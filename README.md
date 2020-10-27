@@ -7,7 +7,7 @@
 ## Description
 
 A tool for monitoring and provisioning (coming soon) network devices written in Go.
-It features a check mode which complies with the monitoring plugins development guidelines and is therefore compatible with Nagios, Icinga, Zabbix, Checkmk, etc.
+It features a check mode which complies with the [monitoring plugins development guidelines](https://www.monitoring-plugins.org/doc/guidelines.html) and is therefore compatible with Nagios, Icinga, Zabbix, Checkmk, etc.
 
 ## Installation
 
