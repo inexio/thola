@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/inexio/thola/core/request"
 	"github.com/spf13/cobra"
-	"thola/core/request"
 )
 
 func init() {

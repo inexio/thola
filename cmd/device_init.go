@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/core/utility"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"os"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/request"
-	"thola/core/utility"
 )
 
 var deviceFlagSet = buildDeviceFlagSet()

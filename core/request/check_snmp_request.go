@@ -2,7 +2,7 @@ package request
 
 import (
 	"context"
-	"thola/core/network"
+	"github.com/inexio/thola/core/network"
 )
 
 // CheckSNMPRequest

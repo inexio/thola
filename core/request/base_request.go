@@ -2,15 +2,15 @@ package request
 
 import (
 	"context"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"
 	"net"
 	"strconv"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/utility"
 	"time"
 )
 

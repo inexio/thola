@@ -4,10 +4,10 @@ package request
 
 import (
 	"context"
+	"github.com/inexio/thola/core/communicator"
+	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"thola/core/communicator"
-	"thola/core/network"
 )
 
 func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {

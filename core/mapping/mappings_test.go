@@ -2,12 +2,12 @@ package mapping
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/inexio/thola/core/vfs"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
-	"thola/core/vfs"
 )
 
 func TestMappings(t *testing.T) {

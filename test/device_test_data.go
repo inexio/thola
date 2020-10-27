@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
 	"github.com/rs/zerolog/log"
 	"os/exec"
 	"strconv"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/request"
 	"time"
 )
 

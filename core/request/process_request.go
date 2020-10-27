@@ -5,12 +5,12 @@ package request
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/api/statistics"
+	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog/log"
 	"strconv"
-	"thola/api/statistics"
-	"thola/core/network"
 	"time"
 )
 

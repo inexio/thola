@@ -5,13 +5,13 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"thola/core/tholaerr"
 	"time"
 )
 

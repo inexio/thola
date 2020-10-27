@@ -4,14 +4,14 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/soniah/gosnmp"
 	"golang.org/x/text/encoding/charmap"
 	"regexp"
 	"strings"
-	"thola/core/tholaerr"
-	"thola/core/utility"
 	"time"
 )
 

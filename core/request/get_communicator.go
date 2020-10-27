@@ -4,11 +4,11 @@ package request
 
 import (
 	"context"
+	"github.com/inexio/thola/core/communicator"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"thola/core/communicator"
-	"thola/core/device"
-	"thola/core/tholaerr"
 )
 
 // GetCommunicator returns a NetworkDeviceCommunicator for the given device.

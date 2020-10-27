@@ -2,14 +2,14 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"regexp"
 	"strings"
-	"thola/core/device"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/utility"
 )
 
 type condition interface {

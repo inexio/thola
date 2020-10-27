@@ -5,7 +5,7 @@ package request
 import (
 	"context"
 	"github.com/inexio/go-monitoringplugin"
-	"thola/core/tholaerr"
+	"github.com/inexio/thola/core/tholaerr"
 )
 
 func (r *CheckMetricsRequest) process(ctx context.Context) (Response, error) {

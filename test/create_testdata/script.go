@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/test"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -12,10 +16,6 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/request"
-	"thola/test"
 )
 
 var (

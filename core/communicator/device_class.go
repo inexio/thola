@@ -3,6 +3,12 @@ package communicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/core/mapping"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
+	"github.com/inexio/thola/core/value"
+	"github.com/inexio/thola/core/vfs"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -14,12 +20,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"thola/core/mapping"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/utility"
-	"thola/core/value"
-	"thola/core/vfs"
 )
 
 // deviceClassComponent represents a component with an byte.

@@ -5,6 +5,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
 	"github.com/mitchellh/colorstring"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -23,9 +26,6 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/request"
 )
 
 type testDevice struct {

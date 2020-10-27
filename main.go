@@ -2,7 +2,7 @@
 
 package main
 
-import "thola/cmd"
+import "github.com/inexio/thola/cmd"
 
 func main() {
 	cmd.Execute()

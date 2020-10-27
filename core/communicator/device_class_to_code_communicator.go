@@ -2,7 +2,7 @@ package communicator
 
 import (
 	"fmt"
-	"thola/core/tholaerr"
+	"github.com/inexio/thola/core/tholaerr"
 )
 
 func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommunicators) (codeCommunicator, error) {

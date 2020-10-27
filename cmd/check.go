@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/inexio/thola/core/request"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"thola/core/request"
 )
 
 func init() {

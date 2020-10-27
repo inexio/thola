@@ -3,14 +3,14 @@ package communicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
 	"regexp"
 	"strings"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/value"
 )
 
 type propertyOperator interface {

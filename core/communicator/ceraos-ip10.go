@@ -2,9 +2,9 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/device"
 	"github.com/pkg/errors"
 	"regexp"
-	"thola/core/device"
 )
 
 type ceraosIP10Communicator struct {

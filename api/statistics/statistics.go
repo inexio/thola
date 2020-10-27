@@ -3,12 +3,12 @@ package statistics
 import (
 	"context"
 	"errors"
+	"github.com/inexio/thola/core/network"
 	"github.com/labstack/echo"
 	"github.com/thoas/stats"
 	"net/http"
 	"strings"
 	"sync"
-	"thola/core/network"
 	"time"
 )
 

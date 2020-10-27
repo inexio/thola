@@ -4,7 +4,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"thola/core/request"
+	"github.com/inexio/thola/core/request"
 )
 
 func init() {

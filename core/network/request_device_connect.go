@@ -2,8 +2,8 @@ package network
 
 import (
 	"context"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
-	"thola/core/utility"
 )
 
 // RequestDeviceConnection represents the request device connection

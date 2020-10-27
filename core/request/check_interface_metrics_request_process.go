@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/parser"
 	"github.com/pkg/errors"
-	"thola/core/device"
-	"thola/core/parser"
 )
 
 type interfaceCheckOutput struct {

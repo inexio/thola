@@ -2,8 +2,8 @@ package communicator
 
 import (
 	"context"
-	"thola/core/device"
-	"thola/core/tholaerr"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/tholaerr"
 )
 
 type baseCommunicator struct {

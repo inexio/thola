@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"github.com/inexio/thola/core/request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
-	"thola/core/request"
 )
 
 func init() {

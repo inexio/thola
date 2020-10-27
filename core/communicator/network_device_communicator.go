@@ -2,10 +2,10 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
-	"thola/core/device"
-	"thola/core/tholaerr"
-	"thola/core/utility"
 )
 
 // NetworkDeviceCommunicator represents a communicator for a device

@@ -1,8 +1,8 @@
 package network
 
 import (
+	"github.com/inexio/thola/core/tholaerr"
 	"sync"
-	"thola/core/tholaerr"
 )
 
 /*

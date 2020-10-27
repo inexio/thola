@@ -2,9 +2,9 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"strconv"
-	"thola/core/network"
 )
 
 type poweroneACCCommunicator struct {

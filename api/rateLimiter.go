@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/labstack/echo"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -8,7 +9,6 @@ import (
 	"github.com/ulule/limiter/v3/drivers/store/memory"
 	"os"
 	"strconv"
-	"thola/core/tholaerr"
 )
 
 var (

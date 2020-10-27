@@ -3,15 +3,15 @@ package communicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"sort"
 	"strings"
-	"thola/core/device"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/value"
 )
 
 type deviceClassCommunicator struct {

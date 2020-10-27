@@ -2,12 +2,12 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"thola/core/device"
-	"thola/core/network"
-	"thola/core/tholaerr"
-	"thola/core/value"
 )
 
 type propertyReader interface {

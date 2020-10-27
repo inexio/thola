@@ -3,14 +3,14 @@ package api
 import (
 	"crypto/subtle"
 	"fmt"
+	"github.com/inexio/thola/api/statistics"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/spf13/viper"
 	"net/http"
 	"sync"
-	"thola/api/statistics"
-	"thola/core/request"
-	"thola/core/tholaerr"
 )
 
 var deviceLocks struct {

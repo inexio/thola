@@ -9,9 +9,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"strings"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/tholaerr"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/tholaerr"
 )
 
 func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {

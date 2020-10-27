@@ -5,8 +5,8 @@ package request
 import (
 	"context"
 	"github.com/inexio/go-monitoringplugin"
-	"thola/core/device"
-	"thola/core/utility"
+	"github.com/inexio/thola/core/device"
+	"github.com/inexio/thola/core/utility"
 )
 
 func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {

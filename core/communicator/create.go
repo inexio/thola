@@ -2,10 +2,10 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"thola/core/network"
-	"thola/core/tholaerr"
 )
 
 // CreateNetworkDeviceCommunicator creates a communicator.

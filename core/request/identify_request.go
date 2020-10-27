@@ -1,7 +1,7 @@
 package request
 
 import (
-	"thola/core/device"
+	"github.com/inexio/thola/core/device"
 )
 
 // IdentifyRequest

@@ -5,6 +5,10 @@ import (
 	"github.com/go-redis/redis/v7"
 	_ "github.com/go-sql-driver/mysql" //needed for sql driver
 	"github.com/huandu/go-sqlbuilder"
+	"github.com/inexio/thola/core/network"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3" //needed for sql driver
 	"github.com/pkg/errors"
@@ -13,10 +17,6 @@ import (
 	"os/user"
 	"strconv"
 	"sync"
-	"thola/core/network"
-	"thola/core/parser"
-	"thola/core/tholaerr"
-	"thola/core/utility"
 	"time"
 )
 

@@ -4,10 +4,10 @@ package cmd
 
 import (
 	"errors"
+	"github.com/inexio/thola/api"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"thola/api"
 )
 
 func init() {

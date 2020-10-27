@@ -1,6 +1,6 @@
 package request
 
-import "thola/core/device"
+import "github.com/inexio/thola/core/device"
 
 // ReadUPSRequest
 //

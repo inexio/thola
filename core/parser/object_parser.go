@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
 	"reflect"
-	"thola/core/tholaerr"
 )
 
 type jsonParser interface {

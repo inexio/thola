@@ -1,13 +1,13 @@
 package mapping
 
 import (
+	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/vfs"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
 	"sync"
-	"thola/core/tholaerr"
-	"thola/core/vfs"
 )
 
 type mapping map[string]string
