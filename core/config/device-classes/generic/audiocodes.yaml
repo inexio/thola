@@ -1,0 +1,82 @@
+name: audiocodes
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.5003.8.1.1
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "AudioCodes"
+    serial_number:
+      - detection: snmpget
+        oid: ".1.3.6.1.2.1.47.1.1.1.1.11.67112960"
+    model:
+      - detection: SysDescription
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: "(?U)Product: ([^;]+)[[:space:]]?;"
+            format: "$1"
+          - type: switch
+            switch_value: snmpwalkCount
+            oid: 1.3.6.1.2.1.2.2.1.2
+            snmp_result_filter:
+              filter_method: contains
+              value: "BRI"
+            cases:
+              - case: 1
+                operators:
+                  - type: modify
+                    modify_method: addSuffix
+                    value: " - 1 BRI"
+              - case: 2
+                operators:
+                    - type: modify
+                      modify_method: addSuffix
+                      value: " - 2 BRI"
+              - case: 4
+                operators:
+                    - type: modify
+                      modify_method: addSuffix
+                      value: " - 4 BRI"
+              - case: 8
+                operators:
+                    - type: modify
+                      modify_method: addSuffix
+                      value: " - 8 BRI"
+          - type: switch
+            switch_value: snmpwalkCount
+            oid: 1.3.6.1.2.1.2.2.1.2
+            snmp_result_filter:
+              filter_method: contains
+              value: "DS1"
+            cases:
+              - case: 1
+                operators:
+                  - type: modify
+                    modify_method: addSuffix
+                    value: " - 1 PRI"
+              - case: 2
+                operators:
+                  - type: modify
+                    modify_method: addSuffix
+                    value: " - 2 PRI"
+              - case: 4
+                operators:
+                  - type: modify
+                    modify_method: addSuffix
+                    value: " - 4 PRI"
+              - case: 8
+                operators:
+                  - type: modify
+                    modify_method: addSuffix
+                    value: " - 8 PRI"
+    os_version:
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.14988.1.1.4.4.0"

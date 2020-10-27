@@ -1,0 +1,145 @@
+name: "generic"
+
+config:
+  components:
+    interfaces: true
+  snmp:
+    max_repetitions: 20
+
+components:
+  interfaces:
+    count: 1.3.6.1.2.1.2.1.0
+    ifTable:
+      ifIndex:
+        oid: 1.3.6.1.2.1.2.2.1.1
+      ifDescr:
+        oid: 1.3.6.1.2.1.2.2.1.2
+      ifType:
+        oid: 1.3.6.1.2.1.2.2.1.3
+        operators:
+          - type: modify
+            modify_method: map
+            mappings: ifType.yaml
+      ifMtu:
+        oid: 1.3.6.1.2.1.2.2.1.4
+      ifSpeed:
+        oid: 1.3.6.1.2.1.2.2.1.5
+      ifPhysAddress:
+        oid: 1.3.6.1.2.1.2.2.1.6
+        use_raw_result: true
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})"
+            format: "$1:$2:$3:$4:$5:$6"
+            return_on_mismatch: true
+      ifAdminStatus:
+        oid: 1.3.6.1.2.1.2.2.1.7
+        operators:
+          - type: modify
+            modify_method: map
+            mappings:
+              "1": "up"
+              "2": "down"
+              "3": "testing"
+      ifOperStatus:
+        oid: 1.3.6.1.2.1.2.2.1.8
+        operators:
+          - type: modify
+            modify_method: map
+            mappings:
+              "1": "up"
+              "2": "down"
+              "3": "testing"
+              "4": "unknown"
+              "5": "dormant"
+              "6": "notPresent"
+              "7": "lowerLayerDown"
+      ifLastChange:
+        oid: 1.3.6.1.2.1.2.2.1.9
+      ifInOctets:
+        oid: 1.3.6.1.2.1.2.2.1.10
+      ifInUcastPkts:
+        oid: 1.3.6.1.2.1.2.2.1.11
+      ifInNUcastPkts:
+        oid: 1.3.6.1.2.1.2.2.1.12
+      ifInDiscards:
+        oid: 1.3.6.1.2.1.2.2.1.13
+      ifInErrors:
+        oid: 1.3.6.1.2.1.2.2.1.14
+      ifInUnknownProtos:
+        oid: 1.3.6.1.2.1.2.2.1.15
+      ifOutOctets:
+        oid: 1.3.6.1.2.1.2.2.1.16
+      ifOutUcastPkts:
+        oid: 1.3.6.1.2.1.2.2.1.17
+      ifOutNUcastPkts:
+        oid: 1.3.6.1.2.1.2.2.1.18
+      ifOutDiscards:
+        oid: 1.3.6.1.2.1.2.2.1.19
+      ifOutErrors:
+        oid: 1.3.6.1.2.1.2.2.1.20
+      ifOutQLen:
+        oid: 1.3.6.1.2.1.2.2.1.21
+      ifSpecific:
+        oid: 1.3.6.1.2.1.2.2.1.22
+      ifName:
+        oid: 1.3.6.1.2.1.31.1.1.1.1
+      ifInMulticastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.2
+      ifInBroadcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.3
+      ifOutMulticastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.4
+      ifOutBroadcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.5
+      ifHCInOctets:
+        oid: 1.3.6.1.2.1.31.1.1.1.6
+      ifHCInUcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.7
+      ifHCInMulticastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.8
+      ifHCInBroadcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.9
+      ifHCOutOctets:
+        oid: 1.3.6.1.2.1.31.1.1.1.10
+      ifHCOutUcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.11
+      ifHCOutMulticastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.12
+      ifHCOutBroadcastPkts:
+        oid: 1.3.6.1.2.1.31.1.1.1.13
+      ifHighSpeed:
+        oid: 1.3.6.1.2.1.31.1.1.1.15
+      ifAlias:
+        oid: 1.3.6.1.2.1.31.1.1.1.18
+    types:
+      ether_like:
+        detection: 1.3.6.1.2.1.10.7.2.1.1
+        specific_values:
+          dot3StatsAlignmentErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.2
+          dot3StatsFCSErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.3
+          dot3StatsSingleCollisionFrames:
+            oid: 1.3.6.1.2.1.10.7.2.1.4
+          dot3StatsMultipleCollisionFrames:
+            oid: 1.3.6.1.2.1.10.7.2.1.5
+          dot3StatsSQETestErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.6
+          dot3StatsDeferredTransmissions:
+            oid: 1.3.6.1.2.1.10.7.2.1.7
+          dot3StatsLateCollisions:
+            oid: 1.3.6.1.2.1.10.7.2.1.8
+          dot3StatsExcessiveCollisions:
+            oid: 1.3.6.1.2.1.10.7.2.1.9
+          dot3StatsInternalMacTransmitErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.10
+          dot3StatsCarrierSenseErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.11
+          dot3StatsFrameTooLongs:
+            oid: 1.3.6.1.2.1.10.7.2.1.13
+          dot3StatsInternalMacReceiveErrors:
+            oid: 1.3.6.1.2.1.10.7.2.1.16
+          dot3HCStatsFCSErrors:
+            oid: 1.3.6.1.2.1.10.7.11.1.2

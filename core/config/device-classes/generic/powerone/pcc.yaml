@@ -1,0 +1,59 @@
+name: "pcc"
+
+match:
+  logical_operator: "OR"
+  conditions:
+    - type: snmpget
+      oid: .1.3.6.1.4.1.5961.3.1.2.0
+      match_mode: contains
+      values:
+        - "PCC"
+
+identify:
+  properties:
+    model:
+      - detection: constant
+        value: "PCC"
+
+components:
+  ups:
+    battery_capacity:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.1.7.0
+    battery_temperature:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.2.5.0
+    battery_current:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.2.3.0
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    system_voltage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.2.1.0
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.01
+    current_load:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.2.2.0
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    rectifier_current:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.2.4.0
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    alarm:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.3.1.0
+    alarm_low_voltage_disconnect:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.5961.3.3.2.0

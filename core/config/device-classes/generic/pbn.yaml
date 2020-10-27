@@ -1,0 +1,31 @@
+name: "pbn"
+
+match:
+  logical_operator: "OR"
+  conditions:
+    - type: SysObjectID
+      match_mode: startsWith
+      values:
+        - .1.3.6.1.4.1.11606.10
+        - .1.3.6.1.4.1.11606.25
+        - .1.3.6.1.4.1.11606.11
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "PBN"
+    serial_number:
+      - detection: SysDescription
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: 'Serial num:([^,]+),'
+            format: "$1"
+    os_version:
+      - detection: SysDescription
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: 'Version ([^,]+),'
+            format: "$1"

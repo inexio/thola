@@ -1,0 +1,12 @@
+name: "arista_eos"
+
+match:
+  logical_operator: "OR"
+  conditions:
+    - type: SysDescription
+      match_mode: contains
+      values:
+        - "Arista Networks EOS"
+
+identify:
+  properties:

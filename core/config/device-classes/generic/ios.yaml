@@ -1,0 +1,50 @@
+name: ios
+
+config:
+  snmp:
+    max_repetitions: 1
+
+match:
+  conditions:
+    - type: SysObjectID
+      match_mode: startsWith
+      values:
+        - .1.3.6.1.4.1.9.1.
+    - type: SysDescription
+      match_mode: regex
+      values:
+        - '(?i)^CISCO\s'
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Cisco"
+    serial_number:
+      - detection: snmpget
+        oid: "1.3.6.1.2.1.47.1.1.1.1.11.1"
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.9.3.6.3.0"
+    model:
+      - detection: snmpget
+        oid: "1.3.6.1.2.1.47.1.1.1.1.13.1"
+        operators:
+          - type: modify
+            modify_method: regexReplace
+            replace: ""
+            regex: "(?i)^C(ISCO)?"
+    model_series:
+      - detection: Model
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: "^([0-9]+)"
+            format: "$1"
+    os_version:
+      - detection: SysDescription
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: "Version ([^, ]+)"
+            format: "$1"

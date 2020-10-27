@@ -1,0 +1,68 @@
+# output format ('json', 'xml' or 'pretty')
+format: pretty
+
+# the loglevel
+loglevel: error
+
+# database settings
+db:
+  # don't use a database cache
+  no-cache: false
+  # the db drivername (mysql, sqlite3 and redis are supported)
+  drivername: sqlite3
+  # timespan in which the data in the cache stays valid
+  duration: 60m
+  sql:
+    # datasourcename in case of a mysql or sqlite db
+    # if empty and drivername is sqlite3, thola will create and use a db in the temp folder of the os
+    datasourcename:
+  redis:
+    # if address is emtpy, thola will try to connect to redis on localhost:6379
+    addr:
+    password:
+    # the db to use (0 is the default db)
+    db: 0
+
+# request specific settings
+request:
+  # allow multiple request at a time for one ip
+  no-ip-lock: false
+  # timeout for the request in seconds (0 => no timeout)
+  timeout: 0
+
+# settings for the connection to the device
+device:
+  snmp-communities:
+  - public
+  snmp-versions:
+  - 2c
+  - 1
+  snmp-ports:
+  - 161
+  # The amount of parallel connection requests used while trying to get a valid SNMP connection
+  snmp-discover-par-requests: 5
+  # The timeout in seconds used while trying to get a valid SNMP connection
+  snmp-discover-timeout: 2
+  # The retries used while trying to get a valid SNMP connection
+  snmp-discover-retries: 0
+
+  http-ports:
+  https-ports:
+  # if username or password is empty, no authorization will be used
+  http-username:
+  http-password:
+
+# settings for the API
+api:
+  port: 8237
+  # api format ('json' or 'xml')
+  format: json
+  # if username or password is empty, no authorization will be used
+  username:
+  password:
+  # if certfile or keyfile is emtpy, no SSL encryption will be used
+  certfile:
+  keyfile:
+  # if ratelimit empty, no ratelimit will be set
+  # e.g. 1000 reqs/hour: "1000-H"
+  ratelimit:

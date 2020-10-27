@@ -1,0 +1,2591 @@
+{
+	"type": "snmpsim",
+	"expectations": {
+		"identify": {
+			"class": "comware",
+			"properties": {
+				"vendor": "HPE",
+				"model": "VSR1000",
+				"model_series": null,
+				"serial_number": null,
+				"os_version": "7.1.059"
+			}
+		},
+		"readCountInterfaces": {
+			"count": 11
+		},
+		"checkInterfaceMetrics": {
+			"status_code": 0,
+			"performance_data": [
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "NULL0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "NULL0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 185,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 7255,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "NULL0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "NULL0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "NULL0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "InLoopBack0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "NULL0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 5,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "InLoopBack0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "Register-Tunnel0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 7288,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_late_collisions",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "Register-Tunnel0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 693224,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 27,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_carrier_sense_errors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "NULL0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_FCSErrors",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_SQETest_errors",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_transmit_errors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 1315474,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_frame_too_longs",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_dot3HCStatsFCSErrors",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_single_collision_frames",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_alignment_errors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet2/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_internal_mac_receive_errors",
+					"label_tag": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "Register-Tunnel0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "NULL0",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_excessive_collisions",
+					"label_tag": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_multiple_collision_frames",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "InLoopBack0",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_deferred_transmissions",
+					"label_tag": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "GigabitEthernet8/0",
+					"value": 185,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				}
+			],
+			"raw_output": "OK: checked\n[{\"ifIndex\":\"17\",\"ifDescr\":\"GigabitEthernet1/0\",\"ifName\":\"GigabitEthernet1/0\",\"ifAlias\":\"GigabitEthernet1/0 Interface\",\"ifPhysAddress\":\"52:54:00:A0:CA:01\"},{\"ifIndex\":\"33\",\"ifDescr\":\"GigabitEthernet2/0\",\"ifName\":\"GigabitEthernet2/0\",\"ifAlias\":\"GigabitEthernet2/0 Interface\",\"ifPhysAddress\":\"52:54:00:D1:2D:02\"},{\"ifIndex\":\"49\",\"ifDescr\":\"GigabitEthernet3/0\",\"ifName\":\"GigabitEthernet3/0\",\"ifAlias\":\"GigabitEthernet3/0 Interface\",\"ifPhysAddress\":\"52:54:00:FC:26:03\"},{\"ifIndex\":\"65\",\"ifDescr\":\"GigabitEthernet4/0\",\"ifName\":\"GigabitEthernet4/0\",\"ifAlias\":\"GigabitEthernet4/0 Interface\",\"ifPhysAddress\":\"52:54:00:CB:2A:04\"},{\"ifIndex\":\"81\",\"ifDescr\":\"GigabitEthernet5/0\",\"ifName\":\"GigabitEthernet5/0\",\"ifAlias\":\"GigabitEthernet5/0 Interface\",\"ifPhysAddress\":\"52:54:00:EA:66:05\"},{\"ifIndex\":\"97\",\"ifDescr\":\"GigabitEthernet6/0\",\"ifName\":\"GigabitEthernet6/0\",\"ifAlias\":\"GigabitEthernet6/0 Interface\",\"ifPhysAddress\":\"52:54:00:30:75:06\"},{\"ifIndex\":\"113\",\"ifDescr\":\"GigabitEthernet7/0\",\"ifName\":\"GigabitEthernet7/0\",\"ifAlias\":\"GigabitEthernet7/0 Interface\",\"ifPhysAddress\":\"52:54:00:77:9D:07\"},{\"ifIndex\":\"129\",\"ifDescr\":\"GigabitEthernet8/0\",\"ifName\":\"GigabitEthernet8/0\",\"ifAlias\":\"GigabitEthernet8/0 Interface\",\"ifPhysAddress\":\"52:54:00:BB:FC:00\"},{\"ifIndex\":\"401\",\"ifDescr\":\"NULL0\",\"ifName\":\"NULL0\",\"ifAlias\":\"NULL0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"402\",\"ifDescr\":\"InLoopBack0\",\"ifName\":\"InLoopBack0\",\"ifAlias\":\"InLoopBack0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"403\",\"ifDescr\":\"Register-Tunnel0\",\"ifName\":\"Register-Tunnel0\",\"ifAlias\":\"Register-Tunnel0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"}]",
+			"messages": [
+				{
+					"status": 0,
+					"message": "[{\"ifIndex\":\"17\",\"ifDescr\":\"GigabitEthernet1/0\",\"ifName\":\"GigabitEthernet1/0\",\"ifAlias\":\"GigabitEthernet1/0 Interface\",\"ifPhysAddress\":\"52:54:00:A0:CA:01\"},{\"ifIndex\":\"33\",\"ifDescr\":\"GigabitEthernet2/0\",\"ifName\":\"GigabitEthernet2/0\",\"ifAlias\":\"GigabitEthernet2/0 Interface\",\"ifPhysAddress\":\"52:54:00:D1:2D:02\"},{\"ifIndex\":\"49\",\"ifDescr\":\"GigabitEthernet3/0\",\"ifName\":\"GigabitEthernet3/0\",\"ifAlias\":\"GigabitEthernet3/0 Interface\",\"ifPhysAddress\":\"52:54:00:FC:26:03\"},{\"ifIndex\":\"65\",\"ifDescr\":\"GigabitEthernet4/0\",\"ifName\":\"GigabitEthernet4/0\",\"ifAlias\":\"GigabitEthernet4/0 Interface\",\"ifPhysAddress\":\"52:54:00:CB:2A:04\"},{\"ifIndex\":\"81\",\"ifDescr\":\"GigabitEthernet5/0\",\"ifName\":\"GigabitEthernet5/0\",\"ifAlias\":\"GigabitEthernet5/0 Interface\",\"ifPhysAddress\":\"52:54:00:EA:66:05\"},{\"ifIndex\":\"97\",\"ifDescr\":\"GigabitEthernet6/0\",\"ifName\":\"GigabitEthernet6/0\",\"ifAlias\":\"GigabitEthernet6/0 Interface\",\"ifPhysAddress\":\"52:54:00:30:75:06\"},{\"ifIndex\":\"113\",\"ifDescr\":\"GigabitEthernet7/0\",\"ifName\":\"GigabitEthernet7/0\",\"ifAlias\":\"GigabitEthernet7/0 Interface\",\"ifPhysAddress\":\"52:54:00:77:9D:07\"},{\"ifIndex\":\"129\",\"ifDescr\":\"GigabitEthernet8/0\",\"ifName\":\"GigabitEthernet8/0\",\"ifAlias\":\"GigabitEthernet8/0 Interface\",\"ifPhysAddress\":\"52:54:00:BB:FC:00\"},{\"ifIndex\":\"401\",\"ifDescr\":\"NULL0\",\"ifName\":\"NULL0\",\"ifAlias\":\"NULL0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"402\",\"ifDescr\":\"InLoopBack0\",\"ifName\":\"InLoopBack0\",\"ifAlias\":\"InLoopBack0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"403\",\"ifDescr\":\"Register-Tunnel0\",\"ifName\":\"Register-Tunnel0\",\"ifAlias\":\"Register-Tunnel0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"}]"
+				}
+			]
+		},
+		"checkUPS": null
+	}
+}

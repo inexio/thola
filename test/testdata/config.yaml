@@ -1,0 +1,6 @@
+concurrentRequests: 5
+retries: 1
+simpleUI: false
+snmpRecDir: ./devices
+apiPort: 8237
+keepDockerAlive: false

@@ -1,0 +1,74 @@
+name: eltek-webpower
+
+config:
+  components:
+    interfaces: false
+    ups: true
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.12148.9
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Eltek"
+    model:
+      - detection: snmpget
+        oid: 1.3.6.1.4.1.12148.9.2.1.3.6.0
+        operators:
+          - type: modify
+            modify_method: map
+            mappings:
+              "0": "AL175"
+              "1": "AL4000 (Aeon Gold)"
+              "2": "AL6000"
+              "3": "AL175OEM"
+              "4": "MCU"
+              "5": "SmartPack"
+              "6": "ComPack"
+    serial_number:
+      - detection: snmpget
+        oid: 1.3.6.1.4.1.12148.9.2.1.3.7.0
+    os_version:
+      - detection: SysDescription
+        operators:
+          - type: modify
+            modify_method: regexSubmatch
+            regex: 'OS:([0-9\.]+)\s'
+            format: "$1"
+
+components:
+  ups:
+    battery_voltage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.12148.9.3.10.0
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    alarm:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.12148.9.7.1.11.0
+    mains_voltage_applied:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.12148.9.7.1.11.0
+        operators:
+          - type: switch
+            switch_mode: regex
+            cases:
+              - case: "0"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "1"
+              - case: ".*"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "0"

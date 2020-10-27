@@ -1,0 +1,45 @@
+# .goreleaser.yml
+
+builds:
+  - id: "thola"
+
+    goos:
+      - linux
+    ignore:
+      - goos: linux
+        goarch: 386
+
+    main: ./main.go
+    binary: thola
+
+    ldflags:
+      - -s -w
+    env:
+      - CGO_ENABLED=1
+
+  - id: "thola-client"
+
+    goos:
+      - linux
+    ignore:
+      - goos: linux
+        goarch: 386
+
+    main: ./main.go
+    binary: thola-client
+
+    flags:
+      - -tags
+      - client
+    ldflags:
+      - -s -w
+    env:
+      - CGO_ENABLED=1
+
+archives:
+  - builds:
+      - thola
+      - thola-client
+      
+    replacements:
+      amd64: 64-bit

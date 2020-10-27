@@ -1,0 +1,31 @@
+name: ironware
+
+config:
+  snmp:
+    max_repetitions: 1
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.1991
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Brocade"
+    serial_number:
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.1991.1.1.1.1.2.0"
+    model:
+      - detection: SysObjectID
+        operators:
+          - type: modify
+            modify_method: map
+            mappings: sysObjectID.yaml
+    os_version:
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.1991.1.1.2.1.49.0"

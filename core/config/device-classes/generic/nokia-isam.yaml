@@ -1,0 +1,71 @@
+name: nokia-isam
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.637.61
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Alcatel"
+    serial_number:
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.637.61.1.23.3.1.19.4353"
+    model:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.637.61.1.23.3.1.14.4353
+        operators:
+          - type: switch
+            switch_mode: equals
+            cases:
+              - case: "RANT-A"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "7363"
+              - case: "NRNT-A"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "7356"
+              - case: "NANT-A"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "7330"
+              - case: "NANT-E"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "7330"
+              - case: "FANT-F"
+                operators:
+                  - type: modify
+                    modify_method: overwrite
+                    value: "7360"
+                  - type: switch
+                    switch_value: snmpwalkCount
+                    oid: 1.3.6.1.4.1.637.61.1.23.3.1.14
+                    use_oid_for_filter: true
+                    snmp_result_filter:
+                      filter_method: regex
+                      value: '(\.435[5-9]$)|(\.436[0-2]$)'
+                    cases:
+                      - case: 4
+                        operators:
+                          - type: modify
+                            modify_method: addSuffix
+                            value: " FX-4"
+                      - case: 8
+                        operators:
+                          - type: modify
+                            modify_method: addSuffix
+                            value: " FX-8"
+    os_version:
+      - detection: snmpget
+        oid: "1.3.6.1.4.1.637.61.1.9.28.1.0"

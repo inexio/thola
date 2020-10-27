@@ -1,0 +1,31 @@
+name: smartax
+
+match:
+  conditions:
+    - match_mode: contains
+      type: SysDescription
+      values:
+        - Huawei Integrated Access Software
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.2011.2
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Huawei"
+    model:
+      - detection: SysObjectID
+        operators:
+          - type: modify
+            modify_method: map
+            mappings: sysObjectID.yaml
+    serial_number:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.2011.6.3.3.1.1.9.0
+    os_version:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.2011.6.3.1.999.0

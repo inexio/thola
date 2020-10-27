@@ -1,0 +1,68 @@
+name: effekta
+
+config:
+  components:
+    interfaces: false
+    ups: true
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.20246.
+  logical_operator: OR
+
+identify:
+  properties:
+    vendor:
+      - detection: constant
+        value: "Effekta"
+    os_version:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.1.4.0
+
+components:
+  ups:
+    battery_voltage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.9.1.1.3.26
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.01
+    battery_amperage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.9.1.1.3.12
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    battery_temperature:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.9.1.1.3.23
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    alarm:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.2.5.0
+    current_load:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.9.1.1.3.11
+        operators:
+          - type: modify
+            modify_method: multiply
+            value: 0.1
+    mains_voltage_applied:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.20246.2.3.1.1.1.2.2.5.0
+        operators:
+          - type: filter
+            filter_method: "!equals"
+            value: "1"
+            return_on_mismatch: true
+          - type: modify
+            modify_method: "overwrite"
+            value: "0"
