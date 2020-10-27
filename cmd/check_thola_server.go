@@ -3,8 +3,8 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"github.com/inexio/thola/core/request"
+	"github.com/spf13/cobra"
 )
 
 func init() {

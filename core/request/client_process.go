@@ -6,12 +6,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/pkg/errors"
-	"github.com/spf13/viper"
-	"strings"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
+	"github.com/pkg/errors"
+	"github.com/spf13/viper"
+	"strings"
 )
 
 func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {
