@@ -1,4 +1,4 @@
-module thola
+module github.com/inexio/thola
 
 go 1.14
 
