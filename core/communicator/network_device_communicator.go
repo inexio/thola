@@ -285,7 +285,11 @@ func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, erro
 	if err != nil {
 		return "", err
 	}
-	return res.(string), err
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
 }
 
 func (c *networkDeviceCommunicator) GetModel(ctx context.Context) (string, error) {
@@ -296,7 +300,11 @@ func (c *networkDeviceCommunicator) GetModel(ctx context.Context) (string, error
 	if err != nil {
 		return "", err
 	}
-	return res.(string), err
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
 }
 
 func (c *networkDeviceCommunicator) GetModelSeries(ctx context.Context) (string, error) {
@@ -307,7 +315,11 @@ func (c *networkDeviceCommunicator) GetModelSeries(ctx context.Context) (string,
 	if err != nil {
 		return "", err
 	}
-	return res.(string), err
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
 }
 
 func (c *networkDeviceCommunicator) GetSerialNumber(ctx context.Context) (string, error) {
@@ -318,7 +330,11 @@ func (c *networkDeviceCommunicator) GetSerialNumber(ctx context.Context) (string
 	if err != nil {
 		return "", err
 	}
-	return res.(string), err
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
 }
 
 func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, error) {
@@ -329,7 +345,11 @@ func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, e
 	if err != nil {
 		return "", err
 	}
-	return res.(string), err
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
 }
 
 func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
