@@ -42,13 +42,13 @@ Thola currently has three main modes of operation with various subcommands:
 More features are coming soon:
 
 - Read out additional information
-    - inventory data
-    - system data
-    - device specific data (e.g. DSLAMs)
+    - Inventory data
+    - System data
+    - Device specific data (e.g. DSLAMs)
 - More checks
     - CPU load
-    - memory usage
-    - hardware health
+    - Memory usage
+    - Hardware health
 - Configuration/Provisioning
 
 ## Quick Start
