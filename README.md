@@ -145,7 +145,7 @@ We plan to support more protocols like telnet, SSH and more.
 You can run our test located in the `test` directory with the `go test` command if you have Docker and Docker Compose installed. 
 
 If you want to add your own devices  to the tests you can put your SNMP recordings in the `testdata/devices` folder.
-After that you just need to run the script located in `create_testdata` to create the expectation files and your devices were added to the testsuite!
+After that you just need to run the script located in `create_testdata` to create the expectation files and your devices are included in the testsuite!
 
 ## Contribution
 
