@@ -1,6 +1,7 @@
 package network
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 )
 
 // SNMPClient is used to communicate via snmp.
@@ -370,8 +372,14 @@ func (s *SNMPResponse) getValueDecoded() (interface{}, error) {
 	switch x := s.value.(type) {
 	case string:
 		i, err = charmap.ISO8859_1.NewDecoder().String(x)
+		i = strings.TrimFunc(i.(string), func(r rune) bool {
+			return !unicode.IsGraphic(r)
+		})
 	case []byte:
 		i, err = charmap.ISO8859_1.NewDecoder().Bytes(x)
+		i = bytes.TrimFunc(i.([]byte), func(r rune) bool {
+			return !unicode.IsGraphic(r)
+		})
 	}
 	if err != nil {
 		return nil, err
