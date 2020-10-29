@@ -388,6 +388,13 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 		}
 
+		if i.EtherStatsCRCAlignErrors != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_CRCAlign_errors", *i.EtherStatsCRCAlignErrors, "c").SetLabelTag(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+
 		//radio interface metrics
 		if i.LevelOut != nil {
 			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_level_out", *i.LevelOut, "").SetLabelTag(*i.IfDescr))

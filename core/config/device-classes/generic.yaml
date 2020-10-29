@@ -143,3 +143,5 @@ components:
             oid: 1.3.6.1.2.1.10.7.2.1.16
           dot3HCStatsFCSErrors:
             oid: 1.3.6.1.2.1.10.7.11.1.2
+          etherStatsCRCAlignErrors:
+            oid: 1.3.6.1.2.1.16.1.1.1.8

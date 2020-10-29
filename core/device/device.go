@@ -126,6 +126,7 @@ type EthernetLikeInterface struct {
 	Dot3StatsFrameTooLongs             *uint64 `yaml:"dot3StatsFrameTooLongs,omitempty" json:"dot3StatsFrameTooLongs,omitempty" xml:"dot3StatsFrameTooLongs,omitempty"`
 	Dot3StatsInternalMacReceiveErrors  *uint64 `yaml:"dot3StatsInternalMacReceiveErrors,omitempty" json:"dot3StatsInternalMacReceiveErrors,omitempty" xml:"dot3StatsInternalMacReceiveErrors,omitempty"`
 	Dot3HCStatsFCSErrors               *uint64 `yaml:"dot3HCStatsFCSErrors,omitempty" json:"dot3HCStatsFCSErrors,omitempty" xml:"dot3HCStatsFCSErrors,omitempty"`
+	EtherStatsCRCAlignErrors           *uint64 `yaml:"etherStatsCRCAlignErrors ,omitempty" json:"etherStatsCRCAlignErrors,omitempty" xml:"etherStatsCRCAlignErrors,omitempty"`
 }
 
 // RadioInterface represents a radio interface
