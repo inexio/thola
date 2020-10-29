@@ -214,7 +214,7 @@ func (s *HTTPCondition) validate() error {
 	return nil
 }
 
-// VendorCondition is a condition based on a a vendor.
+// VendorCondition is a condition based on a vendor.
 type VendorCondition struct {
 	Condition `yaml:",inline" mapstructure:",squash"`
 }
@@ -230,7 +230,7 @@ func (m *VendorCondition) check(ctx context.Context) (bool, error) {
 	return matchStrings(ctx, *properties.Properties.Vendor, m.MatchMode, m.Value...)
 }
 
-// ModelCondition is a condition based on a a model.
+// ModelCondition is a condition based on a model.
 type ModelCondition struct {
 	Condition `yaml:",inline" mapstructure:",squash"`
 }
@@ -246,7 +246,7 @@ func (m *ModelCondition) check(ctx context.Context) (bool, error) {
 	return matchStrings(ctx, *properties.Properties.Model, m.MatchMode, m.Value...)
 }
 
-// ModelSeriesCondition is a condition based on a a model series.
+// ModelSeriesCondition is a condition based on a model series.
 type ModelSeriesCondition struct {
 	Condition `yaml:",inline" mapstructure:",squash"`
 }
