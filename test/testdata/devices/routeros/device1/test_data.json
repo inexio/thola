@@ -18,10 +18,10 @@
 			"status_code": 0,
 			"performance_data": [
 				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
+					"label": "interface_admin_status",
+					"label_tag": "ether7",
+					"value": 1,
+					"unit": "",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -29,7 +29,7 @@
 				},
 				{
 					"label": "interface_admin_status",
-					"label_tag": "ether10",
+					"label_tag": "ether8",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -39,7 +39,7 @@
 				},
 				{
 					"label": "interface_maxspeed_in",
-					"label_tag": "ether17",
+					"label_tag": "ether15",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -48,27 +48,17 @@
 					"max": null
 				},
 				{
-					"label": "interface_admin_status",
-					"label_tag": "ether19",
-					"value": 1,
-					"unit": "",
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
 					"warn": null,
 					"crit": null,
 					"min": null,
 					"max": null
 				},
 				{
-					"label": "interface_oper_status",
-					"label_tag": "ether1",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
+					"label": "packet_counter_multicast_in",
 					"label_tag": "ether8",
 					"value": 0,
 					"unit": "c",
@@ -79,548 +69,8 @@
 				},
 				{
 					"label": "packet_counter_unicast_out",
-					"label_tag": "ether5",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether18",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether23",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether4",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether26",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether1",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether20",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
 					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether4",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether13",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether13",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether30",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether5",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether12",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether17",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether23",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether10",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether14",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether18",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether28",
 					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether1",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether28",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether30",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether7",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether32",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether22",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether1",
-					"value": 12788,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether12",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether18",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether20",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether21",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether22",
-					"value": 0,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -638,210 +88,10 @@
 					"max": null
 				},
 				{
-					"label": "interface_oper_status",
-					"label_tag": "ether10",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether27",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether3",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether27",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
+					"label": "packet_counter_discard_in",
 					"label_tag": "ether3",
 					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether14",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether28",
-					"value": 0,
 					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether13",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether22",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether25",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether7",
-					"value": 1,
-					"unit": "",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -849,46 +99,6 @@
 				},
 				{
 					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether31",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
 					"label_tag": "ether3",
 					"value": 0,
 					"unit": "c",
@@ -899,167 +109,7 @@
 				},
 				{
 					"label": "error_counter_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether17",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether11",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether21",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether15",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether28",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether4",
-					"value": 60939,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether13",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether23",
+					"label_tag": "ether12",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -1069,39 +119,9 @@
 				},
 				{
 					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether3",
+					"label_tag": "ether16",
 					"value": 0,
 					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether20",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether11",
-					"value": 1000000000,
-					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -1118,2908 +138,8 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_in",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
 					"label": "packet_counter_unicast_in",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether14",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether15",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether16",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether6",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether29",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether1",
-					"value": 1158,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether16",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether12",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether21",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether15",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether19",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether23",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether11",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
 					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether25",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether3",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether6",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether9",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether6",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether13",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether19",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether26",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether30",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether4",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether29",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether8",
-					"value": 60606,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether14",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether18",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether10",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether23",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether23",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether16",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether17",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether24",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether17",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether25",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether7",
-					"value": 60606,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether8",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether16",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether3",
-					"value": 60939,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether27",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether30",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether31",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether21",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether2",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether3",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether16",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether31",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether14",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether8",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether32",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether18",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether19",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether19",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether25",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether16",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether10",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether26",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether31",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether19",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether6",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether15",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether20",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether22",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether5",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether7",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether27",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether2",
-					"value": 60939,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether9",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether14",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether20",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether11",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether26",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether12",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether32",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether11",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether19",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether22",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether24",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether28",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether2",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether21",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether27",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether32",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether16",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether5",
-					"value": 60606,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether9",
-					"value": 60606,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether24",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether1",
-					"value": 3121399,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether12",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether19",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether28",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether32",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether2",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether29",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether1",
-					"value": 13374,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether18",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether1",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether20",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether24",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether29",
-					"value": 61152,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether22",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether19",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether6",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether25",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether5",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether8",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether4",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether10",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether13",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether25",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether28",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether7",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether8",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether26",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether22",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether3",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether15",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether21",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether23",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether30",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_in",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether3",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether6",
-					"value": 60606,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether17",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4038,7 +158,47 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_broadcast_out",
+					"label": "interface_oper_status",
+					"label_tag": "ether13",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether2",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
 					"label_tag": "ether5",
 					"value": 0,
 					"unit": "c",
@@ -4048,8 +208,18 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether19",
+					"label": "traffic_counter_in",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether23",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4058,8 +228,8 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether28",
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether30",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4069,7 +239,7 @@
 				},
 				{
 					"label": "interface_admin_status",
-					"label_tag": "ether29",
+					"label_tag": "ether6",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4078,9 +248,9 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether18",
-					"value": 0,
+					"label": "traffic_counter_out",
+					"label_tag": "ether11",
+					"value": 61152,
 					"unit": "B",
 					"warn": null,
 					"crit": null,
@@ -4088,8 +258,8 @@
 					"max": null
 				},
 				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether24",
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether15",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4098,9 +268,9 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether27",
-					"value": 546,
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether16",
+					"value": 0,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -4108,8 +278,48 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether29",
+					"label": "interface_oper_status",
+					"label_tag": "ether7",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether28",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether31",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4120,6 +330,96 @@
 				{
 					"label": "packet_counter_broadcast_out",
 					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether32",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether21",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether23",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether25",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether2",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether12",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4138,8 +438,18 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether21",
+					"label": "traffic_counter_out",
+					"label_tag": "ether6",
+					"value": 60606,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether12",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4148,8 +458,8 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether27",
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether29",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4158,7 +468,27 @@
 					"max": null
 				},
 				{
-					"label": "interface_maxspeed_out",
+					"label": "traffic_counter_out",
+					"label_tag": "ether1",
+					"value": 3121399,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether25",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
 					"label_tag": "ether28",
 					"value": 1000000000,
 					"unit": "B",
@@ -4168,8 +498,68 @@
 					"max": null
 				},
 				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether14",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "interface_admin_status",
-					"label_tag": "ether32",
+					"label_tag": "ether18",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4179,7 +569,7 @@
 				},
 				{
 					"label": "packet_counter_unicast_in",
-					"label_tag": "ether16",
+					"label_tag": "ether30",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4189,7 +579,7 @@
 				},
 				{
 					"label": "interface_maxspeed_in",
-					"label_tag": "ether8",
+					"label_tag": "ether14",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4198,8 +588,128 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether9",
+					"label": "error_counter_out",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether13",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether4",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether10",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether12",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether27",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether32",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4218,37 +728,7 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether4",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether17",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
+					"label": "error_counter_in",
 					"label_tag": "ether13",
 					"value": 0,
 					"unit": "c",
@@ -4258,67 +738,17 @@
 					"max": null
 				},
 				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether14",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "packet_counter_multicast_out",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether24",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether29",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether10",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether20",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether21",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
 					"label_tag": "ether22",
 					"value": 0,
 					"unit": "c",
@@ -4328,48 +758,8 @@
 					"max": null
 				},
 				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether9",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether31",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
 					"label": "interface_oper_status",
-					"label_tag": "ether29",
+					"label_tag": "ether26",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4378,28 +768,18 @@
 					"max": null
 				},
 				{
-					"label": "interface_oper_status",
-					"label_tag": "ether8",
-					"value": 1,
-					"unit": "",
+					"label": "traffic_counter_out",
+					"label_tag": "ether13",
+					"value": 61488,
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether23",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether30",
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether20",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4409,7 +789,7 @@
 				},
 				{
 					"label": "interface_admin_status",
-					"label_tag": "ether5",
+					"label_tag": "ether21",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4418,20 +798,10 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_in",
-					"label_tag": "ether10",
+					"label": "traffic_counter_in",
+					"label_tag": "ether21",
 					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "c",
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -4439,17 +809,7 @@
 				},
 				{
 					"label": "packet_counter_multicast_out",
-					"label_tag": "ether9",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "error_counter_out",
-					"label_tag": "ether15",
+					"label_tag": "ether30",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4459,7 +819,7 @@
 				},
 				{
 					"label": "interface_maxspeed_in",
-					"label_tag": "ether12",
+					"label_tag": "ether24",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4468,18 +828,8 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether4",
-					"value": 549,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether8",
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether26",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4488,49 +838,9 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_out",
-					"label_tag": "ether9",
-					"value": 546,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether15",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether17",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether19",
-					"value": 61488,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether19",
-					"value": 0,
+					"label": "error_counter_in",
+					"label_tag": "ether1",
+					"value": 1158,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -4548,8 +858,28 @@
 					"max": null
 				},
 				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether13",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "interface_maxspeed_out",
-					"label_tag": "ether27",
+					"label_tag": "ether17",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4559,7 +889,217 @@
 				},
 				{
 					"label": "packet_counter_discard_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether18",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether6",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether10",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
 					"label_tag": "ether30",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether32",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether17",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether1",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether3",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether23",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4578,8 +1118,8 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether20",
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether32",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4588,8 +1128,8 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_out",
-					"label_tag": "ether27",
+					"label": "error_counter_in",
+					"label_tag": "ether5",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4598,8 +1138,18 @@
 					"max": null
 				},
 				{
-					"label": "interface_oper_status",
-					"label_tag": "ether2",
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether16",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4609,7 +1159,7 @@
 				},
 				{
 					"label": "error_counter_out",
-					"label_tag": "ether19",
+					"label_tag": "ether16",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4618,9 +1168,19 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_discard_out",
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether20",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
 					"label_tag": "ether24",
-					"value": 0,
+					"value": 546,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -4628,10 +1188,110 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_discard_out",
+					"label": "packet_counter_discard_in",
 					"label_tag": "ether28",
 					"value": 0,
 					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether27",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether31",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether10",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether11",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether16",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether22",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -4648,29 +1308,89 @@
 					"max": null
 				},
 				{
+					"label": "interface_oper_status",
+					"label_tag": "ether29",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether30",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "packet_counter_discard_out",
-					"label_tag": "ether31",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether7",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
 					"label_tag": "ether14",
 					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether17",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether26",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether27",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether8",
+					"value": 546,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -4688,18 +1408,18 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether19",
+					"label": "error_counter_in",
+					"label_tag": "ether23",
 					"value": 0,
-					"unit": "B",
+					"unit": "c",
 					"warn": null,
 					"crit": null,
 					"min": null,
 					"max": null
 				},
 				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether19",
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether16",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4709,7 +1429,7 @@
 				},
 				{
 					"label": "packet_counter_broadcast_out",
-					"label_tag": "ether27",
+					"label_tag": "ether21",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4718,18 +1438,8 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether12",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_in",
-					"label_tag": "ether13",
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether21",
 					"value": 1000000000,
 					"unit": "B",
 					"warn": null,
@@ -4738,9 +1448,139 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether20",
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether25",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether12",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether7",
 					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether5",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether16",
+					"value": 549,
 					"unit": "c",
 					"warn": null,
 					"crit": null,
@@ -4750,6 +1590,1446 @@
 				{
 					"label": "error_counter_in",
 					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether1",
+					"value": 12788,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether16",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether19",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether7",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether20",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether28",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether1",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether3",
+					"value": 60939,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether4",
+					"value": 60939,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether19",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether15",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether12",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether3",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether8",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether17",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether24",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether12",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether23",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether26",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether22",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether19",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether21",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether32",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether6",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether21",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether12",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether1",
+					"value": 13374,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether32",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether24",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether28",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether5",
+					"value": 60606,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether23",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether28",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether18",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether2",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether9",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether10",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether3",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether9",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether25",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether27",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether29",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether16",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether31",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether11",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether13",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether19",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether20",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether23",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether1",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether13",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether18",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether26",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether31",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether22",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether29",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether5",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether8",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether26",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether5",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4768,8 +3048,188 @@
 					"max": null
 				},
 				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether18",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether19",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether7",
+					"value": 60606,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether10",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "error_counter_in",
-					"label_tag": "ether23",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether16",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether28",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether21",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4779,7 +3239,117 @@
 				},
 				{
 					"label": "packet_counter_unicast_in",
-					"label_tag": "ether30",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether15",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether2",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether7",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether12",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether24",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether7",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4798,48 +3368,8 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_out",
-					"label_tag": "ether2",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_admin_status",
-					"label_tag": "ether6",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_out",
-					"label_tag": "ether26",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_oper_status",
-					"label_tag": "ether30",
-					"value": 1,
-					"unit": "",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
 					"label": "error_counter_in",
-					"label_tag": "ether2",
+					"label_tag": "ether21",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4849,7 +3379,7 @@
 				},
 				{
 					"label": "error_counter_in",
-					"label_tag": "ether31",
+					"label_tag": "ether22",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4858,18 +3388,28 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether32",
-					"value": 0,
-					"unit": "c",
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether2",
+					"value": 1000000000,
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
 					"max": null
 				},
 				{
-					"label": "packet_counter_unicast_in",
-					"label_tag": "ether14",
+					"label": "traffic_counter_in",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether23",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4888,8 +3428,28 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_in",
-					"label_tag": "ether26",
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether4",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether9",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether28",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4898,7 +3458,227 @@
 					"max": null
 				},
 				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether6",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether17",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether29",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "error_counter_in",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether15",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether3",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether9",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
 					"label_tag": "ether30",
 					"value": 0,
 					"unit": "c",
@@ -4908,8 +3688,348 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_in",
-					"label_tag": "ether6",
+					"label": "interface_oper_status",
+					"label_tag": "ether31",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether2",
+					"value": 60939,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether9",
+					"value": 60606,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether26",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether14",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether31",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether28",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether29",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether32",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether22",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether1",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether4",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether5",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether30",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether5",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether32",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4928,18 +4048,8 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether14",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether31",
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether11",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4948,8 +4058,8 @@
 					"max": null
 				},
 				{
-					"label": "interface_oper_status",
-					"label_tag": "ether5",
+					"label": "interface_admin_status",
+					"label_tag": "ether32",
 					"value": 1,
 					"unit": "",
 					"warn": null,
@@ -4958,8 +4068,8 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_out",
-					"label_tag": "ether9",
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether32",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4968,18 +4078,8 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_in",
-					"label_tag": "ether15",
-					"value": 0,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether20",
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether13",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4988,8 +4088,18 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_in",
-					"label_tag": "ether25",
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether27",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether32",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -4999,7 +4109,77 @@
 				},
 				{
 					"label": "packet_counter_unicast_in",
-					"label_tag": "ether4",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether5",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether27",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -5018,8 +4198,498 @@
 					"max": null
 				},
 				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether21",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether30",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether4",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether23",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether3",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether6",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether14",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether29",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether32",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether8",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether19",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether30",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether10",
+					"value": 61488,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether20",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether24",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether4",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether7",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether19",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether23",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether1",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether11",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_out",
+					"label_tag": "ether32",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether8",
+					"value": 60606,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether29",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
 					"label": "error_counter_in",
-					"label_tag": "ether13",
+					"label_tag": "ether31",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether8",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_out",
+					"label_tag": "ether17",
+					"value": 61152,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether25",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether27",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether4",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether9",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -5029,7 +4699,377 @@
 				},
 				{
 					"label": "packet_counter_discard_in",
+					"label_tag": "ether16",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether22",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether10",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether17",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
 					"label_tag": "ether18",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether21",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether13",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_out",
+					"label_tag": "ether24",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether25",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether30",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether5",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether32",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether32",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_in",
+					"label_tag": "ether6",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_maxspeed_in",
+					"label_tag": "ether11",
+					"value": 1000000000,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether12",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether20",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_admin_status",
+					"label_tag": "ether30",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether9",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether14",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether15",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_multicast_out",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_in",
+					"label_tag": "ether27",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "error_counter_in",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether20",
+					"value": 549,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether26",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "traffic_counter_in",
+					"label_tag": "ether11",
+					"value": 0,
+					"unit": "B",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_unicast_out",
+					"label_tag": "ether14",
+					"value": 546,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_broadcast_out",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "interface_oper_status",
+					"label_tag": "ether15",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_in",
+					"label_tag": "ether22",
+					"value": 0,
+					"unit": "c",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				},
+				{
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether29",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -5048,8 +5088,8 @@
 					"max": null
 				},
 				{
-					"label": "packet_counter_broadcast_in",
-					"label_tag": "ether1",
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether25",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -5058,8 +5098,8 @@
 					"max": null
 				},
 				{
-					"label": "error_counter_in",
-					"label_tag": "ether19",
+					"label": "packet_counter_multicast_in",
+					"label_tag": "ether14",
 					"value": 0,
 					"unit": "c",
 					"warn": null,
@@ -5068,10 +5108,10 @@
 					"max": null
 				},
 				{
-					"label": "traffic_counter_out",
-					"label_tag": "ether11",
-					"value": 61152,
-					"unit": "B",
+					"label": "packet_counter_discard_out",
+					"label_tag": "ether23",
+					"value": 0,
+					"unit": "c",
 					"warn": null,
 					"crit": null,
 					"min": null,
@@ -5079,59 +5119,19 @@
 				},
 				{
 					"label": "interface_maxspeed_in",
-					"label_tag": "ether11",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_discard_in",
-					"label_tag": "ether24",
-					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "interface_maxspeed_out",
-					"label_tag": "ether26",
-					"value": 1000000000,
-					"unit": "B",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_unicast_out",
 					"label_tag": "ether31",
-					"value": 549,
-					"unit": "c",
+					"value": 1000000000,
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
 					"max": null
 				},
 				{
-					"label": "packet_counter_multicast_out",
+					"label": "traffic_counter_in",
 					"label_tag": "ether32",
 					"value": 0,
-					"unit": "c",
-					"warn": null,
-					"crit": null,
-					"min": null,
-					"max": null
-				},
-				{
-					"label": "packet_counter_multicast_out",
-					"label_tag": "ether1",
-					"value": 0,
-					"unit": "c",
+					"unit": "B",
 					"warn": null,
 					"crit": null,
 					"min": null,
