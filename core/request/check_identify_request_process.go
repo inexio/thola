@@ -43,12 +43,12 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 		var got string
 		if response.Properties.Vendor == nil {
 			failed = true
-			got = "null"
+			got = "no result"
 		} else if *response.Properties.Vendor != *r.Expectations.Properties.Vendor {
 			failed = true
-			got = *response.Properties.Vendor
+			got = "\"" + *response.Properties.Vendor + "\""
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.VendorDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Vendor: expected: \"%s\", got: \"%s\"", *r.Expectations.Properties.Vendor, got)) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.VendorDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Vendor: expected: \"%s\", got: %s", *r.Expectations.Properties.Vendor, got)) {
 			r.failedExpectations["vendor"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.Vendor,
 				Got:      got,
@@ -60,12 +60,12 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 		var got string
 		if response.Properties.Model == nil {
 			failed = true
-			got = "null"
+			got = "no result"
 		} else if *response.Properties.Model != *r.Expectations.Properties.Model {
 			failed = true
-			got = *response.Properties.Model
+			got = "\"" + *response.Properties.Model + "\""
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Model: expected: \"%s\", got: \"%s\"", *r.Expectations.Properties.Model, got)) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Model: expected: \"%s\", got: %s", *r.Expectations.Properties.Model, got)) {
 			r.failedExpectations["model"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.Model,
 				Got:      got,
@@ -77,12 +77,12 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 		var got string
 		if response.Properties.ModelSeries == nil {
 			failed = true
-			got = "null"
+			got = "no result"
 		} else if *response.Properties.ModelSeries != *r.Expectations.Properties.ModelSeries {
 			failed = true
-			got = *response.Properties.ModelSeries
+			got = "\"" + *response.Properties.ModelSeries + "\""
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelSeriesDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("ModelSeries: expected: \"%s\", got: \"%s\"", *r.Expectations.Properties.ModelSeries, got)) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelSeriesDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("ModelSeries: expected: \"%s\", got: %s", *r.Expectations.Properties.ModelSeries, got)) {
 			r.failedExpectations["model_series"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.ModelSeries,
 				Got:      got,
@@ -94,12 +94,12 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 		var got string
 		if response.Properties.SerialNumber == nil {
 			failed = true
-			got = "null"
+			got = "no result"
 		} else if *response.Properties.SerialNumber != *r.Expectations.Properties.SerialNumber {
 			failed = true
-			got = *response.Properties.SerialNumber
+			got = "\"" + *response.Properties.SerialNumber + "\""
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.SerialNumberDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("SerialNumber: expected: \"%s\", got: \"%s\"", *r.Expectations.Properties.SerialNumber, got)) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.SerialNumberDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("SerialNumber: expected: \"%s\", got: %s", *r.Expectations.Properties.SerialNumber, got)) {
 			r.failedExpectations["serial_number"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.SerialNumber,
 				Got:      got,
@@ -111,12 +111,12 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 		var got string
 		if response.Properties.OSVersion == nil {
 			failed = true
-			got = "null"
+			got = "no result"
 		} else if *response.Properties.OSVersion != *r.Expectations.Properties.OSVersion {
 			failed = true
-			got = *response.Properties.OSVersion
+			got = "\"" + *response.Properties.OSVersion + "\""
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.OsVersionDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("OSVersion: expected: \"%s\", got: \"%s\"", *r.Expectations.Properties.OSVersion, got)) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.OsVersionDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("OSVersion: expected: \"%s\", got: %s", *r.Expectations.Properties.OSVersion, got)) {
 			r.failedExpectations["version"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.OSVersion,
 				Got:      got,
