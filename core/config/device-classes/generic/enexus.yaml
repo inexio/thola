@@ -16,7 +16,7 @@ match:
       oid: .1.3.6.1.4.1.12148.10.2.6.0
       match_mode: regex
       values:
-        - '(Micropack System|Smartpack S)(\s*)?$'
+        - '(Micropack System|Smartpack S|SmartPack2 Touch)(\s*)?$'
 
 identify:
   properties:
