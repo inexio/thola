@@ -50,7 +50,7 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 			failed = true
 			got = *response.Properties.Vendor
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.VendorDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Vendor: expected: \"%s\", got: %s", *r.Expectations.Properties.Vendor,  utility.IfThenElseString(empty, got, "\"" + got + "\""))) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.VendorDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Vendor: expected: \"%s\", got: %s", *r.Expectations.Properties.Vendor, utility.IfThenElseString(empty, got, "\""+got+"\""))) {
 			r.failedExpectations["vendor"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.Vendor,
 				Got:      got,
@@ -69,7 +69,7 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 			failed = true
 			got = *response.Properties.Model
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Model: expected: \"%s\", got: %s", *r.Expectations.Properties.Model,  utility.IfThenElseString(empty, got, "\"" + got + "\""))) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("Model: expected: \"%s\", got: %s", *r.Expectations.Properties.Model, utility.IfThenElseString(empty, got, "\""+got+"\""))) {
 			r.failedExpectations["model"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.Model,
 				Got:      got,
@@ -88,7 +88,7 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 			failed = true
 			got = *response.Properties.ModelSeries
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelSeriesDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("ModelSeries: expected: \"%s\", got: %s", *r.Expectations.Properties.ModelSeries,  utility.IfThenElseString(empty, got, "\"" + got + "\""))) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.ModelSeriesDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("ModelSeries: expected: \"%s\", got: %s", *r.Expectations.Properties.ModelSeries, utility.IfThenElseString(empty, got, "\""+got+"\""))) {
 			r.failedExpectations["model_series"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.ModelSeries,
 				Got:      got,
@@ -107,7 +107,7 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 			failed = true
 			got = *response.Properties.SerialNumber
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.SerialNumberDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("SerialNumber: expected: \"%s\", got: %s", *r.Expectations.Properties.SerialNumber, utility.IfThenElseString(empty, got, "\"" + got + "\""))) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.SerialNumberDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("SerialNumber: expected: \"%s\", got: %s", *r.Expectations.Properties.SerialNumber, utility.IfThenElseString(empty, got, "\""+got+"\""))) {
 			r.failedExpectations["serial_number"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.SerialNumber,
 				Got:      got,
@@ -126,7 +126,7 @@ func (r *CheckIdentifyRequest) compareExpectations(response *IdentifyResponse) {
 			failed = true
 			got = *response.Properties.OSVersion
 		}
-		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.OsVersionDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("OSVersion: expected: \"%s\", got: %s", *r.Expectations.Properties.OSVersion, utility.IfThenElseString(empty, got, "\"" + got + "\""))) {
+		if r.mon.UpdateStatusIf(failed, utility.IfThenElseInt(r.OsVersionDiffWarning, monitoringplugin.WARNING, monitoringplugin.CRITICAL), fmt.Sprintf("OSVersion: expected: \"%s\", got: %s", *r.Expectations.Properties.OSVersion, utility.IfThenElseString(empty, got, "\""+got+"\""))) {
 			r.failedExpectations["version"] = IdentifyExpectationResult{
 				Expected: *r.Expectations.Properties.OSVersion,
 				Got:      got,
