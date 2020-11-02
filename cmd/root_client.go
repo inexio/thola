@@ -114,7 +114,7 @@ var rootCMD = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if viper.GetBool("version") {
-			fmt.Println("v0.1.0")
+			fmt.Println("v0.1.1")
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
