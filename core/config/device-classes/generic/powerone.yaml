@@ -17,4 +17,4 @@ identify:
   properties:
     vendor:
       - detection: constant
-        value: "Power One"
+        value: "Powerone"
