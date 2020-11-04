@@ -7,10 +7,10 @@ config:
 
 match:
   conditions:
-    - match_mode: startsWith
+    - match_mode: equals
       type: SysObjectID
       values:
-        - .1.3.6.1.4.1.20246.
+        - .1.3.6.1.4.1.20246
   logical_operator: OR
 
 identify:
