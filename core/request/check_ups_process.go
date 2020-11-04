@@ -121,7 +121,7 @@ func addCheckUPSPerformanceData(ups device.UPSComponent, r *monitoringplugin.Res
 	}
 
 	if ups.SystemVoltage != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("system_voltage", *ups.SystemVoltage, ""))
+		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("sys_voltage", *ups.SystemVoltage, ""))
 		if err != nil {
 			return err
 		}
