@@ -145,7 +145,6 @@ type DWDMInterface struct {
 
 // UPSComponent represents a UPS component
 type UPSComponent struct {
-	Alarm                     *int     `yaml:"alarm" json:"alarm" xml:"alarm"`
 	AlarmLowVoltageDisconnect *int     `yaml:"alarm_low_voltage_disconnect" json:"alarm_low_voltage_disconnect" xml:"alarm_low_voltage_disconnect"`
 	BatteryAmperage           *float64 `yaml:"battery_amperage " json:"battery_amperage " xml:"battery_amperage"`
 	BatteryCapacity           *float64 `yaml:"battery_capacity" json:"battery_capacity" xml:"battery_capacity"`

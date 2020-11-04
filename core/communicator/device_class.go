@@ -66,7 +66,6 @@ type deviceClassComponents struct {
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
 type deviceClassComponentsUPS struct {
-	alarm                     propertyReader
 	alarmLowVoltageDisconnect propertyReader
 	batteryAmperage           propertyReader
 	batteryCapacity           propertyReader
@@ -157,7 +156,6 @@ type yamlDeviceClassIdentifyProperties struct {
 }
 
 type yamlComponentsUPSProperties struct {
-	Alarm                     []interface{} `yaml:"alarm"`
 	AlarmLowVoltageDisconnect []interface{} `yaml:"alarm_low_voltage_disconnect"`
 	BatteryAmperage           []interface{} `yaml:"battery_amperage"`
 	BatteryCapacity           []interface{} `yaml:"battery_capacity"`
@@ -732,12 +730,6 @@ func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error
 	var properties deviceClassComponentsUPS
 	var err error
 
-	if y.Alarm != nil {
-		properties.alarm, err = convertYamlProperty(y.Alarm, propertyDefault)
-		if err != nil {
-			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm property to property reader")
-		}
-	}
 	if y.AlarmLowVoltageDisconnect != nil {
 		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault)
 		if err != nil {

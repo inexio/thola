@@ -201,25 +201,6 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 
 }
 
-func (o *deviceClassCommunicator) GetUPSComponentAlarm(ctx context.Context) (int, error) {
-	if o.components.ups == nil || o.components.ups.alarm == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentAlarm").Msg("no detection information available")
-		return 0, tholaerr.NewNotImplementedError("no detection information available")
-	}
-	logger := log.Ctx(ctx).With().Str("property", "UPSComponentAlarm").Logger()
-	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.alarm.getProperty(ctx)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
-		return 0, errors.Wrap(err, "failed to get UPSComponentAlarm")
-	}
-	r, err := res.Int()
-	if err != nil {
-		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
-	}
-	return r, nil
-}
-
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
 	if o.components.ups == nil || o.components.ups.alarmLowVoltageDisconnect == nil {
 		log.Ctx(ctx).Trace().Str("property", "UPSComponentAlarmLowVoltageDisconnect").Msg("no detection information available")

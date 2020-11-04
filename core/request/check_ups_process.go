@@ -43,13 +43,6 @@ func (r *CheckUPSRequest) getData(ctx context.Context) (*ReadUPSResponse, error)
 }
 
 func addCheckUPSPerformanceData(ups device.UPSComponent, r *monitoringplugin.Response) error {
-	if ups.Alarm != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm", *ups.Alarm, ""))
-		if err != nil {
-			return err
-		}
-	}
-
 	if ups.AlarmLowVoltageDisconnect != nil {
 		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm_low_voltage_disconnect", *ups.AlarmLowVoltageDisconnect, ""))
 		if err != nil {

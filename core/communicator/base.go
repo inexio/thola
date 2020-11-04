@@ -49,10 +49,6 @@ func (c *baseCommunicator) GetCountInterfaces(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *baseCommunicator) GetUPSComponentAlarm(_ context.Context) (int, error) {
-	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
-}
-
 func (c *baseCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

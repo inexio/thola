@@ -29,7 +29,6 @@ type availableCommunicatorFunctions interface {
 }
 
 type availableUPSCommunicatorFunctions interface {
-	GetUPSComponentAlarm(ctx context.Context) (int, error)
 	GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error)
 	GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error)
 	GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error)
@@ -150,16 +149,6 @@ func (c *networkDeviceCommunicator) GetUPSComponent(ctx context.Context) (device
 
 	var ups device.UPSComponent
 	empty := true
-
-	alarm, err := c.head.GetUPSComponentAlarm(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get alarm")
-		}
-	} else {
-		ups.Alarm = &alarm
-		empty = false
-	}
 
 	alarmLowVoltage, err := c.head.GetUPSComponentAlarmLowVoltageDisconnect(ctx)
 	if err != nil {
@@ -387,17 +376,6 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCountInterfaces
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
-func (c *networkDeviceCommunicator) GetUPSComponentAlarm(ctx context.Context) (int, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getUPSComponentAlarm
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getUPSComponentAlarm), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getUPSComponentAlarm), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
 		return 0, err
