@@ -72,7 +72,7 @@ func addCheckUPSPerformanceData(ups device.UPSComponent, r *monitoringplugin.Res
 	}
 
 	if ups.BatteryCapacity != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *ups.BatteryCapacity, "%"))
+		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *ups.BatteryCapacity, ""))
 		if err != nil {
 			return err
 		}
@@ -100,7 +100,7 @@ func addCheckUPSPerformanceData(ups device.UPSComponent, r *monitoringplugin.Res
 	}
 
 	if ups.CurrentLoad != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("current_load", *ups.CurrentLoad, "%"))
+		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("current_load", *ups.CurrentLoad, ""))
 		if err != nil {
 			return err
 		}
