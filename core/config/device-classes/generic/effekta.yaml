@@ -11,6 +11,10 @@ match:
       type: SysObjectID
       values:
         - .1.3.6.1.4.1.20246
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - .1.3.6.1.4.1.20246.
   logical_operator: OR
 
 identify:
