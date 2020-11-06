@@ -471,7 +471,7 @@ func metricsTransformer() cmp.Option {
 		out := make([]monitoringplugin.PerformanceDataPointInfo, len(in))
 		copy(out, in)
 		sort.Slice(out, func(i, j int) bool {
-			return out[i].LabelTag+out[i].Label < out[j].LabelTag+out[j].Label
+			return out[i].Label+out[i].Metric < out[j].Label+out[j].Metric
 		})
 		return out
 	})
