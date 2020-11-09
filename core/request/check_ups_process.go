@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/utility"
+	"github.com/inexio/thola/core/value"
 )
 
 func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
@@ -26,6 +27,46 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 
 	if readUPSResponse.UPS.MainsVoltageApplied != nil {
 		r.mon.UpdateStatusIfNot(*readUPSResponse.UPS.MainsVoltageApplied, monitoringplugin.CRITICAL, "Mains voltage is not applied")
+	}
+
+	if !r.BatteryCurrentThresholds.isEmpty() {
+		if readUPSResponse.UPS.BatteryCurrent == nil {
+			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "battery current value is empty")
+		} else if status := r.BatteryCurrentThresholds.checkValue(value.New(*readUPSResponse.UPS.BatteryCurrent)); status != monitoringplugin.OK {
+			r.mon.UpdateStatus(status, "battery current is outside of threshold")
+		}
+	}
+
+	if !r.BatteryTemperatureThresholds.isEmpty() {
+		if readUPSResponse.UPS.BatteryTemperature == nil {
+			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "battery temperature value is empty")
+		} else if status := r.BatteryTemperatureThresholds.checkValue(value.New(*readUPSResponse.UPS.BatteryTemperature)); status != monitoringplugin.OK {
+			r.mon.UpdateStatus(status, "battery temperature is outside of threshold")
+		}
+	}
+
+	if !r.CurrentLoadThresholds.isEmpty() {
+		if readUPSResponse.UPS.CurrentLoad == nil {
+			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "current load value is empty")
+		} else if status := r.CurrentLoadThresholds.checkValue(value.New(*readUPSResponse.UPS.CurrentLoad)); status != monitoringplugin.OK {
+			r.mon.UpdateStatus(status, "current load is outside of threshold")
+		}
+	}
+
+	if !r.RectifierCurrentThresholds.isEmpty() {
+		if readUPSResponse.UPS.RectifierCurrent == nil {
+			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "rectifier current value is empty")
+		} else if status := r.RectifierCurrentThresholds.checkValue(value.New(*readUPSResponse.UPS.RectifierCurrent)); status != monitoringplugin.OK {
+			r.mon.UpdateStatus(status, "rectifier current is outside of threshold")
+		}
+	}
+
+	if !r.SystemVoltageThresholds.isEmpty() {
+		if readUPSResponse.UPS.SystemVoltage == nil {
+			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "system voltage value is empty")
+		} else if status := r.SystemVoltageThresholds.checkValue(value.New(*readUPSResponse.UPS.SystemVoltage)); status != monitoringplugin.OK {
+			r.mon.UpdateStatus(status, "system voltage is outside of threshold")
+		}
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil

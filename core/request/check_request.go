@@ -1,7 +1,9 @@
 package request
 
 import (
+	"errors"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/core/value"
 )
 
 // CheckRequest
@@ -44,4 +46,67 @@ func (c *CheckResponse) ToCheckPluginOutput() ([]byte, error) {
 // GetExitCode returns the exit code of the response.
 func (c *CheckResponse) GetExitCode() int {
 	return c.ResponseInfo.StatusCode
+}
+
+type CheckThresholds struct {
+	WarningMin  value.Value `json:"warningMin" xml:"warningMin"`
+	WarningMax  value.Value `json:"warningMax" xml:"warningMax"`
+	CriticalMin value.Value `json:"criticalMin" xml:"criticalMin"`
+	CriticalMax value.Value `json:"criticalMax" xml:"criticalMax"`
+}
+
+func (c *CheckThresholds) validate() error {
+	if !c.WarningMin.IsEmpty() && !c.WarningMax.IsEmpty() {
+		if cmp, err := c.WarningMin.Cmp(c.WarningMax); err != nil || cmp != -1 {
+			return errors.New("warning min and max are invalid")
+		}
+	}
+
+	if !c.CriticalMin.IsEmpty() && !c.CriticalMax.IsEmpty() {
+		if cmp, err := c.CriticalMin.Cmp(c.CriticalMax); err != nil || cmp != -1 {
+			return errors.New("critical min and max are invalid")
+		}
+	}
+
+	if !c.CriticalMin.IsEmpty() && !c.WarningMin.IsEmpty() {
+		if cmp, err := c.CriticalMin.Cmp(c.WarningMin); err != nil || cmp != -1 {
+			return errors.New("critical and warning min are invalid")
+		}
+	}
+
+	if !c.WarningMax.IsEmpty() && !c.CriticalMax.IsEmpty() {
+		if cmp, err := c.WarningMax.Cmp(c.CriticalMax); err != nil || cmp != -1 {
+			return errors.New("warning and critical max are invalid")
+		}
+	}
+
+	return nil
+}
+
+func (c *CheckThresholds) isEmpty() bool {
+	return c.WarningMin.IsEmpty() && c.WarningMax.IsEmpty() && c.CriticalMin.IsEmpty() && c.CriticalMax.IsEmpty()
+}
+
+func (c *CheckThresholds) checkValue(v value.Value) int {
+	if !c.CriticalMin.IsEmpty() {
+		if res, err := c.CriticalMin.Cmp(v); err != nil || res != -1 {
+			return monitoringplugin.CRITICAL
+		}
+	}
+	if !c.CriticalMax.IsEmpty() {
+		if res, err := c.CriticalMax.Cmp(v); err != nil || res != 1 {
+			return monitoringplugin.CRITICAL
+		}
+	}
+	if !c.WarningMin.IsEmpty() {
+		if res, err := c.WarningMin.Cmp(v); err != nil || res != -1 {
+			return monitoringplugin.WARNING
+		}
+	}
+	if !c.WarningMax.IsEmpty() {
+		if res, err := c.WarningMax.Cmp(v); err != nil || res != 1 {
+			return monitoringplugin.WARNING
+		}
+	}
+	return monitoringplugin.OK
 }
