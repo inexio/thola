@@ -8,7 +8,7 @@
 //     Schemes: http, https
 //     Host: localhost:8237
 //     Version: 1.0.0
-//     License: BSD https://github.com/inexio/check-eve-ng/blob/master/LICENSE
+//     License: BSD https://github.com/inexio/thola/blob/master/LICENSE
 //     Consumes:
 //     - application/json
 //	   - application/xml
