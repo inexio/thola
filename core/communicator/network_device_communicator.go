@@ -11,6 +11,7 @@ import (
 // NetworkDeviceCommunicator represents a communicator for a device
 type NetworkDeviceCommunicator interface {
 	GetDeviceClass() string
+	GetAvailableComponents() []string
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
 	availableCommunicatorFunctions
@@ -51,6 +52,22 @@ type networkDeviceCommunicator struct {
 // GetDeviceClass returns the OS.
 func (c *networkDeviceCommunicator) GetDeviceClass() string {
 	return c.deviceClassCommunicator.getName()
+}
+
+// GetAvailableComponents returns the available Components for the device.
+func (c *networkDeviceCommunicator) GetAvailableComponents() []string {
+	var res []string
+	components := c.deviceClassCommunicator.getAvailableComponents()
+	for k, v := range components {
+		if v {
+			component, err := k.toString()
+			if err != nil {
+				continue
+			}
+			res = append(res, component)
+		}
+	}
+	return res
 }
 
 func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adapterFunc, args ...interface{}) (interface{}, error) {

@@ -2,8 +2,8 @@ name: "powerone"
 
 config:
   components:
-    interfaces: false
-    ups: true
+    interfaceComponent: false
+    upsComponent: true
 
 match:
   logical_operator: "OR"
