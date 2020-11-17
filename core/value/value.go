@@ -7,7 +7,11 @@ import (
 	"strconv"
 )
 
+// Value
+//
 // Value represents a value that was read out from a device.
+//
+// swagger:model
 type Value string
 
 // New creates a new value

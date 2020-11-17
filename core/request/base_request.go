@@ -285,7 +285,11 @@ func (r *BaseRequest) setupHTTPConnection() (*network.RequestDeviceConnectionHTT
 	return con, nil
 }
 
-// Base Response defines attributes every response has.
+// BaseResponse
+//
+// BaseResponse defines attributes every response has.
+//
+// swagger:model
 type BaseResponse struct {
 }
 

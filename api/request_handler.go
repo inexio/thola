@@ -77,7 +77,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/identify check checkIdentify
 	// ---
-	// summary: Check mode for identify.
+	// summary: Checks if identify matches the expectations.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -104,7 +104,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/snmp check checkSNMP
 	// ---
-	// summary: Check mode for SNMP.
+	// summary: Checks SNMP availability.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -266,7 +266,7 @@ func StartAPI() {
 
 	// swagger:operation POST /read/count-interfaces read readCountInterfaces
 	// ---
-	// summary: Counts interface of a device.
+	// summary: Counts the interfaces of a device.
 	// consumes:
 	// - application/json
 	// - application/xml
