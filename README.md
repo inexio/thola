@@ -28,6 +28,7 @@ Thola currently has three main modes of operation with various subcommands:
 
 - `identify` automatically identifies the device and outputs its vendor, model and other properties.
 - `read` reads out values and statistics of the device.
+    - `read available-components` returns the available components for the device.
     - `read interfaces` outputs the interfaces with several values like error counters and statistics.
     - `read count-interfaces` counts the interfaces.
     - `read ups` outputs the special values of a UPS device.
