@@ -45,7 +45,7 @@ type availableUPSCommunicatorFunctions interface {
 
 type networkDeviceCommunicator struct {
 	*relatedNetworkDeviceCommunicators
-	codeCommunicator        codeCommunicator
+	codeCommunicator        availableCommunicatorFunctions
 	deviceClassCommunicator *deviceClassCommunicator
 }
 
