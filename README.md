@@ -28,6 +28,7 @@ Thola currently has three main modes of operation with various subcommands:
 
 - `identify` automatically identifies the device and outputs its vendor, model and other properties.
 - `read` reads out values and statistics of the device.
+    - `read available-components` returns the available components for the device.
     - `read interfaces` outputs the interfaces with several values like error counters and statistics.
     - `read count-interfaces` counts the interfaces.
     - `read ups` outputs the special values of a UPS device.
@@ -118,7 +119,7 @@ For sending requests to the Thola API you can use the Thola client. When executi
           SerialNumber: 00:0A:25:25:77:67
           OSVersion: 2.9.25-1
         
-You can find the full API documentation on our [SwaggerHub](https://app.swaggerhub.com/apis-docs/TheFireMike/thola/1.0.0#/).
+You can find the full API documentation on our [SwaggerHub](https://app.swaggerhub.com/apis-docs/thola/thola/1.0.0).
 
 ## Supported Devices
 

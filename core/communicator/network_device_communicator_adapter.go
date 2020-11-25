@@ -21,7 +21,6 @@ type communicatorAdapter interface {
 }
 
 type communicatorAdapterUPS interface {
-	getUPSComponentAlarm(...interface{}) (interface{}, error)
 	getUPSComponentAlarmLowVoltageDisconnect(...interface{}) (interface{}, error)
 	getUPSComponentBatteryAmperage(...interface{}) (interface{}, error)
 	getUPSComponentBatteryCapacity(...interface{}) (interface{}, error)
@@ -71,10 +70,6 @@ func (a *adapter) getInterfaces(i ...interface{}) (interface{}, error) {
 
 func (a *adapter) getCountInterfaces(i ...interface{}) (interface{}, error) {
 	return a.com.GetCountInterfaces(i[0].(context.Context))
-}
-
-func (a *adapter) getUPSComponentAlarm(i ...interface{}) (interface{}, error) {
-	return a.com.GetUPSComponentAlarm(i[0].(context.Context))
 }
 
 func (a *adapter) getUPSComponentAlarmLowVoltageDisconnect(i ...interface{}) (interface{}, error) {

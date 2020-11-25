@@ -77,7 +77,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/identify check checkIdentify
 	// ---
-	// summary: Check mode for identify.
+	// summary: Checks if identify matches the expectations.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -104,7 +104,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/snmp check checkSNMP
 	// ---
-	// summary: Check mode for SNMP.
+	// summary: Checks SNMP availability.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -266,7 +266,7 @@ func StartAPI() {
 
 	// swagger:operation POST /read/count-interfaces read readCountInterfaces
 	// ---
-	// summary: Counts interface of a device.
+	// summary: Counts the interfaces of a device.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -317,6 +317,33 @@ func StartAPI() {
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/ups", readUPS)
+
+	// swagger:operation POST /read/available-components read readAvailableComponents
+	// ---
+	// summary: Returns the available components for the device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadAvailableComponentsRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadAvailableComponentsResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/available-components", readAvailableComponents)
 
 	if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
 		e.Logger.Fatal(e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile")))
@@ -435,6 +462,18 @@ func readCountInterfaces(ctx echo.Context) error {
 
 func readUPS(ctx echo.Context) error {
 	r := request.ReadUPSRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readAvailableComponents(ctx echo.Context) error {
+	r := request.ReadAvailableComponentsRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

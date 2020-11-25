@@ -11,6 +11,7 @@ import (
 // NetworkDeviceCommunicator represents a communicator for a device
 type NetworkDeviceCommunicator interface {
 	GetDeviceClass() string
+	GetAvailableComponents() []string
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
 	availableCommunicatorFunctions
@@ -29,7 +30,6 @@ type availableCommunicatorFunctions interface {
 }
 
 type availableUPSCommunicatorFunctions interface {
-	GetUPSComponentAlarm(ctx context.Context) (int, error)
 	GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error)
 	GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error)
 	GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error)
@@ -45,13 +45,29 @@ type availableUPSCommunicatorFunctions interface {
 
 type networkDeviceCommunicator struct {
 	*relatedNetworkDeviceCommunicators
-	codeCommunicator        codeCommunicator
+	codeCommunicator        availableCommunicatorFunctions
 	deviceClassCommunicator *deviceClassCommunicator
 }
 
 // GetDeviceClass returns the OS.
 func (c *networkDeviceCommunicator) GetDeviceClass() string {
 	return c.deviceClassCommunicator.getName()
+}
+
+// GetAvailableComponents returns the available Components for the device.
+func (c *networkDeviceCommunicator) GetAvailableComponents() []string {
+	var res []string
+	components := c.deviceClassCommunicator.getAvailableComponents()
+	for k, v := range components {
+		if v {
+			component, err := k.toString()
+			if err != nil {
+				continue
+			}
+			res = append(res, component)
+		}
+	}
+	return res
 }
 
 func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adapterFunc, args ...interface{}) (interface{}, error) {
@@ -150,16 +166,6 @@ func (c *networkDeviceCommunicator) GetUPSComponent(ctx context.Context) (device
 
 	var ups device.UPSComponent
 	empty := true
-
-	alarm, err := c.head.GetUPSComponentAlarm(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get alarm")
-		}
-	} else {
-		ups.Alarm = &alarm
-		empty = false
-	}
 
 	alarmLowVoltage, err := c.head.GetUPSComponentAlarmLowVoltageDisconnect(ctx)
 	if err != nil {
@@ -387,17 +393,6 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCountInterfaces
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
-func (c *networkDeviceCommunicator) GetUPSComponentAlarm(ctx context.Context) (int, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getUPSComponentAlarm
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getUPSComponentAlarm), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getUPSComponentAlarm), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
 		return 0, err

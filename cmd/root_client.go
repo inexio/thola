@@ -80,14 +80,6 @@ func init() {
 			Msg("Can't bind flag insecure-ssl-cert")
 		return
 	}
-
-	err = viper.BindPFlag("version", rootCMD.PersistentFlags().Lookup("version"))
-	if err != nil {
-		log.Error().
-			AnErr("Error", err).
-			Msg("Can't bind flag version")
-		return
-	}
 }
 
 var rootCMD = &cobra.Command{
@@ -113,7 +105,7 @@ var rootCMD = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		if viper.GetBool("version") {
+		if cmd.Flags().Lookup("version").Changed {
 			fmt.Println("v0.1.1")
 		} else {
 			fmt.Print(cmd.UsageString())

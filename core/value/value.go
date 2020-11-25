@@ -2,10 +2,16 @@ package value
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
+	"math/big"
 	"strconv"
 )
 
+// Value
+//
 // Value represents a value that was read out from a device.
+//
+// swagger:model
 type Value string
 
 // New creates a new value
@@ -31,4 +37,23 @@ func (v *Value) Int() (int, error) {
 // Bool returns the value as a bool
 func (v *Value) Bool() (bool, error) {
 	return strconv.ParseBool(string(*v))
+}
+
+func (v *Value) IsEmpty() bool {
+	return v == nil || v.String() == ""
+}
+
+func (v *Value) Cmp(val Value) (int, error) {
+	var v1, v2 big.Float
+	_, _, err := v1.Parse(v.String(), 10)
+	if err != nil {
+		return 0, errors.Wrap(err, "can't parse value")
+	}
+
+	_, _, err = v2.Parse(val.String(), 10)
+	if err != nil {
+		return 0, errors.Wrap(err, "can't parse value")
+	}
+
+	return v1.Cmp(&v2), nil
 }

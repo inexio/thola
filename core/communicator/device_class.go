@@ -68,7 +68,6 @@ type deviceClassComponents struct {
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
 type deviceClassComponentsUPS struct {
-	alarm                     propertyReader
 	alarmLowVoltageDisconnect propertyReader
 	batteryAmperage           propertyReader
 	batteryCapacity           propertyReader
@@ -166,7 +165,6 @@ type yamlDeviceClassIdentifyProperties struct {
 }
 
 type yamlComponentsUPSProperties struct {
-	Alarm                     []interface{} `yaml:"alarm"`
 	AlarmLowVoltageDisconnect []interface{} `yaml:"alarm_low_voltage_disconnect"`
 	BatteryAmperage           []interface{} `yaml:"battery_amperage"`
 	BatteryCapacity           []interface{} `yaml:"battery_capacity"`
@@ -737,16 +735,11 @@ func (y *yamlDeviceClassConfig) convert() (deviceClassConfig, error) {
 	config.components = make(map[deviceClassComponent]bool)
 
 	for k, v := range y.Components {
-		switch k {
-		case "interfaces":
-			config.components[interfacesComponent] = v
-		case "ups":
-			config.components[upsComponent] = v
-		case "cpu":
-			config.components[cpuComponent] = v
-		default:
-			return deviceClassConfig{}, fmt.Errorf("invalid component type: %s", k)
+		component, err := createComponent(k)
+		if err != nil {
+			return deviceClassConfig{}, err
 		}
+		config.components[component] = v
 	}
 
 	return config, nil
@@ -756,12 +749,6 @@ func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error
 	var properties deviceClassComponentsUPS
 	var err error
 
-	if y.Alarm != nil {
-		properties.alarm, err = convertYamlProperty(y.Alarm, propertyDefault)
-		if err != nil {
-			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm property to property reader")
-		}
-	}
 	if y.AlarmLowVoltageDisconnect != nil {
 		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault)
 		if err != nil {
@@ -1410,4 +1397,31 @@ func (l *logicalOperator) validate() error {
 		return errors.New(string("unknown logical operator \"" + *l + "\""))
 	}
 	return nil
+}
+
+func createComponent(component string) (deviceClassComponent, error) {
+	switch component {
+	case "interfaceComponent":
+		return interfacesComponent, nil
+	case "upsComponent":
+		return upsComponent, nil
+	case "cpuComponent":
+		return cpuComponent, nil
+	default:
+		return 0, fmt.Errorf("invalid component type: %s", component)
+	}
+}
+
+func (d *deviceClassComponent) toString() (string, error) {
+	if d == nil {
+		return "", errors.New("component is empty")
+	}
+	switch *d {
+	case interfacesComponent:
+		return "interfaceComponent", nil
+	case upsComponent:
+		return "upsComponent", nil
+	default:
+		return "", errors.New("unknown component")
+	}
 }

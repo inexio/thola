@@ -5,7 +5,7 @@ import (
 	"github.com/inexio/thola/core/tholaerr"
 )
 
-func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommunicators) (codeCommunicator, error) {
+func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommunicators) (availableCommunicatorFunctions, error) {
 	switch classIdentifier {
 	case "generic":
 		return &genericCommunicator{baseCommunicator{rel}}, nil

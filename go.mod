@@ -9,7 +9,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/go-cmp v0.3.0
 	github.com/huandu/go-sqlbuilder v1.8.0
-	github.com/inexio/go-monitoringplugin v0.0.0-20201016110407-ff45fae4612b
+	github.com/inexio/go-monitoringplugin v0.0.0-20201117085742-ec06ef4904fe
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect

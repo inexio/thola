@@ -1,0 +1,1755 @@
+{
+  "consumes": [
+    "application/json",
+    "application/xml"
+  ],
+  "produces": [
+    "application/json",
+    "application/xml"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "REST API for Thola.\n\nFor more information look at our Github : https://github.com/inexio/thola",
+    "title": "Thola",
+    "license": {
+      "name": "BSD",
+      "url": "https://github.com/inexio/thola/blob/main/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "host": "localhost:8237",
+  "paths": {
+    "/check/identify": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Checks if identify matches the expectations.",
+        "operationId": "checkIdentify",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckIdentifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/interface-metrics": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Check to read out interface metrics.",
+        "operationId": "checkInterfaceMetrics",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckInterfaceMetricsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/metrics": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Prints all available metrics for a device as performance data.",
+        "operationId": "checkMetrics",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckMetricsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/snmp": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Checks SNMP availability.",
+        "operationId": "checkSNMP",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckSNMPRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/thola-server": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Check existence of thola servers.",
+        "operationId": "checkTholaServer",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckTholaServerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/ups": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Checks whether a UPS device has its main voltage applied.",
+        "operationId": "checkUPS",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckUPSRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/identify": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json\u003c",
+          "application/xml"
+        ],
+        "tags": [
+          "identify"
+        ],
+        "summary": "Identifies a device.",
+        "operationId": "identify",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/IdentifyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the device which was found.",
+            "schema": {
+              "$ref": "#/definitions/IdentifyResponse"
+            }
+          },
+          "400": {
+            "description": "Returns a string that the request was formatted wrong."
+          },
+          "404": {
+            "description": "Returns a string that no device was found."
+          }
+        }
+      }
+    },
+    "/read/available-components": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Returns the available components for the device.",
+        "operationId": "readAvailableComponents",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadAvailableComponentsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadAvailableComponentsResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/read/count-interfaces": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Counts the interfaces of a device.",
+        "operationId": "readCountInterfaces",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadCountInterfacesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadCountInterfacesResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/read/interfaces": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Reads out data of the interfaces of a device.",
+        "operationId": "readInterfaces",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadInterfacesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadInterfacesResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/read/ups": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Reads out UPS data of a device.",
+        "operationId": "readUPS",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadUPSRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadUPSResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BaseRequest": {
+      "description": "BaseRequest is a generic request that is processed by thola",
+      "type": "object",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "BaseResponse": {
+      "description": "BaseResponse defines attributes every response has.",
+      "type": "object",
+      "title": "BaseResponse",
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckDeviceRequest": {
+      "description": "CheckDeviceRequest is a the request struct for the check device request.",
+      "type": "object",
+      "title": "CheckDeviceRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckIdentifyRequest": {
+      "description": "CheckIdentifyRequest is a the request struct for the check identify request.",
+      "type": "object",
+      "title": "CheckIdentifyRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "expectations": {
+          "$ref": "#/definitions/Device"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "model_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "ModelDiffWarning"
+        },
+        "model_series_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "ModelSeriesDiffWarning"
+        },
+        "os_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "OsDiffWarning"
+        },
+        "os_version_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "OsVersionDiffWarning"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "serial_number_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "SerialNumberDiffWarning"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        },
+        "vendor_diff_warning": {
+          "type": "boolean",
+          "x-go-name": "VendorDiffWarning"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckInterfaceMetricsRequest": {
+      "description": "CheckInterfaceRequest is a the request struct for the check interface metrics request.",
+      "type": "object",
+      "title": "CheckInterfaceMetricsRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Filter"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_interfaces": {
+          "type": "boolean",
+          "x-go-name": "PrintInterfaces"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckMetricsRequest": {
+      "description": "CheckRequest is a the request struct for the check metrics request.",
+      "type": "object",
+      "title": "CheckMetricsRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "interface_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "InterfaceFilter"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckRequest": {
+      "description": "CheckRequest is a generic response struct for the check request.",
+      "type": "object",
+      "title": "CheckRequest",
+      "properties": {
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckResponse": {
+      "description": "CheckResponse is a generic response struct for the check plugin format.",
+      "type": "object",
+      "title": "CheckResponse",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OutputMessage"
+          },
+          "x-go-name": "Messages"
+        },
+        "performance_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PerformanceDataPointInfo"
+          },
+          "x-go-name": "PerformanceData"
+        },
+        "raw_output": {
+          "type": "string",
+          "x-go-name": "RawOutput"
+        },
+        "status_code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "StatusCode"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckSNMPRequest": {
+      "description": "CheckSNMPRequest is a the request struct for the check snmp request.",
+      "type": "object",
+      "title": "CheckSNMPRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckTholaServerRequest": {
+      "description": "CheckTholaServerRequest is the request struct for the check thola server request.",
+      "type": "object",
+      "title": "CheckTholaServerRequest",
+      "properties": {
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckThresholds": {
+      "type": "object",
+      "properties": {
+        "criticalMax": {
+          "$ref": "#/definitions/Value"
+        },
+        "criticalMin": {
+          "$ref": "#/definitions/Value"
+        },
+        "warningMax": {
+          "$ref": "#/definitions/Value"
+        },
+        "warningMin": {
+          "$ref": "#/definitions/Value"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckUPSRequest": {
+      "description": "CheckUPSRequest is a the request struct for the check ups request.",
+      "type": "object",
+      "title": "CheckUPSRequest",
+      "properties": {
+        "batteryCurrentThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
+        },
+        "batteryTemperatureThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
+        },
+        "currentLoadThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
+        },
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "rectifierCurrentThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
+        },
+        "systemVoltageThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ConnectionData": {
+      "description": "ConnectionData includes all connection data for a device",
+      "type": "object",
+      "title": "ConnectionData",
+      "properties": {
+        "http": {
+          "$ref": "#/definitions/HTTPConnectionData"
+        },
+        "snmp": {
+          "$ref": "#/definitions/SNMPConnectionData"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/network"
+    },
+    "DWDMInterface": {
+      "description": "DWDMInterface represents a DWDM interface",
+      "type": "object",
+      "properties": {
+        "rx_level": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "RXLevel"
+        },
+        "tx_level": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TXLevel"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "Device": {
+      "description": "Device represents a device and has the same structure as Response.\nResponse can possibly be removed and replaced by Device.",
+      "type": "object",
+      "title": "Device",
+      "properties": {
+        "class": {
+          "description": "The os of the device",
+          "type": "string",
+          "x-go-name": "Class",
+          "example": "routerOS"
+        },
+        "properties": {
+          "$ref": "#/definitions/Properties"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "DeviceData": {
+      "description": "DeviceData includes all data that can be used to contact a device",
+      "type": "object",
+      "title": "DeviceData",
+      "properties": {
+        "connection_data": {
+          "$ref": "#/definitions/ConnectionData"
+        },
+        "ip_address": {
+          "description": "The IP of the device",
+          "type": "string",
+          "x-go-name": "IPAddress",
+          "example": "203.0.113.195"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "EthernetLikeInterface": {
+      "description": "EthernetLikeInterface represents an ethernet like interface",
+      "type": "object",
+      "properties": {
+        "dot3HCStatsFCSErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsFCSErrors"
+        },
+        "dot3StatsAlignmentErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsAlignmentErrors"
+        },
+        "dot3StatsCarrierSenseErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsCarrierSenseErrors"
+        },
+        "dot3StatsDeferredTransmissions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsDeferredTransmissions"
+        },
+        "dot3StatsExcessiveCollisions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsExcessiveCollisions"
+        },
+        "dot3StatsFCSErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsFCSErrors"
+        },
+        "dot3StatsFrameTooLongs": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsFrameTooLongs"
+        },
+        "dot3StatsInternalMacReceiveErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsInternalMacReceiveErrors"
+        },
+        "dot3StatsInternalMacTransmitErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsInternalMacTransmitErrors"
+        },
+        "dot3StatsLateCollisions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsLateCollisions"
+        },
+        "dot3StatsMultipleCollisionFrames": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsMultipleCollisionFrames"
+        },
+        "dot3StatsSQETestErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsSQETestErrors"
+        },
+        "dot3StatsSingleCollisionFrames": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsSingleCollisionFrames"
+        },
+        "etherStatsCRCAlignErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "EtherStatsCRCAlignErrors"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "HTTPConnectionData": {
+      "description": "HTTPConnectionData includes all http connection data for a device",
+      "type": "object",
+      "title": "HTTPConnectionData",
+      "properties": {
+        "auth_password": {
+          "description": "The password for authorization on the device",
+          "type": "string",
+          "x-go-name": "AuthPassword",
+          "example": "password"
+        },
+        "auth_username": {
+          "description": "The username for authorization on the device",
+          "type": "string",
+          "x-go-name": "AuthUsername",
+          "example": "username"
+        },
+        "http_ports": {
+          "description": "The http port(s) of the device",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "x-go-name": "HTTPPorts",
+          "example": "80"
+        },
+        "https_ports": {
+          "description": "The https port(s) of the device",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "x-go-name": "HTTPSPorts",
+          "example": "443"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/network"
+    },
+    "IdentifyRequest": {
+      "description": "IdentifyRequest is a the request struct for the identify request.",
+      "type": "object",
+      "title": "IdentifyRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "IdentifyResponse": {
+      "description": "IdentifyResponse is the response struct that is for identify requests.",
+      "type": "object",
+      "title": "IdentifyResponse",
+      "properties": {
+        "class": {
+          "description": "The os of the device",
+          "type": "string",
+          "x-go-name": "Class",
+          "example": "routerOS"
+        },
+        "properties": {
+          "$ref": "#/definitions/Properties"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "Interface": {
+      "description": "Interface represents all interface values which can be read",
+      "type": "object",
+      "properties": {
+        "dot3HCStatsFCSErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsFCSErrors"
+        },
+        "dot3StatsAlignmentErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsAlignmentErrors"
+        },
+        "dot3StatsCarrierSenseErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsCarrierSenseErrors"
+        },
+        "dot3StatsDeferredTransmissions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsDeferredTransmissions"
+        },
+        "dot3StatsExcessiveCollisions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsExcessiveCollisions"
+        },
+        "dot3StatsFCSErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsFCSErrors"
+        },
+        "dot3StatsFrameTooLongs": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsFrameTooLongs"
+        },
+        "dot3StatsInternalMacReceiveErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsInternalMacReceiveErrors"
+        },
+        "dot3StatsInternalMacTransmitErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsInternalMacTransmitErrors"
+        },
+        "dot3StatsLateCollisions": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsLateCollisions"
+        },
+        "dot3StatsMultipleCollisionFrames": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsMultipleCollisionFrames"
+        },
+        "dot3StatsSQETestErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsSQETestErrors"
+        },
+        "dot3StatsSingleCollisionFrames": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3StatsSingleCollisionFrames"
+        },
+        "etherStatsCRCAlignErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "EtherStatsCRCAlignErrors"
+        },
+        "ifAdminStatus": {
+          "$ref": "#/definitions/Status"
+        },
+        "ifAlias": {
+          "type": "string",
+          "x-go-name": "IfAlias"
+        },
+        "ifDescr": {
+          "type": "string",
+          "x-go-name": "IfDescr"
+        },
+        "ifHCInBroadcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCInBroadcastPkts"
+        },
+        "ifHCInMulticastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCInMulticastPkts"
+        },
+        "ifHCInOctets": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCInOctets"
+        },
+        "ifHCInUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCInUcastPkts"
+        },
+        "ifHCOutBroadcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCOutBroadcastPkts"
+        },
+        "ifHCOutMulticastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCOutMulticastPkts"
+        },
+        "ifHCOutOctets": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCOutOctets"
+        },
+        "ifHCOutUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHCOutUcastPkts"
+        },
+        "ifHighSpeed": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfHighSpeed"
+        },
+        "ifInBroadcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInBroadcastPkts"
+        },
+        "ifInDiscards": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInDiscards"
+        },
+        "ifInErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInErrors"
+        },
+        "ifInMulticastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInMulticastPkts"
+        },
+        "ifInNUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInNUcastPkts"
+        },
+        "ifInOctets": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInOctets"
+        },
+        "ifInUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInUcastPkts"
+        },
+        "ifInUnknownProtos": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfInUnknownProtos"
+        },
+        "ifIndex": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfIndex"
+        },
+        "ifLastChange": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfLastChange"
+        },
+        "ifMtu": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfMtu"
+        },
+        "ifName": {
+          "type": "string",
+          "x-go-name": "IfName"
+        },
+        "ifOperStatus": {
+          "$ref": "#/definitions/Status"
+        },
+        "ifOutBroadcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutBroadcastPkts"
+        },
+        "ifOutDiscards": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutDiscards"
+        },
+        "ifOutErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutErrors"
+        },
+        "ifOutMulticastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutMulticastPkts"
+        },
+        "ifOutNUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutNUcastPkts"
+        },
+        "ifOutOctets": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutOctets"
+        },
+        "ifOutQLen": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutQLen"
+        },
+        "ifOutUcastPkts": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfOutUcastPkts"
+        },
+        "ifPhysAddress": {
+          "type": "string",
+          "x-go-name": "IfPhysAddress"
+        },
+        "ifSpecific": {
+          "type": "string",
+          "x-go-name": "IfSpecific"
+        },
+        "ifSpeed": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "IfSpeed"
+        },
+        "ifType": {
+          "type": "string",
+          "x-go-name": "IfType"
+        },
+        "level_in": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LevelIn"
+        },
+        "level_out": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LevelOut"
+        },
+        "maxbitrate_in": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "MaxbitrateIn"
+        },
+        "maxbitrate_out": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "MaxbitrateOut"
+        },
+        "rx_level": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "RXLevel"
+        },
+        "tx_level": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TXLevel"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "OutputError": {
+      "description": "OutputError embeds all error messages which occur in requests on the API.",
+      "type": "object",
+      "title": "OutputError",
+      "properties": {
+        "error": {
+          "type": "string",
+          "x-go-name": "Error"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/tholaerr"
+    },
+    "OutputMessage": {
+      "type": "object",
+      "description": "OutputMessage represents a message of the response. It contains a message and a status code.",
+      "title": "OutputMessage",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "github.com/inexio/go-monitoringplugin"
+    },
+    "PerformanceDataPointInfo": {
+      "description": "PerformanceDataPointInfo has all information to one performance data point as exported variables. It is returned by\nPerformanceDataPoint.GetInfo()",
+      "type": "object",
+      "properties": {
+        "crit": {
+          "type": "object",
+          "x-go-name": "Crit"
+        },
+        "label": {
+          "type": "string",
+          "x-go-name": "Label"
+        },
+        "max": {
+          "type": "object",
+          "x-go-name": "Max"
+        },
+        "metric": {
+          "type": "string",
+          "x-go-name": "Metric"
+        },
+        "min": {
+          "type": "object",
+          "x-go-name": "Min"
+        },
+        "unit": {
+          "type": "string",
+          "x-go-name": "Unit"
+        },
+        "value": {
+          "type": "object",
+          "x-go-name": "Value"
+        },
+        "warn": {
+          "type": "object",
+          "x-go-name": "Warn"
+        }
+      },
+      "x-go-package": "github.com/inexio/go-monitoringplugin"
+    },
+    "Properties": {
+      "description": "Properties are properties that can be determined for a device",
+      "type": "object",
+      "title": "Properties",
+      "properties": {
+        "model": {
+          "description": "Model of the device",
+          "type": "string",
+          "x-go-name": "Model",
+          "example": "CHR"
+        },
+        "model_series": {
+          "description": "ModelSeries of the device",
+          "type": "string",
+          "x-go-name": "ModelSeries",
+          "example": "null"
+        },
+        "os_version": {
+          "description": "OSVersion of the device",
+          "type": "string",
+          "x-go-name": "OSVersion",
+          "example": "6.44.6"
+        },
+        "serial_number": {
+          "description": "SerialNumber of the device",
+          "type": "string",
+          "x-go-name": "SerialNumber",
+          "example": "null"
+        },
+        "vendor": {
+          "description": "Vendor of the device",
+          "type": "string",
+          "x-go-name": "Vendor",
+          "example": "Mikrotik"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "RadioInterface": {
+      "description": "RadioInterface represents a radio interface",
+      "type": "object",
+      "properties": {
+        "level_in": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LevelIn"
+        },
+        "level_out": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "LevelOut"
+        },
+        "maxbitrate_in": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "MaxbitrateIn"
+        },
+        "maxbitrate_out": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "MaxbitrateOut"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "ReadAvailableComponentsRequest": {
+      "description": "ReadAvailableComponentsRequest is a the request struct for the read available-components request.",
+      "type": "object",
+      "title": "ReadAvailableComponentsRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadAvailableComponentsResponse": {
+      "description": "ReadAvailableComponentsResponse is a the response struct for the read available-components response.",
+      "type": "object",
+      "title": "ReadAvailableComponentsResponse",
+      "properties": {
+        "availableComponents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "AvailableComponents"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadCountInterfacesRequest": {
+      "description": "ReadCountInterfacesRequest is a the request struct for the read count-interfaces request.",
+      "type": "object",
+      "title": "ReadCountInterfacesRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadCountInterfacesResponse": {
+      "description": "ReadCountInterfacesResponse is a the response struct for the read count-interfaces response.",
+      "type": "object",
+      "title": "ReadCountInterfacesResponse",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Count"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadInterfacesRequest": {
+      "description": "ReadInterfacesRequest is a the request struct for the read interfaces request.",
+      "type": "object",
+      "title": "ReadInterfacesRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadInterfacesResponse": {
+      "description": "ReadInterfacesResponse is a the request struct for the read interfaces response.",
+      "type": "object",
+      "title": "ReadInterfacesResponse",
+      "properties": {
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Interface"
+          },
+          "x-go-name": "Interfaces"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadRequest": {
+      "description": "ReadRequest is the response struct that is for read requests.",
+      "type": "object",
+      "title": "ReadRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadResponse": {
+      "description": "ReadResponse is the response struct that is for read requests.",
+      "type": "object",
+      "title": "ReadResponse",
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadUPSRequest": {
+      "description": "ReadUPSRequest is a the request struct for the read ups request.",
+      "type": "object",
+      "title": "ReadUPSRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadUPSResponse": {
+      "description": "ReadUPSResponse is a the response struct for the read ups response.",
+      "type": "object",
+      "title": "ReadUPSResponse",
+      "properties": {
+        "ups": {
+          "$ref": "#/definitions/UPSComponent"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ResponseInfo": {
+      "type": "object",
+      "description": "ResponseInfo has all available information for a response. It also contains the RawOutput.",
+      "title": "ResponseInfo",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OutputMessage"
+          },
+          "x-go-name": "Messages"
+        },
+        "performance_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PerformanceDataPointInfo"
+          },
+          "x-go-name": "PerformanceData"
+        },
+        "raw_output": {
+          "type": "string",
+          "x-go-name": "RawOutput"
+        },
+        "status_code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "StatusCode"
+        }
+      },
+      "x-go-package": "github.com/inexio/go-monitoringplugin"
+    },
+    "SNMPConnectionData": {
+      "description": "SNMPConnectionData includes all snmp connection data for a device",
+      "type": "object",
+      "title": "SNMPConnectionData",
+      "properties": {
+        "communities": {
+          "description": "The snmp community string(s) for the device",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Communities",
+          "example": "public"
+        },
+        "discoverParallelRequests": {
+          "description": "The amount of parallel connection requests used while trying to get a valid SNMP connection",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "DiscoverParallelRequests",
+          "example": 5
+        },
+        "discoverRetries": {
+          "description": "The retries used while trying to get a valid SNMP connection",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "DiscoverRetries",
+          "example": 0
+        },
+        "discoverTimeout": {
+          "description": "The timeout in seconds used while trying to get a valid SNMP connection",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "DiscoverTimeout",
+          "example": 2
+        },
+        "ports": {
+          "description": "The snmp port(s) of the device",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "x-go-name": "Ports",
+          "example": "161"
+        },
+        "versions": {
+          "description": "The snmp version(s) of the device",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Versions",
+          "example": "2c"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/network"
+    },
+    "Status": {
+      "description": "Status represents an interface status",
+      "type": "string",
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "UPSComponent": {
+      "description": "UPSComponent represents a UPS component",
+      "type": "object",
+      "properties": {
+        "alarm_low_voltage_disconnect": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "AlarmLowVoltageDisconnect"
+        },
+        "battery_amperage ": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryAmperage"
+        },
+        "battery_capacity": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryCapacity"
+        },
+        "battery_current": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryCurrent"
+        },
+        "battery_remaining_time": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryRemainingTime"
+        },
+        "battery_temperature": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryTemperature"
+        },
+        "battery_voltage": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "BatteryVoltage"
+        },
+        "current_load": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "CurrentLoad"
+        },
+        "mains_voltage_applied": {
+          "type": "boolean",
+          "x-go-name": "MainsVoltageApplied"
+        },
+        "rectifier_current": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "RectifierCurrent"
+        },
+        "system_voltage": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "SystemVoltage"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "Value": {
+      "description": "Value represents a value that was read out from a device.",
+      "type": "string",
+      "title": "Value",
+      "x-go-package": "github.com/inexio/thola/core/value"
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ]
+}
