@@ -1421,6 +1421,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "interfaceComponent", nil
 	case upsComponent:
 		return "upsComponent", nil
+	case cpuComponent:
+		return "cpuComponent", nil
 	default:
 		return "", errors.New("unknown component")
 	}

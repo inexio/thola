@@ -2,7 +2,7 @@ name: fortigate
 
 config:
   components:
-    cpu: true
+    cpuComponent: true
 
 match:
   conditions:
