@@ -198,7 +198,44 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 	}
 
 	return len(interfaces), nil
+}
 
+func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) (float64, error) {
+	if o.components.cpu == nil || o.components.cpu.load == nil {
+		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPULoad").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPULoad").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.cpu.load.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get CPUComponentCPULoad")
+	}
+	r, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+	return r, nil
+}
+
+func (o *deviceClassCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) (float64, error) {
+	if o.components.cpu == nil || o.components.cpu.temperature == nil {
+		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPUTemperature").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPUTemperature").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.cpu.temperature.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get CPUComponentCPUTemperature")
+	}
+	r, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+	return r, nil
 }
 
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
