@@ -9,7 +9,7 @@
 A tool for monitoring and provisioning (coming soon) network devices written in Go.
 It features a check mode which complies with the [monitoring plugins development guidelines](https://www.monitoring-plugins.org/doc/guidelines.html) and is therefore compatible with Nagios, Icinga, Zabbix, Checkmk, etc.
 
-## Thola at FOSDEM 2021
+## Thola at FOSDEM 2021 - Request for Papers
 The Thola team will organize a devroom for Network monitoring, discovery and inventory.
 Click [here](https://github.com/inexio/thola/blob/main/FOSDEM.md) for more information
 
