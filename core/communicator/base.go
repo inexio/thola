@@ -15,8 +15,6 @@ type relatedNetworkDeviceCommunicators struct {
 	sub  NetworkDeviceCommunicator
 }
 
-type codeCommunicator availableCommunicatorFunctions
-
 func (c *baseCommunicator) GetVendor(_ context.Context) (string, error) {
 	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
