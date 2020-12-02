@@ -11,7 +11,7 @@ It features a check mode which complies with the [monitoring plugins development
 
 ## Thola at FOSDEM 2021 - Request for Papers
 The Thola team will organize a devroom for Network monitoring, discovery and inventory.
-Click [here](https://github.com/inexio/thola/blob/main/FOSDEM.md) for more information
+Click [here](https://github.com/inexio/thola/blob/main/FOSDEM.md) for more information.
 
 ## Installation
 
