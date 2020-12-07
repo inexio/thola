@@ -1,5 +1,9 @@
 name: "pbn"
 
+config:
+  components:
+    cpuComponent: true
+
 match:
   logical_operator: "OR"
   conditions:
@@ -29,3 +33,9 @@ identify:
             modify_method: regexSubmatch
             regex: 'Version ([^,]+),'
             format: "$1"
+
+components:
+  cpu:
+    load:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.11606.10.9.109.1.1.1.1.5.1
