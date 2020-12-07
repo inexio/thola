@@ -1005,7 +1005,7 @@ func interface2propertyReader(i interface{}, task relatedTask) (propertyReader, 
 	var basePropReader basePropertyReader
 	switch stringDetection {
 	case "snmpget":
-		var pr snmpgetPropertyReader
+		var pr snmpGetPropertyReader
 		err := mapstructure.Decode(i, &pr)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode constant propertyReader")
@@ -1232,7 +1232,7 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 				}
 				valueReader, err := interface2propertyReader(valueReaderInterface, task)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to convert read_value to propertyReader in inserReadValue operator")
+					return nil, errors.Wrap(err, "failed to convert read_value to propertyReader in insertReadValue operator")
 				}
 				var irvModifier insertReadValueModifier
 				irvModifier.format = format
