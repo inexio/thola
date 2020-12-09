@@ -12,7 +12,6 @@ type ceraosIP10Communicator struct {
 }
 
 func (c *ceraosIP10Communicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-
 	subInterfaces, err := c.sub.GetIfTable(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "an unexpected error occurred while trying to get ifTable of sub communicator")
