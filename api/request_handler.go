@@ -291,6 +291,33 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/count-interfaces", readCountInterfaces)
 
+	// swagger:operation POST /read/cpu-load read readCPULoad
+	// ---
+	// summary: Read out the CPU load of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadCPULoadRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadCPULoadResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/cpu-load", readCPULoad)
+
 	// swagger:operation POST /read/ups read readUPS
 	// ---
 	// summary: Reads out UPS data of a device.
@@ -450,6 +477,18 @@ func readInterfaces(ctx echo.Context) error {
 
 func readCountInterfaces(ctx echo.Context) error {
 	r := request.ReadCountInterfacesRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readCPULoad(ctx echo.Context) error {
+	r := request.ReadCPULoadRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

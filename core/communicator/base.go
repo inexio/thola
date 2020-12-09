@@ -47,6 +47,14 @@ func (c *baseCommunicator) GetCountInterfaces(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
+func (c *baseCommunicator) GetCPUComponentCPULoad(_ context.Context) ([]float64, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetCPUComponentCPUTemperature(_ context.Context) ([]float64, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
 func (c *baseCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

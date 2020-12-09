@@ -401,6 +401,48 @@
         }
       }
     },
+    "/read/cpu-load": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Read out the CPU load of a device.",
+        "operationId": "readCPULoad",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadCPULoadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadCPULoadResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
     "/read/interfaces": {
       "post": {
         "consumes": [
@@ -819,23 +861,6 @@
       },
       "x-go-package": "github.com/inexio/thola/core/network"
     },
-    "DWDMInterface": {
-      "description": "DWDMInterface represents a DWDM interface",
-      "type": "object",
-      "properties": {
-        "rx_level": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "RXLevel"
-        },
-        "tx_level": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "TXLevel"
-        }
-      },
-      "x-go-package": "github.com/inexio/thola/core/device"
-    },
     "Device": {
       "description": "Device represents a device and has the same structure as Response.\nResponse can possibly be removed and replaced by Device.",
       "type": "object",
@@ -869,83 +894,6 @@
         }
       },
       "x-go-package": "github.com/inexio/thola/core/request"
-    },
-    "EthernetLikeInterface": {
-      "description": "EthernetLikeInterface represents an ethernet like interface",
-      "type": "object",
-      "properties": {
-        "dot3HCStatsFCSErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3HCStatsFCSErrors"
-        },
-        "dot3StatsAlignmentErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsAlignmentErrors"
-        },
-        "dot3StatsCarrierSenseErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsCarrierSenseErrors"
-        },
-        "dot3StatsDeferredTransmissions": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsDeferredTransmissions"
-        },
-        "dot3StatsExcessiveCollisions": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsExcessiveCollisions"
-        },
-        "dot3StatsFCSErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsFCSErrors"
-        },
-        "dot3StatsFrameTooLongs": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsFrameTooLongs"
-        },
-        "dot3StatsInternalMacReceiveErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsInternalMacReceiveErrors"
-        },
-        "dot3StatsInternalMacTransmitErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsInternalMacTransmitErrors"
-        },
-        "dot3StatsLateCollisions": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsLateCollisions"
-        },
-        "dot3StatsMultipleCollisionFrames": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsMultipleCollisionFrames"
-        },
-        "dot3StatsSQETestErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsSQETestErrors"
-        },
-        "dot3StatsSingleCollisionFrames": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Dot3StatsSingleCollisionFrames"
-        },
-        "etherStatsCRCAlignErrors": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "EtherStatsCRCAlignErrors"
-        }
-      },
-      "x-go-package": "github.com/inexio/thola/core/device"
     },
     "HTTPConnectionData": {
       "description": "HTTPConnectionData includes all http connection data for a device",
@@ -1409,33 +1357,6 @@
       },
       "x-go-package": "github.com/inexio/thola/core/device"
     },
-    "RadioInterface": {
-      "description": "RadioInterface represents a radio interface",
-      "type": "object",
-      "properties": {
-        "level_in": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "LevelIn"
-        },
-        "level_out": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "LevelOut"
-        },
-        "maxbitrate_in": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "MaxbitrateIn"
-        },
-        "maxbitrate_out": {
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "MaxbitrateOut"
-        }
-      },
-      "x-go-package": "github.com/inexio/thola/core/device"
-    },
     "ReadAvailableComponentsRequest": {
       "description": "ReadAvailableComponentsRequest is a the request struct for the read available-components request.",
       "type": "object",
@@ -1464,6 +1385,36 @@
             "type": "string"
           },
           "x-go-name": "AvailableComponents"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadCPULoadRequest": {
+      "description": "ReadCPULoadRequest is a the request struct for the read cpu request.",
+      "type": "object",
+      "title": "ReadCPULoadRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadCPULoadResponse": {
+      "description": "ReadCPULoadResponse is a the response struct for the read cpu response.",
+      "type": "object",
+      "title": "ReadCPULoadResponse",
+      "properties": {
+        "cpu_load": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "CPULoad"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/request"

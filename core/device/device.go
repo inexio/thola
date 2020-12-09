@@ -158,6 +158,12 @@ type UPSComponent struct {
 	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
 }
 
+// CPUComponent represents a CPU component
+type CPUComponent struct {
+	Load        []float64 `yaml:"load" json:"load" xml:"load"`
+	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
+}
+
 // NewContextWithDeviceProperties returns a new context with the device properties
 func NewContextWithDeviceProperties(ctx context.Context, properties Device) context.Context {
 	return context.WithValue(ctx, devicePropertiesKey, properties)

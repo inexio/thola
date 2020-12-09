@@ -17,7 +17,13 @@ type communicatorAdapter interface {
 	getIfTable(...interface{}) (interface{}, error)
 	getInterfaces(...interface{}) (interface{}, error)
 	getCountInterfaces(...interface{}) (interface{}, error)
+	communicatorAdapterCPU
 	communicatorAdapterUPS
+}
+
+type communicatorAdapterCPU interface {
+	getCPULoad(...interface{}) (interface{}, error)
+	getCPUTemperature(...interface{}) (interface{}, error)
 }
 
 type communicatorAdapterUPS interface {
@@ -70,6 +76,14 @@ func (a *adapter) getInterfaces(i ...interface{}) (interface{}, error) {
 
 func (a *adapter) getCountInterfaces(i ...interface{}) (interface{}, error) {
 	return a.com.GetCountInterfaces(i[0].(context.Context))
+}
+
+func (a *adapter) getCPULoad(i ...interface{}) (interface{}, error) {
+	return a.com.GetCPUComponentCPULoad(i[0].(context.Context))
+}
+
+func (a *adapter) getCPUTemperature(i ...interface{}) (interface{}, error) {
+	return a.com.GetCPUComponentCPUTemperature(i[0].(context.Context))
 }
 
 func (a *adapter) getUPSComponentAlarmLowVoltageDisconnect(i ...interface{}) (interface{}, error) {
