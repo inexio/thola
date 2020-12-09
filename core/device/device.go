@@ -160,8 +160,8 @@ type UPSComponent struct {
 
 // CPUComponent represents a CPU component
 type CPUComponent struct {
-	Load        *float64 `yaml:"load" json:"load" xml:"load"`
-	Temperature *float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
+	Load        []float64 `yaml:"load" json:"load" xml:"load"`
+	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
 }
 
 // NewContextWithDeviceProperties returns a new context with the device properties

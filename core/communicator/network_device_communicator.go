@@ -32,8 +32,8 @@ type availableCommunicatorFunctions interface {
 }
 
 type availableCPUCommunicatorFunctions interface {
-	GetCPUComponentCPULoad(ctx context.Context) (float64, error)
-	GetCPUComponentCPUTemperature(ctx context.Context) (float64, error)
+	GetCPUComponentCPULoad(ctx context.Context) ([]float64, error)
+	GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error)
 }
 
 type availableUPSCommunicatorFunctions interface {
@@ -180,7 +180,7 @@ func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device
 			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu load")
 		}
 	} else {
-		cpu.Load = &cpuLoad
+		cpu.Load = cpuLoad
 		empty = false
 	}
 
@@ -190,7 +190,7 @@ func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device
 			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu temperature")
 		}
 	} else {
-		cpu.Temperature = &cpuTemp
+		cpu.Temperature = cpuTemp
 		empty = false
 	}
 
@@ -441,32 +441,32 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 	return res.(int), err
 }
 
-func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) (float64, error) {
+func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
 	}
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPULoad
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPULoad), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPULoad), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return res.(float64), err
+	return res.([]float64), err
 }
 
-func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) (float64, error) {
+func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
 	}
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPUTemperature
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return res.(float64), err
+	return res.([]float64), err
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {

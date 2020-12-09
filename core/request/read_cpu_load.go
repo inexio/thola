@@ -15,6 +15,6 @@ type ReadCPULoadRequest struct {
 //
 // swagger:model
 type ReadCPULoadResponse struct {
-	CPULoad float64 `yaml:"cpu_load" json:"cpu_load" xml:"cpu_load"`
+	CPULoad []float64 `yaml:"cpu_load" json:"cpu_load" xml:"cpu_load"`
 	ReadResponse
 }
