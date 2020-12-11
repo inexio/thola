@@ -233,9 +233,28 @@ func (o *deviceClassCommunicator) GetCPUComponentCPUTemperature(ctx context.Cont
 	}
 	r, err := res.Float64()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+		return nil, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
 	}
 	return []float64{r}, nil
+}
+
+func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+	if o.components.memory == nil || o.components.memory.usage == nil {
+		log.Ctx(ctx).Trace().Str("property", "MemoryComponentMemoryUsage").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "MemoryComponentMemoryUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.memory.usage.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get MemoryComponentMemoryUsage")
+	}
+	r, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+	return r, nil
 }
 
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {

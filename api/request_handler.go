@@ -318,6 +318,8 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/cpu-load", readCPULoad)
 
+	e.POST("/read/memory-usage", readMemoryUsage)
+
 	// swagger:operation POST /read/ups read readUPS
 	// ---
 	// summary: Reads out UPS data of a device.
@@ -489,6 +491,18 @@ func readCountInterfaces(ctx echo.Context) error {
 
 func readCPULoad(ctx echo.Context) error {
 	r := request.ReadCPULoadRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readMemoryUsage(ctx echo.Context) error {
+	r := request.ReadMemoryUsageRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

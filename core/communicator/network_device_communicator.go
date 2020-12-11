@@ -28,12 +28,17 @@ type availableCommunicatorFunctions interface {
 	GetInterfaces(ctx context.Context) ([]device.Interface, error)
 	GetCountInterfaces(ctx context.Context) (int, error)
 	availableCPUCommunicatorFunctions
+	availableMemoryCommunicatorFunctions
 	availableUPSCommunicatorFunctions
 }
 
 type availableCPUCommunicatorFunctions interface {
 	GetCPUComponentCPULoad(ctx context.Context) ([]float64, error)
 	GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error)
+}
+
+type availableMemoryCommunicatorFunctions interface {
+	GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error)
 }
 
 type availableUPSCommunicatorFunctions interface {
@@ -467,6 +472,20 @@ func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Co
 		return nil, err
 	}
 	return res.([]float64), err
+}
+
+func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(memoryComponent) {
+		return 0, tholaerr.NewComponentNotFoundError("no memory component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getMemoryUsage
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(float64), err
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {

@@ -30,6 +30,7 @@ const (
 	interfacesComponent deviceClassComponent = iota + 1
 	upsComponent
 	cpuComponent
+	memoryComponent
 )
 
 // deviceClass represents a device class.
@@ -64,6 +65,7 @@ type deviceClassComponents struct {
 	interfaces *deviceClassComponentsInterfaces
 	ups        *deviceClassComponentsUPS
 	cpu        *deviceClassComponentsCPU
+	memory     *deviceClassComponentsMemory
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -85,6 +87,11 @@ type deviceClassComponentsUPS struct {
 type deviceClassComponentsCPU struct {
 	load        propertyReader
 	temperature propertyReader
+}
+
+// deviceClassComponentsCPU represents the memory components part of a device class.
+type deviceClassComponentsMemory struct {
+	usage propertyReader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -141,9 +148,10 @@ type yamlDeviceClassIdentify struct {
 }
 
 type yamlDeviceClassComponents struct {
-	Interfaces *yamlComponentsInterfaces    `yaml:"interfaces"`
-	UPS        *yamlComponentsUPSProperties `yaml:"ups"`
-	CPU        *yamlComponentsCPUProperties `yaml:"cpu"`
+	Interfaces *yamlComponentsInterfaces       `yaml:"interfaces"`
+	UPS        *yamlComponentsUPSProperties    `yaml:"ups"`
+	CPU        *yamlComponentsCPUProperties    `yaml:"cpu"`
+	Memory     *yamlComponentsMemoryProperties `yaml:"memory"`
 }
 
 type yamlDeviceClassConfig struct {
@@ -181,6 +189,10 @@ type yamlComponentsUPSProperties struct {
 type yamlComponentsCPUProperties struct {
 	Load        []interface{} `yaml:"load"`
 	Temperature []interface{} `yaml:"temperature"`
+}
+
+type yamlComponentsMemoryProperties struct {
+	Usage []interface{} `yaml:"usage"`
 }
 
 type yamlComponentsInterfaces struct {
@@ -583,6 +595,14 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.cpu = &cpu
 	}
 
+	if y.Memory != nil {
+		memory, err := y.Memory.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml memory properties")
+		}
+		components.memory = &memory
+	}
+
 	return components, nil
 }
 
@@ -832,6 +852,18 @@ func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error
 		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory, error) {
+	var properties deviceClassComponentsMemory
+	var err error
+	if y.Usage != nil {
+		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
 		}
 	}
 	return properties, nil
@@ -1407,6 +1439,8 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return upsComponent, nil
 	case "cpuComponent":
 		return cpuComponent, nil
+	case "memoryComponent":
+		return memoryComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -1423,6 +1457,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "upsComponent", nil
 	case cpuComponent:
 		return "cpuComponent", nil
+	case memoryComponent:
+		return "memoryComponent", nil
 	default:
 		return "", errors.New("unknown component")
 	}

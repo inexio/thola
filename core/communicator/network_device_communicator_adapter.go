@@ -19,11 +19,16 @@ type communicatorAdapter interface {
 	getCountInterfaces(...interface{}) (interface{}, error)
 	communicatorAdapterCPU
 	communicatorAdapterUPS
+	communicatorAdapterMemory
 }
 
 type communicatorAdapterCPU interface {
 	getCPULoad(...interface{}) (interface{}, error)
 	getCPUTemperature(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterMemory interface {
+	getMemoryUsage(...interface{}) (interface{}, error)
 }
 
 type communicatorAdapterUPS interface {
@@ -84,6 +89,10 @@ func (a *adapter) getCPULoad(i ...interface{}) (interface{}, error) {
 
 func (a *adapter) getCPUTemperature(i ...interface{}) (interface{}, error) {
 	return a.com.GetCPUComponentCPUTemperature(i[0].(context.Context))
+}
+
+func (a *adapter) getMemoryUsage(i ...interface{}) (interface{}, error) {
+	return a.com.GetMemoryComponentMemoryUsage(i[0].(context.Context))
 }
 
 func (a *adapter) getUPSComponentAlarmLowVoltageDisconnect(i ...interface{}) (interface{}, error) {
