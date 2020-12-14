@@ -98,6 +98,10 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/ups"), nil
 }
 
+func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/memory-usage"), nil
+}
+
 func (r *CheckMetricsRequest) process(ctx context.Context) (Response, error) {
 	var res CheckResponse
 	apiFormat := viper.GetString("target-api-format")

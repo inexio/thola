@@ -210,6 +210,8 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/ups", checkUPS)
 
+	e.POST("/check/memory-usage", checkMemoryUsage)
+
 	// swagger:operation POST /check/metrics check checkMetrics
 	// ---
 	// summary: Prints all available metrics for a device as performance data.
@@ -468,6 +470,18 @@ func checkTholaServer(ctx echo.Context) error {
 
 func checkUPS(ctx echo.Context) error {
 	r := request.CheckUPSRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkMemoryUsage(ctx echo.Context) error {
+	r := request.CheckMemoryUsageRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
