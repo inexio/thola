@@ -8,13 +8,12 @@ loglevel: error
 db:
   # don't use a database cache
   no-cache: false
-  # the db drivername (mysql, sqlite3 and redis are supported)
-  drivername: sqlite3
+  # the db drivername (built-in, mysql and redis are supported)
+  drivername: built-in
   # timespan in which the data in the cache stays valid
   duration: 60m
   sql:
-    # datasourcename in case of a mysql or sqlite db
-    # if empty and drivername is sqlite3, thola will create and use a db in the temp folder of the os
+    # datasourcename of the mysql db
     datasourcename:
   redis:
     # if address is emtpy, thola will try to connect to redis on localhost:6379

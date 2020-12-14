@@ -23,7 +23,7 @@ func init() {
 	rootCMD.PersistentFlags().StringVar(&cfgFile, "config", "", "The location of the config file")
 	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
 	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
-	rootCMD.PersistentFlags().String("db-drivername", "sqlite3", "Database type for caching ('sqlite3', 'mysql' or 'redis' supported)")
+	rootCMD.PersistentFlags().String("db-drivername", "built-in", "Database type for caching ('built-in', 'mysql' or 'redis' supported)")
 	rootCMD.PersistentFlags().String("db-duration", "60m", "Duration in which the cache stays valid")
 	rootCMD.PersistentFlags().String("sql-datasourcename", "", "Data sourcename if using a sql driver")
 	rootCMD.PersistentFlags().String("redis-addr", "", "Database address if using the redis driver")

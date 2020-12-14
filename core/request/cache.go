@@ -2,19 +2,19 @@ package request
 
 import (
 	"encoding/json"
+	"github.com/dgraph-io/badger/v2"
 	"github.com/go-redis/redis/v7"
 	_ "github.com/go-sql-driver/mysql" //needed for sql driver
 	"github.com/huandu/go-sqlbuilder"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/inexio/thola/core/utility"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3" //needed for sql driver
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"os"
 	"os/user"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"time"
@@ -25,11 +25,6 @@ var db struct {
 	database
 }
 
-const (
-	selectTimeMySQL  = "DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S')"
-	selectTimeSQLite = "strftime('%Y-%m-%d %H:%M:%S', time)"
-)
-
 var cacheExpiration time.Duration
 
 type database interface {
@@ -37,6 +32,10 @@ type database interface {
 	GetIdentifyData(ip string) (*IdentifyResponse, error)
 	SetConnectionData(ip string, data *network.ConnectionData) error
 	GetConnectionData(ip string) (*network.ConnectionData, error)
+}
+
+type badgerDatabase struct {
+	db *badger.DB
 }
 
 type sqlDatabase struct {
@@ -48,19 +47,6 @@ type redisDatabase struct {
 }
 
 type emptyDatabase struct{}
-
-var sqliteSchemaArr = []string{
-	`DROP TABLE IF EXISTS cache;`,
-
-	`CREATE TABLE cache (
-		id INTEGER PRIMARY KEY,
-		ip varchar(255) NOT NULL,
-		datatype varchar(255) NOT NULL,
-		data text NOT NULL,
-		time datetime DEFAULT current_timestamp,
-		unique (ip, datatype)
-		);`,
-}
 
 var mysqlSchemaArr = []string{
 	`DROP TABLE IF EXISTS cache;`,
@@ -87,26 +73,35 @@ func initDB() error {
 		db.database = &emptyDatabase{}
 		return nil
 	}
+
 	var err error
 	cacheExpiration, err = time.ParseDuration(viper.GetString("db.duration"))
 	if err != nil {
 		return errors.Wrap(err, "failed to parse cache expiration")
 	}
-	if (viper.GetString("db.drivername") == "mysql") || (viper.GetString("db.drivername") == "sqlite3") || (viper.GetString("db.drivername") == "") {
+
+	if viper.GetString("db.drivername") == "built-in" {
+		badgerDB := badgerDatabase{}
+		u, err := user.Current()
+		if err != nil {
+			return err
+		}
+		badgerDB.db, err = badger.Open(badger.DefaultOptions(filepath.Join(os.TempDir(), "thola-"+u.Username+"-cache")).WithLogger(nil))
+		if err != nil {
+			return errors.Wrap(err, "error while setting up database")
+		}
+		if viper.GetBool("db.rebuild") {
+			err = badgerDB.db.DropAll()
+			if err != nil {
+				return errors.Wrap(err, "failed to rebuild the db")
+			}
+		}
+		db.database = &badgerDB
+	} else if viper.GetString("db.drivername") == "mysql" {
 		checkIfTableExistsQuery := "SHOW TABLES LIKE 'cache';"
 		sqlDB := sqlDatabase{}
 		if viper.GetString("db.sql.datasourcename") != "" {
 			sqlDB.db, err = sqlx.Connect(viper.GetString("db.drivername"), viper.GetString("db.sql.datasourcename"))
-			if err != nil {
-				return err
-			}
-		} else if viper.GetString("db.drivername") == "sqlite3" {
-			checkIfTableExistsQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name='cache';"
-			u, err := user.Current()
-			if err != nil {
-				return err
-			}
-			sqlDB.db, err = sqlx.Connect("sqlite3", os.TempDir()+"/thola-"+u.Username+".db")
 			if err != nil {
 				return err
 			}
@@ -130,7 +125,6 @@ func initDB() error {
 			}
 		}
 		db.database = &sqlDB
-		return nil
 	} else if viper.GetString("db.drivername") == "redis" {
 		redisDB := redisDatabase{
 			db: redis.NewClient(&redis.Options{
@@ -140,29 +134,25 @@ func initDB() error {
 			}),
 		}
 		_, err := redisDB.db.Ping().Result()
-		if err == nil {
-			db.database = &redisDB
+		if err != nil {
+			return errors.Wrap(err, "failed to ping redis db")
 		}
-		return err
+		if viper.GetBool("db.rebuild") {
+			redisDB.db.FlushAll()
+		}
+		db.database = &redisDB
 	} else {
-		return errors.New("invalid drivername, only 'mysql', 'sqlite3' and 'redis' supported")
+		return errors.New("invalid drivername, only 'built-in', 'mysql' and 'redis' supported")
 	}
+	return nil
 }
 
 func (d sqlDatabase) setupDatabase() error {
-	var schemaArr []string
-	switch viper.GetString("db.drivername") {
-	case "mysql":
-		schemaArr = mysqlSchemaArr
-	case "sqlite3":
-		schemaArr = sqliteSchemaArr
-	}
-
-	for _, query := range schemaArr {
+	for _, query := range mysqlSchemaArr {
 		_, err := d.db.Exec(query)
 		if err != nil {
 			_, _ = d.db.Exec(`DROP TABLE IF EXISTS cache;`)
-			return errors.Wrap(err, "Could not set up database schema - query:"+query)
+			return errors.Wrap(err, "Could not set up database schema - query: "+query)
 		}
 	}
 	return nil
@@ -182,6 +172,32 @@ func getDB() (database, error) {
 	return db.database, nil
 }
 
+func (d *badgerDatabase) SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error {
+	txn := d.db.NewTransaction(true)
+	defer txn.Discard()
+
+	JSONData, err := parser.ToJSON(&response)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshall response")
+	}
+	entry := badger.Entry{
+		Key:       []byte("IdentifyResponse-" + ip),
+		Value:     JSONData,
+		ExpiresAt: uint64(time.Now().Add(cacheExpiration).Unix()),
+	}
+
+	err = txn.SetEntry(&entry)
+	if err != nil {
+		return errors.Wrap(err, "failed to store identify data")
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		return errors.Wrap(err, "failed to store identify data")
+	}
+	return d.SetConnectionData(ip, data)
+}
+
 func (d *sqlDatabase) SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error {
 	err := d.insertReplaceQuery(response, ip, "IdentifyResponse")
 	if err != nil {
@@ -189,7 +205,7 @@ func (d *sqlDatabase) SetIdentifyData(ip string, data *network.ConnectionData, r
 	}
 	err = d.SetConnectionData(ip, data)
 	if err != nil {
-		return errors.Wrap(err, "failed to store connection data")
+		return errors.Wrap(err, "failed to store identify data")
 	}
 	return nil
 }
@@ -205,6 +221,28 @@ func (d *redisDatabase) SetIdentifyData(ip string, data *network.ConnectionData,
 
 func (d *emptyDatabase) SetIdentifyData(_ string, _ *network.ConnectionData, _ *IdentifyResponse) error {
 	return nil
+}
+
+func (d *badgerDatabase) GetIdentifyData(ip string) (*IdentifyResponse, error) {
+	txn := d.db.NewTransaction(false)
+	defer txn.Discard()
+
+	item, err := txn.Get([]byte("IdentifyResponse-" + ip))
+	if err != nil {
+		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+	}
+
+	value, err := item.ValueCopy(nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get value from db item")
+	}
+
+	data := IdentifyResponse{}
+	err = json.Unmarshal(value, &data)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshall identifyResponse")
+	}
+	return &data, nil
 }
 
 func (d *sqlDatabase) GetIdentifyData(ip string) (*IdentifyResponse, error) {
@@ -233,6 +271,32 @@ func (d *emptyDatabase) GetIdentifyData(_ string) (*IdentifyResponse, error) {
 	return nil, tholaerr.NewNotFoundError("no db available")
 }
 
+func (d *badgerDatabase) SetConnectionData(ip string, data *network.ConnectionData) error {
+	txn := d.db.NewTransaction(true)
+	defer txn.Discard()
+
+	JSONData, err := parser.ToJSON(&data)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshall connection data")
+	}
+	entry := badger.Entry{
+		Key:       []byte("ConnectionData-" + ip),
+		Value:     JSONData,
+		ExpiresAt: uint64(time.Now().Add(cacheExpiration).Unix()),
+	}
+
+	err = txn.SetEntry(&entry)
+	if err != nil {
+		return errors.Wrap(err, "failed to store connection data")
+	}
+
+	err = txn.Commit()
+	if err != nil {
+		return errors.Wrap(err, "failed to store connection data")
+	}
+	return nil
+}
+
 func (d *sqlDatabase) SetConnectionData(ip string, data *network.ConnectionData) error {
 	return d.insertReplaceQuery(data, ip, "ConnectionData")
 }
@@ -248,6 +312,28 @@ func (d *redisDatabase) SetConnectionData(ip string, data *network.ConnectionDat
 
 func (d *emptyDatabase) SetConnectionData(_ string, _ *network.ConnectionData) error {
 	return nil
+}
+
+func (d *badgerDatabase) GetConnectionData(ip string) (*network.ConnectionData, error) {
+	txn := d.db.NewTransaction(false)
+	defer txn.Discard()
+
+	item, err := txn.Get([]byte("ConnectionData-" + ip))
+	if err != nil {
+		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+	}
+
+	value, err := item.ValueCopy(nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get value from db item")
+	}
+
+	data := network.ConnectionData{}
+	err = json.Unmarshal(value, &data)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshall connectionData")
+	}
+	return &data, nil
 }
 
 func (d *sqlDatabase) GetConnectionData(ip string) (*network.ConnectionData, error) {
@@ -267,17 +353,17 @@ func (d *redisDatabase) GetConnectionData(ip string) (*network.ConnectionData, e
 	data := network.ConnectionData{}
 	err = json.Unmarshal([]byte(value), &data)
 	if err != nil {
-		return &network.ConnectionData{}, errors.Wrap(err, "failed to unmarshall connectionData")
+		return nil, errors.Wrap(err, "failed to unmarshall connectionData")
 	}
 	return &data, nil
 }
 
 func (d *emptyDatabase) GetConnectionData(_ string) (*network.ConnectionData, error) {
-	return &network.ConnectionData{}, nil
+	return nil, tholaerr.NewNotFoundError("no db available")
 }
 
 func (d *sqlDatabase) selectQuery(dest interface{}, ip, dataType string) error {
-	return d.db.Select(dest, d.db.Rebind("SELECT "+utility.IfThenElseString(viper.GetString("db.drivername") == "mysql", selectTimeMySQL, selectTimeSQLite)+" as time, data, datatype FROM cache WHERE ip=? AND datatype=?;"), ip, dataType)
+	return d.db.Select(dest, d.db.Rebind("SELECT DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') as time, data, datatype FROM cache WHERE ip=? AND datatype=?;"), ip, dataType)
 }
 
 func (d *sqlDatabase) insertReplaceQuery(data interface{}, ip, dataType string) error {
