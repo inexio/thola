@@ -318,6 +318,31 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/cpu-load", readCPULoad)
 
+	// swagger:operation POST /read/memory-usage read readMemoryUsage
+	// ---
+	// summary: Read out the memory usage of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadMemoryUsageRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadMemoryUsageResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/memory-usage", readMemoryUsage)
 
 	// swagger:operation POST /read/ups read readUPS

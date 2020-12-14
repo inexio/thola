@@ -485,6 +485,48 @@
         }
       }
     },
+    "/read/memory-usage": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Read out the memory usage of a device.",
+        "operationId": "readMemoryUsage",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadMemoryUsageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadMemoryUsageResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
     "/read/ups": {
       "post": {
         "consumes": [
@@ -1412,8 +1454,11 @@
       "title": "ReadCPULoadResponse",
       "properties": {
         "cpu_load": {
-          "type": "number",
-          "format": "double",
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          },
           "x-go-name": "CPULoad"
         }
       },
@@ -1477,6 +1522,36 @@
             "$ref": "#/definitions/Interface"
           },
           "x-go-name": "Interfaces"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadMemoryUsageRequest": {
+      "description": "ReadMemoryUsageRequest is a the request struct for the read cpu request.",
+      "type": "object",
+      "title": "ReadMemoryUsageRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "ReadMemoryUsageResponse": {
+      "description": "ReadMemoryUsageResponse is a the response struct for the read cpu response.",
+      "type": "object",
+      "title": "ReadMemoryUsageResponse",
+      "properties": {
+        "memory_usage": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "MemoryUsage"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/request"
