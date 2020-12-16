@@ -2,7 +2,7 @@ package request
 
 // ReadMemoryUsageRequest
 //
-// ReadMemoryUsageRequest is a the request struct for the read cpu request.
+// ReadMemoryUsageRequest is a the request struct for the read memory usage request.
 //
 // swagger:model
 type ReadMemoryUsageRequest struct {
@@ -11,7 +11,7 @@ type ReadMemoryUsageRequest struct {
 
 // ReadMemoryUsageResponse
 //
-// ReadMemoryUsageResponse is a the response struct for the read cpu response.
+// ReadMemoryUsageResponse is a the response struct for the read memory usage request.
 //
 // swagger:model
 type ReadMemoryUsageResponse struct {

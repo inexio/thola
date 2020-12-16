@@ -107,6 +107,48 @@
         }
       }
     },
+    "/check/memory-usage": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Read out the memory usage of a device.",
+        "operationId": "checkMemoryUsage",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckMemoryUsageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckMemoryUsageResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
     "/check/metrics": {
       "post": {
         "consumes": [
@@ -692,6 +734,34 @@
         "print_interfaces": {
           "type": "boolean",
           "x-go-name": "PrintInterfaces"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
+    "CheckMemoryUsageRequest": {
+      "description": "CheckMemoryUsageRequest is a the request struct for the check memory usage request.",
+      "type": "object",
+      "title": "CheckMemoryUsageRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "memoryUsageThresholds": {
+          "$ref": "#/definitions/CheckThresholds"
         },
         "print_performance_data": {
           "type": "boolean",
@@ -1527,7 +1597,7 @@
       "x-go-package": "github.com/inexio/thola/core/request"
     },
     "ReadMemoryUsageRequest": {
-      "description": "ReadMemoryUsageRequest is a the request struct for the read cpu request.",
+      "description": "ReadMemoryUsageRequest is a the request struct for the read memory usage request.",
       "type": "object",
       "title": "ReadMemoryUsageRequest",
       "properties": {
@@ -1544,7 +1614,7 @@
       "x-go-package": "github.com/inexio/thola/core/request"
     },
     "ReadMemoryUsageResponse": {
-      "description": "ReadMemoryUsageResponse is a the response struct for the read cpu response.",
+      "description": "ReadMemoryUsageResponse is a the response struct for the read memory usage response.",
       "type": "object",
       "title": "ReadMemoryUsageResponse",
       "properties": {
@@ -1606,37 +1676,6 @@
         }
       },
       "x-go-package": "github.com/inexio/thola/core/request"
-    },
-    "ResponseInfo": {
-      "type": "object",
-      "description": "ResponseInfo has all available information for a response. It also contains the RawOutput.",
-      "title": "ResponseInfo",
-      "properties": {
-        "messages": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/OutputMessage"
-          },
-          "x-go-name": "Messages"
-        },
-        "performance_data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PerformanceDataPointInfo"
-          },
-          "x-go-name": "PerformanceData"
-        },
-        "raw_output": {
-          "type": "string",
-          "x-go-name": "RawOutput"
-        },
-        "status_code": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "StatusCode"
-        }
-      },
-      "x-go-package": "github.com/inexio/go-monitoringplugin"
     },
     "SNMPConnectionData": {
       "description": "SNMPConnectionData includes all snmp connection data for a device",

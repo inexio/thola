@@ -25,7 +25,7 @@ func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error)
 	}
 	if !r.MemoryUsageThresholds.isEmpty() {
 		code := r.MemoryUsageThresholds.checkValue(val)
-		r.mon.UpdateStatusIf(code != monitoringplugin.OK, code, fmt.Sprintf("memory-usage is %s%%", val))
+		r.mon.UpdateStatusIf(code != monitoringplugin.OK, code, fmt.Sprintf("memory usage is %s%%", val))
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil

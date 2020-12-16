@@ -1,8 +1,8 @@
 package request
 
-// CheckUPSRequest
+// CheckMemoryUsageRequest
 //
-// CheckUPSRequest is a the request struct for the check ups request.
+// CheckMemoryUsageRequest is a the request struct for the check memory usage request.
 //
 // swagger:model
 type CheckMemoryUsageRequest struct {

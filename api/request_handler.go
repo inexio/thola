@@ -210,6 +210,31 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/ups", checkUPS)
 
+	// swagger:operation POST /check/memory-usage check checkMemoryUsage
+	// ---
+	// summary: Read out the memory usage of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckMemoryUsageRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckMemoryUsageResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/memory-usage", checkMemoryUsage)
 
 	// swagger:operation POST /check/metrics check checkMetrics
