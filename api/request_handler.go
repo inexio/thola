@@ -237,6 +237,33 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/memory-usage", checkMemoryUsage)
 
+	// swagger:operation POST /check/cpu-load check checkCpuLoad
+	// ---
+	// summary: Read out the cpu load of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckCpuLoadRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckCpuLoadResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/cpu-load", checkCpuLoad)
+
 	// swagger:operation POST /check/metrics check checkMetrics
 	// ---
 	// summary: Prints all available metrics for a device as performance data.
@@ -507,6 +534,18 @@ func checkUPS(ctx echo.Context) error {
 
 func checkMemoryUsage(ctx echo.Context) error {
 	r := request.CheckMemoryUsageRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkCpuLoad(ctx echo.Context) error {
+	r := request.CheckCPULoadRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
