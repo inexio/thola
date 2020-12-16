@@ -15,7 +15,7 @@ func (r *ReadMemoryUsageRequest) process(ctx context.Context) (Response, error) 
 
 	result, err := com.GetMemoryComponentMemoryUsage(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't get cpu load")
+		return nil, errors.Wrap(err, "can't get memory usage")
 	}
 
 	return &ReadMemoryUsageResponse{
