@@ -3,8 +3,6 @@
 builds:
   - id: "thola"
 
-    goos:
-      - linux
     ignore:
       - goos: linux
         goarch: 386
@@ -15,12 +13,10 @@ builds:
     ldflags:
       - -s -w
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
 
   - id: "thola-client"
 
-    goos:
-      - linux
     ignore:
       - goos: linux
         goarch: 386
@@ -29,12 +25,11 @@ builds:
     binary: thola-client
 
     flags:
-      - -tags
-      - client
+      - -tags=client
     ldflags:
       - -s -w
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
 
 archives:
   - builds:
@@ -43,3 +38,4 @@ archives:
       
     replacements:
       amd64: 64-bit
+      darwin: macOS
