@@ -35,12 +35,16 @@ Thola currently has three main modes of operation with various subcommands:
     - `read available-components` returns the available components for the device.
     - `read interfaces` outputs the interfaces with several values like error counters and statistics.
     - `read count-interfaces` counts the interfaces.
+    - `read cpu-load` returns the current cpu load of all CPUs.
+    - `read memory-usage` reads out the current memory usage.
     - `read ups` outputs the special values of a UPS device.
 - `check` performs checks that can be used in monitoring systems. Output is by default in check plugin format.
     - `check identify` compares the device properties with given expectations.
     - `check snmp` checks SNMP reachability.
     - `check interface-metrics` outputs performance data for the interfaces, including special values based on the interface type (e.g. Radio Interface).
-    - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity and current load.
+    - `check cpu-load` checks the average CPU load of all CPUs against given thresholds and outputs the current load of all CPUs as performance data.
+    - `check memory-usage` checks the current memory usage against given thresholds.
+    - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity or current load, and compares them to optionally given thresholds.
     - `check metrics` outputs all possible metrics.
     - `check thola-server` checks reachability of a Thola API.
 
@@ -48,12 +52,11 @@ More features are coming soon:
 
 - Read out additional information
     - Inventory data
-    - System data
+    - Sensors and Status Flags like temperatures, frequencies, alarms, etc.
     - Device specific data (e.g. DSLAMs)
 - More checks
-    - CPU load
-    - Memory usage
     - Hardware health
+    - Device specific checks
 - Configuration/Provisioning
 
 ## Quick Start

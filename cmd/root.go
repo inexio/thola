@@ -169,7 +169,7 @@ var rootCMD = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Lookup("version").Changed {
-			fmt.Println("v0.1.1")
+			fmt.Println("v0.1.2")
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
