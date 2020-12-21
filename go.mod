@@ -8,6 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/go-cmp v0.3.0
+	github.com/gosnmp/gosnmp v1.29.0
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/inexio/go-monitoringplugin v0.0.0-20201117085742-ec06ef4904fe
 	github.com/jmoiron/sqlx v1.2.0
@@ -20,7 +21,6 @@ require (
 	github.com/rs/zerolog v1.20.0
 	github.com/schollz/progressbar/v3 v3.5.1
 	github.com/shopspring/decimal v1.2.0
-	github.com/soniah/gosnmp v1.27.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
