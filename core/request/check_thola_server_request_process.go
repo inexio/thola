@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/api/statistics"
+	"github.com/inexio/thola/core/database"
 	"time"
 )
 
@@ -19,6 +20,18 @@ func (r *CheckTholaServerRequest) process(_ context.Context) (Response, error) {
 	}
 
 	r.mon.UpdateStatus(monitoringplugin.OK, "thola server is running since "+stats.UpSince.Format(time.UnixDate))
+
+	db, err := database.GetDB()
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to get database", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
+	err = db.CheckConnection()
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.CRITICAL, "database is not alive", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
 
 	err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("total_request_counter", stats.Requests.TotalCount, "c"))
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {

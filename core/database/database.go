@@ -33,6 +33,7 @@ type Database interface {
 	GetDeviceProperties(ip string) (device.Device, error)
 	SetConnectionData(ip string, data network.ConnectionData) error
 	GetConnectionData(ip string) (network.ConnectionData, error)
+	CheckConnection() error
 }
 
 type badgerDatabase struct {
@@ -139,9 +140,9 @@ func initDB() error {
 			return errors.Wrap(err, "failed to ping redis db")
 		}
 		if viper.GetBool("db.rebuild") {
-			status := redisDB.db.FlushAll()
-			if status.Err() != nil {
-				return errors.Wrap(status.Err(), "failed to rebuild redis db")
+			_, err := redisDB.db.FlushAll().Result()
+			if err != nil {
+				return errors.Wrap(err, "failed to rebuild redis db")
 			}
 		}
 		db.Database = &redisDB
@@ -215,9 +216,9 @@ func (d *redisDatabase) SetDeviceProperties(ip string, data device.Device) error
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall response")
 	}
-	status := d.db.Set("DeviceInfo-"+ip, JSONData, cacheExpiration)
-	if status.Err() != nil {
-		return errors.Wrap(status.Err(), "failed to store device data")
+	_, err = d.db.Set("DeviceInfo-"+ip, JSONData, cacheExpiration).Result()
+	if err != nil {
+		return errors.Wrap(err, "failed to store device data")
 	}
 	return nil
 }
@@ -309,9 +310,9 @@ func (d *redisDatabase) SetConnectionData(ip string, data network.ConnectionData
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall connectionData")
 	}
-	status := d.db.Set("ConnectionData-"+ip, JSONData, cacheExpiration)
-	if status.Err() != nil {
-		return errors.Wrap(status.Err(), "failed to store connection data")
+	_, err = d.db.Set("ConnectionData-"+ip, JSONData, cacheExpiration).Result()
+	if err != nil {
+		return errors.Wrap(err, "failed to store connection data")
 	}
 	return nil
 }
@@ -423,5 +424,30 @@ func (d *sqlDatabase) getEntry(dest interface{}, ip, dataType string) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshall entry data")
 	}
+	return nil
+}
+
+func (d *badgerDatabase) CheckConnection() error {
+	if d.db.IsClosed() {
+		return errors.New("badger db is closed")
+	} else {
+		return nil
+	}
+}
+
+func (d *sqlDatabase) CheckConnection() error {
+	return d.db.Ping()
+}
+
+func (d *redisDatabase) CheckConnection() error {
+	_, err := d.db.Ping().Result()
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
+func (d *emptyDatabase) CheckConnection() error {
 	return nil
 }
