@@ -16,7 +16,7 @@ import (
 var cfgFile string
 
 func init() {
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	cobra.OnInitialize(initConfig)
 

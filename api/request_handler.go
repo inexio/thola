@@ -4,10 +4,12 @@ import (
 	"crypto/subtle"
 	"fmt"
 	"github.com/inexio/thola/api/statistics"
+	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/request"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
 	"sync"
@@ -21,6 +23,11 @@ var deviceLocks struct {
 
 // StartAPI starts the API.
 func StartAPI() {
+	_, err := database.GetDB()
+	if err != nil {
+		log.Fatal().Err(err).Msg("starting api failed")
+	}
+
 	deviceLocks.locks = make(map[string]*sync.Mutex)
 	e := echo.New()
 

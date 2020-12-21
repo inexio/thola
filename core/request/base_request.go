@@ -2,6 +2,7 @@ package request
 
 import (
 	"context"
+	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/inexio/thola/core/utility"
@@ -52,7 +53,7 @@ func (r *BaseRequest) validate() error {
 		configData.HTTP = &network.HTTPConnectionData{}
 	}
 
-	db, err := getDB()
+	db, err := database.GetDB()
 	if err != nil {
 		return errors.Wrap(err, "failed to get DB")
 	}
@@ -62,7 +63,7 @@ func (r *BaseRequest) validate() error {
 		if !tholaerr.IsNotFoundError(err) {
 			return err
 		}
-		cacheData = &network.ConnectionData{}
+		cacheData = network.ConnectionData{}
 	}
 	if cacheData.SNMP == nil {
 		cacheData.SNMP = &network.SNMPConnectionData{}

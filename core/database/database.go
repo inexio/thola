@@ -1,4 +1,4 @@
-package request
+package database
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v7"
 	_ "github.com/go-sql-driver/mysql" //needed for sql driver
 	"github.com/huandu/go-sqlbuilder"
+	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
@@ -22,16 +23,16 @@ import (
 
 var db struct {
 	sync.Once
-	database
+	Database
 }
 
 var cacheExpiration time.Duration
 
-type database interface {
-	SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error
-	GetIdentifyData(ip string) (*IdentifyResponse, error)
-	SetConnectionData(ip string, data *network.ConnectionData) error
-	GetConnectionData(ip string) (*network.ConnectionData, error)
+type Database interface {
+	SetDeviceProperties(ip string, data device.Device) error
+	GetDeviceProperties(ip string) (device.Device, error)
+	SetConnectionData(ip string, data network.ConnectionData) error
+	GetConnectionData(ip string) (network.ConnectionData, error)
 }
 
 type badgerDatabase struct {
@@ -70,7 +71,7 @@ type sqlSelectResults []struct {
 
 func initDB() error {
 	if viper.GetBool("db.no-cache") {
-		db.database = &emptyDatabase{}
+		db.Database = &emptyDatabase{}
 		return nil
 	}
 
@@ -96,7 +97,7 @@ func initDB() error {
 				return errors.Wrap(err, "failed to rebuild the db")
 			}
 		}
-		db.database = &badgerDB
+		db.Database = &badgerDB
 	} else if viper.GetString("db.drivername") == "mysql" {
 		checkIfTableExistsQuery := "SHOW TABLES LIKE 'cache';"
 		sqlDB := sqlDatabase{}
@@ -124,7 +125,7 @@ func initDB() error {
 				return errors.Wrap(err, "error while setting up database")
 			}
 		}
-		db.database = &sqlDB
+		db.Database = &sqlDB
 	} else if viper.GetString("db.drivername") == "redis" {
 		redisDB := redisDatabase{
 			db: redis.NewClient(&redis.Options{
@@ -138,9 +139,12 @@ func initDB() error {
 			return errors.Wrap(err, "failed to ping redis db")
 		}
 		if viper.GetBool("db.rebuild") {
-			redisDB.db.FlushAll()
+			status := redisDB.db.FlushAll()
+			if status.Err() != nil {
+				return errors.Wrap(status.Err(), "failed to rebuild redis db")
+			}
 		}
-		db.database = &redisDB
+		db.Database = &redisDB
 	} else {
 		return errors.New("invalid drivername, only 'built-in', 'mysql' and 'redis' supported")
 	}
@@ -158,7 +162,7 @@ func (d sqlDatabase) setupDatabase() error {
 	return nil
 }
 
-func getDB() (database, error) {
+func GetDB() (Database, error) {
 	var err error
 	db.Do(func() {
 		err = initDB()
@@ -166,22 +170,22 @@ func getDB() (database, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize DB")
 	}
-	if db.database == nil {
+	if db.Database == nil {
 		return nil, errors.New("database was not initialized")
 	}
-	return db.database, nil
+	return db.Database, nil
 }
 
-func (d *badgerDatabase) SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error {
+func (d *badgerDatabase) SetDeviceProperties(ip string, data device.Device) error {
 	txn := d.db.NewTransaction(true)
 	defer txn.Discard()
 
-	JSONData, err := parser.ToJSON(&response)
+	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall response")
 	}
 	entry := badger.Entry{
-		Key:       []byte("IdentifyResponse-" + ip),
+		Key:       []byte("DeviceInfo-" + ip),
 		Value:     JSONData,
 		ExpiresAt: uint64(time.Now().Add(cacheExpiration).Unix()),
 	}
@@ -195,87 +199,86 @@ func (d *badgerDatabase) SetIdentifyData(ip string, data *network.ConnectionData
 	if err != nil {
 		return errors.Wrap(err, "failed to store identify data")
 	}
-	return d.SetConnectionData(ip, data)
+	return nil
 }
 
-func (d *sqlDatabase) SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error {
-	err := d.insertReplaceQuery(response, ip, "IdentifyResponse")
+func (d *sqlDatabase) SetDeviceProperties(ip string, data device.Device) error {
+	err := d.insertReplaceQuery(data, ip, "DeviceInfo")
 	if err != nil {
-		return errors.Wrap(err, "failed to store identify data")
-	}
-	err = d.SetConnectionData(ip, data)
-	if err != nil {
-		return errors.Wrap(err, "failed to store identify data")
+		return errors.Wrap(err, "failed to store device data")
 	}
 	return nil
 }
 
-func (d *redisDatabase) SetIdentifyData(ip string, data *network.ConnectionData, response *IdentifyResponse) error {
-	JSONData, err := parser.ToJSON(&response)
+func (d *redisDatabase) SetDeviceProperties(ip string, data device.Device) error {
+	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall response")
 	}
-	d.db.Set("IdentifyResponse-"+ip, JSONData, cacheExpiration)
-	return d.SetConnectionData(ip, data)
-}
-
-func (d *emptyDatabase) SetIdentifyData(_ string, _ *network.ConnectionData, _ *IdentifyResponse) error {
+	status := d.db.Set("DeviceInfo-"+ip, JSONData, cacheExpiration)
+	if status.Err() != nil {
+		return errors.Wrap(status.Err(), "failed to store device data")
+	}
 	return nil
 }
 
-func (d *badgerDatabase) GetIdentifyData(ip string) (*IdentifyResponse, error) {
+func (d *emptyDatabase) SetDeviceProperties(_ string, _ device.Device) error {
+	return nil
+}
+
+func (d *badgerDatabase) GetDeviceProperties(ip string) (device.Device, error) {
 	txn := d.db.NewTransaction(false)
 	defer txn.Discard()
 
-	item, err := txn.Get([]byte("IdentifyResponse-" + ip))
+	item, err := txn.Get([]byte("DeviceInfo-" + ip))
 	if err != nil {
-		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+		return device.Device{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
 
 	value, err := item.ValueCopy(nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get value from db item")
+		return device.Device{}, errors.Wrap(err, "failed to get value from db item")
 	}
 
-	data := IdentifyResponse{}
+	data := device.Device{}
 	err = json.Unmarshal(value, &data)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshall identifyResponse")
+		return device.Device{}, errors.Wrap(err, "failed to unmarshall device properties")
 	}
-	return &data, nil
+	return data, nil
 }
 
-func (d *sqlDatabase) GetIdentifyData(ip string) (*IdentifyResponse, error) {
-	var identifyResponse IdentifyResponse
-	err := d.getEntry(&identifyResponse, ip, "IdentifyResponse")
+func (d *sqlDatabase) GetDeviceProperties(ip string) (device.Device, error) {
+	var identifyResponse device.Device
+	err := d.getEntry(&identifyResponse, ip, "DeviceInfo")
 	if err != nil {
-		return nil, err
+		return device.Device{}, err
 	}
-	return &identifyResponse, nil
+	return identifyResponse, nil
 }
 
-func (d *redisDatabase) GetIdentifyData(ip string) (*IdentifyResponse, error) {
-	value, err := d.db.Get("IdentifyResponse-" + ip).Result()
+func (d *redisDatabase) GetDeviceProperties(ip string) (device.Device, error) {
+	value, err := d.db.Get("DeviceInfo-" + ip).Result()
 	if err != nil {
-		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+		return device.Device{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
-	data := IdentifyResponse{}
+	data := device.Device{}
 	err = json.Unmarshal([]byte(value), &data)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshall identifyResponse")
+		return device.Device{}, errors.Wrap(err, "failed to unmarshall device properties")
 	}
-	return &data, nil
+	return data, nil
 }
 
-func (d *emptyDatabase) GetIdentifyData(_ string) (*IdentifyResponse, error) {
-	return nil, tholaerr.NewNotFoundError("no db available")
+func (d *emptyDatabase) GetDeviceProperties(_ string) (device.Device, error) {
+	return device.Device{}, tholaerr.NewNotFoundError("no db available")
 }
 
-func (d *badgerDatabase) SetConnectionData(ip string, data *network.ConnectionData) error {
+func (d *badgerDatabase) SetConnectionData(ip string, data network.ConnectionData) error {
 	txn := d.db.NewTransaction(true)
 	defer txn.Discard()
 
-	JSONData, err := parser.ToJSON(&data)
+	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall connection data")
 	}
@@ -297,73 +300,72 @@ func (d *badgerDatabase) SetConnectionData(ip string, data *network.ConnectionDa
 	return nil
 }
 
-func (d *sqlDatabase) SetConnectionData(ip string, data *network.ConnectionData) error {
+func (d *sqlDatabase) SetConnectionData(ip string, data network.ConnectionData) error {
 	return d.insertReplaceQuery(data, ip, "ConnectionData")
 }
 
-func (d *redisDatabase) SetConnectionData(ip string, data *network.ConnectionData) error {
-	JSONData, err := parser.ToJSON(&data)
+func (d *redisDatabase) SetConnectionData(ip string, data network.ConnectionData) error {
+	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall connectionData")
 	}
-	d.db.Set("ConnectionData-"+ip, JSONData, cacheExpiration)
+	status := d.db.Set("ConnectionData-"+ip, JSONData, cacheExpiration)
+	if status.Err() != nil {
+		return errors.Wrap(status.Err(), "failed to store connection data")
+	}
 	return nil
 }
 
-func (d *emptyDatabase) SetConnectionData(_ string, _ *network.ConnectionData) error {
+func (d *emptyDatabase) SetConnectionData(_ string, _ network.ConnectionData) error {
 	return nil
 }
 
-func (d *badgerDatabase) GetConnectionData(ip string) (*network.ConnectionData, error) {
+func (d *badgerDatabase) GetConnectionData(ip string) (network.ConnectionData, error) {
 	txn := d.db.NewTransaction(false)
 	defer txn.Discard()
 
 	item, err := txn.Get([]byte("ConnectionData-" + ip))
 	if err != nil {
-		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+		return network.ConnectionData{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
 
 	value, err := item.ValueCopy(nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get value from db item")
+		return network.ConnectionData{}, errors.Wrap(err, "failed to get value from db item")
 	}
 
 	data := network.ConnectionData{}
 	err = json.Unmarshal(value, &data)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshall connectionData")
+		return network.ConnectionData{}, errors.Wrap(err, "failed to unmarshall connectionData")
 	}
-	return &data, nil
+	return data, nil
 }
 
-func (d *sqlDatabase) GetConnectionData(ip string) (*network.ConnectionData, error) {
+func (d *sqlDatabase) GetConnectionData(ip string) (network.ConnectionData, error) {
 	var connectionData network.ConnectionData
 	err := d.getEntry(&connectionData, ip, "ConnectionData")
 	if err != nil {
-		return nil, err
+		return network.ConnectionData{}, err
 	}
-	return &connectionData, nil
+	return connectionData, nil
 }
 
-func (d *redisDatabase) GetConnectionData(ip string) (*network.ConnectionData, error) {
+func (d *redisDatabase) GetConnectionData(ip string) (network.ConnectionData, error) {
 	value, err := d.db.Get("ConnectionData-" + ip).Result()
 	if err != nil {
-		return nil, tholaerr.NewNotFoundError("cannot find cache entry")
+		return network.ConnectionData{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
 	data := network.ConnectionData{}
 	err = json.Unmarshal([]byte(value), &data)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshall connectionData")
+		return network.ConnectionData{}, errors.Wrap(err, "failed to unmarshall connectionData")
 	}
-	return &data, nil
+	return data, nil
 }
 
-func (d *emptyDatabase) GetConnectionData(_ string) (*network.ConnectionData, error) {
-	return nil, tholaerr.NewNotFoundError("no db available")
-}
-
-func (d *sqlDatabase) selectQuery(dest interface{}, ip, dataType string) error {
-	return d.db.Select(dest, d.db.Rebind("SELECT DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') as time, data, datatype FROM cache WHERE ip=? AND datatype=?;"), ip, dataType)
+func (d *emptyDatabase) GetConnectionData(_ string) (network.ConnectionData, error) {
+	return network.ConnectionData{}, tholaerr.NewNotFoundError("no db available")
 }
 
 func (d *sqlDatabase) insertReplaceQuery(data interface{}, ip, dataType string) error {
@@ -390,7 +392,7 @@ func (d *sqlDatabase) insertReplaceQuery(data interface{}, ip, dataType string) 
 
 func (d *sqlDatabase) getEntry(dest interface{}, ip, dataType string) error {
 	var results sqlSelectResults
-	err := d.selectQuery(&results, ip, dataType)
+	err := d.db.Select(&results, d.db.Rebind("SELECT DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') as time, data, datatype FROM cache WHERE ip=? AND datatype=?;"), ip, dataType)
 	if err != nil {
 		return errors.Wrap(err, "db select failed")
 	}
