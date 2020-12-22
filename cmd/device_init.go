@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
@@ -209,10 +210,10 @@ func getBaseRequest() request.BaseRequest {
 	}
 }
 
-func handleError(err error) {
+func handleError(ctx context.Context, err error) {
 	b, err := parser.Parse(err, viper.GetString("format"))
 	if err != nil {
-		log.Error().AnErr("parse_error", err).AnErr("original_error", err).Msg("failed to parse error")
+		log.Ctx(ctx).Error().AnErr("parse_error", err).AnErr("original_error", err).Msg("failed to parse error")
 	} else {
 		fmt.Printf("%s\n", b)
 	}

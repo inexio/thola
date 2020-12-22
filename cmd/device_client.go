@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/request"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog/log"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -20,17 +21,23 @@ func addBinarySpecificDeviceFlags(fs *flag.FlagSet) {
 }
 
 func handleRequest(r request.Request) {
-	ctx := context.Background()
+	rid := xid.New().String()
+	logger := log.With().Str("request_id", rid).Logger()
+	ctx := logger.WithContext(request.NewContextWithRequestID(context.Background(), rid))
+
+	log.Ctx(ctx).Trace().Msg("sending request")
 
 	resp, err := request.ProcessRequest(ctx, r)
 	if err != nil {
-		handleError(err)
+		handleError(ctx, err)
 		os.Exit(3)
 	}
 
+	log.Ctx(ctx).Trace().Msg("received response")
+
 	b, err := parser.Parse(resp, viper.GetString("format"))
 	if err != nil {
-		log.Error().Err(err).Msg("Request successful, but failed to parse response")
+		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
 		os.Exit(3)
 	}
 

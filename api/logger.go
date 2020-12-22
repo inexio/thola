@@ -15,13 +15,13 @@ func LoggerMiddleware() echo.MiddlewareFunc {
 			res := c.Response()
 			start := time.Now()
 
-			logger := log.Logger
-
 			if err = next(c); err != nil {
 				c.Error(err)
 			}
 
 			stop := time.Now()
+
+			logger := log.Logger.With().Str("request_id", res.Header().Get(echo.HeaderXRequestID)).Logger()
 
 			evt := logger.Info()
 			evt.Str("remote_ip", c.RealIP())

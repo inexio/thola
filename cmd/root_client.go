@@ -15,6 +15,7 @@ import (
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
+	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
 	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
 	rootCMD.PersistentFlags().String("target-api", "", "The URL of the target API")
 	rootCMD.PersistentFlags().String("target-api-username", "", "The username for authorization on the target API")
@@ -30,6 +31,14 @@ func init() {
 		log.Error().
 			AnErr("Error", err).
 			Msg("Can't make flag target-api required")
+		return
+	}
+
+	err = viper.BindPFlag("loglevel", rootCMD.PersistentFlags().Lookup("loglevel"))
+	if err != nil {
+		log.Error().
+			AnErr("Error", err).
+			Msg("Can't bind flag loglevel")
 		return
 	}
 
@@ -102,6 +111,11 @@ var rootCMD = &cobra.Command{
 		if !(viper.GetString("target-api-format") == "json" || viper.GetString("target-api-format") == "xml") {
 			return errors.New("invalid api format set")
 		}
+		loglevel, err := zerolog.ParseLevel(viper.GetString("loglevel"))
+		if err != nil {
+			return errors.New("invalid loglevel set")
+		}
+		zerolog.SetGlobalLevel(loglevel)
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {

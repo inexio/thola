@@ -5,10 +5,12 @@ package request
 import (
 	"context"
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
+	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"strings"
@@ -236,6 +238,7 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create http client")
 	}
+
 	if apiUserName != "" && apiPassword != "" {
 		err := client.SetUsernameAndPassword(apiUserName, apiPassword)
 		if err != nil {
@@ -253,10 +256,19 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse request to format '%s'", format)
 	}
-	restyResponse, err := client.Request(ctx, "POST", path, string(b), nil, nil)
+
+	var restyResponse *resty.Response
+	rid, ok := RequestIDFromContext(ctx)
+	if !ok {
+		restyResponse, err = client.Request(ctx, "POST", path, string(b), nil, nil)
+	} else {
+		restyResponse, err = client.Request(ctx, "POST", path, string(b), map[string]string{echo.HeaderXRequestID: rid}, nil)
+	}
+
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to send request to api")
 	}
+
 	if restyResponse.IsError() {
 		var errorMessageFetcher map[string]interface{}
 		err = parser.ToStruct(restyResponse.Body(), format, &errorMessageFetcher)
@@ -273,5 +285,6 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 		return nil, fmt.Errorf("an error occurred during api call. response body: '%s'", restyResponse.Body())
 
 	}
+
 	return restyResponse.Body(), nil
 }

@@ -60,6 +60,8 @@ func StartAPI() {
 
 	e.Use(statistics.Middleware())
 
+	e.Use(RequestIDMiddleware())
+
 	e.Use(LoggerMiddleware())
 
 	// swagger:operation POST /identify identify identify
@@ -504,7 +506,7 @@ func identify(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -516,7 +518,7 @@ func checkIdentify(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -528,7 +530,7 @@ func checkSNMP(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -540,7 +542,7 @@ func checkInterfaceMetrics(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -552,7 +554,7 @@ func checkTholaServer(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, nil)
+	resp, err := handleAPIRequest(ctx, &r, nil)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -564,7 +566,7 @@ func checkUPS(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -576,7 +578,7 @@ func checkMemoryUsage(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -588,7 +590,7 @@ func checkCpuLoad(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -600,7 +602,7 @@ func checkMetrics(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -612,7 +614,7 @@ func readInterfaces(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -624,7 +626,7 @@ func readCountInterfaces(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -636,7 +638,7 @@ func readCPULoad(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -648,7 +650,7 @@ func readMemoryUsage(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -660,7 +662,7 @@ func readUPS(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -672,7 +674,7 @@ func readAvailableComponents(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -719,11 +721,15 @@ func getDeviceLock(ip string) *sync.Mutex {
 	return lock
 }
 
-func handleAPIRequest(r request.Request, ip *string) (request.Response, error) {
+func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
 		lock := getDeviceLock(*ip)
 		lock.Lock()
 		defer lock.Unlock()
 	}
-	return request.ProcessRequest(context.Background(), r)
+
+	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
+	ctx := logger.WithContext(context.Background())
+
+	return request.ProcessRequest(ctx, r)
 }
