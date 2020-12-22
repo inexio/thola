@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
 	rootCMD.PersistentFlags().String("target-api", "", "The URL of the target API")

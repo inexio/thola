@@ -33,6 +33,7 @@ func init() {
 
 	rootCMD.PersistentFlags().Bool("db-rebuild", false, "Rebuild the cache DB")
 	rootCMD.PersistentFlags().Bool("no-cache", false, "Don't use a database cache")
+	rootCMD.PersistentFlags().Bool("ignore-db-failure", false, "Ignore the cache if the database fails")
 	rootCMD.Flags().Bool("version", false, "Prints the version of Thola")
 
 	err := viper.BindPFlag("config", rootCMD.PersistentFlags().Lookup("config"))
@@ -120,6 +121,14 @@ func init() {
 		log.Error().
 			AnErr("Error", err).
 			Msg("Can't bind flag no-cache")
+		return
+	}
+
+	err = viper.BindPFlag("db.ignore-db-failure", rootCMD.PersistentFlags().Lookup("ignore-db-failure"))
+	if err != nil {
+		log.Error().
+			AnErr("Error", err).
+			Msg("Can't bind flag ignore-db-failure")
 		return
 	}
 }

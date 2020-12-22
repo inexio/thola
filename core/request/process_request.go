@@ -20,10 +20,10 @@ type response struct {
 }
 
 // ProcessRequest is called by every request thola receives
-func ProcessRequest(request Request) (Response, error) {
+func ProcessRequest(ctx context.Context, request Request) (Response, error) {
 	logger := log.With().Str("request_id", xid.New().String()).Logger()
-	ctx := logger.WithContext(context.Background())
-	err := request.validate()
+	ctx = logger.WithContext(ctx)
+	err := request.validate(ctx)
 	if err != nil {
 		return request.handlePreProcessError(errors.Wrap(err, "invalid request"))
 	}

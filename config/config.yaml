@@ -8,6 +8,8 @@ loglevel: error
 db:
   # don't use a database cache
   no-cache: false
+  # ignore the cache if the database fails
+  ignore-db-failure: false
   # the db drivername (built-in, mysql and redis are supported)
   drivername: built-in
   # timespan in which the data in the cache stays valid

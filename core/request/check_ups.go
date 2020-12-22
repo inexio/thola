@@ -1,5 +1,7 @@
 package request
 
+import "context"
+
 // CheckUPSRequest
 //
 // CheckUPSRequest is a the request struct for the check ups request.
@@ -14,7 +16,7 @@ type CheckUPSRequest struct {
 	SystemVoltageThresholds      CheckThresholds `json:"systemVoltageThresholds" xml:"systemVoltageThresholds"`
 }
 
-func (r *CheckUPSRequest) validate() error {
+func (r *CheckUPSRequest) validate(ctx context.Context) error {
 	if err := r.BatteryCurrentThresholds.validate(); err != nil {
 		return err
 	}
@@ -35,5 +37,5 @@ func (r *CheckUPSRequest) validate() error {
 		return err
 	}
 
-	return r.CheckDeviceRequest.validate()
+	return r.CheckDeviceRequest.validate(ctx)
 }

@@ -1,5 +1,7 @@
 package request
 
+import "context"
+
 // CheckCPULoadRequest
 //
 // CheckCPULoadRequest is a the request struct for the check cpu load request.
@@ -10,9 +12,9 @@ type CheckCPULoadRequest struct {
 	CPULoadThresholds CheckThresholds `json:"cpuLoadThresholds" xml:"cpuLoadThresholds"`
 }
 
-func (r *CheckCPULoadRequest) validate() error {
+func (r *CheckCPULoadRequest) validate(ctx context.Context) error {
 	if err := r.CPULoadThresholds.validate(); err != nil {
 		return err
 	}
-	return r.CheckDeviceRequest.validate()
+	return r.CheckDeviceRequest.validate(ctx)
 }

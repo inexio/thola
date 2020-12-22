@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (r *CheckTholaServerRequest) process(_ context.Context) (Response, error) {
+func (r *CheckTholaServerRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
 	stats, err := statistics.GetStatistics()
@@ -21,13 +21,13 @@ func (r *CheckTholaServerRequest) process(_ context.Context) (Response, error) {
 
 	r.mon.UpdateStatus(monitoringplugin.OK, "thola server is running since "+stats.UpSince.Format(time.UnixDate))
 
-	db, err := database.GetDB()
+	db, err := database.GetDB(ctx)
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to get database", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
-	err = db.CheckConnection()
+	err = db.CheckConnection(ctx)
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.CRITICAL, "database is not alive", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil

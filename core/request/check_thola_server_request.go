@@ -23,7 +23,7 @@ func (r *CheckTholaServerRequest) getTimeout() *int {
 	return r.Timeout
 }
 
-func (r *CheckTholaServerRequest) validate() error {
+func (r *CheckTholaServerRequest) validate(_ context.Context) error {
 	return nil
 }
 

@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"os"
 )
 
 var deviceFlagSet = buildDeviceFlagSet()
@@ -210,22 +209,11 @@ func getBaseRequest() request.BaseRequest {
 	}
 }
 
-func handleRequest(r request.Request) {
-	resp, err := request.ProcessRequest(r)
+func handleError(err error) {
+	b, err := parser.Parse(err, viper.GetString("format"))
 	if err != nil {
-		b, err := parser.Parse(err, viper.GetString("format"))
-		if err != nil {
-			log.Error().AnErr("parse_error", err).AnErr("original_error", err).Msg("failed to parse error")
-		} else {
-			fmt.Printf("%s\n", b)
-		}
-		os.Exit(3)
+		log.Error().AnErr("parse_error", err).AnErr("original_error", err).Msg("failed to parse error")
+	} else {
+		fmt.Printf("%s\n", b)
 	}
-	b, err := parser.Parse(resp, viper.GetString("format"))
-	if err != nil {
-		log.Error().Err(err).Msg("Request successful, but failed to parse response")
-		os.Exit(3)
-	}
-	fmt.Printf("%s\n", b)
-	os.Exit(resp.GetExitCode())
 }

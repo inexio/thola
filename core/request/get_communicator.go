@@ -14,14 +14,14 @@ import (
 
 // GetCommunicator returns a NetworkDeviceCommunicator for the given device.
 func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator.NetworkDeviceCommunicator, error) {
-	db, err := database.GetDB()
+	db, err := database.GetDB(ctx)
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("failed to get DB")
 		return nil, errors.Wrap(err, "failed to get DB")
 	}
 
 	var invalidCache bool
-	deviceProperties, err := db.GetDeviceProperties(baseRequest.DeviceData.IPAddress)
+	deviceProperties, err := db.GetDeviceProperties(ctx, baseRequest.DeviceData.IPAddress)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) {
 			log.Ctx(ctx).Error().Err(err).Msg("failed to get connection data from cache")

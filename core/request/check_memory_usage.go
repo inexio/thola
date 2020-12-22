@@ -1,5 +1,7 @@
 package request
 
+import "context"
+
 // CheckMemoryUsageRequest
 //
 // CheckMemoryUsageRequest is a the request struct for the check memory usage request.
@@ -10,9 +12,9 @@ type CheckMemoryUsageRequest struct {
 	MemoryUsageThresholds CheckThresholds `json:"memoryUsageThresholds" xml:"memoryUsageThresholds"`
 }
 
-func (r *CheckMemoryUsageRequest) validate() error {
+func (r *CheckMemoryUsageRequest) validate(ctx context.Context) error {
 	if err := r.MemoryUsageThresholds.validate(); err != nil {
 		return err
 	}
-	return r.CheckDeviceRequest.validate()
+	return r.CheckDeviceRequest.validate(ctx)
 }

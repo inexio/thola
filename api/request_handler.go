@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"crypto/subtle"
 	"fmt"
 	"github.com/inexio/thola/api/statistics"
@@ -12,7 +13,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"time"
 )
 
 var deviceLocks struct {
@@ -23,7 +27,8 @@ var deviceLocks struct {
 
 // StartAPI starts the API.
 func StartAPI() {
-	_, err := database.GetDB()
+	ctx := context.Background()
+	db, err := database.GetDB(ctx)
 	if err != nil {
 		log.Fatal().Err(err).Msg("starting api failed")
 	}
@@ -54,6 +59,8 @@ func StartAPI() {
 	}
 
 	e.Use(statistics.Middleware())
+
+	e.Use(LoggerMiddleware())
 
 	// swagger:operation POST /identify identify identify
 	// ---
@@ -460,10 +467,35 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/available-components", readAvailableComponents)
 
-	if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
-		e.Logger.Fatal(e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile")))
-	} else {
-		e.Logger.Fatal(e.Start(":" + viper.GetString("api.port")))
+	// Start server
+	go func() {
+		if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
+			err = e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile"))
+		} else {
+			err = e.Start(":" + viper.GetString("api.port"))
+		}
+
+		if dbErr := db.CloseConnection(ctx); dbErr != nil {
+			log.Err(dbErr).Msg("failed to close connection to the db")
+		}
+
+		if err != nil && err == http.ErrServerClosed {
+			log.Info().Msg("shutting down the server")
+		} else {
+			log.Fatal().Err(err).Msg("unexpected server error")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	// Also close the connection to the database.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	if err = e.Shutdown(ctx); err != nil {
+		log.Fatal().Err(err).Msg("shutting down the server failed")
 	}
 }
 
@@ -693,5 +725,5 @@ func handleAPIRequest(r request.Request, ip *string) (request.Response, error) {
 		lock.Lock()
 		defer lock.Unlock()
 	}
-	return request.ProcessRequest(r)
+	return request.ProcessRequest(context.Background(), r)
 }
