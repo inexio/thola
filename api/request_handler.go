@@ -27,10 +27,12 @@ var deviceLocks struct {
 
 // StartAPI starts the API.
 func StartAPI() {
+	log.Trace().Msg("starting the server")
+
 	ctx := context.Background()
 	db, err := database.GetDB(ctx)
 	if err != nil {
-		log.Fatal().Err(err).Msg("starting api failed")
+		log.Fatal().Err(err).Msg("starting the server failed")
 	}
 
 	deviceLocks.locks = make(map[string]*sync.Mutex)
@@ -44,6 +46,7 @@ func StartAPI() {
 		"    \\/_/   \\/_/\\/_/   \\/_____/   \\/_____/   \\/_/\\/_/\n\n")
 
 	if (viper.GetString("api.username") != "") && (viper.GetString("api.password") != "") {
+		log.Trace().Msg("set authorization for api")
 		e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 			// Be careful to use constant time comparison to prevent timing attacks
 			if subtle.ConstantTimeCompare([]byte(username), []byte(viper.GetString("restapi.username"))) == 1 &&
@@ -55,14 +58,15 @@ func StartAPI() {
 	}
 
 	if viper.GetString("api.ratelimit") != "" {
+		log.Trace().Msg("set ratelimit for api")
 		e.Use(ipRateLimit())
 	}
 
 	e.Use(statistics.Middleware())
 
-	e.Use(RequestIDMiddleware())
+	e.Use(requestIDMiddleware())
 
-	e.Use(LoggerMiddleware())
+	e.Use(loggerMiddleware())
 
 	// swagger:operation POST /identify identify identify
 	// ---
@@ -477,6 +481,8 @@ func StartAPI() {
 			err = e.Start(":" + viper.GetString("api.port"))
 		}
 
+		log.Trace().Msg("closing connection to the database")
+
 		if dbErr := db.CloseConnection(ctx); dbErr != nil {
 			log.Err(dbErr).Msg("failed to close connection to the db")
 		}
@@ -493,6 +499,9 @@ func StartAPI() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+
+	log.Trace().Msg("received shutdown signal")
+
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
@@ -725,7 +734,12 @@ func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (requ
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
 		lock := getDeviceLock(*ip)
 		lock.Lock()
-		defer lock.Unlock()
+		defer func() {
+			lock.Unlock()
+			log.Trace().Msg("unlocked IP " + *ip)
+		}()
+
+		log.Trace().Msg("locked IP " + *ip)
 	}
 
 	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()

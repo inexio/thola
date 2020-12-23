@@ -9,6 +9,7 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"os"
 	"os/user"
@@ -37,6 +38,7 @@ type Database interface {
 
 func initDB(ctx context.Context) error {
 	if viper.GetBool("db.no-cache") {
+		log.Trace().Msg("initialized empty database")
 		db.Database = &emptyDatabase{}
 		return nil
 	}
@@ -49,7 +51,9 @@ func initDB(ctx context.Context) error {
 
 	db.ignoreFailure = viper.GetBool("db.ignore-db-failure")
 
-	if viper.GetString("db.drivername") == "built-in" {
+	drivername := viper.GetString("db.drivername")
+
+	if drivername == "built-in" {
 		badgerDB := badgerDatabase{}
 		u, err := user.Current()
 		if err != nil {
@@ -66,7 +70,7 @@ func initDB(ctx context.Context) error {
 			}
 		}
 		db.Database = &badgerDB
-	} else if viper.GetString("db.drivername") == "mysql" {
+	} else if drivername == "mysql" {
 		checkIfTableExistsQuery := "SHOW TABLES LIKE 'cache';"
 		sqlDB := sqlDatabase{}
 		if viper.GetString("db.sql.datasourcename") != "" {
@@ -94,7 +98,7 @@ func initDB(ctx context.Context) error {
 			}
 		}
 		db.Database = &sqlDB
-	} else if viper.GetString("db.drivername") == "redis" {
+	} else if drivername == "redis" {
 		redisDB := redisDatabase{
 			db: redis.NewClient(&redis.Options{
 				Addr:     viper.GetString("db.redis.addr"),
@@ -116,6 +120,7 @@ func initDB(ctx context.Context) error {
 	} else {
 		return errors.New("invalid drivername, only 'built-in', 'mysql' and 'redis' supported")
 	}
+	log.Trace().Msg("initialized " + drivername + " database")
 	return nil
 }
 

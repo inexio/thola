@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func LoggerMiddleware() echo.MiddlewareFunc {
+func loggerMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			var err error
