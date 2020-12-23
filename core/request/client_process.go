@@ -5,12 +5,11 @@ package request
 import (
 	"context"
 	"fmt"
-	"github.com/go-resty/resty/v2"
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/labstack/echo"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"strings"
@@ -257,14 +256,13 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 		return nil, errors.Wrapf(err, "failed to parse request to format '%s'", format)
 	}
 
-	var restyResponse *resty.Response
+	header := map[string]string{"User-Agent": "Thola Client " + doc.Version}
 	rid, ok := RequestIDFromContext(ctx)
-	if !ok {
-		restyResponse, err = client.Request(ctx, "POST", path, string(b), nil, nil)
-	} else {
-		restyResponse, err = client.Request(ctx, "POST", path, string(b), map[string]string{echo.HeaderXRequestID: rid}, nil)
+	if ok {
+		header["X-Request-ID"] = rid
 	}
 
+	restyResponse, err := client.Request(ctx, "POST", path, string(b), header, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to send request to api")
 	}

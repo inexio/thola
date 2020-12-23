@@ -3,8 +3,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/inexio/thola/core/database"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -178,7 +184,7 @@ var rootCMD = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Lookup("version").Changed {
-			fmt.Println("v0.1.2")
+			fmt.Println(doc.Version)
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
@@ -190,4 +196,37 @@ func Execute() {
 	if err := rootCMD.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func handleRequest(r request.Request) {
+	logger := log.With().Str("request_id", xid.New().String()).Logger()
+	ctx := logger.WithContext(context.Background())
+
+	db, err := database.GetDB(ctx)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	resp, err := request.ProcessRequest(ctx, r)
+	if err != nil {
+		handleError(ctx, err)
+		_ = db.CloseConnection(ctx)
+		os.Exit(3)
+	}
+
+	err = db.CloseConnection(ctx)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	b, err := parser.Parse(resp, viper.GetString("format"))
+	if err != nil {
+		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
+		os.Exit(3)
+	}
+
+	fmt.Printf("%s\n", b)
+	os.Exit(resp.GetExitCode())
 }

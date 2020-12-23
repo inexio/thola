@@ -3,8 +3,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -120,15 +125,41 @@ var rootCMD = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Lookup("version").Changed {
-			fmt.Println("v0.1.1")
+			fmt.Println(doc.Version)
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
 	},
 }
 
+// Execute is the entrypoint for the CLI interface.
 func Execute() {
 	if err := rootCMD.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func handleRequest(r request.Request) {
+	rid := xid.New().String()
+	logger := log.With().Str("request_id", rid).Logger()
+	ctx := logger.WithContext(request.NewContextWithRequestID(context.Background(), rid))
+
+	log.Ctx(ctx).Trace().Msg("sending request")
+
+	resp, err := request.ProcessRequest(ctx, r)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	log.Ctx(ctx).Trace().Msg("received response")
+
+	b, err := parser.Parse(resp, viper.GetString("format"))
+	if err != nil {
+		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
+		os.Exit(3)
+	}
+
+	fmt.Printf("%s\n", b)
+	os.Exit(resp.GetExitCode())
 }

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -86,5 +87,5 @@ func toHumanReadable(value reflect.Value, insertion int) []byte {
 		}
 	}
 
-	return outputString
+	return bytes.TrimSpace(outputString)
 }

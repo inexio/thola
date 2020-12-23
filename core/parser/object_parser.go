@@ -75,7 +75,7 @@ func ToHumanReadable(i interface{}) ([]byte, error) {
 	if i == nil {
 		return []byte("null"), nil
 	}
-	return bytes.TrimSpace(toHumanReadable(reflect.ValueOf(i), 0)), nil
+	return toHumanReadable(reflect.ValueOf(i), 0), nil
 }
 
 // ToCheckPluginOutput parses the object to a check plugin format.

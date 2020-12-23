@@ -44,7 +44,7 @@ func LoggerMiddleware() echo.MiddlewareFunc {
 
 			evt.Str("bytes_in", cl)
 			evt.Str("bytes_out", strconv.FormatInt(res.Size, 10))
-			evt.Msg("")
+			evt.Msg("handled request")
 
 			return err
 		}
