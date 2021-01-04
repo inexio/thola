@@ -4,10 +4,10 @@ go 1.14
 
 require (
 	github.com/dgraph-io/badger/v2 v2.2007.2
-	github.com/go-redis/redis/v7 v7.4.0
+	github.com/go-redis/redis/v8 v8.4.4
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/google/go-cmp v0.3.0
+	github.com/google/go-cmp v0.5.4
 	github.com/gosnmp/gosnmp v1.29.0
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/inexio/go-monitoringplugin v0.0.0-20201117085742-ec06ef4904fe
