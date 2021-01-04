@@ -9,6 +9,7 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"strings"
@@ -98,6 +99,14 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/ups"), nil
 }
 
+func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/memory-usage"), nil
+}
+
+func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/cpu-load"), nil
+}
+
 func (r *CheckMetricsRequest) process(ctx context.Context) (Response, error) {
 	var res CheckResponse
 	apiFormat := viper.GetString("target-api-format")
@@ -138,6 +147,34 @@ func (r *ReadCountInterfacesRequest) process(ctx context.Context) (Response, err
 		return nil, err
 	}
 	var res ReadCountInterfacesResponse
+	err = parser.ToStruct(responseBody, apiFormat, &res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
+	}
+	return &res, nil
+}
+
+func (r *ReadCPULoadRequest) process(ctx context.Context) (Response, error) {
+	apiFormat := viper.GetString("target-api-format")
+	responseBody, err := sendToAPI(ctx, r, "read/cpu-load", apiFormat)
+	if err != nil {
+		return nil, err
+	}
+	var res ReadCPULoadResponse
+	err = parser.ToStruct(responseBody, apiFormat, &res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
+	}
+	return &res, nil
+}
+
+func (r *ReadMemoryUsageRequest) process(ctx context.Context) (Response, error) {
+	apiFormat := viper.GetString("target-api-format")
+	responseBody, err := sendToAPI(ctx, r, "read/memory-usage", apiFormat)
+	if err != nil {
+		return nil, err
+	}
+	var res ReadMemoryUsageResponse
 	err = parser.ToStruct(responseBody, apiFormat, &res)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
@@ -200,6 +237,7 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create http client")
 	}
+
 	if apiUserName != "" && apiPassword != "" {
 		err := client.SetUsernameAndPassword(apiUserName, apiPassword)
 		if err != nil {
@@ -217,10 +255,18 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse request to format '%s'", format)
 	}
-	restyResponse, err := client.Request(ctx, "POST", path, string(b), nil, nil)
+
+	header := map[string]string{"User-Agent": "Thola Client " + doc.Version}
+	rid, ok := RequestIDFromContext(ctx)
+	if ok {
+		header["X-Request-ID"] = rid
+	}
+
+	restyResponse, err := client.Request(ctx, "POST", path, string(b), header, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to send request to api")
 	}
+
 	if restyResponse.IsError() {
 		var errorMessageFetcher map[string]interface{}
 		err = parser.ToStruct(restyResponse.Body(), format, &errorMessageFetcher)
@@ -237,5 +283,6 @@ func sendToAPI(ctx context.Context, request Request, path, format string) ([]byt
 		return nil, fmt.Errorf("an error occurred during api call. response body: '%s'", restyResponse.Body())
 
 	}
+
 	return restyResponse.Body(), nil
 }

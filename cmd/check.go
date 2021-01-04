@@ -40,7 +40,9 @@ var checkCMD = &cobra.Command{
 			viper.Set("format", "check-plugin")
 		}
 
-		zerolog.SetGlobalLevel(zerolog.Disabled)
+		if !cmd.Flags().Changed("loglevel") {
+			zerolog.SetGlobalLevel(zerolog.Disabled)
+		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {

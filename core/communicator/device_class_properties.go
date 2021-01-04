@@ -109,11 +109,11 @@ func (c *sysDescriptionPropertyReader) getProperty(ctx context.Context) (value.V
 	return value.New(sysDescription), nil
 }
 
-type snmpgetPropertyReader struct {
+type snmpGetPropertyReader struct {
 	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
 }
 
-func (s *snmpgetPropertyReader) getProperty(ctx context.Context) (value.Value, error) {
+func (s *snmpGetPropertyReader) getProperty(ctx context.Context) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil || con.SNMP.SnmpClient == nil {
 		return "", errors.New("No SNMP Data available!")
@@ -121,7 +121,7 @@ func (s *snmpgetPropertyReader) getProperty(ctx context.Context) (value.Value, e
 	oid := string(s.OID)
 	result, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Str("property_reader", "snmpget").Msg("snmpget failed")
+		log.Ctx(ctx).Trace().Err(err).Str("property_reader", "snmpget").Msg("snmpget on oid " + oid + " failed")
 		return "", errors.Wrap(err, "snmpget failed")
 	}
 

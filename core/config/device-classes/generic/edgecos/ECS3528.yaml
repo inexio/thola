@@ -1,0 +1,19 @@
+name: "ECS3528"
+
+config:
+  components:
+    cpuComponent: true
+
+match:
+  logical_operator: "OR"
+  conditions:
+    - type: SysObjectID
+      match_mode: startsWith
+      values:
+        - .1.3.6.1.4.1.259.10.1.22.
+
+components:
+  cpu:
+    load:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.259.10.1.22.1.39.2.3.0

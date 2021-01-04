@@ -29,6 +29,8 @@ type deviceClassComponent byte
 const (
 	interfacesComponent deviceClassComponent = iota + 1
 	upsComponent
+	cpuComponent
+	memoryComponent
 )
 
 // deviceClass represents a device class.
@@ -62,6 +64,8 @@ type deviceClassIdentifyProperties struct {
 type deviceClassComponents struct {
 	interfaces *deviceClassComponentsInterfaces
 	ups        *deviceClassComponentsUPS
+	cpu        *deviceClassComponentsCPU
+	memory     *deviceClassComponentsMemory
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -77,6 +81,17 @@ type deviceClassComponentsUPS struct {
 	mainsVoltageApplied       propertyReader
 	rectifierCurrent          propertyReader
 	systemVoltage             propertyReader
+}
+
+// deviceClassComponentsCPU represents the cpu components part of a device class.
+type deviceClassComponentsCPU struct {
+	load        propertyReader
+	temperature propertyReader
+}
+
+// deviceClassComponentsCPU represents the memory components part of a device class.
+type deviceClassComponentsMemory struct {
+	usage propertyReader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -133,8 +148,10 @@ type yamlDeviceClassIdentify struct {
 }
 
 type yamlDeviceClassComponents struct {
-	UPS        *yamlComponentsUPSProperties `yaml:"ups"`
-	Interfaces *yamlComponentsInterfaces    `yaml:"interfaces"`
+	Interfaces *yamlComponentsInterfaces       `yaml:"interfaces"`
+	UPS        *yamlComponentsUPSProperties    `yaml:"ups"`
+	CPU        *yamlComponentsCPUProperties    `yaml:"cpu"`
+	Memory     *yamlComponentsMemoryProperties `yaml:"memory"`
 }
 
 type yamlDeviceClassConfig struct {
@@ -167,6 +184,15 @@ type yamlComponentsUPSProperties struct {
 	MainsVoltageApplied       []interface{} `yaml:"mains_voltage_applied"`
 	RectifierCurrent          []interface{} `yaml:"rectifier_current"`
 	SystemVoltage             []interface{} `yaml:"system_voltage"`
+}
+
+type yamlComponentsCPUProperties struct {
+	Load        []interface{} `yaml:"load"`
+	Temperature []interface{} `yaml:"temperature"`
+}
+
+type yamlComponentsMemoryProperties struct {
+	Usage []interface{} `yaml:"usage"`
 }
 
 type yamlComponentsInterfaces struct {
@@ -561,6 +587,22 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.ups = &ups
 	}
 
+	if y.CPU != nil {
+		cpu, err := y.CPU.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml CPU properties")
+		}
+		components.cpu = &cpu
+	}
+
+	if y.Memory != nil {
+		memory, err := y.Memory.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml memory properties")
+		}
+		components.memory = &memory
+	}
+
 	return components, nil
 }
 
@@ -796,6 +838,37 @@ func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error
 	return properties, nil
 }
 
+func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error) {
+	var properties deviceClassComponentsCPU
+	var err error
+
+	if y.Load != nil {
+		properties.load, err = convertYamlProperty(y.Load, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
+		}
+	}
+	if y.Temperature != nil {
+		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory, error) {
+	var properties deviceClassComponentsMemory
+	var err error
+	if y.Usage != nil {
+		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
+		}
+	}
+	return properties, nil
+}
+
 func (y *yamlConditionSet) convert() (condition, error) {
 	err := y.validate()
 	if err != nil {
@@ -964,7 +1037,7 @@ func interface2propertyReader(i interface{}, task relatedTask) (propertyReader, 
 	var basePropReader basePropertyReader
 	switch stringDetection {
 	case "snmpget":
-		var pr snmpgetPropertyReader
+		var pr snmpGetPropertyReader
 		err := mapstructure.Decode(i, &pr)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode constant propertyReader")
@@ -1191,7 +1264,7 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 				}
 				valueReader, err := interface2propertyReader(valueReaderInterface, task)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to convert read_value to propertyReader in inserReadValue operator")
+					return nil, errors.Wrap(err, "failed to convert read_value to propertyReader in insertReadValue operator")
 				}
 				var irvModifier insertReadValueModifier
 				irvModifier.format = format
@@ -1364,6 +1437,10 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return interfacesComponent, nil
 	case "upsComponent":
 		return upsComponent, nil
+	case "cpuComponent":
+		return cpuComponent, nil
+	case "memoryComponent":
+		return memoryComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -1378,6 +1455,10 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "interfaceComponent", nil
 	case upsComponent:
 		return "upsComponent", nil
+	case cpuComponent:
+		return "cpuComponent", nil
+	case memoryComponent:
+		return "memoryComponent", nil
 	default:
 		return "", errors.New("unknown component")
 	}

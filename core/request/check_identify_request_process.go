@@ -145,8 +145,8 @@ func (r *CheckIdentifyRequest) handlePreProcessError(err error) (Response, error
 	}, nil
 }
 
-func (r *CheckIdentifyRequest) validate() error {
-	err := r.BaseRequest.validate()
+func (r *CheckIdentifyRequest) validate(ctx context.Context) error {
+	err := r.BaseRequest.validate(ctx)
 	if err != nil {
 		return errors.Wrap(err, "base request is not valid")
 	}

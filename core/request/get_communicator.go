@@ -5,6 +5,7 @@ package request
 import (
 	"context"
 	"github.com/inexio/thola/core/communicator"
+	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
@@ -13,27 +14,33 @@ import (
 
 // GetCommunicator returns a NetworkDeviceCommunicator for the given device.
 func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator.NetworkDeviceCommunicator, error) {
-	db, err := getDB()
+	db, err := database.GetDB(ctx)
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("failed to get DB")
 		return nil, errors.Wrap(err, "failed to get DB")
 	}
 
 	var invalidCache bool
-	identifyData, err := db.GetIdentifyData(baseRequest.DeviceData.IPAddress)
+	deviceProperties, err := db.GetDeviceProperties(ctx, baseRequest.DeviceData.IPAddress)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to get connection data from cache")
-			return nil, errors.Wrap(err, "failed to get connection data from cache")
+			log.Ctx(ctx).Error().Err(err).Msg("failed to get device properties from cache")
+			return nil, errors.Wrap(err, "failed to get device properties from cache")
 		}
+		log.Ctx(ctx).Trace().Msg("no device properties found in cache")
 		invalidCache = true
 	} else {
-		res, err := communicator.MatchDeviceClass(ctx, identifyData.Class)
+		log.Ctx(ctx).Trace().Msg("found device properties in cache, starting to validate")
+		res, err := communicator.MatchDeviceClass(ctx, deviceProperties.Class)
 		if err != nil {
 			log.Ctx(ctx).Error().Err(err).Msg("failed to match device class")
 			return nil, errors.Wrap(err, "failed to match device class")
 		}
-		invalidCache = !res
+		if invalidCache = !res; invalidCache {
+			log.Ctx(ctx).Trace().Msg("cached device class is invalid")
+		} else {
+			log.Ctx(ctx).Trace().Msg("cached device class is valid")
+		}
 	}
 	if invalidCache {
 		identifyRequest := IdentifyRequest{BaseRequest: baseRequest}
@@ -42,13 +49,13 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 			log.Ctx(ctx).Error().Err(err).Msg("failed to run identify")
 			return nil, errors.Wrap(err, "failed to run identify")
 		}
-		identifyData = res.(*IdentifyResponse)
+		deviceProperties = res.(*IdentifyResponse).Device
 	}
-	ctx = device.NewContextWithDeviceProperties(ctx, identifyData.Device)
+	ctx = device.NewContextWithDeviceProperties(ctx, deviceProperties)
 
-	com, err := communicator.CreateNetworkDeviceCommunicator(ctx, identifyData.Class)
+	com, err := communicator.CreateNetworkDeviceCommunicator(ctx, deviceProperties.Class)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get communicator for os '%s'", identifyData.Device.Class)
+		return nil, errors.Wrapf(err, "failed to get communicator for os '%s'", deviceProperties.Class)
 	}
 	return com, nil
 }

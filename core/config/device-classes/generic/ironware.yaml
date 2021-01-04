@@ -3,6 +3,8 @@ name: ironware
 config:
   snmp:
     max_repetitions: 1
+  components:
+    cpuComponent: true
 
 match:
   conditions:

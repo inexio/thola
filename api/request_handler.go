@@ -1,16 +1,22 @@
 package api
 
 import (
+	"context"
 	"crypto/subtle"
 	"fmt"
 	"github.com/inexio/thola/api/statistics"
+	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/request"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"time"
 )
 
 var deviceLocks struct {
@@ -21,6 +27,14 @@ var deviceLocks struct {
 
 // StartAPI starts the API.
 func StartAPI() {
+	log.Trace().Msg("starting the server")
+
+	ctx := context.Background()
+	db, err := database.GetDB(ctx)
+	if err != nil {
+		log.Fatal().Err(err).Msg("starting the server failed")
+	}
+
 	deviceLocks.locks = make(map[string]*sync.Mutex)
 	e := echo.New()
 
@@ -32,6 +46,7 @@ func StartAPI() {
 		"    \\/_/   \\/_/\\/_/   \\/_____/   \\/_____/   \\/_/\\/_/\n\n")
 
 	if (viper.GetString("api.username") != "") && (viper.GetString("api.password") != "") {
+		log.Trace().Msg("set authorization for api")
 		e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 			// Be careful to use constant time comparison to prevent timing attacks
 			if subtle.ConstantTimeCompare([]byte(username), []byte(viper.GetString("restapi.username"))) == 1 &&
@@ -43,10 +58,15 @@ func StartAPI() {
 	}
 
 	if viper.GetString("api.ratelimit") != "" {
+		log.Trace().Msg("set ratelimit for api")
 		e.Use(ipRateLimit())
 	}
 
 	e.Use(statistics.Middleware())
+
+	e.Use(requestIDMiddleware())
+
+	e.Use(loggerMiddleware())
 
 	// swagger:operation POST /identify identify identify
 	// ---
@@ -210,6 +230,60 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/ups", checkUPS)
 
+	// swagger:operation POST /check/memory-usage check checkMemoryUsage
+	// ---
+	// summary: Read out the memory usage of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckMemoryUsageRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckMemoryUsageResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/memory-usage", checkMemoryUsage)
+
+	// swagger:operation POST /check/cpu-load check checkCpuLoad
+	// ---
+	// summary: Read out the cpu load of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckCpuLoadRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckCpuLoadResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/cpu-load", checkCpuLoad)
+
 	// swagger:operation POST /check/metrics check checkMetrics
 	// ---
 	// summary: Prints all available metrics for a device as performance data.
@@ -291,6 +365,60 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/count-interfaces", readCountInterfaces)
 
+	// swagger:operation POST /read/cpu-load read readCPULoad
+	// ---
+	// summary: Read out the CPU load of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadCPULoadRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadCPULoadResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/cpu-load", readCPULoad)
+
+	// swagger:operation POST /read/memory-usage read readMemoryUsage
+	// ---
+	// summary: Read out the memory usage of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadMemoryUsageRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadMemoryUsageResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/memory-usage", readMemoryUsage)
+
 	// swagger:operation POST /read/ups read readUPS
 	// ---
 	// summary: Reads out UPS data of a device.
@@ -345,10 +473,40 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/available-components", readAvailableComponents)
 
-	if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
-		e.Logger.Fatal(e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile")))
-	} else {
-		e.Logger.Fatal(e.Start(":" + viper.GetString("api.port")))
+	// Start server
+	go func() {
+		if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
+			err = e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile"))
+		} else {
+			err = e.Start(":" + viper.GetString("api.port"))
+		}
+
+		log.Trace().Msg("closing connection to the database")
+
+		if dbErr := db.CloseConnection(ctx); dbErr != nil {
+			log.Err(dbErr).Msg("failed to close connection to the db")
+		}
+
+		if err != nil && err == http.ErrServerClosed {
+			log.Info().Msg("shutting down the server")
+		} else {
+			log.Fatal().Err(err).Msg("unexpected server error")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	// Also close the connection to the database.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	log.Trace().Msg("received shutdown signal")
+
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	if err = e.Shutdown(ctx); err != nil {
+		log.Fatal().Err(err).Msg("shutting down the server failed")
 	}
 }
 
@@ -357,7 +515,7 @@ func identify(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -369,7 +527,7 @@ func checkIdentify(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -381,7 +539,7 @@ func checkSNMP(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -393,7 +551,7 @@ func checkInterfaceMetrics(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -405,7 +563,7 @@ func checkTholaServer(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, nil)
+	resp, err := handleAPIRequest(ctx, &r, nil)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -417,7 +575,31 @@ func checkUPS(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkMemoryUsage(ctx echo.Context) error {
+	r := request.CheckMemoryUsageRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkCpuLoad(ctx echo.Context) error {
+	r := request.CheckCPULoadRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -429,7 +611,7 @@ func checkMetrics(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -441,7 +623,7 @@ func readInterfaces(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -453,7 +635,31 @@ func readCountInterfaces(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readCPULoad(ctx echo.Context) error {
+	r := request.ReadCPULoadRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readMemoryUsage(ctx echo.Context) error {
+	r := request.ReadMemoryUsageRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -465,7 +671,7 @@ func readUPS(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -477,7 +683,7 @@ func readAvailableComponents(ctx echo.Context) error {
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
-	resp, err := handleAPIRequest(&r, &r.BaseRequest.DeviceData.IPAddress)
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -524,11 +730,20 @@ func getDeviceLock(ip string) *sync.Mutex {
 	return lock
 }
 
-func handleAPIRequest(r request.Request, ip *string) (request.Response, error) {
+func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
 		lock := getDeviceLock(*ip)
 		lock.Lock()
-		defer lock.Unlock()
+		defer func() {
+			lock.Unlock()
+			log.Trace().Msg("unlocked IP " + *ip)
+		}()
+
+		log.Trace().Msg("locked IP " + *ip)
 	}
-	return request.ProcessRequest(r)
+
+	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
+	ctx := logger.WithContext(context.Background())
+
+	return request.ProcessRequest(ctx, r)
 }

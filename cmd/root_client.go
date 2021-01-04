@@ -3,8 +3,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -13,8 +18,9 @@ import (
 )
 
 func init() {
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
+	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
 	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
 	rootCMD.PersistentFlags().String("target-api", "", "The URL of the target API")
 	rootCMD.PersistentFlags().String("target-api-username", "", "The username for authorization on the target API")
@@ -30,6 +36,14 @@ func init() {
 		log.Error().
 			AnErr("Error", err).
 			Msg("Can't make flag target-api required")
+		return
+	}
+
+	err = viper.BindPFlag("loglevel", rootCMD.PersistentFlags().Lookup("loglevel"))
+	if err != nil {
+		log.Error().
+			AnErr("Error", err).
+			Msg("Can't bind flag loglevel")
 		return
 	}
 
@@ -102,19 +116,50 @@ var rootCMD = &cobra.Command{
 		if !(viper.GetString("target-api-format") == "json" || viper.GetString("target-api-format") == "xml") {
 			return errors.New("invalid api format set")
 		}
+		loglevel, err := zerolog.ParseLevel(viper.GetString("loglevel"))
+		if err != nil {
+			return errors.New("invalid loglevel set")
+		}
+		zerolog.SetGlobalLevel(loglevel)
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Lookup("version").Changed {
-			fmt.Println("v0.1.1")
+			fmt.Println(doc.Version)
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
 	},
 }
 
+// Execute is the entrypoint for the CLI interface.
 func Execute() {
 	if err := rootCMD.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func handleRequest(r request.Request) {
+	rid := xid.New().String()
+	logger := log.With().Str("request_id", rid).Logger()
+	ctx := logger.WithContext(request.NewContextWithRequestID(context.Background(), rid))
+
+	log.Ctx(ctx).Trace().Msg("sending request")
+
+	resp, err := request.ProcessRequest(ctx, r)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	log.Ctx(ctx).Trace().Msg("received response")
+
+	b, err := parser.Parse(resp, viper.GetString("format"))
+	if err != nil {
+		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
+		os.Exit(3)
+	}
+
+	fmt.Printf("%s\n", b)
+	os.Exit(resp.GetExitCode())
 }

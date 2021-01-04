@@ -66,7 +66,7 @@ var (
 )
 
 func init() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	_, currFilename, _, _ := runtime.Caller(0)
 

@@ -7,7 +7,7 @@ import (
 
 // Request is the interface which all requests must implement.
 type Request interface {
-	validate() error
+	validate(ctx context.Context) error
 	getTimeout() *int
 	setupConnection(ctx context.Context) (*network.RequestDeviceConnection, error)
 	process(ctx context.Context) (Response, error)

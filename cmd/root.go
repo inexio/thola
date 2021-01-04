@@ -3,8 +3,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"github.com/inexio/thola/core/database"
+	"github.com/inexio/thola/core/parser"
+	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/doc"
 	"github.com/pkg/errors"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -16,14 +22,14 @@ import (
 var cfgFile string
 
 func init() {
-	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	cobra.OnInitialize(initConfig)
 
 	rootCMD.PersistentFlags().StringVar(&cfgFile, "config", "", "The location of the config file")
 	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
 	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
-	rootCMD.PersistentFlags().String("db-drivername", "sqlite3", "Database type for caching ('sqlite3', 'mysql' or 'redis' supported)")
+	rootCMD.PersistentFlags().String("db-drivername", "built-in", "Database type for caching ('built-in', 'mysql' or 'redis' supported)")
 	rootCMD.PersistentFlags().String("db-duration", "60m", "Duration in which the cache stays valid")
 	rootCMD.PersistentFlags().String("sql-datasourcename", "", "Data sourcename if using a sql driver")
 	rootCMD.PersistentFlags().String("redis-addr", "", "Database address if using the redis driver")
@@ -33,6 +39,7 @@ func init() {
 
 	rootCMD.PersistentFlags().Bool("db-rebuild", false, "Rebuild the cache DB")
 	rootCMD.PersistentFlags().Bool("no-cache", false, "Don't use a database cache")
+	rootCMD.PersistentFlags().Bool("ignore-db-failure", false, "Ignore the cache if the database fails")
 	rootCMD.Flags().Bool("version", false, "Prints the version of Thola")
 
 	err := viper.BindPFlag("config", rootCMD.PersistentFlags().Lookup("config"))
@@ -122,6 +129,14 @@ func init() {
 			Msg("Can't bind flag no-cache")
 		return
 	}
+
+	err = viper.BindPFlag("db.ignore-db-failure", rootCMD.PersistentFlags().Lookup("ignore-db-failure"))
+	if err != nil {
+		log.Error().
+			AnErr("Error", err).
+			Msg("Can't bind flag ignore-db-failure")
+		return
+	}
 }
 
 func initConfig() {
@@ -169,7 +184,7 @@ var rootCMD = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if cmd.Flags().Lookup("version").Changed {
-			fmt.Println("v0.1.1")
+			fmt.Println(doc.Version)
 		} else {
 			fmt.Print(cmd.UsageString())
 		}
@@ -181,4 +196,37 @@ func Execute() {
 	if err := rootCMD.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func handleRequest(r request.Request) {
+	logger := log.With().Str("request_id", xid.New().String()).Logger()
+	ctx := logger.WithContext(context.Background())
+
+	db, err := database.GetDB(ctx)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	resp, err := request.ProcessRequest(ctx, r)
+	if err != nil {
+		handleError(ctx, err)
+		_ = db.CloseConnection(ctx)
+		os.Exit(3)
+	}
+
+	err = db.CloseConnection(ctx)
+	if err != nil {
+		handleError(ctx, err)
+		os.Exit(3)
+	}
+
+	b, err := parser.Parse(resp, viper.GetString("format"))
+	if err != nil {
+		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
+		os.Exit(3)
+	}
+
+	fmt.Printf("%s\n", b)
+	os.Exit(resp.GetExitCode())
 }

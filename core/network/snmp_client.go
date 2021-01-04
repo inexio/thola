@@ -5,11 +5,11 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"github.com/soniah/gosnmp"
 	"golang.org/x/text/encoding/charmap"
 	"regexp"
 	"strings"
@@ -100,7 +100,7 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 		if res.err != nil {
 			if !tholaerr.IsNetworkError(res.err) {
 				s := "non network error occurred during NewSNMPClient"
-				log.Error().Err(res.err).Msg(s)
+				log.Ctx(ctx).Error().Err(res.err).Msg(s)
 				if criticalError == nil {
 					criticalError = errors.Wrap(res.err, s)
 				}

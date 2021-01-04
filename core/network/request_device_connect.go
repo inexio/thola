@@ -80,7 +80,7 @@ func (r *RequestDeviceConnectionSNMP) GetSysObjectID(ctx context.Context) (strin
 }
 
 // GetIdealConnectionData returns the ideal connection data.
-func (r *RequestDeviceConnection) GetIdealConnectionData() *ConnectionData {
+func (r *RequestDeviceConnection) GetIdealConnectionData() ConnectionData {
 	connectionData := ConnectionData{}
 
 	if r.SNMP != nil {
@@ -105,7 +105,7 @@ func (r *RequestDeviceConnection) GetIdealConnectionData() *ConnectionData {
 		}
 	}
 
-	return &connectionData
+	return connectionData
 }
 
 // CloseConnections closes the connection to the device
