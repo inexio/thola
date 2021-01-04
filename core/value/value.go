@@ -16,7 +16,16 @@ type Value string
 
 // New creates a new value
 func New(i interface{}) Value {
-	return Value(fmt.Sprint(i))
+	var v Value
+	switch t := i.(type) {
+	case []byte:
+		v = Value(t)
+	case string:
+		v = Value(t)
+	default:
+		v = Value(fmt.Sprint(t))
+	}
+	return v
 }
 
 // String returns the value as a string
