@@ -221,6 +221,8 @@ func handleRequest(r request.Request) {
 		os.Exit(3)
 	}
 
+	log.Ctx(ctx).Trace().Msg("closed connection to the database")
+
 	b, err := parser.Parse(resp, viper.GetString("format"))
 	if err != nil {
 		log.Ctx(ctx).Error().Err(err).Msg("Request successful, but failed to parse response")
