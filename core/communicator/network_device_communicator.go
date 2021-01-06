@@ -121,7 +121,10 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 }
 
 func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
-	var properties device.Properties
+	dev := device.Device{
+		Class:      c.head.GetDeviceClass(),
+		Properties: device.Properties{},
+	}
 
 	vendor, err := c.head.GetVendor(ctx)
 	if err != nil {
@@ -129,7 +132,8 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 			return device.Properties{}, errors.Wrap(err, "error occurred during get vendor")
 		}
 	} else {
-		properties.Vendor = &vendor
+		dev.Properties.Vendor = &vendor
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
 	model, err := c.head.GetModel(ctx)
@@ -138,7 +142,8 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 			return device.Properties{}, errors.Wrap(err, "error occurred during get model")
 		}
 	} else {
-		properties.Model = &model
+		dev.Properties.Model = &model
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
 	modelSeries, err := c.head.GetModelSeries(ctx)
@@ -147,7 +152,8 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 			return device.Properties{}, errors.Wrap(err, "error occurred during get model series")
 		}
 	} else {
-		properties.ModelSeries = &modelSeries
+		dev.Properties.ModelSeries = &modelSeries
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
 	serialNumber, err := c.head.GetSerialNumber(ctx)
@@ -156,7 +162,8 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 			return device.Properties{}, errors.Wrap(err, "error occurred during get serial number")
 		}
 	} else {
-		properties.SerialNumber = &serialNumber
+		dev.Properties.SerialNumber = &serialNumber
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
 	osVersion, err := c.head.GetOSVersion(ctx)
@@ -165,10 +172,11 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 			return device.Properties{}, errors.Wrap(err, "error occurred during get os version")
 		}
 	} else {
-		properties.OSVersion = &osVersion
+		dev.Properties.OSVersion = &osVersion
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
-	return properties, nil
+	return dev.Properties, nil
 }
 
 func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device.CPUComponent, error) {
