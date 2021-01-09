@@ -6,7 +6,7 @@
 			"properties": {
 				"vendor": "Cisco",
 				"model": "7206VXR",
-				"model_series": null,
+				"model_series": "7206",
 				"serial_number": "4279256517",
 				"os_version": "12.4(24)T5"
 			}
