@@ -606,6 +606,16 @@
 					"crit": null,
 					"min": null,
 					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "Null0",
+					"value": 1,
+					"unit": "",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
 				}
 			],
 			"raw_output": "OK: checked\n[{\"ifIndex\":\"1\",\"ifDescr\":\"FastEthernet0/0\",\"ifName\":\"Fa0/0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"CA:01:16:E4:00:00\"},{\"ifIndex\":\"2\",\"ifDescr\":\"VoIP-Null0\",\"ifName\":\"Vo0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Null0\",\"ifName\":\"Nu0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"}]",
@@ -623,7 +633,7 @@
 				{
 					"metric": "cpu_load",
 					"label": "",
-					"value": "2",
+					"value": "5",
 					"unit": "%",
 					"warn": null,
 					"crit": null,
