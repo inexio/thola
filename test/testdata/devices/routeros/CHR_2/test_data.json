@@ -658,7 +658,7 @@
 					"max": null
 				}
 			],
-			"raw_output": "OK: checked\n[{\"ifIndex\":\"1\",\"ifDescr\":\"ether1\",\"ifName\":\"ether1\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:01:00:00\"},{\"ifIndex\":\"2\",\"ifDescr\":\"ether2\",\"ifName\":\"ether2\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:01:00:01\"},{\"ifIndex\":\"3\",\"ifDescr\":\"ether3\",\"ifName\":\"ether3\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:01:00:02\"},{\"ifIndex\":\"4\",\"ifDescr\":\"ether4\",\"ifName\":\"ether4\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:01:00:03\"}]",
+			"raw_output": "",
 			"messages": [
 				{
 					"status": 0,

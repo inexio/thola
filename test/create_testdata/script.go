@@ -212,6 +212,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check interface metrics for device " + device + " failed")
 	} else {
 		checkInterfaceMetricsResponse = res.(*request.CheckResponse)
+		checkInterfaceMetricsResponse.RawOutput = ""
 	}
 
 	var checkUPSResponse *request.CheckResponse
@@ -234,6 +235,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check ups for device " + device + " failed")
 	} else {
 		checkUPSResponse = res.(*request.CheckResponse)
+		checkUPSResponse.RawOutput = ""
 	}
 
 	var checkCPULoadResponse *request.CheckResponse
@@ -256,6 +258,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check cpu load for device " + device + " failed")
 	} else {
 		checkCPULoadResponse = res.(*request.CheckResponse)
+		checkCPULoadResponse.RawOutput = ""
 	}
 
 	var checkMemoryUsageResponse *request.CheckResponse
@@ -278,6 +281,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check memory usage for device " + device + " failed")
 	} else {
 		checkMemoryUsageResponse = res.(*request.CheckResponse)
+		checkMemoryUsageResponse.RawOutput = ""
 	}
 
 	return test.DeviceTestData{
