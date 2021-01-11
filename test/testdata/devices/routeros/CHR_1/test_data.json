@@ -5146,6 +5146,8 @@
 				}
 			]
 		},
-		"checkUPS": null
+		"checkUPS": null,
+		"checkCPULoad": null,
+		"checkMemoryUsage": null
 	}
 }
