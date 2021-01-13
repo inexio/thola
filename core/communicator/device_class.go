@@ -1433,13 +1433,13 @@ func (l *logicalOperator) validate() error {
 
 func createComponent(component string) (deviceClassComponent, error) {
 	switch component {
-	case "interfaceComponent":
+	case "interfaces":
 		return interfacesComponent, nil
-	case "upsComponent":
+	case "ups":
 		return upsComponent, nil
-	case "cpuComponent":
+	case "cpu":
 		return cpuComponent, nil
-	case "memoryComponent":
+	case "memory":
 		return memoryComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
@@ -1452,13 +1452,13 @@ func (d *deviceClassComponent) toString() (string, error) {
 	}
 	switch *d {
 	case interfacesComponent:
-		return "interfaceComponent", nil
+		return "interfaces", nil
 	case upsComponent:
-		return "upsComponent", nil
+		return "ups", nil
 	case cpuComponent:
-		return "cpuComponent", nil
+		return "cpu", nil
 	case memoryComponent:
-		return "memoryComponent", nil
+		return "memory", nil
 	default:
 		return "", errors.New("unknown component")
 	}

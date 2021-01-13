@@ -4,8 +4,8 @@ config:
   snmp:
     max_repetitions: 1
   components:
-    cpuComponent: true
-    memoryComponent: true
+    cpu: true
+    memory: true
 
 match:
   conditions:

@@ -2,7 +2,7 @@ name: "generic"
 
 config:
   components:
-    interfaceComponent: true
+    interfaces: true
   snmp:
     max_repetitions: 20
 

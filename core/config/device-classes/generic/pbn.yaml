@@ -2,7 +2,7 @@ name: "pbn"
 
 config:
   components:
-    cpuComponent: true
+    cpu: true
 
 match:
   logical_operator: "OR"

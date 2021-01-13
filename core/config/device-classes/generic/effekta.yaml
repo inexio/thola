@@ -2,8 +2,8 @@ name: effekta
 
 config:
   components:
-    interfaceComponent: false
-    upsComponent: true
+    interfaces: false
+    ups: true
 
 match:
   conditions:
