@@ -1,6 +1,8 @@
 package communicator
 
-import "context"
+import (
+	"context"
+)
 
 type adapterFunc func(...interface{}) (interface{}, error)
 
@@ -20,6 +22,7 @@ type communicatorAdapter interface {
 	communicatorAdapterCPU
 	communicatorAdapterUPS
 	communicatorAdapterMemory
+	communicatorAdapterSCB
 }
 
 type communicatorAdapterCPU interface {
@@ -43,6 +46,14 @@ type communicatorAdapterUPS interface {
 	getUPSComponentMainsVoltageApplied(...interface{}) (interface{}, error)
 	getUPSComponentRectifierCurrent(...interface{}) (interface{}, error)
 	getUPSComponentSystemVoltage(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterSCB interface {
+	getSBCComponentGlobalCallPerSecond(...interface{}) (interface{}, error)
+	getSBCComponentGlobalConcurrentSessions(...interface{}) (interface{}, error)
+	getSBCComponentActiveLocalContacts(...interface{}) (interface{}, error)
+	getSBCComponentTranscodingCapacity(...interface{}) (interface{}, error)
+	getSBCComponentLicenseCapacity(...interface{}) (interface{}, error)
 }
 
 var emptyAdapterFunc adapterFunc
@@ -137,4 +148,24 @@ func (a *adapter) getUPSComponentRectifierCurrent(i ...interface{}) (interface{}
 
 func (a *adapter) getUPSComponentSystemVoltage(i ...interface{}) (interface{}, error) {
 	return a.com.GetUPSComponentSystemVoltage(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentGlobalCallPerSecond(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentGlobalCallPerSecond(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentGlobalConcurrentSessions(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentGlobalConcurrentSessions(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentActiveLocalContacts(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentActiveLocalContacts(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentTranscodingCapacity(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentTranscodingCapacity(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentLicenseCapacity(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentLicenseCapacity(i[0].(context.Context))
 }

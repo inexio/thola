@@ -102,3 +102,23 @@ func (c *baseCommunicator) GetUPSComponentRectifierCurrent(_ context.Context) (f
 func (c *baseCommunicator) GetUPSComponentSystemVoltage(_ context.Context) (float64, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
+
+func (c *baseCommunicator) GetSBCComponentGlobalCallPerSecond(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentGlobalConcurrentSessions(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentActiveLocalContacts(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentTranscodingCapacity(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentLicenseCapacity(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}

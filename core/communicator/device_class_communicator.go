@@ -466,6 +466,101 @@ func (o *deviceClassCommunicator) GetUPSComponentSystemVoltage(ctx context.Conte
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.globalCallPerSecond == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalCallPerSecond").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalCallPerSecond").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.globalCallPerSecond.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentGlobalCallPerSecond")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.globalConcurrentSessions == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalConcurrentSessions").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalConcurrentSessions").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.globalConcurrentSessions.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentGlobalConcurrentSessions")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.activeLocalContacts == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentActiveLocalContacts").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentActiveLocalContacts").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.activeLocalContacts.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentActiveLocalContacts")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.transcodingCapacity == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentTranscodingCapacity").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentTranscodingCapacity").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.transcodingCapacity.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentTranscodingCapacity")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponentLicenseCapacity(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.licenseCapacity == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentLicenseCapacity").Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentLicenseCapacity").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.licenseCapacity.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentLicenseCapacity")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
 func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassInterfaceOIDs) (map[string]map[string]interface{}, error) {
 	networkInterfaces := make(map[string]map[string]interface{})
 

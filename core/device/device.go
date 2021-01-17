@@ -158,6 +158,25 @@ type UPSComponent struct {
 	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
 }
 
+// SBCComponent represents a SBC component
+type SBCComponent struct {
+	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents"`
+	Realms                   []SBCComponentRealm `yaml:"realms" json:"realms" xml:"realms"`
+	GlobalCallPerSecond      *int                `yaml:"global_call_per_second" json:"global_call_per_second" xml:"global_call_per_second"`
+	GlobalConcurrentSessions *int                `yaml:"global_concurrent_sessions " json:"global_concurrent_sessions " xml:"global_concurrent_sessions"`
+	ActiveLocalContacts      *int                `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts"`
+	TranscodingCapacity      *int                `yaml:"transcoding_capacity" json:"transcoding_capacity" xml:"transcoding_capacity"`
+	LicenseCapacity          *int                `yaml:"license_capacity" json:"license_capacity" xml:"license_capacity"`
+}
+
+// SBCComponentAgent contains information per agent. (Voice)
+type SBCComponentAgent struct {
+}
+
+// SBCComponentRealm contains information per realm. (Voice)
+type SBCComponentRealm struct {
+}
+
 // CPUComponent represents a CPU component
 type CPUComponent struct {
 	Load        []float64 `yaml:"load" json:"load" xml:"load"`

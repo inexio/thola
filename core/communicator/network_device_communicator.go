@@ -15,6 +15,7 @@ type NetworkDeviceCommunicator interface {
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
 	GetCPUComponent(ctx context.Context) (device.CPUComponent, error)
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
+	GetSBCComponent(ctx context.Context) (device.SBCComponent, error)
 	availableCommunicatorFunctions
 }
 
@@ -30,6 +31,7 @@ type availableCommunicatorFunctions interface {
 	availableCPUCommunicatorFunctions
 	availableMemoryCommunicatorFunctions
 	availableUPSCommunicatorFunctions
+	availableSBCCommunicatorFunctions
 }
 
 type availableCPUCommunicatorFunctions interface {
@@ -53,6 +55,14 @@ type availableUPSCommunicatorFunctions interface {
 	GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error)
 	GetUPSComponentRectifierCurrent(ctx context.Context) (float64, error)
 	GetUPSComponentSystemVoltage(ctx context.Context) (float64, error)
+}
+
+type availableSBCCommunicatorFunctions interface {
+	GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error)
+	GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error)
+	GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error)
+	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
+	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
 }
 
 type networkDeviceCommunicator struct {
@@ -337,6 +347,72 @@ func (c *networkDeviceCommunicator) GetUPSComponent(ctx context.Context) (device
 	return ups, nil
 }
 
+func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device.SBCComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(sbcComponent) {
+		return device.SBCComponent{}, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+	}
+
+	var sbc device.SBCComponent
+
+	empty := true
+
+	globalCPS, err := c.head.GetSBCComponentGlobalCallPerSecond(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		sbc.GlobalCallPerSecond = &globalCPS
+		empty = false
+	}
+
+	globalConcurrentSessions, err := c.head.GetSBCComponentGlobalConcurrentSessions(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		sbc.GlobalConcurrentSessions = &globalConcurrentSessions
+		empty = false
+	}
+
+	activeLocalContacts, err := c.head.GetSBCComponentActiveLocalContacts(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		sbc.ActiveLocalContacts = &activeLocalContacts
+		empty = false
+	}
+
+	transcodingCapacity, err := c.head.GetSBCComponentTranscodingCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		sbc.TranscodingCapacity = &transcodingCapacity
+		empty = false
+	}
+
+	licenseCapacity, err := c.head.GetSBCComponentLicenseCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		sbc.LicenseCapacity = &licenseCapacity
+		empty = false
+	}
+
+	if empty {
+		return device.SBCComponent{}, tholaerr.NewNotFoundError("no cpu data available")
+	}
+
+	return sbc, nil
+}
+
 func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, error) {
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getVendor
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getVendor), emptyAdapterFunc).(adapterFunc)
@@ -615,6 +691,61 @@ func (c *networkDeviceCommunicator) GetUPSComponentSystemVoltage(ctx context.Con
 		return 0, err
 	}
 	return res.(float64), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentGlobalCallPerSecond
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentGlobalCallPerSecond), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentGlobalCallPerSecond), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentGlobalConcurrentSessions
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentGlobalConcurrentSessions), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentGlobalConcurrentSessions), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentActiveLocalContacts
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentActiveLocalContacts), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentActiveLocalContacts), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentTranscodingCapacity
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentTranscodingCapacity), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentTranscodingCapacity), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentLicenseCapacity(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentLicenseCapacity
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentLicenseCapacity), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentLicenseCapacity), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
 }
 
 func (c *networkDeviceCommunicator) isHead() bool {

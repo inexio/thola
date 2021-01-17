@@ -446,6 +446,33 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/ups", readUPS)
 
+	// swagger:operation POST /read/sbc read readSBC
+	// ---
+	// summary: Reads out SBC data of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadSBCRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadSBCResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/sbc", readSBC)
+
 	// swagger:operation POST /read/available-components read readAvailableComponents
 	// ---
 	// summary: Returns the available components for the device.
@@ -668,6 +695,18 @@ func readMemoryUsage(ctx echo.Context) error {
 
 func readUPS(ctx echo.Context) error {
 	r := request.ReadUPSRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readSBC(ctx echo.Context) error {
+	r := request.ReadSBCRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

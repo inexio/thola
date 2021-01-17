@@ -4,6 +4,7 @@ config:
   components:
     cpu: true
     memory: true
+    sbc: true
 
 match:
   type: SysObjectID
@@ -39,3 +40,19 @@ components:
     usage:
       - detection: snmpget
         oid: .1.3.6.1.4.1.9148.3.2.1.1.2.0
+  sbc:
+    global_call_per_second:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.6.0
+    global_concurrent_sessions:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.5.0
+    active_local_contacts:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.11.0
+    transcoding_capacity:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.34.0
+    license_capacity:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.10.0

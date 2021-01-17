@@ -31,6 +31,7 @@ const (
 	upsComponent
 	cpuComponent
 	memoryComponent
+	sbcComponent
 )
 
 // deviceClass represents a device class.
@@ -66,6 +67,7 @@ type deviceClassComponents struct {
 	ups        *deviceClassComponentsUPS
 	cpu        *deviceClassComponentsCPU
 	memory     *deviceClassComponentsMemory
+	sbc        *deviceClassComponentsSBC
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -92,6 +94,15 @@ type deviceClassComponentsCPU struct {
 // deviceClassComponentsCPU represents the memory components part of a device class.
 type deviceClassComponentsMemory struct {
 	usage propertyReader
+}
+
+// deviceClassComponentsSBC represents the sbc components part of a device class.
+type deviceClassComponentsSBC struct {
+	globalCallPerSecond      propertyReader
+	globalConcurrentSessions propertyReader
+	activeLocalContacts      propertyReader
+	transcodingCapacity      propertyReader
+	licenseCapacity          propertyReader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -152,6 +163,7 @@ type yamlDeviceClassComponents struct {
 	UPS        *yamlComponentsUPSProperties    `yaml:"ups"`
 	CPU        *yamlComponentsCPUProperties    `yaml:"cpu"`
 	Memory     *yamlComponentsMemoryProperties `yaml:"memory"`
+	SBC        *yamlComponentsSBCProperties    `yaml:"sbc"`
 }
 
 type yamlDeviceClassConfig struct {
@@ -193,6 +205,14 @@ type yamlComponentsCPUProperties struct {
 
 type yamlComponentsMemoryProperties struct {
 	Usage []interface{} `yaml:"usage"`
+}
+
+type yamlComponentsSBCProperties struct {
+	GlobalCallPerSecond      []interface{} `yaml:"global_call_per_second"`
+	GlobalConcurrentSessions []interface{} `yaml:"global_concurrent_sessions"`
+	ActiveLocalContacts      []interface{} `yaml:"active_local_contacts"`
+	TranscodingCapacity      []interface{} `yaml:"transcoding_capacity"`
+	LicenseCapacity          []interface{} `yaml:"license_capacity"`
 }
 
 type yamlComponentsInterfaces struct {
@@ -603,6 +623,14 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.memory = &memory
 	}
 
+	if y.SBC != nil {
+		sbc, err := y.SBC.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read read yaml sbc properties")
+		}
+		components.sbc = &sbc
+	}
+
 	return components, nil
 }
 
@@ -864,6 +892,43 @@ func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory,
 		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error) {
+	var properties deviceClassComponentsSBC
+	var err error
+
+	if y.ActiveLocalContacts != nil {
+		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
+		}
+	}
+	if y.GlobalCallPerSecond != nil {
+		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
+		}
+	}
+	if y.GlobalConcurrentSessions != nil {
+		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
+		}
+	}
+	if y.LicenseCapacity != nil {
+		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
+		}
+	}
+	if y.TranscodingCapacity != nil {
+		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
 		}
 	}
 	return properties, nil
@@ -1441,6 +1506,8 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return cpuComponent, nil
 	case "memory":
 		return memoryComponent, nil
+	case "sbc":
+		return sbcComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -1459,6 +1526,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "cpu", nil
 	case memoryComponent:
 		return "memory", nil
+	case sbcComponent:
+		return "sbc", nil
 	default:
 		return "", errors.New("unknown component")
 	}
