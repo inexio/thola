@@ -53,7 +53,7 @@ type filterOperatorAdapter struct {
 func (o *filterOperatorAdapter) operate(ctx context.Context, v value.Value) (value.Value, error) {
 	err := o.operator.filter(ctx, v)
 	if err != nil {
-		return "", err
+		return value.Empty(), err
 	}
 	return v, err
 }
@@ -92,7 +92,7 @@ func (o *propertyOperators) apply(ctx context.Context, v value.Value) (value.Val
 			if operator.returnOnError() {
 				return v, nil
 			}
-			return "", errors.Wrap(err, "operator failed")
+			return value.Empty(), errors.Wrap(err, "operator failed")
 		}
 		v = x
 	}
@@ -106,7 +106,7 @@ type multiplyNumberModifier struct {
 func (m *multiplyNumberModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
 	a, err := decimal.NewFromString(v.String())
 	if err != nil {
-		return "", errors.New("cannot covert current value to decimal number")
+		return value.Empty(), errors.New("cannot covert current value to decimal number")
 	}
 	b := decimal.NewFromFloat(m.value)
 	result := a.Mul(b)
@@ -159,7 +159,7 @@ type addSuffixModifier struct {
 }
 
 func (a *addSuffixModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
-	return v + value.New(a.suffix), nil
+	return value.New(v.String() + a.suffix), nil
 }
 
 type addPrefixModifier struct {
@@ -167,7 +167,7 @@ type addPrefixModifier struct {
 }
 
 func (a *addPrefixModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
-	return value.New(a.prefix) + v, nil
+	return value.New(a.prefix + v.String()), nil
 }
 
 type regexSubmatchModifier struct {
@@ -189,7 +189,7 @@ func newRegexSubmatchModifier(regex string, format string) (*regexSubmatchModifi
 func (o *regexSubmatchModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
 	subMatches := o.regex.FindStringSubmatch(v.String())
 	if subMatches == nil {
-		return "", errors.New("regex does not match")
+		return value.Empty(), errors.New("regex does not match")
 	}
 	return value.New(o.regex.ReplaceAllString(subMatches[0], o.format)), nil
 }
@@ -211,7 +211,7 @@ func newRegexReplaceModifier(regex, replace string) (*regexReplaceModifier, erro
 }
 
 func (r *regexReplaceModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
-	return value.New(r.regex.ReplaceAllString(string(v), r.replace)), nil
+	return value.New(r.regex.ReplaceAllString(v.String(), r.replace)), nil
 }
 
 type insertReadValueModifier struct {
@@ -222,7 +222,7 @@ type insertReadValueModifier struct {
 func (r *insertReadValueModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
 	readValue, err := r.readValueReader.getProperty(ctx)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to read out value")
+		return value.Empty(), errors.Wrap(err, "failed to read out value")
 	}
 	str := strings.ReplaceAll(r.format, "$property$", v.String())
 	str = strings.ReplaceAll(str, "$read_value$", fmt.Sprint(readValue))
@@ -237,7 +237,7 @@ func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, err
 	if val, ok := r.mappings[v.String()]; ok {
 		return value.New(val), nil
 	}
-	return "", tholaerr.NewNotFoundError("string not found in mapping")
+	return value.Empty(), tholaerr.NewNotFoundError("string not found in mapping")
 }
 
 type genericStringSwitch struct {
@@ -254,9 +254,9 @@ type stringSwitchCase struct {
 func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) (value.Value, error) {
 	switchValue, err := w.switchValueGetter.getSwitchValue(ctx, s)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get switch string")
+		return value.Empty(), errors.Wrap(err, "failed to get switch string")
 	}
-	switchString := string(switchValue)
+	switchString := switchValue.String()
 	for _, c := range w.cases {
 		b, err := matchStrings(ctx, switchString, w.switchMode, c.caseString)
 		if err != nil {
@@ -269,7 +269,7 @@ func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) 
 		}
 		x, err := c.operators.apply(ctx, s)
 		if err != nil {
-			return "", errors.Wrapf(err, "failed to apply operations inside switch case '%s'", c.caseString)
+			return value.Empty(), errors.Wrapf(err, "failed to apply operations inside switch case '%s'", c.caseString)
 		}
 		return value.New(x), nil
 	}
@@ -296,13 +296,13 @@ type snmpwalkCountStringSwitchValueGetter struct {
 func (w *snmpwalkCountStringSwitchValueGetter) getSwitchValue(ctx context.Context, _ value.Value) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return "", errors.New("no snmp connection available, snmpwalk not possible")
+		return value.Empty(), errors.New("no snmp connection available, snmpwalk not possible")
 	}
 	var i int
 
 	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, w.oid)
 	if err != nil {
-		return "", errors.Wrap(err, "snmpwalk failed")
+		return value.Empty(), errors.Wrap(err, "snmpwalk failed")
 	}
 	for _, r := range res {
 		var str string

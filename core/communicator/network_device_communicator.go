@@ -183,7 +183,6 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 		}
 	} else {
 		dev.Properties.OSVersion = &osVersion
-		ctx = device.NewContextWithDeviceProperties(ctx, dev)
 	}
 
 	return dev.Properties, nil
@@ -407,7 +406,7 @@ func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device
 	}
 
 	if empty {
-		return device.SBCComponent{}, tholaerr.NewNotFoundError("no cpu data available")
+		return device.SBCComponent{}, tholaerr.NewNotFoundError("no sbc data available")
 	}
 
 	return sbc, nil

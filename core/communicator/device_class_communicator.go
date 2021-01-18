@@ -588,7 +588,7 @@ func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids 
 				return nil, errors.Wrap(err, "couldn't get value from response response")
 			}
 			if res != "" {
-				resNormalized, err := oid.operators.apply(ctx, value.Value(res))
+				resNormalized, err := oid.operators.apply(ctx, value.New(res))
 				if err != nil {
 					log.Ctx(ctx).Trace().Err(err).Msg("response couldn't be normalized")
 					return nil, errors.Wrap(err, "response couldn't be normalized")

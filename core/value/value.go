@@ -28,6 +28,11 @@ func New(i interface{}) Value {
 	return v
 }
 
+// Empty returns the an empty value.
+func Empty() Value {
+	return ""
+}
+
 // String returns the value as a string
 func (v *Value) String() string {
 	return string(*v)
