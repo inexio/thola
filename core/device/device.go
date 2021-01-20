@@ -171,10 +171,25 @@ type SBCComponent struct {
 
 // SBCComponentAgent contains information per agent. (Voice)
 type SBCComponentAgent struct {
+	Hostname                      string `yaml:"hostname" json:"hostname" xml:"hostname" mapstructure:"hostname"`
+	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"period_asr"`
+	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
 // SBCComponentRealm contains information per realm. (Voice)
 type SBCComponentRealm struct {
+	Name                          string `yaml:"name" json:"name" xml:"name"`
+	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"d_asr"`
+	ActiveLocalContacts           *int   `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts" mapstructure:"active_local_contacts"`
+	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
 // CPUComponent represents a CPU component

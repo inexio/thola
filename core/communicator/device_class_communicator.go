@@ -21,7 +21,7 @@ type deviceClassCommunicator struct {
 
 func (o *deviceClassCommunicator) GetVendor(ctx context.Context) (string, error) {
 	if o.identify.properties.vendor == nil {
-		log.Ctx(ctx).Trace().Str("property", "vendor").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "vendor").Str("device_class", o.name).Msg("no detection information available")
 		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "vendor").Logger()
@@ -37,7 +37,7 @@ func (o *deviceClassCommunicator) GetVendor(ctx context.Context) (string, error)
 
 func (o *deviceClassCommunicator) GetModel(ctx context.Context) (string, error) {
 	if o.identify.properties.model == nil {
-		log.Ctx(ctx).Trace().Str("property", "model").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "model").Str("device_class", o.name).Msg("no detection information available")
 		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "model").Logger()
@@ -53,7 +53,7 @@ func (o *deviceClassCommunicator) GetModel(ctx context.Context) (string, error) 
 
 func (o *deviceClassCommunicator) GetModelSeries(ctx context.Context) (string, error) {
 	if o.identify.properties.modelSeries == nil {
-		log.Ctx(ctx).Trace().Str("property", "model_series").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "model_series").Str("device_class", o.name).Msg("no detection information available")
 		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "model_series").Logger()
@@ -69,7 +69,7 @@ func (o *deviceClassCommunicator) GetModelSeries(ctx context.Context) (string, e
 
 func (o *deviceClassCommunicator) GetSerialNumber(ctx context.Context) (string, error) {
 	if o.identify.properties.serialNumber == nil {
-		log.Ctx(ctx).Trace().Str("property", "serial_number").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "serial_number").Str("device_class", o.name).Msg("no detection information available")
 		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "serial_number").Logger()
@@ -85,7 +85,7 @@ func (o *deviceClassCommunicator) GetSerialNumber(ctx context.Context) (string, 
 
 func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, error) {
 	if o.identify.properties.osVersion == nil {
-		log.Ctx(ctx).Trace().Str("property", "osVersion").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "osVersion").Str("device_class", o.name).Msg("no detection information available")
 		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "osVersion").Logger()
@@ -101,7 +101,7 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 
 func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
 	if o.components.interfaces == nil || (o.components.interfaces.IfTable == nil && o.components.interfaces.Types == nil) {
-		log.Ctx(ctx).Trace().Str("property", "interface").Msg("no interface information available")
+		log.Ctx(ctx).Trace().Str("property", "interface").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
@@ -133,7 +133,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 
 func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	if o.components.interfaces == nil || o.components.interfaces.IfTable == nil {
-		log.Ctx(ctx).Trace().Str("property", "interface").Msg("no interface information available")
+		log.Ctx(ctx).Trace().Str("property", "ifTable").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
@@ -163,7 +163,7 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
 	if o.components.interfaces == nil || o.components.interfaces.Count == "" {
-		log.Ctx(ctx).Trace().Msg("no interface count information available")
+		log.Ctx(ctx).Trace().Str("property", "countInterfaces").Str("device_class", o.name).Msg("no interface count information available")
 		return 0, tholaerr.NewNotImplementedError("not implemented")
 	}
 
@@ -202,7 +202,7 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 
 func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
 	if o.components.cpu == nil || o.components.cpu.load == nil {
-		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPULoad").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPULoad").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPULoad").Logger()
@@ -221,7 +221,7 @@ func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([
 
 func (o *deviceClassCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
 	if o.components.cpu == nil || o.components.cpu.temperature == nil {
-		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPUTemperature").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "CPUComponentCPUTemperature").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPUTemperature").Logger()
@@ -240,7 +240,7 @@ func (o *deviceClassCommunicator) GetCPUComponentCPUTemperature(ctx context.Cont
 
 func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
 	if o.components.memory == nil || o.components.memory.usage == nil {
-		log.Ctx(ctx).Trace().Str("property", "MemoryComponentMemoryUsage").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "MemoryComponentMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "MemoryComponentMemoryUsage").Logger()
@@ -259,7 +259,7 @@ func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Cont
 
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
 	if o.components.ups == nil || o.components.ups.alarmLowVoltageDisconnect == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentAlarmLowVoltageDisconnect").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentAlarmLowVoltageDisconnect").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentAlarmAlarmLowVoltageDisconnect").Logger()
@@ -278,7 +278,7 @@ func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx c
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryAmperage == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryAmperage").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryAmperage").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryAmperage").Logger()
@@ -297,7 +297,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryAmperage(ctx context.Con
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryCapacity == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryCapacity").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryCapacity").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryCapacity").Logger()
@@ -316,7 +316,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryCapacity(ctx context.Con
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryCurrent(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryCurrent == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryCurrent").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryCurrent").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryCurrent").Logger()
@@ -335,7 +335,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryCurrent(ctx context.Cont
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryRemainingTime(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryRemainingTime == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryRemainingTime").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryRemainingTime").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryRemainingTime").Logger()
@@ -354,7 +354,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryRemainingTime(ctx contex
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryTemperature(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryTemperature == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryTemperature").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryTemperature").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryTemperature").Logger()
@@ -373,7 +373,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryTemperature(ctx context.
 
 func (o *deviceClassCommunicator) GetUPSComponentBatteryVoltage(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.batteryVoltage == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryVoltage").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentBatteryVoltage").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryVoltage").Logger()
@@ -392,7 +392,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryVoltage(ctx context.Cont
 
 func (o *deviceClassCommunicator) GetUPSComponentCurrentLoad(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.currentLoad == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentCurrentLoad").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentCurrentLoad").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentCurrentLoad").Logger()
@@ -411,7 +411,7 @@ func (o *deviceClassCommunicator) GetUPSComponentCurrentLoad(ctx context.Context
 
 func (o *deviceClassCommunicator) GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error) {
 	if o.components.ups == nil || o.components.ups.mainsVoltageApplied == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentMainsVoltageApplied").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentMainsVoltageApplied").Str("device_class", o.name).Msg("no detection information available")
 		return false, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentMainsVoltageApplied").Logger()
@@ -430,7 +430,7 @@ func (o *deviceClassCommunicator) GetUPSComponentMainsVoltageApplied(ctx context
 
 func (o *deviceClassCommunicator) GetUPSComponentRectifierCurrent(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.rectifierCurrent == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentRectifierCurrent").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentRectifierCurrent").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentRectifierCurrent").Logger()
@@ -449,7 +449,7 @@ func (o *deviceClassCommunicator) GetUPSComponentRectifierCurrent(ctx context.Co
 
 func (o *deviceClassCommunicator) GetUPSComponentSystemVoltage(ctx context.Context) (float64, error) {
 	if o.components.ups == nil || o.components.ups.systemVoltage == nil {
-		log.Ctx(ctx).Trace().Str("property", "UPSComponentSystemVoltage").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "UPSComponentSystemVoltage").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentSystemVoltage").Logger()
@@ -466,9 +466,47 @@ func (o *deviceClassCommunicator) GetUPSComponentSystemVoltage(ctx context.Conte
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetSBCComponentAgents(ctx context.Context) ([]device.SBCComponentAgent, error) {
+	if o.components.sbc == nil || o.components.sbc.agents == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "SBCComponentAgents").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentAgents").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.agents.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var agents []device.SBCComponentAgent
+	err = mapstructure.WeakDecode(res, &agents)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into agent struct")
+	}
+	return agents, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponentRealms(ctx context.Context) ([]device.SBCComponentRealm, error) {
+	if o.components.sbc == nil || o.components.sbc.realms == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "SBCComponentRealms").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentRealms").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.realms.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var realms []device.SBCComponentRealm
+	err = mapstructure.WeakDecode(res, &realms)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into realms struct")
+	}
+	return realms, nil
+}
+
 func (o *deviceClassCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error) {
 	if o.components.sbc == nil || o.components.sbc.globalCallPerSecond == nil {
-		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalCallPerSecond").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalCallPerSecond").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalCallPerSecond").Logger()
@@ -487,7 +525,7 @@ func (o *deviceClassCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context
 
 func (o *deviceClassCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error) {
 	if o.components.sbc == nil || o.components.sbc.globalConcurrentSessions == nil {
-		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalConcurrentSessions").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentGlobalConcurrentSessions").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalConcurrentSessions").Logger()
@@ -506,7 +544,7 @@ func (o *deviceClassCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx co
 
 func (o *deviceClassCommunicator) GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error) {
 	if o.components.sbc == nil || o.components.sbc.activeLocalContacts == nil {
-		log.Ctx(ctx).Trace().Str("property", "SBCComponentActiveLocalContacts").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentActiveLocalContacts").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentActiveLocalContacts").Logger()
@@ -525,7 +563,7 @@ func (o *deviceClassCommunicator) GetSBCComponentActiveLocalContacts(ctx context
 
 func (o *deviceClassCommunicator) GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error) {
 	if o.components.sbc == nil || o.components.sbc.transcodingCapacity == nil {
-		log.Ctx(ctx).Trace().Str("property", "SBCComponentTranscodingCapacity").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentTranscodingCapacity").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentTranscodingCapacity").Logger()
@@ -544,7 +582,7 @@ func (o *deviceClassCommunicator) GetSBCComponentTranscodingCapacity(ctx context
 
 func (o *deviceClassCommunicator) GetSBCComponentLicenseCapacity(ctx context.Context) (int, error) {
 	if o.components.sbc == nil || o.components.sbc.licenseCapacity == nil {
-		log.Ctx(ctx).Trace().Str("property", "SBCComponentLicenseCapacity").Msg("no detection information available")
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentLicenseCapacity").Str("device_class", o.name).Msg("no detection information available")
 		return 0, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentLicenseCapacity").Logger()
@@ -561,7 +599,7 @@ func (o *deviceClassCommunicator) GetSBCComponentLicenseCapacity(ctx context.Con
 	return result, nil
 }
 
-func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassInterfaceOIDs) (map[string]map[string]interface{}, error) {
+func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
 	networkInterfaces := make(map[string]map[string]interface{})
 
 	con, ok := network.DeviceConnectionFromContext(ctx)

@@ -49,6 +49,8 @@ type communicatorAdapterUPS interface {
 }
 
 type communicatorAdapterSCB interface {
+	getSBCComponentAgents(...interface{}) (interface{}, error)
+	getSBCComponentRealms(...interface{}) (interface{}, error)
 	getSBCComponentGlobalCallPerSecond(...interface{}) (interface{}, error)
 	getSBCComponentGlobalConcurrentSessions(...interface{}) (interface{}, error)
 	getSBCComponentActiveLocalContacts(...interface{}) (interface{}, error)
@@ -148,6 +150,14 @@ func (a *adapter) getUPSComponentRectifierCurrent(i ...interface{}) (interface{}
 
 func (a *adapter) getUPSComponentSystemVoltage(i ...interface{}) (interface{}, error) {
 	return a.com.GetUPSComponentSystemVoltage(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentAgents(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentAgents(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentRealms(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentRealms(i[0].(context.Context))
 }
 
 func (a *adapter) getSBCComponentGlobalCallPerSecond(i ...interface{}) (interface{}, error) {
