@@ -99,6 +99,10 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/ups"), nil
 }
 
+func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/sbc"), nil
+}
+
 func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/memory-usage"), nil
 }
