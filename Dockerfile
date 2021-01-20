@@ -1,10 +1,10 @@
-FROM golang:latest
-
+FROM golang:latest AS build
 WORKDIR /go/src/thola
 COPY . .
-
-RUN go get -d -v .
 RUN go generate
-RUN go install -v .
+RUN CGO_ENABLED=0 go build -v -o thola .
 
-ENTRYPOINT ["thola", "api"]
+FROM alpine:latest
+COPY --from=build /go/src/thola/thola .
+
+ENTRYPOINT ["./thola", "api"]
