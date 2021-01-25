@@ -10,7 +10,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"sort"
 	"strings"
 )
 
@@ -101,7 +100,7 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 
 func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
 	if o.components.interfaces == nil || (o.components.interfaces.IfTable == nil && o.components.interfaces.Types == nil) {
-		log.Ctx(ctx).Trace().Str("property", "interface").Str("device_class", o.name).Msg("no interface information available")
+		log.Ctx(ctx).Trace().Str("property", "interfaces").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
@@ -137,7 +136,7 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	networkInterfacesRaw, err := o.getValuesBySNMPWalk(ctx, o.components.interfaces.IfTable)
+	networkInterfacesRaw, err := o.components.interfaces.IfTable.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -153,10 +152,6 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 		}
 		networkInterfaces = append(networkInterfaces, networkInterface)
 	}
-
-	sort.Slice(networkInterfaces, func(i, j int) bool {
-		return *networkInterfaces[i].IfIndex < *networkInterfaces[j].IfIndex
-	})
 
 	return networkInterfaces, nil
 }

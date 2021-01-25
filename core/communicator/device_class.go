@@ -116,7 +116,7 @@ type deviceClassConfig struct {
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
 	Count   string
-	IfTable deviceClassOIDs
+	IfTable groupPropertyReader
 	Types   deviceClassInterfaceTypes
 }
 
@@ -221,7 +221,7 @@ type yamlComponentsSBCProperties struct {
 
 type yamlComponentsInterfaces struct {
 	Count   string                       `yaml:"count"`
-	IfTable yamlComponentsOIDs           `yaml:"ifTable"`
+	IfTable interface{}                  `yaml:"ifTable"`
 	Types   yamlComponentsInterfaceTypes `yaml:"types"`
 }
 
@@ -640,13 +640,13 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 
 func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, error) {
 	var interfaces deviceClassComponentsInterfaces
+	var err error
 
 	if y.IfTable != nil {
-		ifTable, err := y.IfTable.convert()
+		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable)
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces ifTable")
+			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
 		}
-		interfaces.IfTable = ifTable
 	}
 
 	if y.Types != nil {
