@@ -56,6 +56,7 @@ type communicatorAdapterSCB interface {
 	getSBCComponentActiveLocalContacts(...interface{}) (interface{}, error)
 	getSBCComponentTranscodingCapacity(...interface{}) (interface{}, error)
 	getSBCComponentLicenseCapacity(...interface{}) (interface{}, error)
+	getSBCComponentSystemRedundancy(...interface{}) (interface{}, error)
 }
 
 var emptyAdapterFunc adapterFunc
@@ -178,4 +179,8 @@ func (a *adapter) getSBCComponentTranscodingCapacity(i ...interface{}) (interfac
 
 func (a *adapter) getSBCComponentLicenseCapacity(i ...interface{}) (interface{}, error) {
 	return a.com.GetSBCComponentLicenseCapacity(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentSystemRedundancy(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentSystemRedundancy(i[0].(context.Context))
 }

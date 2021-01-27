@@ -130,3 +130,7 @@ func (c *baseCommunicator) GetSBCComponentTranscodingCapacity(_ context.Context)
 func (c *baseCommunicator) GetSBCComponentLicenseCapacity(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
+
+func (c *baseCommunicator) GetSBCComponentSystemRedundancy(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}

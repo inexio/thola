@@ -105,6 +105,7 @@ type deviceClassComponentsSBC struct {
 	activeLocalContacts      propertyReader
 	transcodingCapacity      propertyReader
 	licenseCapacity          propertyReader
+	systemRedundancy         propertyReader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -217,6 +218,7 @@ type yamlComponentsSBCProperties struct {
 	ActiveLocalContacts      []interface{} `yaml:"active_local_contacts"`
 	TranscodingCapacity      []interface{} `yaml:"transcoding_capacity"`
 	LicenseCapacity          []interface{} `yaml:"license_capacity"`
+	SystemRedundancy         []interface{} `yaml:"system_redundancy"`
 }
 
 type yamlComponentsInterfaces struct {
@@ -955,6 +957,12 @@ func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error
 		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
+		}
+	}
+	if y.SystemRedundancy != nil {
+		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
 	return properties, nil

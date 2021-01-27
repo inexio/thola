@@ -594,6 +594,25 @@ func (o *deviceClassCommunicator) GetSBCComponentLicenseCapacity(ctx context.Con
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetSBCComponentSystemRedundancy(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.systemRedundancy == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentSystemRedundancy").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentSystemRedundancy").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.systemRedundancy.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentSystemRedundancy")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
 func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
 	networkInterfaces := make(map[string]map[string]interface{})
 

@@ -65,6 +65,7 @@ type availableSBCCommunicatorFunctions interface {
 	GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error)
 	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
 	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
+	GetSBCComponentSystemRedundancy(ctx context.Context) (int, error)
 }
 
 type networkDeviceCommunicator struct {
@@ -427,6 +428,16 @@ func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device
 		empty = false
 	}
 
+	systemRedundancy, err := c.head.GetSBCComponentSystemRedundancy(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get license capacity")
+		}
+	} else {
+		sbc.SystemRedundancy = &systemRedundancy
+		empty = false
+	}
+
 	if empty {
 		return device.SBCComponent{}, tholaerr.NewNotFoundError("no sbc data available")
 	}
@@ -784,6 +795,17 @@ func (c *networkDeviceCommunicator) GetSBCComponentLicenseCapacity(ctx context.C
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentLicenseCapacity
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentLicenseCapacity), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentLicenseCapacity), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentSystemRedundancy(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentSystemRedundancy
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentSystemRedundancy), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentSystemRedundancy), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
 		return 0, err

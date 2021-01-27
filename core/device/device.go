@@ -167,6 +167,7 @@ type SBCComponent struct {
 	ActiveLocalContacts      *int                `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts"`
 	TranscodingCapacity      *int                `yaml:"transcoding_capacity" json:"transcoding_capacity" xml:"transcoding_capacity"`
 	LicenseCapacity          *int                `yaml:"license_capacity" json:"license_capacity" xml:"license_capacity"`
+	SystemRedundancy         *int                `yaml:"system_redundancy" json:"system_redundancy" xml:"system_redundancy"`
 }
 
 // SBCComponentAgent contains information per agent. (Voice)
