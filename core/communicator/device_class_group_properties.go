@@ -9,7 +9,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 type groupPropertyReader interface {
@@ -72,11 +71,12 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) ([]map[string
 	size := len(networkInterfaces)
 	for i := 0; i < size; i++ {
 		var smallestIndex int
-		once := sync.Once{}
+		firstRun := true
 		for index := range networkInterfaces {
-			once.Do(func() {
+			if firstRun {
 				smallestIndex = index
-			})
+				firstRun = false
+			}
 			if index < smallestIndex {
 				smallestIndex = index
 			}
