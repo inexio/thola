@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
-	"github.com/thoas/go-funk"
 	"net"
 	"strconv"
 	"time"
@@ -74,16 +73,16 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 
 	mergedData := network.ConnectionData{
 		SNMP: &network.SNMPConnectionData{
-			Communities:              funk.UniqString(append(cacheData.SNMP.Communities, configData.SNMP.Communities...)),
-			Versions:                 funk.UniqString(append(cacheData.SNMP.Versions, configData.SNMP.Versions...)),
-			Ports:                    funk.UniqInt(append(cacheData.SNMP.Ports, configData.SNMP.Ports...)),
+			Communities:              utility.SliceUniqueString(append(cacheData.SNMP.Communities, configData.SNMP.Communities...)),
+			Versions:                 utility.SliceUniqueString(append(cacheData.SNMP.Versions, configData.SNMP.Versions...)),
+			Ports:                    utility.SliceUniqueInt(append(cacheData.SNMP.Ports, configData.SNMP.Ports...)),
 			DiscoverParallelRequests: configData.SNMP.DiscoverParallelRequests,
 			DiscoverTimeout:          configData.SNMP.DiscoverTimeout,
 			DiscoverRetries:          configData.SNMP.DiscoverRetries,
 		},
 		HTTP: &network.HTTPConnectionData{
-			HTTPPorts:    funk.UniqInt(append(cacheData.HTTP.HTTPPorts, configData.HTTP.HTTPPorts...)),
-			HTTPSPorts:   funk.UniqInt(append(cacheData.HTTP.HTTPSPorts, configData.HTTP.HTTPSPorts...)),
+			HTTPPorts:    utility.SliceUniqueInt(append(cacheData.HTTP.HTTPPorts, configData.HTTP.HTTPPorts...)),
+			HTTPSPorts:   utility.SliceUniqueInt(append(cacheData.HTTP.HTTPSPorts, configData.HTTP.HTTPSPorts...)),
 			AuthUsername: utility.IfThenElse(cacheData.HTTP.AuthUsername == nil, configData.HTTP.AuthUsername, cacheData.HTTP.AuthUsername).(*string),
 			AuthPassword: utility.IfThenElse(cacheData.HTTP.AuthPassword == nil, configData.HTTP.AuthPassword, cacheData.HTTP.AuthPassword).(*string),
 		},
