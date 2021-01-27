@@ -28,6 +28,7 @@ type DeviceTestDataExpectations struct {
 	CheckUPS              *request.CheckResponse               `json:"checkUPS" mapstructure:"checkUPS"`
 	CheckCPULoad          *request.CheckResponse               `json:"checkCPULoad" mapstructure:"checkCPULoad"`
 	CheckMemoryUsage      *request.CheckResponse               `json:"checkMemoryUsage" mapstructure:"checkMemoryUsage"`
+	CheckSBC              *request.CheckResponse               `json:"checkSBC" mapstructure:"checkSBC"`
 }
 
 // GetAvailableRequestTypes returns all available request types
@@ -56,6 +57,10 @@ func (d *DeviceTestData) GetAvailableRequestTypes() []string {
 
 	if d.Expectations.CheckMemoryUsage != nil {
 		res = append(res, "check memory-usage")
+	}
+
+	if d.Expectations.CheckSBC != nil {
+		res = append(res, "check sbc")
 	}
 
 	return res
@@ -114,6 +119,9 @@ func ProcessRequest(r request.Request, port int) (request.Response, error) {
 		response = &request.CheckResponse{}
 	case *request.CheckMemoryUsageRequest:
 		requestEndpoint = "check/memory-usage"
+		response = &request.CheckResponse{}
+	case *request.CheckSBCRequest:
+		requestEndpoint = "check/sbc"
 		response = &request.CheckResponse{}
 	default:
 		return nil, errors.New("unknown request type")

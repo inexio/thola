@@ -644,6 +644,7 @@
 			"raw_output": "",
 			"messages": null
 		},
-		"checkMemoryUsage": null
+		"checkMemoryUsage": null,
+		"checkSBC": null
 	}
 }

@@ -284,6 +284,29 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		checkMemoryUsageResponse.RawOutput = ""
 	}
 
+	var checkSBCResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckSBCRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check sbc for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check sbc for device " + device + " failed")
+	} else {
+		checkSBCResponse = res.(*request.CheckResponse)
+		checkSBCResponse.RawOutput = ""
+	}
+
 	return test.DeviceTestData{
 		Type: "snmpsim",
 		Expectations: test.DeviceTestDataExpectations{
@@ -293,6 +316,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 			CheckUPS:              checkUPSResponse,
 			CheckCPULoad:          checkCPULoadResponse,
 			CheckMemoryUsage:      checkMemoryUsageResponse,
+			CheckSBC:              checkSBCResponse,
 		},
 		Connection: connectionData,
 	}, nil

@@ -2588,6 +2588,7 @@
 		},
 		"checkUPS": null,
 		"checkCPULoad": null,
-		"checkMemoryUsage": null
+		"checkMemoryUsage": null,
+		"checkSBC": null
 	}
 }
