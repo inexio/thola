@@ -613,6 +613,63 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemRedundancy(ctx context.Co
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.environmentMonitorState == nil {
+		log.Ctx(ctx).Trace().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.hardwareHealth.environmentMonitorState.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get HardwareHealthComponentEnvironmentMonitorState")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
+func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error) {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "HardwareHealthComponentFans").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentFans").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.hardwareHealth.fans.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var fans []device.HardwareHealthComponentFan
+	err = mapstructure.WeakDecode(res, &fans)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into fan struct")
+	}
+	return fans, nil
+}
+
+func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "HardwareHealthComponentPowerSupply").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentPowerSupply").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var powerSupply []device.HardwareHealthComponentPowerSupply
+	err = mapstructure.WeakDecode(res, &powerSupply)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into power supply struct")
+	}
+	return powerSupply, nil
+}
+
 func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
 	networkInterfaces := make(map[string]map[string]interface{})
 

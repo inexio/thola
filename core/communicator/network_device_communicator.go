@@ -16,6 +16,7 @@ type NetworkDeviceCommunicator interface {
 	GetCPUComponent(ctx context.Context) (device.CPUComponent, error)
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
 	GetSBCComponent(ctx context.Context) (device.SBCComponent, error)
+	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
 	availableCommunicatorFunctions
 }
 
@@ -32,6 +33,7 @@ type availableCommunicatorFunctions interface {
 	availableMemoryCommunicatorFunctions
 	availableUPSCommunicatorFunctions
 	availableSBCCommunicatorFunctions
+	availableHardwareHealthCommunicatorFunctions
 }
 
 type availableCPUCommunicatorFunctions interface {
@@ -66,6 +68,12 @@ type availableSBCCommunicatorFunctions interface {
 	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
 	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
 	GetSBCComponentSystemRedundancy(ctx context.Context) (int, error)
+}
+
+type availableHardwareHealthCommunicatorFunctions interface {
+	GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error)
+	GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error)
+	GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error)
 }
 
 type networkDeviceCommunicator struct {
@@ -445,6 +453,52 @@ func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device
 	return sbc, nil
 }
 
+func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(hardwareHealthComponent) {
+		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
+	var hardwareHealth device.HardwareHealthComponent
+
+	empty := true
+
+	state, err := c.head.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get environment monitor states")
+		}
+	} else {
+		hardwareHealth.EnvironmentMonitorState = &state
+		empty = false
+	}
+
+	fans, err := c.head.GetHardwareHealthComponentFans(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get fans")
+		}
+	} else {
+		hardwareHealth.Fans = fans
+		empty = false
+	}
+
+	powerSupply, err := c.head.GetHardwareHealthComponentPowerSupply(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+		}
+	} else {
+		hardwareHealth.PowerSupply = powerSupply
+		empty = false
+	}
+
+	if empty {
+		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+	}
+
+	return hardwareHealth, nil
+}
+
 func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, error) {
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getVendor
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getVendor), emptyAdapterFunc).(adapterFunc)
@@ -811,6 +865,39 @@ func (c *networkDeviceCommunicator) GetSBCComponentSystemRedundancy(ctx context.
 		return 0, err
 	}
 	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getHardwareHealthComponentEnvironmentMonitorState
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getHardwareHealthComponentEnvironmentMonitorState), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getHardwareHealthComponentEnvironmentMonitorState), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getHardwareHealthComponentFans
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getHardwareHealthComponentFans), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getHardwareHealthComponentFans), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]device.HardwareHealthComponentFan), err
+}
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getHardwareHealthComponentPowerSupply
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getHardwareHealthComponentPowerSupply), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getHardwareHealthComponentPowerSupply), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]device.HardwareHealthComponentPowerSupply), err
 }
 
 func (c *networkDeviceCommunicator) isHead() bool {

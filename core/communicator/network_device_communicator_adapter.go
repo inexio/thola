@@ -23,6 +23,7 @@ type communicatorAdapter interface {
 	communicatorAdapterUPS
 	communicatorAdapterMemory
 	communicatorAdapterSCB
+	communicatorAdapterHardwareHealth
 }
 
 type communicatorAdapterCPU interface {
@@ -57,6 +58,12 @@ type communicatorAdapterSCB interface {
 	getSBCComponentTranscodingCapacity(...interface{}) (interface{}, error)
 	getSBCComponentLicenseCapacity(...interface{}) (interface{}, error)
 	getSBCComponentSystemRedundancy(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterHardwareHealth interface {
+	getHardwareHealthComponentFans(...interface{}) (interface{}, error)
+	getHardwareHealthComponentEnvironmentMonitorState(...interface{}) (interface{}, error)
+	getHardwareHealthComponentPowerSupply(i ...interface{}) (interface{}, error)
 }
 
 var emptyAdapterFunc adapterFunc
@@ -183,4 +190,16 @@ func (a *adapter) getSBCComponentLicenseCapacity(i ...interface{}) (interface{},
 
 func (a *adapter) getSBCComponentSystemRedundancy(i ...interface{}) (interface{}, error) {
 	return a.com.GetSBCComponentSystemRedundancy(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentEnvironmentMonitorState(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentEnvironmentMonitorState(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentFans(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentFans(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentPowerSupply(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentPowerSupply(i[0].(context.Context))
 }

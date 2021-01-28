@@ -199,6 +199,23 @@ type CPUComponent struct {
 	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
 }
 
+// HardwareHealthComponent represents hardware health information of a device
+type HardwareHealthComponent struct {
+	EnvironmentMonitorState *int                                 `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
+	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
+	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
+}
+
+type HardwareHealthComponentFan struct {
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	State       *int    `yaml:"state" json:"state" xml:"state"`
+}
+
+type HardwareHealthComponentPowerSupply struct {
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	State       *int    `yaml:"state" json:"state" xml:"state"`
+}
+
 // NewContextWithDeviceProperties returns a new context with the device properties
 func NewContextWithDeviceProperties(ctx context.Context, properties Device) context.Context {
 	return context.WithValue(ctx, devicePropertiesKey, properties)

@@ -32,6 +32,7 @@ const (
 	cpuComponent
 	memoryComponent
 	sbcComponent
+	hardwareHealthComponent
 )
 
 // deviceClass represents a device class.
@@ -63,11 +64,12 @@ type deviceClassIdentifyProperties struct {
 
 // deviceClassComponents represents the components part of a device class.
 type deviceClassComponents struct {
-	interfaces *deviceClassComponentsInterfaces
-	ups        *deviceClassComponentsUPS
-	cpu        *deviceClassComponentsCPU
-	memory     *deviceClassComponentsMemory
-	sbc        *deviceClassComponentsSBC
+	interfaces     *deviceClassComponentsInterfaces
+	ups            *deviceClassComponentsUPS
+	cpu            *deviceClassComponentsCPU
+	memory         *deviceClassComponentsMemory
+	sbc            *deviceClassComponentsSBC
+	hardwareHealth *deviceClassComponentsHardwareHealth
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -106,6 +108,13 @@ type deviceClassComponentsSBC struct {
 	transcodingCapacity      propertyReader
 	licenseCapacity          propertyReader
 	systemRedundancy         propertyReader
+}
+
+// deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
+type deviceClassComponentsHardwareHealth struct {
+	environmentMonitorState propertyReader
+	fans                    groupPropertyReader
+	powerSupply             groupPropertyReader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -162,11 +171,12 @@ type yamlDeviceClassIdentify struct {
 }
 
 type yamlDeviceClassComponents struct {
-	Interfaces *yamlComponentsInterfaces       `yaml:"interfaces"`
-	UPS        *yamlComponentsUPSProperties    `yaml:"ups"`
-	CPU        *yamlComponentsCPUProperties    `yaml:"cpu"`
-	Memory     *yamlComponentsMemoryProperties `yaml:"memory"`
-	SBC        *yamlComponentsSBCProperties    `yaml:"sbc"`
+	Interfaces     *yamlComponentsInterfaces               `yaml:"interfaces"`
+	UPS            *yamlComponentsUPSProperties            `yaml:"ups"`
+	CPU            *yamlComponentsCPUProperties            `yaml:"cpu"`
+	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
+	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
+	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
 }
 
 type yamlDeviceClassConfig struct {
@@ -219,6 +229,12 @@ type yamlComponentsSBCProperties struct {
 	TranscodingCapacity      []interface{} `yaml:"transcoding_capacity"`
 	LicenseCapacity          []interface{} `yaml:"license_capacity"`
 	SystemRedundancy         []interface{} `yaml:"system_redundancy"`
+}
+
+type yamlComponentsHardwareHealthProperties struct {
+	EnvironmentMonitorState []interface{} `yaml:"environment_monitor_state"`
+	Fans                    interface{}   `yaml:"fans"`
+	PowerSupply             interface{}   `yaml:"power_supply"`
 }
 
 type yamlComponentsInterfaces struct {
@@ -632,9 +648,17 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	if y.SBC != nil {
 		sbc, err := y.SBC.convert()
 		if err != nil {
-			return deviceClassComponents{}, errors.Wrap(err, "failed to read read yaml sbc properties")
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml sbc properties")
 		}
 		components.sbc = &sbc
+	}
+
+	if y.HardwareHealth != nil {
+		hardwareHealth, err := y.HardwareHealth.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml hardware health properties")
+		}
+		components.hardwareHealth = &hardwareHealth
 	}
 
 	return components, nil
@@ -965,6 +989,32 @@ func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
+	return properties, nil
+}
+
+func (y *yamlComponentsHardwareHealthProperties) convert() (deviceClassComponentsHardwareHealth, error) {
+	var properties deviceClassComponentsHardwareHealth
+	var err error
+
+	if y.Fans != nil {
+		properties.fans, err = interface2GroupPropertyReader(y.Fans)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
+		}
+	}
+	if y.PowerSupply != nil {
+		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
+		}
+	}
+	if y.EnvironmentMonitorState != nil {
+		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
+		}
+	}
+
 	return properties, nil
 }
 
@@ -1582,6 +1632,8 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return memoryComponent, nil
 	case "sbc":
 		return sbcComponent, nil
+	case "hardware_health":
+		return hardwareHealthComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -1602,6 +1654,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "memory", nil
 	case sbcComponent:
 		return "sbc", nil
+	case hardwareHealthComponent:
+		return "hardware_health", nil
 	default:
 		return "", errors.New("unknown component")
 	}
