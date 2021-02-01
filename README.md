@@ -44,7 +44,6 @@ Thola currently has three main modes of operation with various subcommands:
     - `check cpu-load` checks the average CPU load of all CPUs against given thresholds and outputs the current load of all CPUs as performance data.
     - `check memory-usage` checks the current memory usage against given thresholds.
     - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity or current load, and compares them to optionally given thresholds.
-    - `check metrics` outputs all possible metrics.
     - `check thola-server` checks reachability of a Thola API.
 
 More features are coming soon:

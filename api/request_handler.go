@@ -284,33 +284,6 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/cpu-load", checkCpuLoad)
 
-	// swagger:operation POST /check/metrics check checkMetrics
-	// ---
-	// summary: Prints all available metrics for a device as performance data.
-	// consumes:
-	// - application/json
-	// - application/xml
-	// produces:
-	// - application/json
-	// - application/xml
-	// parameters:
-	// - name: body
-	//   in: body
-	//   description: Request to process.
-	//   required: true
-	//   schema:
-	//     $ref: '#/definitions/CheckMetricsRequest'
-	// responses:
-	//   200:
-	//     description: Returns the response.
-	//     schema:
-	//       $ref: '#/definitions/CheckResponse'
-	//   400:
-	//     description: Returns an error with more details in the body.
-	//     schema:
-	//       $ref: '#/definitions/OutputError'
-	e.POST("/check/metrics", checkMetrics)
-
 	// swagger:operation POST /read/interfaces read readInterfaces
 	// ---
 	// summary: Reads out data of the interfaces of a device.
@@ -650,18 +623,6 @@ func checkMemoryUsage(ctx echo.Context) error {
 
 func checkCpuLoad(ctx echo.Context) error {
 	r := request.CheckCPULoadRequest{}
-	if err := ctx.Bind(&r); err != nil {
-		return err
-	}
-	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
-	if err != nil {
-		return handleError(ctx, err)
-	}
-	return returnInFormat(ctx, http.StatusOK, resp)
-}
-
-func checkMetrics(ctx echo.Context) error {
-	r := request.CheckMetricsRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

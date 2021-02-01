@@ -112,25 +112,6 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/cpu-load"), nil
 }
 
-func (r *CheckMetricsRequest) process(ctx context.Context) (Response, error) {
-	var res CheckResponse
-	apiFormat := viper.GetString("target-api-format")
-	responseBody, err := sendToAPI(ctx, r, "check/metrics", apiFormat)
-	if err != nil {
-		m := monitoringplugin.NewResponse("")
-		m.UpdateStatusOnError(err, 3, "failed to send request to api", true)
-		res.ResponseInfo = m.GetInfo()
-		return &res, nil
-	}
-	err = parser.ToStruct(responseBody, apiFormat, &res)
-	if err != nil {
-		m := monitoringplugin.NewResponse("")
-		m.UpdateStatusOnError(err, 3, "failed to parse response from thola api to icinga output", true)
-		res.ResponseInfo = m.GetInfo()
-	}
-	return &res, nil
-}
-
 func (r *ReadInterfacesRequest) process(ctx context.Context) (Response, error) {
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "read/interfaces", apiFormat)
