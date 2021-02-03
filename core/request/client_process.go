@@ -112,6 +112,10 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/cpu-load"), nil
 }
 
+func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/hardware-health"), nil
+}
+
 func (r *ReadInterfacesRequest) process(ctx context.Context) (Response, error) {
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "read/interfaces", apiFormat)

@@ -284,6 +284,60 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/cpu-load", checkCpuLoad)
 
+	// swagger:operation POST /check/sbc check checkSBC
+	// ---
+	// summary: Check an sbc device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckSBCRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckSBCResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/sbc", checkSBC)
+
+	// swagger:operation POST /check/hardware-health check checkSBC
+	// ---
+	// summary: Check an hardware health of an device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckHardwareHealthRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckHardwareHealthResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/hardware-health", checkHardwareHealth)
+
 	// swagger:operation POST /read/interfaces read readInterfaces
 	// ---
 	// summary: Reads out data of the interfaces of a device.
@@ -623,6 +677,30 @@ func checkMemoryUsage(ctx echo.Context) error {
 
 func checkCpuLoad(ctx echo.Context) error {
 	r := request.CheckCPULoadRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkSBC(ctx echo.Context) error {
+	r := request.CheckSBCRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func checkHardwareHealth(ctx echo.Context) error {
+	r := request.CheckHardwareHealthRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
