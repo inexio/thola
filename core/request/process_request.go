@@ -5,7 +5,6 @@ package request
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/api/statistics"
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"strconv"
@@ -66,7 +65,6 @@ func processRequest(ctx context.Context, request Request, responseChan chan resp
 	}
 	defer con.CloseConnections()
 	ctx = network.NewContextWithDeviceConnection(ctx, con)
-	defer statistics.AddRequestStatistics(ctx)
 	res, err := request.process(ctx)
 	responseChan <- response{
 		res: res,

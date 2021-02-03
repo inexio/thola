@@ -19,10 +19,9 @@ import (
 
 // SNMPClient is used to communicate via snmp.
 type SNMPClient struct {
-	client         *gosnmp.GoSNMP
-	useCache       bool
-	cache          requestCache
-	requestCounter int
+	client   *gosnmp.GoSNMP
+	useCache bool
+	cache    requestCache
 }
 
 type snmpClientCreation struct {
@@ -183,7 +182,7 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 	client.Retries = 3
 	client.ExponentialTimeout = true
 
-	return &SNMPClient{client: client, useCache: true, cache: newRequestCache(), requestCounter: 1}, nil
+	return &SNMPClient{client: client, useCache: true, cache: newRequestCache()}, nil
 }
 
 func getGoSNMPVersion(version string) (gosnmp.SnmpVersion, error) {
@@ -228,7 +227,6 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 		if err != nil {
 			return nil, errors.Wrap(err, "error during snmpget")
 		}
-		s.requestCounter += len(reqOIDs)
 	}
 
 	successful := false
@@ -281,7 +279,6 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 
 	var res []SNMPResponse
 	for _, currentResponse := range response {
-		s.requestCounter++
 		snmpResponse := SNMPResponse{}
 		snmpResponse.oid = currentResponse.Name
 		snmpResponse.value = currentResponse.Value
@@ -346,12 +343,6 @@ func (s *SNMPClient) GetMaxRepetitions() uint8 {
 // SetMaxRepetitions sets the maximum repetitions.
 func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint8) {
 	s.client.MaxRepetitions = maxRepetitions
-}
-
-// GetRequestCounter returns the amount of snmp requests
-// snmp walks are weighted by the amount of results
-func (s *SNMPClient) GetRequestCounter() int {
-	return s.requestCounter
 }
 
 // SNMPResponse is the response returned for a single snmp request.
