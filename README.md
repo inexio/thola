@@ -6,7 +6,7 @@
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)
-[![GoDoc doc](https://img.shields.io/badge/docs-online-green)](https://docs.thola.io)
+[![GoDoc doc](https://img.shields.io/badge/docs-online-brightgreen)](https://docs.thola.io)
 
 ## Description
 
