@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/inexio/thola)](https://goreportcard.com/report/github.com/inexio/thola)
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
-![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)
+[![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)](https://github.com/inexio/thola/actions)
 [![GoDoc doc](https://img.shields.io/badge/docs-online-brightgreen)](https://docs.thola.io)
 
 ## Description
