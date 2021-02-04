@@ -3,9 +3,10 @@
 <img align="right" src="doc/logo.png" width="256" alt="Thola">
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/inexio/thola)](https://goreportcard.com/report/github.com/inexio/thola)
-[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
-[![GoDoc doc](https://img.shields.io/badge/godoc-reference-blue)](https://pkg.go.dev/github.com/inexio/thola)
+[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)
+[![GoDoc doc](https://img.shields.io/badge/docs-online-green)](https://docs.thola.io)
 
 ## Description
 
