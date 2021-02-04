@@ -586,7 +586,7 @@ func StartAPI() {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	if err = e.Shutdown(ctx); err != nil {
+	if err := e.Shutdown(ctx); err != nil {
 		log.Fatal().Err(err).Msg("shutting down the server failed")
 	}
 }
