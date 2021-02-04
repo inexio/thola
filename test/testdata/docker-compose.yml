@@ -13,14 +13,14 @@ services:
       tholanetwork:
         ipv4_address: 172.20.0.7
   snmpsim1:
-    image: tandrup/snmpsim:latest
+    image: thola/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/
     networks:
       tholanetwork:
         ipv4_address: 172.20.0.8
   snmpsim2:
-    image: tandrup/snmpsim:latest
+    image: thola/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/
     networks:

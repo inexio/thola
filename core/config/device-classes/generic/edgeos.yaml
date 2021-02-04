@@ -1,4 +1,4 @@
-name: "edgecos"
+name: "edgeos"
 
 match:
   logical_operator: "OR"

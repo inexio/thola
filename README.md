@@ -1,17 +1,17 @@
 # Thola
+
+<img align="right" src="doc/logo.png" width="256" alt="Thola">
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/inexio/thola)](https://goreportcard.com/report/github.com/inexio/thola)
-[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
-[![GoDoc doc](https://img.shields.io/badge/godoc-reference-blue)](https://godoc.org/github.com/inexio/thola)
+[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)
+[![GoDoc doc](https://img.shields.io/badge/docs-online-brightgreen)](https://docs.thola.io)
 
 ## Description
 
 A tool for monitoring and provisioning (coming soon) network devices written in Go.
 It features a check mode which complies with the [monitoring plugins development guidelines](https://www.monitoring-plugins.org/doc/guidelines.html) and is therefore compatible with Nagios, Icinga, Zabbix, Checkmk, etc.
-
-## Thola at FOSDEM 2021 - Request for Papers
-The Thola team will organize a devroom for Network monitoring, discovery and inventory.
-Click [here](https://thola.io/posts/thola-fosdem/) for more information.
 
 ## Installation
 
@@ -45,7 +45,6 @@ Thola currently has three main modes of operation with various subcommands:
     - `check cpu-load` checks the average CPU load of all CPUs against given thresholds and outputs the current load of all CPUs as performance data.
     - `check memory-usage` checks the current memory usage against given thresholds.
     - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity or current load, and compares them to optionally given thresholds.
-    - `check metrics` outputs all possible metrics.
     - `check thola-server` checks reachability of a Thola API.
 
 More features are coming soon:

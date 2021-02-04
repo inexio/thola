@@ -14,7 +14,7 @@ func init() {
 	rootCMD.AddCommand(apiCMD)
 
 	apiCMD.Flags().Int("port", 8237, "Port for the API")
-	apiCMD.Flags().Bool("no-ip-lock", false, "Allow multiple Request at a time for one IP")
+	apiCMD.Flags().Bool("no-ip-lock", false, "Allow multiple requests at a time for one IP")
 	apiCMD.Flags().String("api-format", "json", "API format ('json' or 'xml')")
 	apiCMD.Flags().String("username", "", "Username for authorization")
 	apiCMD.Flags().String("password", "", "Password for authorization")

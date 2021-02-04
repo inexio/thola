@@ -253,6 +253,18 @@ func (t *testDeviceInfoSNMPSim) generateRequest(requestType string) (request.Req
 		r := request.CheckUPSRequest{}
 		r.DeviceData = t.requestDeviceData
 		return &r, nil
+	case "check cpu-load":
+		r := request.CheckCPULoadRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
+	case "check memory-usage":
+		r := request.CheckMemoryUsageRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
+	case "check sbc":
+		r := request.CheckSBCRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
 	default:
 		return nil, errors.New("unknown requestType")
 	}
@@ -282,7 +294,19 @@ func (e *DeviceTestDataExpectations) compareExpectations(response request.Respon
 		}
 	case "check ups":
 		if !cmp.Equal(e.CheckUPS, response, metricsTransformer(), metricsRawOutputFilter()) {
-			return errors.New("difference:\n" + cmp.Diff(e.CheckInterfaceMetrics, response, metricsTransformer(), metricsRawOutputFilter()))
+			return errors.New("difference:\n" + cmp.Diff(e.CheckUPS, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
+	case "check cpu-load":
+		if !cmp.Equal(e.CheckCPULoad, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckCPULoad, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
+	case "check memory-usage":
+		if !cmp.Equal(e.CheckMemoryUsage, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckMemoryUsage, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
+	case "check sbc":
+		if !cmp.Equal(e.CheckSBC, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckSBC, response, metricsTransformer(), metricsRawOutputFilter()))
 		}
 	default:
 		return errors.New("unknown request type")

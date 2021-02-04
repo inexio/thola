@@ -2,8 +2,8 @@ name: fortigate
 
 config:
   components:
-    cpuComponent: true
-    memoryComponent: true
+    cpu: true
+    memory: true
 
 match:
   conditions:

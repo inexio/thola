@@ -31,6 +31,8 @@ const (
 	upsComponent
 	cpuComponent
 	memoryComponent
+	sbcComponent
+	hardwareHealthComponent
 )
 
 // deviceClass represents a device class.
@@ -62,10 +64,12 @@ type deviceClassIdentifyProperties struct {
 
 // deviceClassComponents represents the components part of a device class.
 type deviceClassComponents struct {
-	interfaces *deviceClassComponentsInterfaces
-	ups        *deviceClassComponentsUPS
-	cpu        *deviceClassComponentsCPU
-	memory     *deviceClassComponentsMemory
+	interfaces     *deviceClassComponentsInterfaces
+	ups            *deviceClassComponentsUPS
+	cpu            *deviceClassComponentsCPU
+	memory         *deviceClassComponentsMemory
+	sbc            *deviceClassComponentsSBC
+	hardwareHealth *deviceClassComponentsHardwareHealth
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -94,6 +98,25 @@ type deviceClassComponentsMemory struct {
 	usage propertyReader
 }
 
+// deviceClassComponentsSBC represents the sbc components part of a device class.
+type deviceClassComponentsSBC struct {
+	agents                   groupPropertyReader
+	realms                   groupPropertyReader
+	globalCallPerSecond      propertyReader
+	globalConcurrentSessions propertyReader
+	activeLocalContacts      propertyReader
+	transcodingCapacity      propertyReader
+	licenseCapacity          propertyReader
+	systemRedundancy         propertyReader
+}
+
+// deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
+type deviceClassComponentsHardwareHealth struct {
+	environmentMonitorState propertyReader
+	fans                    groupPropertyReader
+	powerSupply             groupPropertyReader
+}
+
 // deviceClassConfig represents the config part of a device class.
 type deviceClassConfig struct {
 	snmp       deviceClassSNMP
@@ -103,14 +126,14 @@ type deviceClassConfig struct {
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
 	Count   string
-	IfTable deviceClassInterfaceOIDs
+	IfTable groupPropertyReader
 	Types   deviceClassInterfaceTypes
 }
 
-// deviceClassInterfaceOIDs maps interface labels to OIDs.
-type deviceClassInterfaceOIDs map[string]deviceClassInterfaceOID
+// deviceClassOIDs maps labels to OIDs.
+type deviceClassOIDs map[string]deviceClassOID
 
-type deviceClassInterfaceOID struct {
+type deviceClassOID struct {
 	network.SNMPGetConfiguration
 	operators propertyOperators
 }
@@ -121,7 +144,7 @@ type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
 // deviceClassInterfaceTypeDef represents a interface type (e.g. "radio" interface).
 type deviceClassInterfaceTypeDef struct {
 	Detection string
-	Values    deviceClassInterfaceOIDs
+	Values    deviceClassOIDs
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -148,10 +171,12 @@ type yamlDeviceClassIdentify struct {
 }
 
 type yamlDeviceClassComponents struct {
-	Interfaces *yamlComponentsInterfaces       `yaml:"interfaces"`
-	UPS        *yamlComponentsUPSProperties    `yaml:"ups"`
-	CPU        *yamlComponentsCPUProperties    `yaml:"cpu"`
-	Memory     *yamlComponentsMemoryProperties `yaml:"memory"`
+	Interfaces     *yamlComponentsInterfaces               `yaml:"interfaces"`
+	UPS            *yamlComponentsUPSProperties            `yaml:"ups"`
+	CPU            *yamlComponentsCPUProperties            `yaml:"cpu"`
+	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
+	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
+	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
 }
 
 type yamlDeviceClassConfig struct {
@@ -195,23 +220,40 @@ type yamlComponentsMemoryProperties struct {
 	Usage []interface{} `yaml:"usage"`
 }
 
+type yamlComponentsSBCProperties struct {
+	Agents                   interface{}   `yaml:"agents"`
+	Realms                   interface{}   `yaml:"realms"`
+	GlobalCallPerSecond      []interface{} `yaml:"global_call_per_second"`
+	GlobalConcurrentSessions []interface{} `yaml:"global_concurrent_sessions"`
+	ActiveLocalContacts      []interface{} `yaml:"active_local_contacts"`
+	TranscodingCapacity      []interface{} `yaml:"transcoding_capacity"`
+	LicenseCapacity          []interface{} `yaml:"license_capacity"`
+	SystemRedundancy         []interface{} `yaml:"system_redundancy"`
+}
+
+type yamlComponentsHardwareHealthProperties struct {
+	EnvironmentMonitorState []interface{} `yaml:"environment_monitor_state"`
+	Fans                    interface{}   `yaml:"fans"`
+	PowerSupply             interface{}   `yaml:"power_supply"`
+}
+
 type yamlComponentsInterfaces struct {
 	Count   string                       `yaml:"count"`
-	IfTable yamlComponentsInterfaceOIDs  `yaml:"ifTable"`
+	IfTable interface{}                  `yaml:"ifTable"`
 	Types   yamlComponentsInterfaceTypes `yaml:"types"`
 }
 
 type yamlComponentsInterfaceTypes map[string]yamlComponentsInterfaceTypeDef
 
 type yamlComponentsInterfaceTypeDef struct {
-	Detection string                      `yaml:"detection"`
-	Values    yamlComponentsInterfaceOIDs `yaml:"specific_values"`
+	Detection string             `yaml:"detection"`
+	Values    yamlComponentsOIDs `yaml:"specific_values"`
 }
 
-type yamlComponentsInterfaceOIDs map[string]yamlComponentsInterfaceOID
+type yamlComponentsOIDs map[string]yamlComponentsOID
 
-type yamlComponentsInterfaceOID struct {
-	network.SNMPGetConfiguration `yaml:",inline"`
+type yamlComponentsOID struct {
+	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
 	Operators                    []interface{} `yaml:"operators"`
 }
 
@@ -603,18 +645,34 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.memory = &memory
 	}
 
+	if y.SBC != nil {
+		sbc, err := y.SBC.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml sbc properties")
+		}
+		components.sbc = &sbc
+	}
+
+	if y.HardwareHealth != nil {
+		hardwareHealth, err := y.HardwareHealth.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml hardware health properties")
+		}
+		components.hardwareHealth = &hardwareHealth
+	}
+
 	return components, nil
 }
 
 func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, error) {
 	var interfaces deviceClassComponentsInterfaces
+	var err error
 
 	if y.IfTable != nil {
-		ifTable, err := y.IfTable.convert()
+		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable)
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces ifTable")
+			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
 		}
-		interfaces.IfTable = ifTable
 	}
 
 	if y.Types != nil {
@@ -657,16 +715,16 @@ func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, err
 	return interfaceTypes, nil
 }
 
-func (y *yamlComponentsInterfaceOIDs) convert() (deviceClassInterfaceOIDs, error) {
-	interfaceOIDs := make(map[string]deviceClassInterfaceOID)
+func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
+	interfaceOIDs := make(map[string]deviceClassOID)
 
 	for k, property := range *y {
 		if property.Operators != nil {
 			operators, err := interfaceSlice2propertyOperators(property.Operators, propertyDefault)
 			if err != nil {
-				return deviceClassInterfaceOIDs{}, errors.Wrap(err, "failed to read yaml interfaces oids operators")
+				return deviceClassOIDs{}, errors.Wrap(err, "failed to read yaml oids operators")
 			}
-			interfaceOIDs[k] = deviceClassInterfaceOID{
+			interfaceOIDs[k] = deviceClassOID{
 				SNMPGetConfiguration: network.SNMPGetConfiguration{
 					OID:          (*y)[k].OID,
 					UseRawResult: (*y)[k].UseRawResult,
@@ -674,7 +732,7 @@ func (y *yamlComponentsInterfaceOIDs) convert() (deviceClassInterfaceOIDs, error
 				operators: operators,
 			}
 		} else {
-			interfaceOIDs[k] = deviceClassInterfaceOID{
+			interfaceOIDs[k] = deviceClassOID{
 				SNMPGetConfiguration: network.SNMPGetConfiguration{
 					OID:          (*y)[k].OID,
 					UseRawResult: (*y)[k].UseRawResult,
@@ -685,6 +743,16 @@ func (y *yamlComponentsInterfaceOIDs) convert() (deviceClassInterfaceOIDs, error
 	}
 
 	return interfaceOIDs, nil
+}
+
+func (d *deviceClassOIDs) validate() error {
+	for label, oid := range *d {
+		if err := oid.OID.Validate(); err != nil {
+			return errors.Wrapf(err, "oid for %s is invalid", label)
+		}
+	}
+
+	return nil
 }
 
 func conditionContainsUniqueRequest(c condition) bool {
@@ -869,6 +937,87 @@ func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory,
 	return properties, nil
 }
 
+func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error) {
+	var properties deviceClassComponentsSBC
+	var err error
+
+	if y.Agents != nil {
+		properties.agents, err = interface2GroupPropertyReader(y.Agents)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert agents property to group property reader")
+		}
+	}
+	if y.Realms != nil {
+		properties.realms, err = interface2GroupPropertyReader(y.Realms)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert realms property to group property reader")
+		}
+	}
+	if y.ActiveLocalContacts != nil {
+		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
+		}
+	}
+	if y.GlobalCallPerSecond != nil {
+		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
+		}
+	}
+	if y.GlobalConcurrentSessions != nil {
+		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
+		}
+	}
+	if y.LicenseCapacity != nil {
+		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
+		}
+	}
+	if y.TranscodingCapacity != nil {
+		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
+		}
+	}
+	if y.SystemRedundancy != nil {
+		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsHardwareHealthProperties) convert() (deviceClassComponentsHardwareHealth, error) {
+	var properties deviceClassComponentsHardwareHealth
+	var err error
+
+	if y.Fans != nil {
+		properties.fans, err = interface2GroupPropertyReader(y.Fans)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
+		}
+	}
+	if y.PowerSupply != nil {
+		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
+		}
+	}
+	if y.EnvironmentMonitorState != nil {
+		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
+		}
+	}
+
+	return properties, nil
+}
+
 func (y *yamlConditionSet) convert() (condition, error) {
 	err := y.validate()
 	if err != nil {
@@ -913,7 +1062,7 @@ const (
 func interface2condition(i interface{}, task relatedTask) (condition, error) {
 	m, ok := i.(map[interface{}]interface{})
 	if !ok {
-		return nil, errors.New("failed to convert interface to map[string]interface{}")
+		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
 	}
 
 	var stringType string
@@ -1025,7 +1174,7 @@ func convertYamlProperty(i []interface{}, task relatedTask) (propertyReader, err
 func interface2propertyReader(i interface{}, task relatedTask) (propertyReader, error) {
 	m, ok := i.(map[interface{}]interface{})
 	if !ok {
-		return nil, errors.New("failed to convert interface to map[string]interface{}")
+		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
 	}
 	if _, ok := m["detection"]; !ok {
 		return nil, errors.New("detection is missing in property")
@@ -1124,7 +1273,7 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 	for _, opInterface := range i {
 		m, ok := opInterface.(map[interface{}]interface{})
 		if !ok {
-			return nil, errors.New("failed to convert interface to map[string]interface{}")
+			return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
 		}
 		if _, ok := m["type"]; !ok {
 			return nil, errors.New("operator type is missing!")
@@ -1417,6 +1566,46 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 	return propertyOperators, nil
 }
 
+func interface2GroupPropertyReader(i interface{}) (groupPropertyReader, error) {
+	m, ok := i.(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.New("failed to convert group properties to map[interface{}]interface{}")
+	}
+	if _, ok := m["detection"]; !ok {
+		return nil, errors.New("detection is missing in group properties")
+	}
+	stringDetection, ok := m["detection"].(string)
+	if !ok {
+		return nil, errors.New("property detection needs to be a string")
+	}
+	switch stringDetection {
+	case "snmpwalk":
+		var oids yamlComponentsOIDs
+		if _, ok := m["values"]; !ok {
+			return nil, errors.New("values are missing")
+		}
+		values, ok := m["values"].(map[interface{}]interface{})
+		if !ok {
+			return nil, errors.New("values needs to be a map")
+		}
+		err := mapstructure.Decode(values, &oids)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
+		}
+		deviceClassOIDs, err := oids.convert()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert yaml OIDs to device class OIDs")
+		}
+		err = deviceClassOIDs.validate()
+		if err != nil {
+			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
+		}
+		return &snmpGroupPropertyReader{deviceClassOIDs}, nil
+	default:
+		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
+	}
+}
+
 func (m *matchMode) validate() error {
 	if *m != "contains" && *m != "!contains" && *m != "startsWith" && *m != "!startsWith" && *m != "regex" && *m != "!regex" && *m != "equals" && *m != "!equals" {
 		return errors.New(string("unknown matchmode \"" + *m + "\""))
@@ -1433,14 +1622,18 @@ func (l *logicalOperator) validate() error {
 
 func createComponent(component string) (deviceClassComponent, error) {
 	switch component {
-	case "interfaceComponent":
+	case "interfaces":
 		return interfacesComponent, nil
-	case "upsComponent":
+	case "ups":
 		return upsComponent, nil
-	case "cpuComponent":
+	case "cpu":
 		return cpuComponent, nil
-	case "memoryComponent":
+	case "memory":
 		return memoryComponent, nil
+	case "sbc":
+		return sbcComponent, nil
+	case "hardware_health":
+		return hardwareHealthComponent, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -1452,13 +1645,17 @@ func (d *deviceClassComponent) toString() (string, error) {
 	}
 	switch *d {
 	case interfacesComponent:
-		return "interfaceComponent", nil
+		return "interfaces", nil
 	case upsComponent:
-		return "upsComponent", nil
+		return "ups", nil
 	case cpuComponent:
-		return "cpuComponent", nil
+		return "cpu", nil
 	case memoryComponent:
-		return "memoryComponent", nil
+		return "memory", nil
+	case sbcComponent:
+		return "sbc", nil
+	case hardwareHealthComponent:
+		return "hardware_health", nil
 	default:
 		return "", errors.New("unknown component")
 	}

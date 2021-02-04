@@ -2578,7 +2578,7 @@
 					"max": null
 				}
 			],
-			"raw_output": "OK: checked\n[{\"ifIndex\":\"17\",\"ifDescr\":\"GigabitEthernet1/0\",\"ifName\":\"GigabitEthernet1/0\",\"ifAlias\":\"GigabitEthernet1/0 Interface\",\"ifPhysAddress\":\"52:54:00:A0:CA:01\"},{\"ifIndex\":\"33\",\"ifDescr\":\"GigabitEthernet2/0\",\"ifName\":\"GigabitEthernet2/0\",\"ifAlias\":\"GigabitEthernet2/0 Interface\",\"ifPhysAddress\":\"52:54:00:D1:2D:02\"},{\"ifIndex\":\"49\",\"ifDescr\":\"GigabitEthernet3/0\",\"ifName\":\"GigabitEthernet3/0\",\"ifAlias\":\"GigabitEthernet3/0 Interface\",\"ifPhysAddress\":\"52:54:00:FC:26:03\"},{\"ifIndex\":\"65\",\"ifDescr\":\"GigabitEthernet4/0\",\"ifName\":\"GigabitEthernet4/0\",\"ifAlias\":\"GigabitEthernet4/0 Interface\",\"ifPhysAddress\":\"52:54:00:CB:2A:04\"},{\"ifIndex\":\"81\",\"ifDescr\":\"GigabitEthernet5/0\",\"ifName\":\"GigabitEthernet5/0\",\"ifAlias\":\"GigabitEthernet5/0 Interface\",\"ifPhysAddress\":\"52:54:00:EA:66:05\"},{\"ifIndex\":\"97\",\"ifDescr\":\"GigabitEthernet6/0\",\"ifName\":\"GigabitEthernet6/0\",\"ifAlias\":\"GigabitEthernet6/0 Interface\",\"ifPhysAddress\":\"52:54:00:30:75:06\"},{\"ifIndex\":\"113\",\"ifDescr\":\"GigabitEthernet7/0\",\"ifName\":\"GigabitEthernet7/0\",\"ifAlias\":\"GigabitEthernet7/0 Interface\",\"ifPhysAddress\":\"52:54:00:77:9D:07\"},{\"ifIndex\":\"129\",\"ifDescr\":\"GigabitEthernet8/0\",\"ifName\":\"GigabitEthernet8/0\",\"ifAlias\":\"GigabitEthernet8/0 Interface\",\"ifPhysAddress\":\"52:54:00:BB:FC:00\"},{\"ifIndex\":\"401\",\"ifDescr\":\"NULL0\",\"ifName\":\"NULL0\",\"ifAlias\":\"NULL0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"402\",\"ifDescr\":\"InLoopBack0\",\"ifName\":\"InLoopBack0\",\"ifAlias\":\"InLoopBack0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"},{\"ifIndex\":\"403\",\"ifDescr\":\"Register-Tunnel0\",\"ifName\":\"Register-Tunnel0\",\"ifAlias\":\"Register-Tunnel0 Interface\",\"ifPhysAddress\":\"00:00:00:00:00:00\"}]",
+			"raw_output": "",
 			"messages": [
 				{
 					"status": 0,
@@ -2586,6 +2586,9 @@
 				}
 			]
 		},
-		"checkUPS": null
+		"checkUPS": null,
+		"checkCPULoad": null,
+		"checkMemoryUsage": null,
+		"checkSBC": null
 	}
 }

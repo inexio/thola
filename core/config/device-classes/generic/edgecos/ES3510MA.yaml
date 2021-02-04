@@ -2,7 +2,7 @@ name: "ES3510MA"
 
 config:
   components:
-    cpuComponent: true
+    cpu: true
 
 match:
   logical_operator: "OR"

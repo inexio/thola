@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
@@ -99,6 +100,10 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/ups"), nil
 }
 
+func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/sbc"), nil
+}
+
 func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/memory-usage"), nil
 }
@@ -107,23 +112,8 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/cpu-load"), nil
 }
 
-func (r *CheckMetricsRequest) process(ctx context.Context) (Response, error) {
-	var res CheckResponse
-	apiFormat := viper.GetString("target-api-format")
-	responseBody, err := sendToAPI(ctx, r, "check/metrics", apiFormat)
-	if err != nil {
-		m := monitoringplugin.NewResponse("")
-		m.UpdateStatusOnError(err, 3, "failed to send request to api", true)
-		res.ResponseInfo = m.GetInfo()
-		return &res, nil
-	}
-	err = parser.ToStruct(responseBody, apiFormat, &res)
-	if err != nil {
-		m := monitoringplugin.NewResponse("")
-		m.UpdateStatusOnError(err, 3, "failed to parse response from thola api to icinga output", true)
-		res.ResponseInfo = m.GetInfo()
-	}
-	return &res, nil
+func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/hardware-health"), nil
 }
 
 func (r *ReadInterfacesRequest) process(ctx context.Context) (Response, error) {
@@ -194,6 +184,36 @@ func (r *ReadUPSRequest) process(ctx context.Context) (Response, error) {
 		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
 	}
 	return &res, nil
+}
+
+func (r *ReadSBCRequest) process(ctx context.Context) (Response, error) {
+	apiFormat := viper.GetString("target-api-format")
+	responseBody, err := sendToAPI(ctx, r, "read/sbc", apiFormat)
+	if err != nil {
+		return nil, err
+	}
+	var res ReadSBCResponse
+	err = parser.ToStruct(responseBody, apiFormat, &res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
+	}
+	return &res, nil
+}
+
+func (r *ReadHardwareHealthRequest) process(ctx context.Context) (Response, error) {
+	apiFormat := viper.GetString("target-api-format")
+	responseBody, err := sendToAPI(ctx, r, "read/hardware-health", apiFormat)
+	if err != nil {
+		return nil, err
+	}
+	var res device.HardwareHealthComponent
+	err = parser.ToStruct(responseBody, apiFormat, &res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
+	}
+	return &ReadHardwareHealthResponse{
+		HardwareHealthComponent: res,
+	}, nil
 }
 
 func (r *ReadAvailableComponentsRequest) process(ctx context.Context) (Response, error) {

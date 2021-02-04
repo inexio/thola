@@ -158,10 +158,62 @@ type UPSComponent struct {
 	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
 }
 
+// SBCComponent represents a SBC component
+type SBCComponent struct {
+	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents"`
+	Realms                   []SBCComponentRealm `yaml:"realms" json:"realms" xml:"realms"`
+	GlobalCallPerSecond      *int                `yaml:"global_call_per_second" json:"global_call_per_second" xml:"global_call_per_second"`
+	GlobalConcurrentSessions *int                `yaml:"global_concurrent_sessions " json:"global_concurrent_sessions " xml:"global_concurrent_sessions"`
+	ActiveLocalContacts      *int                `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts"`
+	TranscodingCapacity      *int                `yaml:"transcoding_capacity" json:"transcoding_capacity" xml:"transcoding_capacity"`
+	LicenseCapacity          *int                `yaml:"license_capacity" json:"license_capacity" xml:"license_capacity"`
+	SystemRedundancy         *int                `yaml:"system_redundancy" json:"system_redundancy" xml:"system_redundancy"`
+}
+
+// SBCComponentAgent contains information per agent. (Voice)
+type SBCComponentAgent struct {
+	Hostname                      string `yaml:"hostname" json:"hostname" xml:"hostname" mapstructure:"hostname"`
+	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"period_asr"`
+	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
+}
+
+// SBCComponentRealm contains information per realm. (Voice)
+type SBCComponentRealm struct {
+	Name                          string `yaml:"name" json:"name" xml:"name"`
+	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"d_asr"`
+	ActiveLocalContacts           *int   `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts" mapstructure:"active_local_contacts"`
+	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
+}
+
 // CPUComponent represents a CPU component
 type CPUComponent struct {
 	Load        []float64 `yaml:"load" json:"load" xml:"load"`
 	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
+}
+
+// HardwareHealthComponent represents hardware health information of a device
+type HardwareHealthComponent struct {
+	EnvironmentMonitorState *int                                 `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
+	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
+	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
+}
+
+type HardwareHealthComponentFan struct {
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	State       *int    `yaml:"state" json:"state" xml:"state"`
+}
+
+type HardwareHealthComponentPowerSupply struct {
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	State       *int    `yaml:"state" json:"state" xml:"state"`
 }
 
 // NewContextWithDeviceProperties returns a new context with the device properties

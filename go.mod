@@ -25,8 +25,6 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
-	github.com/thoas/go-funk v0.7.0
-	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/ulule/limiter/v3 v3.5.0
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/text v0.3.3

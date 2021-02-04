@@ -99,6 +99,50 @@ func (c *baseCommunicator) GetUPSComponentRectifierCurrent(_ context.Context) (f
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
+func (c *baseCommunicator) GetSBCComponentAgents(_ context.Context) ([]device.SBCComponentAgent, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentRealms(_ context.Context) ([]device.SBCComponentRealm, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
 func (c *baseCommunicator) GetUPSComponentSystemVoltage(_ context.Context) (float64, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentGlobalCallPerSecond(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentGlobalConcurrentSessions(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentActiveLocalContacts(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentTranscodingCapacity(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentLicenseCapacity(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetSBCComponentSystemRedundancy(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetHardwareHealthComponentFans(_ context.Context) ([]device.HardwareHealthComponentFan, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetHardwareHealthComponentPowerSupply(_ context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

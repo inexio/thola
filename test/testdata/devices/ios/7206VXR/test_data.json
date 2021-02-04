@@ -6,7 +6,7 @@
 			"properties": {
 				"vendor": "Cisco",
 				"model": "7206VXR",
-				"model_series": null,
+				"model_series": "7206",
 				"serial_number": "4279256517",
 				"os_version": "12.4(24)T5"
 			}
@@ -618,7 +618,7 @@
 					"max": null
 				}
 			],
-			"raw_output": "OK: checked\n[{\"ifIndex\":\"1\",\"ifDescr\":\"FastEthernet0/0\",\"ifName\":\"Fa0/0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"CA:01:16:E4:00:00\"},{\"ifIndex\":\"2\",\"ifDescr\":\"VoIP-Null0\",\"ifName\":\"Vo0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Null0\",\"ifName\":\"Nu0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"}]",
+			"raw_output": "",
 			"messages": [
 				{
 					"status": 0,
@@ -626,6 +626,25 @@
 				}
 			]
 		},
-		"checkUPS": null
+		"checkUPS": null,
+		"checkCPULoad": {
+			"status_code": 0,
+			"performance_data": [
+				{
+					"metric": "cpu_load",
+					"label": "",
+					"value": "5",
+					"unit": "%",
+					"warn": null,
+					"crit": null,
+					"min": null,
+					"max": null
+				}
+			],
+			"raw_output": "",
+			"messages": null
+		},
+		"checkMemoryUsage": null,
+		"checkSBC": null
 	}
 }

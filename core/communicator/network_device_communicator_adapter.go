@@ -1,6 +1,8 @@
 package communicator
 
-import "context"
+import (
+	"context"
+)
 
 type adapterFunc func(...interface{}) (interface{}, error)
 
@@ -20,6 +22,8 @@ type communicatorAdapter interface {
 	communicatorAdapterCPU
 	communicatorAdapterUPS
 	communicatorAdapterMemory
+	communicatorAdapterSCB
+	communicatorAdapterHardwareHealth
 }
 
 type communicatorAdapterCPU interface {
@@ -43,6 +47,23 @@ type communicatorAdapterUPS interface {
 	getUPSComponentMainsVoltageApplied(...interface{}) (interface{}, error)
 	getUPSComponentRectifierCurrent(...interface{}) (interface{}, error)
 	getUPSComponentSystemVoltage(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterSCB interface {
+	getSBCComponentAgents(...interface{}) (interface{}, error)
+	getSBCComponentRealms(...interface{}) (interface{}, error)
+	getSBCComponentGlobalCallPerSecond(...interface{}) (interface{}, error)
+	getSBCComponentGlobalConcurrentSessions(...interface{}) (interface{}, error)
+	getSBCComponentActiveLocalContacts(...interface{}) (interface{}, error)
+	getSBCComponentTranscodingCapacity(...interface{}) (interface{}, error)
+	getSBCComponentLicenseCapacity(...interface{}) (interface{}, error)
+	getSBCComponentSystemRedundancy(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterHardwareHealth interface {
+	getHardwareHealthComponentFans(...interface{}) (interface{}, error)
+	getHardwareHealthComponentEnvironmentMonitorState(...interface{}) (interface{}, error)
+	getHardwareHealthComponentPowerSupply(i ...interface{}) (interface{}, error)
 }
 
 var emptyAdapterFunc adapterFunc
@@ -137,4 +158,48 @@ func (a *adapter) getUPSComponentRectifierCurrent(i ...interface{}) (interface{}
 
 func (a *adapter) getUPSComponentSystemVoltage(i ...interface{}) (interface{}, error) {
 	return a.com.GetUPSComponentSystemVoltage(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentAgents(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentAgents(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentRealms(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentRealms(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentGlobalCallPerSecond(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentGlobalCallPerSecond(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentGlobalConcurrentSessions(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentGlobalConcurrentSessions(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentActiveLocalContacts(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentActiveLocalContacts(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentTranscodingCapacity(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentTranscodingCapacity(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentLicenseCapacity(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentLicenseCapacity(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentSystemRedundancy(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentSystemRedundancy(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentEnvironmentMonitorState(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentEnvironmentMonitorState(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentFans(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentFans(i[0].(context.Context))
+}
+
+func (a *adapter) getHardwareHealthComponentPowerSupply(i ...interface{}) (interface{}, error) {
+	return a.com.GetHardwareHealthComponentPowerSupply(i[0].(context.Context))
 }

@@ -212,6 +212,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check interface metrics for device " + device + " failed")
 	} else {
 		checkInterfaceMetricsResponse = res.(*request.CheckResponse)
+		checkInterfaceMetricsResponse.RawOutput = ""
 	}
 
 	var checkUPSResponse *request.CheckResponse
@@ -234,6 +235,76 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		log.Info().Err(errors.New(string(errString))).Msg("check ups for device " + device + " failed")
 	} else {
 		checkUPSResponse = res.(*request.CheckResponse)
+		checkUPSResponse.RawOutput = ""
+	}
+
+	var checkCPULoadResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckCPULoadRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check cpu load for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check cpu load for device " + device + " failed")
+	} else {
+		checkCPULoadResponse = res.(*request.CheckResponse)
+		checkCPULoadResponse.RawOutput = ""
+	}
+
+	var checkMemoryUsageResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckMemoryUsageRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check memory usage for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check memory usage for device " + device + " failed")
+	} else {
+		checkMemoryUsageResponse = res.(*request.CheckResponse)
+		checkMemoryUsageResponse.RawOutput = ""
+	}
+
+	var checkSBCResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckSBCRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check sbc for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check sbc for device " + device + " failed")
+	} else {
+		checkSBCResponse = res.(*request.CheckResponse)
+		checkSBCResponse.RawOutput = ""
 	}
 
 	return test.DeviceTestData{
@@ -243,6 +314,9 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 			ReadCountInterfaces:   readCountInterfacesResponse,
 			CheckInterfaceMetrics: checkInterfaceMetricsResponse,
 			CheckUPS:              checkUPSResponse,
+			CheckCPULoad:          checkCPULoadResponse,
+			CheckMemoryUsage:      checkMemoryUsageResponse,
+			CheckSBC:              checkSBCResponse,
 		},
 		Connection: connectionData,
 	}, nil
