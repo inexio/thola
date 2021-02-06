@@ -268,7 +268,14 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 // SNMPWalk sends a snmpwalk request to the specified oid.
 func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
 	s.client.Context = ctx
-	response, err := s.client.WalkAll(oid)
+
+	var response []gosnmp.SnmpPDU
+	var err error
+	if s.client.Version == gosnmp.Version1 {
+		response, err = s.client.WalkAll(oid)
+	} else {
+		response, err = s.client.BulkWalkAll(oid)
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk all failed")
 	}
