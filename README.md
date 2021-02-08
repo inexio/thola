@@ -38,7 +38,7 @@ Thola currently has three main modes of operation with various subcommands:
     - `read cpu-load` returns the current cpu load of all CPUs.
     - `read memory-usage` reads out the current memory usage.
     - `read ups` outputs the special values of a UPS device.
-    - `read sbc` reads out sbc specific information.
+    - `read sbc` reads out SBC specific information.
 - `check` performs checks that can be used in monitoring systems. Output is by default in check plugin format.
     - `check identify` compares the device properties with given expectations.
     - `check snmp` checks SNMP reachability.
