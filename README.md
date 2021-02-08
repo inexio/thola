@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/inexio/thola)](https://goreportcard.com/report/github.com/inexio/thola)
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/inexio/thola/blob/main/LICENSE)
-![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)
+[![GitHub branch checks state](https://img.shields.io/github/checks-status/inexio/thola/main)](https://github.com/inexio/thola/actions)
 [![GoDoc doc](https://img.shields.io/badge/docs-online-brightgreen)](https://docs.thola.io)
 
 ## Description
@@ -38,6 +38,7 @@ Thola currently has three main modes of operation with various subcommands:
     - `read cpu-load` returns the current cpu load of all CPUs.
     - `read memory-usage` reads out the current memory usage.
     - `read ups` outputs the special values of a UPS device.
+    - `read sbc` reads out SBC specific information.
 - `check` performs checks that can be used in monitoring systems. Output is by default in check plugin format.
     - `check identify` compares the device properties with given expectations.
     - `check snmp` checks SNMP reachability.
@@ -46,6 +47,7 @@ Thola currently has three main modes of operation with various subcommands:
     - `check memory-usage` checks the current memory usage against given thresholds.
     - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity or current load, and compares them to optionally given thresholds.
     - `check thola-server` checks reachability of a Thola API.
+    - `check sbc` checks an SBC device and outputs metrics for each realm and agent as performance data.
 
 More features are coming soon:
 

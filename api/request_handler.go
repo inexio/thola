@@ -556,6 +556,7 @@ func StartAPI() {
 
 	// Start server
 	go func() {
+		var err error
 		if viper.GetString("api.certfile") != "" && viper.GetString("api.keyfile") != "" {
 			err = e.StartTLS(":"+viper.GetString("api.port"), viper.GetString("api.certfile"), viper.GetString("api.keyfile"))
 		} else {

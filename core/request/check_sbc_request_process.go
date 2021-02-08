@@ -56,6 +56,15 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
+	if sbc.SystemRedundancy != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("system_redundancy", *sbc.LicenseCapacity, ""))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+
+		r.mon.UpdateStatusIf(*sbc.SystemRedundancy != 2 && *sbc.SystemRedundancy != 3, monitoringplugin.CRITICAL, "system redundancy is critical")
+	}
+
 	for _, agent := range sbc.Agents {
 		if agent.CurrentActiveSessionsInbound != nil {
 			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_inbound", *agent.CurrentActiveSessionsInbound, "").SetLabel(agent.Hostname)
