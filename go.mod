@@ -10,7 +10,7 @@ require (
 	github.com/google/go-cmp v0.5.4
 	github.com/gosnmp/gosnmp v1.29.0
 	github.com/huandu/go-sqlbuilder v1.8.0
-	github.com/inexio/go-monitoringplugin v0.0.0-20210208120438-565e33bbd7ca
+	github.com/inexio/go-monitoringplugin v1.0.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
