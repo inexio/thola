@@ -613,6 +613,25 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemRedundancy(ctx context.Co
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetSBCComponentSystemHealthScore(ctx context.Context) (int, error) {
+	if o.components.sbc == nil || o.components.sbc.systemHealthScore == nil {
+		log.Ctx(ctx).Trace().Str("property", "SBCComponentSystemHealthScore").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "SBCComponentSystemHealthScore").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.sbc.systemHealthScore.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SBCComponentSystemHealthScore")
+	}
+	result, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+	}
+	return result, nil
+}
+
 func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
 	if o.components.hardwareHealth == nil || o.components.hardwareHealth.environmentMonitorState == nil {
 		log.Ctx(ctx).Trace().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Str("device_class", o.name).Msg("no detection information available")

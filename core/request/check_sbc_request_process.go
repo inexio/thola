@@ -4,7 +4,9 @@ package request
 
 import (
 	"context"
+	"fmt"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/core/value"
 )
 
 func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
@@ -57,12 +59,24 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 	}
 
 	if sbc.SystemRedundancy != nil {
-		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("system_redundancy", *sbc.LicenseCapacity, ""))
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("system_redundancy", *sbc.SystemRedundancy, ""))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 
 		r.mon.UpdateStatusIf(*sbc.SystemRedundancy != 2 && *sbc.SystemRedundancy != 3, monitoringplugin.CRITICAL, "system redundancy is critical")
+	}
+
+	if sbc.SystemHealthScore != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("system_health_score", *sbc.SystemHealthScore, ""))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+		val := value.New(*sbc.SystemHealthScore)
+		if !r.SystemHealthScoreThresholds.isEmpty() {
+			code := r.SystemHealthScoreThresholds.checkValue(val)
+			r.mon.UpdateStatusIf(code != monitoringplugin.OK, code, fmt.Sprintf("system health score is %s%%", val))
+		}
 	}
 
 	for _, agent := range sbc.Agents {

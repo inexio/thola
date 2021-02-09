@@ -146,3 +146,7 @@ func (c *baseCommunicator) GetHardwareHealthComponentFans(_ context.Context) ([]
 func (c *baseCommunicator) GetHardwareHealthComponentPowerSupply(_ context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
+
+func (c *baseCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}

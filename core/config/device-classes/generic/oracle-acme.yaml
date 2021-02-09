@@ -96,6 +96,9 @@ components:
     system_redundancy:
       - detection: snmpget
         oid:  .1.3.6.1.4.1.9148.3.2.1.1.4.0
+    system_health_score:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.9148.3.2.1.1.3.0
   hardware_health:
     environment_monitor_state:
       - detection: snmpget

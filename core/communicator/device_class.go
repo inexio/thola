@@ -108,6 +108,7 @@ type deviceClassComponentsSBC struct {
 	transcodingCapacity      propertyReader
 	licenseCapacity          propertyReader
 	systemRedundancy         propertyReader
+	systemHealthScore        propertyReader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
@@ -229,6 +230,7 @@ type yamlComponentsSBCProperties struct {
 	TranscodingCapacity      []interface{} `yaml:"transcoding_capacity"`
 	LicenseCapacity          []interface{} `yaml:"license_capacity"`
 	SystemRedundancy         []interface{} `yaml:"system_redundancy"`
+	SystemHealthScore        []interface{} `yaml:"system_health_score"`
 }
 
 type yamlComponentsHardwareHealthProperties struct {
@@ -987,6 +989,13 @@ func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error
 		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
+		}
+	}
+
+	if y.SystemHealthScore != nil {
+		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system health score property to property reader")
 		}
 	}
 	return properties, nil

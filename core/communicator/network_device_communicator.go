@@ -68,6 +68,7 @@ type availableSBCCommunicatorFunctions interface {
 	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
 	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
 	GetSBCComponentSystemRedundancy(ctx context.Context) (int, error)
+	GetSBCComponentSystemHealthScore(ctx context.Context) (int, error)
 }
 
 type availableHardwareHealthCommunicatorFunctions interface {
@@ -439,10 +440,20 @@ func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device
 	systemRedundancy, err := c.head.GetSBCComponentSystemRedundancy(ctx)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get license capacity")
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system redundancy")
 		}
 	} else {
 		sbc.SystemRedundancy = &systemRedundancy
+		empty = false
+	}
+
+	systemHealthScore, err := c.head.GetSBCComponentSystemHealthScore(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system health score")
+		}
+	} else {
+		sbc.SystemHealthScore = &systemHealthScore
 		empty = false
 	}
 
@@ -860,6 +871,17 @@ func (c *networkDeviceCommunicator) GetSBCComponentSystemRedundancy(ctx context.
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentSystemRedundancy
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentSystemRedundancy), emptyAdapterFunc).(adapterFunc)
 	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentSystemRedundancy), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetSBCComponentSystemHealthScore(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentSystemHealthScore
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentSystemHealthScore), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSBCComponentSystemHealthScore), emptyAdapterFunc).(adapterFunc)
 	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
 	if err != nil {
 		return 0, err
