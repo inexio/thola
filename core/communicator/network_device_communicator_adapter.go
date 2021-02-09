@@ -58,6 +58,7 @@ type communicatorAdapterSCB interface {
 	getSBCComponentTranscodingCapacity(...interface{}) (interface{}, error)
 	getSBCComponentLicenseCapacity(...interface{}) (interface{}, error)
 	getSBCComponentSystemRedundancy(...interface{}) (interface{}, error)
+	getSBCComponentSystemHealthScore(...interface{}) (interface{}, error)
 }
 
 type communicatorAdapterHardwareHealth interface {
@@ -190,6 +191,10 @@ func (a *adapter) getSBCComponentLicenseCapacity(i ...interface{}) (interface{},
 
 func (a *adapter) getSBCComponentSystemRedundancy(i ...interface{}) (interface{}, error) {
 	return a.com.GetSBCComponentSystemRedundancy(i[0].(context.Context))
+}
+
+func (a *adapter) getSBCComponentSystemHealthScore(i ...interface{}) (interface{}, error) {
+	return a.com.GetSBCComponentSystemHealthScore(i[0].(context.Context))
 }
 
 func (a *adapter) getHardwareHealthComponentEnvironmentMonitorState(i ...interface{}) (interface{}, error) {
