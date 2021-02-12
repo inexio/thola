@@ -14,6 +14,7 @@ import (
 type interfaceCheckOutput struct {
 	IfIndex       string `json:"ifIndex"`
 	IfDescr       string `json:"ifDescr"`
+	IfType        string `json:"ifType"`
 	IfName        string `json:"ifName"`
 	IfAlias       string `json:"ifAlias"`
 	IfPhysAddress string `json:"ifPhysAddress"`
@@ -40,6 +41,9 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			}
 			if interf.IfName != nil {
 				x.IfName = *interf.IfName
+			}
+			if interf.IfType != nil {
+				x.IfType = *interf.IfType
 			}
 			if interf.IfAlias != nil {
 				x.IfAlias = *interf.IfAlias
