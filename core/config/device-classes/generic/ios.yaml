@@ -35,18 +35,18 @@ identify:
           - type: modify
             modify_method: regexReplace
             replace: ""
-            regex: "(?i)^C(ISCO)?"
+            regex: '(?i)^C(ISCO)?'
     model_series:
       - detection: Model
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "^([0-9]+)"
+            regex: '^([0-9]+)'
             format: "$1"
     os_version:
       - detection: SysDescription
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "Version ([^, ]+)"
+            regex: 'Version ([^, ]+)'
             format: "$1"

@@ -33,7 +33,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "^([^,]+),"
+            regex: '^([^,]+),'
             format: "$1"
 
 components:

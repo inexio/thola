@@ -28,7 +28,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})"
+            regex: '(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})'
             format: "$1:$2:$3:$4:$5:$6"
             return_on_mismatch: true
     os_version:

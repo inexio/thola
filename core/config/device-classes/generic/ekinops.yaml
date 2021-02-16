@@ -19,7 +19,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "^Ekinops 360 Platform, ([A-Z0-9]+), Release"
+            regex: '^Ekinops 360 Platform, ([A-Z0-9]+), Release'
             format: "$1"
     serial_number:
       - detection: snmpget
