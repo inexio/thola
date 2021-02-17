@@ -39,7 +39,7 @@ func (m *ekinopsModuleReaderOPM8) readModuleMetrics(ctx context.Context, interfa
 		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + *opticalOPMInterface.Identifier
 		idx, ok := mappings[identifier]
 		if !ok {
-			return nil, fmt.Errorf("interface for identifier '%s' not found")
+			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
 		interfaces[idx].OpticalOPMInterface = opticalOPMInterface
 	}
@@ -153,7 +153,7 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 		}
 
 		if channelIdx > 776 {
-			continue
+			break
 		}
 
 		if _, ok := channelValues[portIdx]; !ok {

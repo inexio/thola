@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
+	"math"
 )
 
 // ekinopsModuleReader is an interface with one function that receives an array of device.Interface and
@@ -91,7 +92,7 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 				labelOID:           ".1.3.6.1.4.1.20044.90.9.3.2.1.3",
 				txPowerOID:         ".1.3.6.1.4.1.20044.90.3.3.144.1.2",
 				rxPowerOID:         ".1.3.6.1.4.1.20044.90.3.3.156.1.2",
-				correctedFEC:       ".1.3.6.1.4.1.20044.90.4.3.193.1.2",
+				correctedFEC:       "",
 				uncorrectedFEC:     ".1.3.6.1.4.1.20044.90.4.3.197.1.2",
 				powerTransformFunc: ekionopsPowerTransformShiftDivideBy100,
 			},
@@ -113,7 +114,7 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 				labelOID:           ".1.3.6.1.4.1.20044.100.9.3.2.1.3",
 				txPowerOID:         ".1.3.6.1.4.1.20044.100.3.3.144.1.2",
 				rxPowerOID:         ".1.3.6.1.4.1.20044.100.3.3.156.1.2",
-				correctedFEC:       ".1.3.6.1.4.1.20044.100.4.3.196.1.2",
+				correctedFEC:       "",
 				uncorrectedFEC:     ".1.3.6.1.4.1.20044.100.4.3.197.1.2",
 				powerTransformFunc: ekionopsPowerTransformShiftDivideBy100,
 			},
@@ -220,4 +221,26 @@ func (m *ekinopsModuleReaderWrapper) readModuleMetrics(ctx context.Context, inte
 	defer con.SNMP.SnmpClient.SetCommunity(community)
 
 	return m.ekinopsModuleReader.readModuleMetrics(ctx, interfaces)
+}
+
+type ekinopsPowerTransformFunc func(float64) float64
+
+func ekinopsPowerTransform10Log10XMinus40(f float64) float64 {
+	return 10*math.Log10(f) - 40
+}
+
+func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
+	return 10 * math.Log10(f/10000)
+}
+
+func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
+	if f < 32768 {
+		return f / 100
+	} else {
+		return (f - 65536) / 100
+	}
+}
+
+func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
+	return (f - 32768) * 0.005
 }

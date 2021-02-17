@@ -6,7 +6,6 @@ import (
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -26,28 +25,6 @@ type ekinopsTransponderOIDs struct {
 	uncorrectedFEC string
 
 	powerTransformFunc ekinopsPowerTransformFunc
-}
-
-type ekinopsPowerTransformFunc func(float64) float64
-
-func ekinopsPowerTransform10Log10XMinus40(f float64) float64 {
-	return 10*math.Log10(f) - 40
-}
-
-func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
-	return 10 * math.Log10(f/10000)
-}
-
-func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
-	if f < 32768 {
-		return f / 100
-	} else {
-		return (f - 65536) / 100
-	}
-}
-
-func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
-	return (f - 32768) * 0.005
 }
 
 func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
@@ -76,7 +53,7 @@ func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, 
 		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + *opticalTransponderInterface.Identifier
 		idx, ok := mappings[identifier]
 		if !ok {
-			return nil, fmt.Errorf("interface for identifier '%s' not found")
+			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
 		interfaces[idx].OpticalTransponderInterface = opticalTransponderInterface
 	}
