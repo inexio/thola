@@ -107,7 +107,10 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 				valueFloat = oids.powerTransformFunc(valueFloat)
 			}
 
-			opticalOPMInterface.RXPower = &valueFloat
+			// power <= -95 = no value
+			if valueFloat > -95 {
+				opticalOPMInterface.RXPower = &valueFloat
+			}
 		}
 
 		opticalOPMInterfaces = append(opticalOPMInterfaces, opticalOPMInterface)
@@ -162,14 +165,18 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 	for k := range opticalOPMInterfaces {
 		channelNum := 13.0
 		for channelIdx := 16; channelIdx <= 776; channelIdx += 8 {
-			var channel device.OpticalOPMChannel
 			rxPower := channelValues[k][channelIdx]
-			channel.RXPower = &rxPower
-			channel.Channel = fmt.Sprintf("C%.2f", channelNum)
 
-			opticalOPMInterfaces[k].Channels = append(opticalOPMInterfaces[k].Channels, channel)
+			// power <= -95 = no value
+			if rxPower > -95 {
+				var channel device.OpticalOPMChannel
+				channel.RXPower = &rxPower
+				channel.Channel = fmt.Sprintf("C%.2f", channelNum)
 
-			channelNum += 0.5
+				opticalOPMInterfaces[k].Channels = append(opticalOPMInterfaces[k].Channels, channel)
+
+				channelNum += 0.5
+			}
 		}
 	}
 
