@@ -11,22 +11,34 @@ import (
 
 type ekinopsModuleReaderAmplifier struct {
 	ekinopsModuleData
+	boosterPorts ekinopsAmplifierOIDs
+	preAmpPorts  ekinopsAmplifierOIDs
+}
+
+type ekinopsAmplifierOIDs struct {
+	identifierOID string
+	labelOID      string
+	txPowerOID    string
+	rxPowerOID    string
+	gainOID       string
+
+	powerTransformFunc ekinopsPowerTransformFunc
 }
 
 func (m *ekinopsModuleReaderAmplifier) readModuleMetrics(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
 	var opticalAmplifierInterfaces []device.OpticalAmplifierInterface
 
 	// booster ports
-	oai, err := ekinopsReadAmplifierMetrics(ctx, ".1.3.6.1.4.1.20044.62.7.7.1.2", ".1.3.6.1.4.1.20044.62.9.4.1.1.3", ".1.3.6.1.4.1.20044.62.3.3.49.0", ".1.3.6.1.4.1.20044.62.3.3.50.0", ".1.3.6.1.4.1.20044.62.3.3.51.0")
+	oai, err := ekinopsReadAmplifierMetrics(ctx, m.boosterPorts)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read out metrics for booster ports")
 	}
 	opticalAmplifierInterfaces = append(opticalAmplifierInterfaces, oai...)
 
 	// pre amp ports
-	oai, err = ekinopsReadAmplifierMetrics(ctx, ".1.3.6.1.4.1.20044.62.7.8.1.2", ".1.3.6.1.4.1.20044.62.9.4.2.1.3", ".1.3.6.1.4.1.20044.62.3.2.33.0", ".1.3.6.1.4.1.20044.62.3.2.34.0", ".1.3.6.1.4.1.20044.62.3.2.35.0")
+	oai, err = ekinopsReadAmplifierMetrics(ctx, m.preAmpPorts)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read out metrics for booster ports")
+		return nil, errors.Wrap(err, "failed to read out metrics for pre amp ports")
 	}
 	opticalAmplifierInterfaces = append(opticalAmplifierInterfaces, oai...)
 
@@ -46,18 +58,18 @@ func (m *ekinopsModuleReaderAmplifier) readModuleMetrics(ctx context.Context, in
 	return interfaces, nil
 }
 
-func ekinopsReadAmplifierMetrics(ctx context.Context, identifierOid, labelOid, txPowerOid, rxPowerOid, gainOid string) ([]device.OpticalAmplifierInterface, error) {
+func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs) ([]device.OpticalAmplifierInterface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
 	}
 
-	identifierResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, identifierOid)
+	identifierResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, oids.identifierOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk for identifier oid failed")
 	}
 
-	labelResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, labelOid)
+	labelResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, oids.labelOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk for label oid failed")
 	}
@@ -83,7 +95,7 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, identifierOid, labelOid, t
 	}
 
 	// tx power
-	txPowerResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, txPowerOid)
+	txPowerResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, oids.txPowerOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for tx power oid failed")
 	}
@@ -95,11 +107,11 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, identifierOid, labelOid, t
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
-	txPower := (av - 32768) * 0.005
+	txPower := oids.powerTransformFunc(av)
 	opticalAmplifierInterfaces[1].TXPower = &txPower
 
 	// rx power
-	rxPowerResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, rxPowerOid)
+	rxPowerResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, oids.rxPowerOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for rx power oid failed")
 	}
@@ -111,11 +123,11 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, identifierOid, labelOid, t
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
-	rxPower := (av - 32768) * 0.005
+	rxPower := oids.powerTransformFunc(av)
 	opticalAmplifierInterfaces[0].RXPower = &rxPower
 
 	// gain
-	gainResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, gainOid)
+	gainResult, err := con.SNMP.SnmpClient.SNMPGet(ctx, oids.gainOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for gain oid failed")
 	}
@@ -127,7 +139,7 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, identifierOid, labelOid, t
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse gain to float64")
 	}
-	gain := (av - 32768) * 0.005
+	gain := oids.powerTransformFunc(av)
 	opticalAmplifierInterfaces[1].Gain = &gain
 
 	return opticalAmplifierInterfaces, nil

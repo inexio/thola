@@ -442,6 +442,68 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				return err
 			}
 		}
+
+		//OpticalAmplifierInterface
+		if i.OpticalAmplifierInterface.RXPower != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalAmplifierInterface.RXPower, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		if i.OpticalAmplifierInterface.TXPower != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalAmplifierInterface.TXPower, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		if i.OpticalAmplifierInterface.Gain != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("gain", *i.OpticalAmplifierInterface.Gain, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+
+		//OpticalTransponderInterface
+		if i.OpticalTransponderInterface.RXPower != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalTransponderInterface.RXPower, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		if i.OpticalTransponderInterface.TXPower != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalTransponderInterface.TXPower, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		if i.OpticalTransponderInterface.CorrectedFEC != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec", *i.OpticalTransponderInterface.CorrectedFEC, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		if i.OpticalTransponderInterface.UncorrectedFEC != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec", *i.OpticalTransponderInterface.UncorrectedFEC, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+
+		//OpticalOPMInterface
+		if i.OpticalOPMInterface.RXPower != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalOPMInterface.RXPower, "").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		}
+		for _, channel := range i.OpticalOPMInterface.Channels {
+			if channel.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalOPMInterface.RXPower, "").SetLabel(*i.IfDescr + "_" + channel.Channel))
+				if err != nil {
+					return err
+				}
+			}
+		}
 	}
 	return nil
 }

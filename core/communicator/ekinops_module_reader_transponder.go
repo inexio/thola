@@ -46,6 +46,10 @@ func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
 	}
 }
 
+func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
+	return (f - 32768) * 0.005
+}
+
 func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
 	var OpticalTransponderInterfaces []device.OpticalTransponderInterface
 

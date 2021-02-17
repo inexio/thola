@@ -20,7 +20,25 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 	moduleData := ekinopsModuleData{slotIdentifier, module}
 	switch module {
 	case "PM_OAIL-HCS", "PM_OAIL-HCS-17", "PM-OABP-HC", "PM-OAIL-HC":
-		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderAmplifier{moduleData}}, nil
+		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderAmplifier{
+			ekinopsModuleData: moduleData,
+			boosterPorts: ekinopsAmplifierOIDs{
+				identifierOID:      ".1.3.6.1.4.1.20044.62.7.7.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.62.9.4.1.1.3",
+				txPowerOID:         ".1.3.6.1.4.1.20044.62.3.3.49.0",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.62.3.3.50.0",
+				gainOID:            ".1.3.6.1.4.1.20044.62.3.3.51.0",
+				powerTransformFunc: ekinopsPowerTransformMinus32768MultiplyByPoint005,
+			},
+			preAmpPorts: ekinopsAmplifierOIDs{
+				identifierOID:      ".1.3.6.1.4.1.20044.62.7.8.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.62.9.4.2.1.3",
+				txPowerOID:         ".1.3.6.1.4.1.20044.62.3.2.33.0",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.62.3.2.34.0",
+				gainOID:            ".1.3.6.1.4.1.20044.62.3.2.35.0",
+				powerTransformFunc: ekinopsPowerTransformMinus32768MultiplyByPoint005,
+			},
+		}}, nil
 	case "PM_100G-AGG":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderTransponder{
 			ekinopsModuleData: moduleData,
