@@ -324,6 +324,11 @@ func (s *SNMPClient) GetCommunity() string {
 	return s.client.Community
 }
 
+// SetCommunity updates the community string. This function is not thread safe!
+func (s *SNMPClient) SetCommunity(community string) {
+	s.client.Community = community
+}
+
 // GetPort returns the port
 func (s *SNMPClient) GetPort() int {
 	return int(s.client.Port)

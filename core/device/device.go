@@ -106,9 +106,12 @@ type Interface struct {
 	IfHighSpeed          *uint64 `yaml:"ifHighSpeed" json:"ifHighSpeed" xml:"ifHighSpeed"`
 	IfAlias              *string `yaml:"ifAlias" json:"ifAlias" xml:"ifAlias"`
 
-	EthernetLikeInterface `mapstructure:",squash"`
-	RadioInterface        `mapstructure:",squash"`
-	DWDMInterface         `mapstructure:",squash"`
+	EthernetLikeInterface       `mapstructure:",squash"`
+	RadioInterface              `mapstructure:",squash"`
+	DWDMInterface               `mapstructure:",squash"`
+	OpticalTransponderInterface `mapstructure:",squash"`
+	OpticalAmplifierInterface   `mapstructure:",squash"`
+	OpticalOPMInterface         `mapstructure:",squash"`
 }
 
 // EthernetLikeInterface represents an ethernet like interface
@@ -141,6 +144,35 @@ type RadioInterface struct {
 type DWDMInterface struct {
 	RXLevel *float64 `yaml:"rx_level,omitempty" json:"rx_level,omitempty" xml:"rx_level,omitempty" mapstructure:"rx_level"`
 	TXLevel *float64 `yaml:"tx_level,omitempty" json:"tx_level,omitempty" xml:"tx_level,omitempty" mapstructure:"tx_level"`
+}
+
+type OpticalTransponderInterface struct {
+	Identifier     *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
+	Label          *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
+	RXPower        *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower        *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	CorrectedFEC   *uint64  `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
+	UncorrectedFEC *uint64  `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
+}
+
+type OpticalAmplifierInterface struct {
+	Identifier *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
+	Label      *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
+	RXPower    *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower    *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	Gain       *float64 `yaml:"gain,omitempty" json:"gain,omitempty" xml:"gain,omitempty" mapstructure:"gain"`
+}
+
+type OpticalOPMInterface struct {
+	Identifier *string             `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
+	Label      *string             `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
+	RXPower    *float64            `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	Channels   []OpticalOPMChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+}
+
+type OpticalOPMChannel struct {
+	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
+	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
 }
 
 // UPSComponent represents a UPS component

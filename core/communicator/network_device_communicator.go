@@ -139,7 +139,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 	if tholaerr.IsNotImplementedError(err1) && tholaerr.IsNotImplementedError(err2) && tholaerr.IsNotImplementedError(err3) {
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
-	return nil, tholaerr.NewNotFoundError("failed to get value")
+	return nil, tholaerr.NewNotFoundError("failed to get information through any device class")
 }
 
 func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
