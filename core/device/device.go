@@ -147,26 +147,26 @@ type DWDMInterface struct {
 }
 
 type OpticalTransponderInterface struct {
-	Identifier     *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label          *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower        *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower        *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	Identifier     *string  `yaml:"identifier_transponder,omitempty" json:"identifier_transponder,omitempty" xml:"identifier_transponder,omitempty" mapstructure:"identifier_transponder"`
+	Label          *string  `yaml:"label_transponder,omitempty" json:"label_transponder,omitempty" xml:"label_transponder,omitempty" mapstructure:"label_transponder"`
+	RXPower        *float64 `yaml:"rx_power_transponder,omitempty" json:"rx_power_transponder,omitempty" xml:"rx_power_transponder,omitempty" mapstructure:"rx_power_transponder"`
+	TXPower        *float64 `yaml:"tx_power_transponder,omitempty" json:"tx_power_transponder,omitempty" xml:"tx_power_transponder,omitempty" mapstructure:"tx_power_transponder"`
 	CorrectedFEC   *uint64  `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
 	UncorrectedFEC *uint64  `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
 }
 
 type OpticalAmplifierInterface struct {
-	Identifier *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label      *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower    *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower    *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	Identifier *string  `yaml:"identifier_amplifier,omitempty" json:"identifier_amplifier,omitempty" xml:"identifier_amplifier,omitempty" mapstructure:"identifier_amplifier"`
+	Label      *string  `yaml:"label_amplifier,omitempty" json:"label_amplifier,omitempty" xml:"label_amplifier,omitempty" mapstructure:"label_amplifier"`
+	RXPower    *float64 `yaml:"rx_power_amplifier,omitempty" json:"rx_power_amplifier,omitempty" xml:"rx_power_amplifier,omitempty" mapstructure:"rx_power_amplifier"`
+	TXPower    *float64 `yaml:"tx_power_amplifier,omitempty" json:"tx_power_amplifier,omitempty" xml:"tx_power_amplifier,omitempty" mapstructure:"tx_power_amplifier"`
 	Gain       *float64 `yaml:"gain,omitempty" json:"gain,omitempty" xml:"gain,omitempty" mapstructure:"gain"`
 }
 
 type OpticalOPMInterface struct {
-	Identifier *string             `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label      *string             `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower    *float64            `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	Identifier *string             `yaml:"identifier_opm,omitempty" json:"identifier_opm,omitempty" xml:"identifier_opm,omitempty" mapstructure:"identifier_opm"`
+	Label      *string             `yaml:"label_opm,omitempty" json:"label_opm,omitempty" xml:"label_opm,omitempty" mapstructure:"label_opm"`
+	RXPower    *float64            `yaml:"rx_power_opm,omitempty" json:"rx_power_opm,omitempty" xml:"rx_power_opm,omitempty" mapstructure:"rx_power_opm"`
 	Channels   []OpticalOPMChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
