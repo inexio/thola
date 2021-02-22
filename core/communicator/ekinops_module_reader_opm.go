@@ -144,12 +144,12 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 
 		portIdx, err := strconv.Atoi(oidArr[len(oidArr)-1])
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to parse oid port index to int (index: %d)", oidArr[len(oidArr)-1])
+			return nil, errors.Wrapf(err, "failed to parse oid port index to int (index: %s)", oidArr[len(oidArr)-1])
 		}
 
 		channelIdx, err := strconv.Atoi(oidArr[len(oidArr)-4])
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to parse oid channel index to int (index: %d)", oidArr[len(oidArr)-4])
+			return nil, errors.Wrapf(err, "failed to parse oid channel index to int (index: %s)", oidArr[len(oidArr)-4])
 		}
 
 		if channelIdx > 776 {
