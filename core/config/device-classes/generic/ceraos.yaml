@@ -40,7 +40,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "^(IP-[0-9]+)"
+            regex: '^(IP-[0-9]+)'
             format: "$1"
     serial_number:
       - detection: snmpget

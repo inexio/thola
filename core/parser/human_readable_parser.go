@@ -35,6 +35,11 @@ func toHumanReadable(value reflect.Value, insertion int) []byte {
 			valueField = ""
 		}
 	case reflect.Slice:
+		if value.IsNil() {
+			fieldValue := "null"
+			outputString = append(outputString, fieldValue...)
+			return outputString
+		}
 		outputString = append(outputString, "["+strconv.Itoa(value.Len())+"] "...)
 		for index := 0; index < value.Len(); index++ {
 			arg := toHumanReadable(value.Index(index), insertion+1)

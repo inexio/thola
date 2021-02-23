@@ -48,8 +48,8 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) ([]map[string
 			if res != "" {
 				resNormalized, err := oid.operators.apply(ctx, value.New(res))
 				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Msg("response couldn't be normalized")
-					return nil, errors.Wrap(err, "response couldn't be normalized")
+					log.Ctx(ctx).Trace().Err(err).Msgf("response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
+					return nil, errors.Wrapf(err, "response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
 				}
 				oid := strings.Split(response.GetOID(), ".")
 				index, err := strconv.Atoi(oid[len(oid)-1])

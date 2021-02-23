@@ -19,6 +19,8 @@ func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommun
 		return &ironwareCommunicator{baseCommunicator{rel}}, nil
 	case "ios":
 		return &iosCommunicator{baseCommunicator{rel}}, nil
+	case "ekinops":
+		return &ekinopsCommunicator{baseCommunicator{rel}}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no communicator found for device class identifier '%s'", classIdentifier))
 }

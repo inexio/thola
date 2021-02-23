@@ -29,7 +29,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexReplace
-            regex: "[0-9]{3}$"
+            regex: '[0-9]{3}$'
             replace: "000"
 
 components:

@@ -21,7 +21,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: "(?U)Product: ([^;]+)[[:space:]]?;"
+            regex: '(?U)Product: ([^;]+)[[:space:]]?;'
             format: "$1"
           - type: switch
             switch_value: snmpwalkCount
