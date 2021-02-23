@@ -65,6 +65,14 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 		}
 	}
 
+	// change ifdescr and ifname of every interface
+	// they no longer contain Ekinops/C...
+	// and are now in the form <slot>-[Description]
+	for _, iface := range interfaces {
+		*iface.IfDescr = strings.Split(*iface.IfDescr, "/")[2] + "-" + strings.Split(strings.Split(*iface.IfDescr, "/")[4], "(")[0]
+		*iface.IfName = *iface.IfDescr
+	}
+
 	return interfaces, nil
 }
 
