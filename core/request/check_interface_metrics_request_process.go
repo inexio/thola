@@ -12,12 +12,14 @@ import (
 )
 
 type interfaceCheckOutput struct {
-	IfIndex       string `json:"ifIndex"`
-	IfDescr       string `json:"ifDescr"`
-	IfType        string `json:"ifType"`
-	IfName        string `json:"ifName"`
-	IfAlias       string `json:"ifAlias"`
-	IfPhysAddress string `json:"ifPhysAddress"`
+	IfIndex       string        `json:"ifIndex"`
+	IfDescr       string        `json:"ifDescr"`
+	IfType        string        `json:"ifType"`
+	IfName        string        `json:"ifName"`
+	IfAlias       string        `json:"ifAlias"`
+	IfPhysAddress string        `json:"ifPhysAddress"`
+	IfAdminStatus device.Status `json:"ifAdminStatus"`
+	IfOperStatus  device.Status `json:"ifOperStatus"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -50,6 +52,12 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			}
 			if interf.IfPhysAddress != nil {
 				x.IfPhysAddress = *interf.IfPhysAddress
+			}
+			if interf.IfAdminStatus != nil {
+				x.IfAdminStatus = *interf.IfAdminStatus
+			}
+			if interf.IfOperStatus != nil {
+				x.IfOperStatus = *interf.IfOperStatus
 			}
 			interfaces = append(interfaces, x)
 		}

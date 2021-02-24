@@ -622,7 +622,7 @@
 			"messages": [
 				{
 					"status": 0,
-					"message": "[{\"ifIndex\":\"1\",\"ifDescr\":\"FastEthernet0/0\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Fa0/0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"CA:01:16:E4:00:00\"},{\"ifIndex\":\"2\",\"ifDescr\":\"VoIP-Null0\",\"ifType\":\"other\",\"ifName\":\"Vo0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Null0\",\"ifType\":\"other\",\"ifName\":\"Nu0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\"}]"
+					"message": "[{\"ifIndex\":\"1\",\"ifDescr\":\"FastEthernet0/0\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Fa0/0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"CA:01:16:E4:00:00\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"},{\"ifIndex\":\"2\",\"ifDescr\":\"VoIP-Null0\",\"ifType\":\"other\",\"ifName\":\"Vo0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Null0\",\"ifType\":\"other\",\"ifName\":\"Nu0\",\"ifAlias\":\"\",\"ifPhysAddress\":\"\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"}]"
 				}
 			]
 		},

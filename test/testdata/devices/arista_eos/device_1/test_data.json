@@ -1212,7 +1212,7 @@
 			"messages": [
 				{
 					"status": 0,
-					"message": "[{\"ifIndex\":\"1\",\"ifDescr\":\"Ethernet1\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet1\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:01\"},{\"ifIndex\":\"2\",\"ifDescr\":\"Ethernet2\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet2\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:02\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Ethernet3\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet3\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:03\"},{\"ifIndex\":\"999001\",\"ifDescr\":\"Management1\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Management1\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:00\"}]"
+					"message": "[{\"ifIndex\":\"1\",\"ifDescr\":\"Ethernet1\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet1\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:01\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"},{\"ifIndex\":\"2\",\"ifDescr\":\"Ethernet2\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet2\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:02\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"},{\"ifIndex\":\"3\",\"ifDescr\":\"Ethernet3\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Ethernet3\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:03\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"},{\"ifIndex\":\"999001\",\"ifDescr\":\"Management1\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"Management1\",\"ifAlias\":\"\",\"ifPhysAddress\":\"50:00:00:03:00:00\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\"}]"
 				}
 			]
 		},
