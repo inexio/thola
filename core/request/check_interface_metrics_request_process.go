@@ -491,16 +491,12 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//OpticalOPMInterface
 		if i.OpticalOPMInterface.RXPower != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalOPMInterface.RXPower, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		}
-		for _, channel := range i.OpticalOPMInterface.Channels {
-			if channel.RXPower != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalOPMInterface.RXPower, "").SetLabel(*i.IfDescr + "_" + channel.Channel))
-				if err != nil {
-					return err
+			for _, channel := range i.OpticalOPMInterface.Channels {
+				if channel.RXPower != nil {
+					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower, "").SetLabel(*i.IfDescr + "_" + channel.Channel))
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}
