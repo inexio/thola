@@ -1,6 +1,6 @@
 # Thola
 
-<img align="right" src="doc/logo.png" width="256" alt="Thola">
+<img align="right" src="https://raw.githubusercontent.com/inexio/thola/main/doc/logo.png" width="256" alt="Thola">
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/inexio/thola)](https://goreportcard.com/report/github.com/inexio/thola)
 [![GitHub code style](https://img.shields.io/badge/code%20style-uber--go-brightgreen)](https://github.com/uber-go/guide/blob/master/style.md)
