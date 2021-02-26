@@ -16,16 +16,3 @@ jobs:
         with:
           run: fmt
           token: ${{ secrets.GITHUB_TOKEN }}
-
-  vet:
-    name: vet
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Generate configs
-        run: go generate
-      - name: check
-        uses: grandcolline/golang-github-actions@v1.1.0
-        with:
-          run: vet
-          token: ${{ secrets.GITHUB_TOKEN }}
