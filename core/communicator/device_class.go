@@ -3,18 +3,18 @@ package communicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/config"
 	"github.com/inexio/thola/core/mapping"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/inexio/thola/core/utility"
 	"github.com/inexio/thola/core/value"
-	"github.com/inexio/thola/core/vfs"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
+	"io/fs"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -392,7 +392,7 @@ func getDeviceClass(identifier string) (*deviceClass, error) {
 func readDeviceClasses() error {
 	//read in generic device class
 	genericDeviceClassDir := "device-classes"
-	genericDeviceClassFile, err := vfs.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
+	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
 	if err != nil {
 		return errors.Wrap(err, "failed to open generic device class file")
 	}
@@ -404,7 +404,7 @@ func readDeviceClasses() error {
 	return nil
 }
 
-func yamlFileToDeviceClass(file http.File, directory string, parentDeviceClass *deviceClass) (*deviceClass, error) {
+func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *deviceClass) (*deviceClass, error) {
 	//get file info
 	fileInfo, err := file.Stat()
 	if err != nil {
@@ -434,7 +434,7 @@ func yamlFileToDeviceClass(file http.File, directory string, parentDeviceClass *
 
 	// check for sub device classes
 	subDirPath := filepath.Join(directory, devClass.name)
-	subDir, err := vfs.FileSystem.Open(subDirPath)
+	subDir, err := config.FileSystem.ReadDir(subDirPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return nil, errors.Wrap(err, "an unexpected error occurred while trying to open sub device class directory")
@@ -450,32 +450,25 @@ func yamlFileToDeviceClass(file http.File, directory string, parentDeviceClass *
 	return &devClass, nil
 }
 
-func readDeviceClassDirectory(dir http.File, directory string, parentDeviceClass *deviceClass) (map[string]*deviceClass, error) {
-	//get fileinfo
-	dirFileInfo, err := dir.Stat()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get stat for dir")
-	}
-	if !dirFileInfo.IsDir() {
-		return nil, errors.New("given file is not a dir")
-	}
-	files, err := dir.Readdir(0)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read dir")
-	}
+func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass) (map[string]*deviceClass, error) {
 	deviceClasses := make(map[string]*deviceClass)
-	for _, fileInfo := range files {
-		fullPathToFile := filepath.Join(directory, fileInfo.Name())
-		if fileInfo.IsDir() {
-			// directories will be ignored here, sub device classes dirs will be called when
-			// their parent device class is processed
+	for _, dirEntry := range dir {
+		// directories will be ignored here, sub device classes dirs will be called when
+		// their parent device class is processed
+		if dirEntry.IsDir() {
 			continue
 		}
+		fileInfo, err := dirEntry.Info()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get info for file")
+		}
+
 		if !strings.HasSuffix(fileInfo.Name(), ".yaml") {
 			// all non directory files need to be yaml file and end with ".yaml"
 			return nil, errors.New("only yaml config files are allowed in device class directories")
 		}
-		file, err := vfs.FileSystem.Open(fullPathToFile)
+		fullPathToFile := filepath.Join(directory, fileInfo.Name())
+		file, err := config.FileSystem.Open(fullPathToFile)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to open file "+fullPathToFile)
 		}
@@ -485,6 +478,7 @@ func readDeviceClassDirectory(dir http.File, directory string, parentDeviceClass
 		}
 		deviceClasses[deviceClass.name] = deviceClass
 	}
+
 	return deviceClasses, nil
 }
 
@@ -574,11 +568,11 @@ func (y *yamlDeviceClass) convert() (deviceClass, error) {
 	}
 	devClass.components = components
 
-	config, err := y.Config.convert()
+	cfg, err := y.Config.convert()
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
-	devClass.config = config
+	devClass.config = cfg
 
 	return devClass, nil
 }
@@ -820,19 +814,19 @@ func (y *yamlDeviceClassIdentifyProperties) convert() (deviceClassIdentifyProper
 }
 
 func (y *yamlDeviceClassConfig) convert() (deviceClassConfig, error) {
-	var config deviceClassConfig
-	config.snmp = y.SNMP
-	config.components = make(map[deviceClassComponent]bool)
+	var cfg deviceClassConfig
+	cfg.snmp = y.SNMP
+	cfg.components = make(map[deviceClassComponent]bool)
 
 	for k, v := range y.Components {
 		component, err := createComponent(k)
 		if err != nil {
 			return deviceClassConfig{}, err
 		}
-		config.components[component] = v
+		cfg.components[component] = v
 	}
 
-	return config, nil
+	return cfg, nil
 }
 
 func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error) {

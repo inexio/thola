@@ -2,7 +2,7 @@ package mapping
 
 import (
 	"github.com/google/go-cmp/cmp"
-	"github.com/inexio/thola/core/vfs"
+	"github.com/inexio/thola/config"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -12,7 +12,7 @@ import (
 
 func TestMappings(t *testing.T) {
 	fileName := "ifType.yaml"
-	f, err := vfs.FileSystem.Open(filepath.Join("mappings", fileName))
+	f, err := config.FileSystem.Open(filepath.Join("mappings", fileName))
 	if !assert.NoError(t, err, "failed to open mappings file from virtual file system") {
 		return
 	}

@@ -19,7 +19,6 @@ You can download the latest compiled version for your platform under the "Releas
 
     git clone https://github.com/inexio/thola.git
     cd thola
-    go generate
     go build
     
 If you also want to build the client binary, which can be used for sending requests to a running Thola API, use the following build command:

@@ -1,8 +1,8 @@
 package mapping
 
 import (
+	"github.com/inexio/thola/config"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/inexio/thola/core/vfs"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -27,7 +27,7 @@ func (m mapping) get(key string) (string, error) {
 }
 
 func readMapping(file string) (mapping, error) {
-	f, err := vfs.FileSystem.Open(filepath.Join("mappings", file))
+	f, err := config.FileSystem.Open(filepath.Join("mappings", file))
 	if err != nil {
 		return nil, errors.New("failed to open mappings file")
 	}
