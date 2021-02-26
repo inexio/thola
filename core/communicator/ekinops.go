@@ -65,15 +65,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 		}
 	}
 
-	// change ifdescr and ifname of every interface
-	// they no longer contain Ekinops/C...
-	// and are now in the form <slot>-[Description]
-	for _, iface := range interfaces {
-		*iface.IfDescr = strings.Split(*iface.IfDescr, "/")[2] + "-" + strings.Split(strings.Split(*iface.IfDescr, "/")[4], "(")[0]
-		*iface.IfName = *iface.IfDescr
-	}
-
-	return interfaces, nil
+	return normalizeEkinopsInterfaces(interfaces)
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
@@ -91,4 +83,43 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 		m[identifier] = k
 	}
 	return m, nil
+}
+
+func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
+	var res []device.Interface
+
+	for _, interf := range interfaces {
+		if interf.IfDescr == nil {
+			return nil, fmt.Errorf("no IfDescr set for interface ifIndex: `%d`", *interf.IfIndex)
+		}
+
+		// change ifType of ports of slots > 1 to "fibreChannel" if ifType equals "other"
+		slotNumber := strings.Split(*interf.IfName, "/")[2]
+		if !(slotNumber == "0" || slotNumber == "1") {
+			if interf.IfType == nil || *interf.IfType == "other" {
+				fibreChannel := "fibreChannel"
+				interf.IfType = &fibreChannel
+			}
+		}
+
+		// change ifType of OPM8 ports
+		moduleName := strings.Split(*interf.IfDescr, "/")[3]
+		if moduleName == "PM_OPM8" {
+			ifType := "ChannelMonitoring" //TODO switch ifType name
+			interf.IfType = &ifType
+		}
+
+		// change ifDescr and ifName of every interface
+		// they no longer contain Ekinops/C...
+		// and are now in the form <slot>-[Description]
+		*interf.IfDescr = slotNumber + "-" + strings.Split(strings.Split(*interf.IfDescr, "/")[4], "(")[0]
+		interf.IfName = interf.IfDescr
+
+		// remove every port on slot 0 starting with "0-FE_"
+		if slotNumber != "0" || !strings.HasPrefix(*interf.IfName, "0-FE_") {
+			res = append(res, interf)
+		}
+	}
+
+	return res, nil
 }

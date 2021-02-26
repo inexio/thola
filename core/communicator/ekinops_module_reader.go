@@ -176,17 +176,11 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderOPM8{
 			ekinopsModuleData: moduleData,
 			ports: ekinopsOPMOIDs{
-				identifierOID: ".1.3.6.1.4.1.20044.66.7.1.1.1.2",
-				labelOID:      ".1.3.6.1.4.1.20044.66.9.2.7.1.3",
-				rxPowerOID:    ".1.3.6.1.4.1.20044.66.3.2.784.1.2",
-				channelsOid:   ".1.3.6.1.4.1.20044.66.3.2",
-				powerTransformFunc: func(f float64) float64 {
-					if f < 32768 {
-						return f / 256
-					} else {
-						return f/256 - 256
-					}
-				},
+				identifierOID:      ".1.3.6.1.4.1.20044.66.7.1.1.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.66.9.2.7.1.3",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.66.3.2.784.1.2",
+				channelsOid:        ".1.3.6.1.4.1.20044.66.3.2",
+				powerTransformFunc: ekinopsPowerTransformOPM8,
 			},
 		}}, nil
 	}
@@ -226,21 +220,36 @@ func (m *ekinopsModuleReaderWrapper) readModuleMetrics(ctx context.Context, inte
 type ekinopsPowerTransformFunc func(float64) float64
 
 func ekinopsPowerTransform10Log10XMinus40(f float64) float64 {
-	return 10*math.Log10(f) - 40
+	return ekinopsPowerTransformCheckEmpty(10*math.Log10(f) - 40)
 }
 
 func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
-	return 10 * math.Log10(f/10000)
+	return ekinopsPowerTransformCheckEmpty(10 * math.Log10(f/10000))
 }
 
 func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
 	if f < 32768 {
-		return f / 100
+		return ekinopsPowerTransformCheckEmpty(f / 100)
 	} else {
-		return (f - 65536) / 100
+		return ekinopsPowerTransformCheckEmpty((f - 65536) / 100)
 	}
 }
 
 func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
-	return (f - 32768) * 0.005
+	return ekinopsPowerTransformCheckEmpty((f - 32768) * 0.005)
+}
+
+func ekinopsPowerTransformOPM8(f float64) float64 {
+	if f < 32768 {
+		return ekinopsPowerTransformCheckEmpty(f / 256)
+	} else {
+		return ekinopsPowerTransformCheckEmpty(f/256 - 256)
+	}
+}
+
+func ekinopsPowerTransformCheckEmpty(f float64) float64 {
+	if f < -40.4 {
+		f = -40.4
+	}
+	return f
 }

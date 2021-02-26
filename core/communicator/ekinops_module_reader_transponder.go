@@ -142,10 +142,7 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 				valueFloat = oids.powerTransformFunc(valueFloat)
 			}
 
-			// power <= -95 = no value
-			if valueFloat > -95 {
-				opticalTransponderInterface.RXPower = &valueFloat
-			}
+			opticalTransponderInterface.RXPower = &valueFloat
 		}
 
 		if txPowerResult != nil {
@@ -162,10 +159,7 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 				valueFloat = oids.powerTransformFunc(valueFloat)
 			}
 
-			// power <= -95 = no value
-			if valueFloat > -95 {
-				opticalTransponderInterface.TXPower = &valueFloat
-			}
+			opticalTransponderInterface.TXPower = &valueFloat
 		}
 
 		if correctedFECResult != nil {
