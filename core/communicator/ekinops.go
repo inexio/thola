@@ -93,12 +93,12 @@ func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interfa
 			return nil, fmt.Errorf("no IfDescr set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
 
-		// change ifType of ports of slots > 1 to "LWL" if ifType equals "other"
+		// change ifType of ports of slots > 1 to "fibreChannel" if ifType equals "other"
 		slotNumber := strings.Split(*interf.IfName, "/")[2]
 		if !(slotNumber == "0" || slotNumber == "1") {
 			if interf.IfType == nil || *interf.IfType == "other" {
-				lwl := "LWL"
-				interf.IfType = &lwl
+				fibreChannel := "fibreChannel"
+				interf.IfType = &fibreChannel
 			}
 		}
 
