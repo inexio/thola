@@ -70,7 +70,7 @@ Use the `identify` mode to automatically discover some properties of a network d
 Specify the address of the network device using the `--ip` flag.
 The `--format` flag modifies the format of the output. `--format pretty` is set by default and is useful when reading the output manually. Other options are `json` and `xml`.
 
-    $ thola identify --ip 10.204.2.90
+    $ thola identify 10.204.2.90
     
     Device: 
       Class: ceraos/ip10
@@ -81,7 +81,7 @@ The `--format` flag modifies the format of the output. `--format pretty` is set 
         OSVersion: 2.9.25-1
 Next we want to print the interfaces of the network device and their relevant data. We use the `read interfaces` command for this.
 
-    $ thola read interfaces --ip 10.204.2.90
+    $ thola read interfaces 10.204.2.90
     
     Interfaces: [8] 
       IfIndex: 1
@@ -116,7 +116,7 @@ Thola can be executed as a REST API. You can start the API using the `api` comma
     
 For sending requests to the Thola API you can use the Thola client. When executing the Thola client you can specify the address of the API with the `--target-api` flag.
 
-    $ thola-client identify --ip 10.204.2.90 --target-api http://192.168.10.20:8237 
+    $ thola-client identify 10.204.2.90 --target-api http://192.168.10.20:8237 
     
     Device: 
       Class: ceraos/ip10

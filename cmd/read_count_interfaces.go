@@ -10,12 +10,13 @@ func init() {
 }
 
 var readCountInterfacesCMD = &cobra.Command{
-	Use:   "count-interfaces",
+	Use:   "count-interfaces [host]",
 	Short: "Count interfaces of a device",
 	Long:  "Count the interfaces of a device.",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadCountInterfacesRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func getBaseRequest() request.BaseRequest {
+func getBaseRequest(host string) request.BaseRequest {
 	var nullInt *int
 	var nullString *string
 	timeout := viper.GetInt("request.timeout")
@@ -23,7 +23,7 @@ func getBaseRequest() request.BaseRequest {
 	return request.BaseRequest{
 		Timeout: utility.IfThenElse(deviceFlagSet.Changed("timeout"), &timeout, nullInt).(*int),
 		DeviceData: request.DeviceData{
-			IPAddress: viper.GetString("device.ip"),
+			IPAddress: host,
 			ConnectionData: network.ConnectionData{
 				SNMP: &network.SNMPConnectionData{
 					Communities:              utility.IfThenElse(deviceFlagSet.Changed("snmp-community"), viper.GetStringSlice("device.snmp-communities"), []string{}).([]string),

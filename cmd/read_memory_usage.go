@@ -10,12 +10,13 @@ func init() {
 }
 
 var readMemoryUsageCMD = &cobra.Command{
-	Use:   "memory-usage",
+	Use:   "memory-usage [host]",
 	Short: "Read out the memory usage of a device",
 	Long:  "Read out the memory usage of a device.",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadMemoryUsageRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

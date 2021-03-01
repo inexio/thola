@@ -11,12 +11,13 @@ func init() {
 }
 
 var checkHardwareHealthCMD = &cobra.Command{
-	Use:   "hardware-health",
+	Use:   "hardware-health [host]",
 	Short: "Check hardware-health of a device.",
 	Long:  "Check hardware-health of a device and return various performance data.",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckHardwareHealthRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 		}
 		handleRequest(&r)
 	},

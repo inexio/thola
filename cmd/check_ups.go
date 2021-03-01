@@ -37,13 +37,14 @@ func init() {
 }
 
 var checkUPSCMD = &cobra.Command{
-	Use:   "ups",
+	Use:   "ups [host]",
 	Short: "Checks whether a UPS device has its main voltage applied",
 	Long: "Checks whether a UPS device has its main voltage applied.\n\n" +
 		"All UPS statistics will be printed as performance data.",
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckUPSRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			BatteryCurrentThresholds: request.CheckThresholds{
 				WarningMin:  value.New(cmd.Flags().Lookup("batt-current-warning-min").Value),
 				WarningMax:  value.New(cmd.Flags().Lookup("batt-current-warning-max").Value),

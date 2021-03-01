@@ -50,9 +50,9 @@ var checkCMD = &cobra.Command{
 	},
 }
 
-func getCheckDeviceRequest() request.CheckDeviceRequest {
+func getCheckDeviceRequest(host string) request.CheckDeviceRequest {
 	return request.CheckDeviceRequest{
-		BaseRequest:  getBaseRequest(),
+		BaseRequest:  getBaseRequest(host),
 		CheckRequest: getCheckRequest(),
 	}
 }

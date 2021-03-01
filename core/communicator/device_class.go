@@ -150,7 +150,7 @@ type deviceClassInterfaceTypeDef struct {
 
 // deviceClassSNMP represents the snmp config part of a device class.
 type deviceClassSNMP struct {
-	MaxRepetitions uint8 `yaml:"max_repetitions"`
+	MaxRepetitions uint32 `yaml:"max_repetitions"`
 }
 
 // logicalOperator represents a logical operator (OR or AND)
@@ -505,7 +505,7 @@ func (o *deviceClass) matchDevice(ctx context.Context) (bool, error) {
 }
 
 // getSNMPMaxRepetitions returns the maximum snmp repetitions.
-func (o *deviceClass) getSNMPMaxRepetitions() (uint8, error) {
+func (o *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
 	if o.config.snmp.MaxRepetitions != 0 {
 		return o.config.snmp.MaxRepetitions, nil
 	}

@@ -15,12 +15,13 @@ func init() {
 }
 
 var checkSBCCMD = &cobra.Command{
-	Use:   "sbc",
+	Use:   "sbc [host]",
 	Short: "Read out sbc specific metrics as performance data",
 	Long:  "Read out sbc specific metrics as performance data.",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckSBCRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			SystemHealthScoreThresholds: request.CheckThresholds{
 				WarningMin:  value.New(cmd.Flags().Lookup("system-health-score-warning").Value),
 				CriticalMin: value.New(cmd.Flags().Lookup("system-health-score-critical").Value),

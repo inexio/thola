@@ -15,13 +15,14 @@ func init() {
 }
 
 var checkMemoryUsage = &cobra.Command{
-	Use:   "memory-usage",
+	Use:   "memory-usage [host]",
 	Short: "Check the memory usage of a device",
 	Long: "Checks the memory usage of a device.\n\n" +
 		"The usage will be printed as performance data.",
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckMemoryUsageRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			MemoryUsageThresholds: request.CheckThresholds{
 				WarningMax:  value.New(cmd.Flags().Lookup("warning").Value),
 				CriticalMax: value.New(cmd.Flags().Lookup("critical").Value),

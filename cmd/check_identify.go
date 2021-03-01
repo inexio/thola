@@ -59,10 +59,11 @@ func init() {
 }
 
 var checkIdentifyCMD = &cobra.Command{
-	Use:   "identify",
+	Use:   "identify [host]",
 	Short: "Check identify properties with given expectations",
 	Long: "Check identify properties with given expectations.\n\n" +
 		"You can set the expectations with the flags.",
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var nilString *string
 		vendor := cmd.Flags().Lookup("vendor").Value.String()
@@ -72,7 +73,7 @@ var checkIdentifyCMD = &cobra.Command{
 		osVersion := cmd.Flags().Lookup("os-version").Value.String()
 
 		r := request.CheckIdentifyRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			Expectations: device.Device{
 				Class: cmd.Flags().Lookup("os").Value.String(),
 				Properties: device.Properties{

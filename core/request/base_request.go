@@ -43,6 +43,24 @@ func (r *BaseRequest) GetDeviceData() *DeviceData {
 }
 
 func (r *BaseRequest) validate(ctx context.Context) error {
+	if net.ParseIP(r.DeviceData.IPAddress) == nil {
+		ips, err := net.LookupIP(r.DeviceData.IPAddress)
+		if err != nil {
+			return errors.Wrap(err, "Domain lookup failed")
+		}
+		found := false
+		for _, ip := range ips {
+			if ipv4 := ip.To4(); ipv4 != nil {
+				r.DeviceData.IPAddress = ipv4.String()
+				found = true
+				break
+			}
+		}
+		if !found {
+			return errors.New("IP formatted wrong or domain lookup failed")
+		}
+	}
+
 	configData := getConfigConnectionData()
 
 	if configData.SNMP == nil {
@@ -90,10 +108,6 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 
 	if r.DeviceData.ConnectionData.SNMP == nil {
 		r.DeviceData.ConnectionData.SNMP = mergedData.SNMP
-	}
-
-	if net.ParseIP(r.DeviceData.IPAddress) == nil {
-		return errors.New("IP formatted wrong")
 	}
 
 	if len(r.DeviceData.ConnectionData.SNMP.Communities) == 0 {

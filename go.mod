@@ -8,7 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/go-cmp v0.5.4
-	github.com/gosnmp/gosnmp v1.29.0
+	github.com/gosnmp/gosnmp v1.30.0
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/inexio/go-monitoringplugin v1.0.0
 	github.com/jmoiron/sqlx v1.2.0
@@ -24,7 +24,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/ulule/limiter/v3 v3.5.0
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/text v0.3.3

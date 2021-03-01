@@ -15,13 +15,14 @@ func init() {
 }
 
 var checkCpuLoad = &cobra.Command{
-	Use:   "cpu-load",
+	Use:   "cpu-load [host]",
 	Short: "Check the cpu load of a device",
 	Long: "Checks the cpu load of a device.\n\n" +
 		"The usage will be printed as performance data.",
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckCPULoadRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			CPULoadThresholds: request.CheckThresholds{
 				WarningMax:  value.New(cmd.Flags().Lookup("warning").Value),
 				CriticalMax: value.New(cmd.Flags().Lookup("critical").Value),
