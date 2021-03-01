@@ -41,7 +41,6 @@ var checkUPSCMD = &cobra.Command{
 	Short: "Checks whether a UPS device has its main voltage applied",
 	Long: "Checks whether a UPS device has its main voltage applied.\n\n" +
 		"All UPS statistics will be printed as performance data.",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckUPSRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),

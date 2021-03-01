@@ -48,6 +48,7 @@ func buildDeviceFlagSet() *flag.FlagSet {
 
 func addDeviceFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().AddFlagSet(deviceFlagSet)
+	cmd.Args = cobra.ExactArgs(1)
 }
 
 func bindDeviceFlags(cmd *cobra.Command) error {

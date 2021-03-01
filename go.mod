@@ -12,8 +12,7 @@ require (
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/inexio/go-monitoringplugin v1.0.0
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/labstack/echo v3.3.10+incompatible
-	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/labstack/echo/v4 v4.2.0
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
 	github.com/mitchellh/mapstructure v1.3.3
 	github.com/pkg/errors v0.9.1
@@ -26,7 +25,6 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	github.com/ulule/limiter/v3 v3.5.0
-	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/text v0.3.3
 	gopkg.in/yaml.v2 v2.3.0
 )

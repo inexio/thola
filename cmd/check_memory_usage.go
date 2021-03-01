@@ -19,7 +19,6 @@ var checkMemoryUsage = &cobra.Command{
 	Short: "Check the memory usage of a device",
 	Long: "Checks the memory usage of a device.\n\n" +
 		"The usage will be printed as performance data.",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckMemoryUsageRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),

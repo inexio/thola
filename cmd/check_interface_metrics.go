@@ -29,7 +29,6 @@ var checkInterfaceMetricsCMD = &cobra.Command{
 	Use:   "interface-metrics [host]",
 	Short: "Reads all interface metrics and prints them as performance data",
 	Long:  "Reads all interface metrics and prints them as performance data.",
-	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckInterfaceMetricsRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),

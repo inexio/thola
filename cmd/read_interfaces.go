@@ -14,7 +14,6 @@ var readInterfacesCMD = &cobra.Command{
 	Short: "Read out interface information of a device",
 	Long: "Read out interface information of a device.\n\n" +
 		"Also reads special values based on the interface type.",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadInterfacesRequest{
 			ReadRequest: getReadRequest(args[0]),

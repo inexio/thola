@@ -18,7 +18,6 @@ var checkSBCCMD = &cobra.Command{
 	Use:   "sbc [host]",
 	Short: "Read out sbc specific metrics as performance data",
 	Long:  "Read out sbc specific metrics as performance data.",
-	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckSBCRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),

@@ -57,7 +57,7 @@ func initDB(ctx context.Context) error {
 		badgerDB := badgerDatabase{}
 		u, err := user.Current()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to get username")
 		}
 		badgerDB.db, err = badger.Open(badger.DefaultOptions(filepath.Join(os.TempDir(), "thola-"+u.Username+"-cache")).WithLogger(nil))
 		if err != nil {

@@ -15,7 +15,6 @@ var checkSNMPCMD = &cobra.Command{
 	Short: "Check whether a device is reachable over snmp",
 	Long: "Check whether a device is reachable over snmp.\n\n" +
 		"All configured SNMP options will be tried.",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckSNMPRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),

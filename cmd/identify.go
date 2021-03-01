@@ -15,7 +15,6 @@ var identifyCMD = &cobra.Command{
 	Short: "Automatically identify devices",
 	Long: "Automatically identify devices.\n\n" +
 		"It returns properties like vendor, model, serial number,...",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.IdentifyRequest{
 			BaseRequest: getBaseRequest(args[0]),

@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"github.com/ulule/limiter/v3"

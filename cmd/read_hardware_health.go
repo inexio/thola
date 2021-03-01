@@ -13,7 +13,6 @@ var readHardwareHealth = &cobra.Command{
 	Use:   "hardware-health [host]",
 	Short: "Read out the hardware health of a device",
 	Long:  "Read out the hardware health of a device.",
-	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadHardwareHealthRequest{
 			ReadRequest: getReadRequest(args[0]),

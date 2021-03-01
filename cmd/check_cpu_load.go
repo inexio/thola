@@ -19,7 +19,6 @@ var checkCpuLoad = &cobra.Command{
 	Short: "Check the cpu load of a device",
 	Long: "Checks the cpu load of a device.\n\n" +
 		"The usage will be printed as performance data.",
-	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckCPULoadRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
