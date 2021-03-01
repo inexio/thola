@@ -111,7 +111,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 	if err1 == nil {
 		return value, nil
 	} else if !tholaerr.IsNotImplementedError(err1) {
-		return nil, errors.Wrap(err1, "an unexpected error occurred while trying to get value through device class")
+		return nil, err1
 	}
 
 	if fCom != nil {
@@ -119,7 +119,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 		if err2 == nil {
 			return value, nil
 		} else if !tholaerr.IsNotImplementedError(err2) {
-			return nil, errors.Wrap(err2, "an unexpected error occurred while trying to get value through communicator")
+			return nil, err2
 		}
 	} else {
 		err2 = tholaerr.NewNotImplementedError("no communicator available")
@@ -130,7 +130,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 		if err3 == nil {
 			return value, err3
 		} else if !tholaerr.IsNotFoundError(err3) {
-			return nil, errors.Wrap(err3, "an unexpected error occurred while trying to get value in parent communicator")
+			return nil, err3
 		}
 	} else {
 		err3 = tholaerr.NewNotImplementedError("no parent communicator with implementation available")
