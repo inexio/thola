@@ -1196,11 +1196,18 @@ func interface2propertyReader(i interface{}, task relatedTask) (propertyReader, 
 		}
 		basePropReader.propertyReader = &pr
 	case "constant":
-		var pr constantPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode constant propertyReader")
+		v, ok := m["value"]
+		if !ok {
+			return nil, errors.New("value is missing in constant property reader")
 		}
+		var pr constantPropertyReader
+		if _, ok := v.(map[interface{}]interface{}); ok {
+			return nil, errors.New("value must not be a map")
+		}
+		if _, ok := v.([]interface{}); ok {
+			return nil, errors.New("value must not be an array")
+		}
+		pr.Value = value.New(v)
 		basePropReader.propertyReader = &pr
 	case "SysObjectID":
 		var pr sysObjectIDPropertyReader
@@ -1453,14 +1460,29 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 				}
 				modifier.operator = &mapModifier
 			case "multiply":
-				v := value.New(m["value"])
-				val, err := v.Float64()
+				valueReaderInterface := m["value"]
+				if !ok {
+					return nil, errors.New("value is missing in multiply")
+				}
+				valueReader, err := interface2propertyReader(valueReaderInterface, task)
 				if err != nil {
 					return nil, errors.New("value is missing in multiply modify operator, or is not of type float64")
 				}
 				var multiplyModifier multiplyNumberModifier
-				multiplyModifier.value = val
+				multiplyModifier.value = valueReader
 				modifier.operator = &multiplyModifier
+			case "divide":
+				valueReaderInterface := m["value"]
+				if !ok {
+					return nil, errors.New("value is missing in divide")
+				}
+				valueReader, err := interface2propertyReader(valueReaderInterface, task)
+				if err != nil {
+					return nil, errors.New("value is missing in divide modify operator, or is not of type float64")
+				}
+				var divideModifier divideNumberModifier
+				divideModifier.value = valueReader
+				modifier.operator = &divideModifier
 			default:
 				return nil, fmt.Errorf("invalid modify method '%s'", modifyMethod)
 			}

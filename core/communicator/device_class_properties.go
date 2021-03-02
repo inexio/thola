@@ -63,12 +63,12 @@ func (b *basePropertyReader) applyOperators(ctx context.Context, v value.Value) 
 }
 
 type constantPropertyReader struct {
-	Value string
+	Value value.Value
 }
 
 func (c *constantPropertyReader) getProperty(ctx context.Context) (value.Value, error) {
 	log.Ctx(ctx).Trace().Str("property_reader", "constant").Msg("setting constant property")
-	return value.New(c.Value), nil
+	return c.Value, nil
 }
 
 type sysObjectIDPropertyReader struct {
