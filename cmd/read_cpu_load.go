@@ -10,7 +10,7 @@ func init() {
 }
 
 var readCPULoadCMD = &cobra.Command{
-	Use:   "cpu-load [host]",
+	Use:   "cpu-load",
 	Short: "Read out the CPU load of a device",
 	Long:  "Read out the CPU load of a device.",
 	Run: func(cmd *cobra.Command, args []string) {

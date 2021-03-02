@@ -26,7 +26,7 @@ func init() {
 }
 
 var checkInterfaceMetricsCMD = &cobra.Command{
-	Use:   "interface-metrics [host]",
+	Use:   "interface-metrics",
 	Short: "Reads all interface metrics and prints them as performance data",
 	Long:  "Reads all interface metrics and prints them as performance data.",
 	Run: func(cmd *cobra.Command, args []string) {

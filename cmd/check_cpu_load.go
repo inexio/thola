@@ -15,7 +15,7 @@ func init() {
 }
 
 var checkCpuLoad = &cobra.Command{
-	Use:   "cpu-load [host]",
+	Use:   "cpu-load",
 	Short: "Check the cpu load of a device",
 	Long: "Checks the cpu load of a device.\n\n" +
 		"The usage will be printed as performance data.",

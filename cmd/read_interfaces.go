@@ -10,7 +10,7 @@ func init() {
 }
 
 var readInterfacesCMD = &cobra.Command{
-	Use:   "interfaces [host]",
+	Use:   "interfaces",
 	Short: "Read out interface information of a device",
 	Long: "Read out interface information of a device.\n\n" +
 		"Also reads special values based on the interface type.",

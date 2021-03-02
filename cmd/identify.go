@@ -11,7 +11,7 @@ func init() {
 }
 
 var identifyCMD = &cobra.Command{
-	Use:   "identify [host]",
+	Use:   "identify",
 	Short: "Automatically identify devices",
 	Long: "Automatically identify devices.\n\n" +
 		"It returns properties like vendor, model, serial number,...",

@@ -15,7 +15,7 @@ func init() {
 }
 
 var checkSBCCMD = &cobra.Command{
-	Use:   "sbc [host]",
+	Use:   "sbc",
 	Short: "Read out sbc specific metrics as performance data",
 	Long:  "Read out sbc specific metrics as performance data.",
 	Run: func(cmd *cobra.Command, args []string) {

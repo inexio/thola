@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
+	"github.com/rs/zerolog/log"
 )
 
 type emptyDatabase struct{}
@@ -29,6 +30,7 @@ func (d *emptyDatabase) CheckConnection(_ context.Context) error {
 	return nil
 }
 
-func (d *emptyDatabase) CloseConnection(_ context.Context) error {
+func (d *emptyDatabase) CloseConnection(ctx context.Context) error {
+	log.Ctx(ctx).Trace().Msg("closing connection to empty database")
 	return nil
 }

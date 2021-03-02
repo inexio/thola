@@ -10,7 +10,7 @@ func init() {
 }
 
 var readHardwareHealth = &cobra.Command{
-	Use:   "hardware-health [host]",
+	Use:   "hardware-health",
 	Short: "Read out the hardware health of a device",
 	Long:  "Read out the hardware health of a device.",
 	Run: func(cmd *cobra.Command, args []string) {

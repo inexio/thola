@@ -11,7 +11,7 @@ func init() {
 }
 
 var checkHardwareHealthCMD = &cobra.Command{
-	Use:   "hardware-health [host]",
+	Use:   "hardware-health",
 	Short: "Check hardware-health of a device.",
 	Long:  "Check hardware-health of a device and return various performance data.",
 	Run: func(cmd *cobra.Command, args []string) {

@@ -59,7 +59,7 @@ func init() {
 }
 
 var checkIdentifyCMD = &cobra.Command{
-	Use:   "identify [host]",
+	Use:   "identify",
 	Short: "Check identify properties with given expectations",
 	Long: "Check identify properties with given expectations.\n\n" +
 		"You can set the expectations with the flags.",

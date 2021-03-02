@@ -10,7 +10,7 @@ func init() {
 }
 
 var readSBCCMD = &cobra.Command{
-	Use:   "sbc [host]",
+	Use:   "sbc",
 	Short: "Read out SBC specific information of a device",
 	Long:  "Read out SPC specific information of a device like global call per second or active local contacts, including information per agent and per realm.",
 	Run: func(cmd *cobra.Command, args []string) {

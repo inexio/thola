@@ -37,7 +37,7 @@ func init() {
 }
 
 var checkUPSCMD = &cobra.Command{
-	Use:   "ups [host]",
+	Use:   "ups",
 	Short: "Checks whether a UPS device has its main voltage applied",
 	Long: "Checks whether a UPS device has its main voltage applied.\n\n" +
 		"All UPS statistics will be printed as performance data.",

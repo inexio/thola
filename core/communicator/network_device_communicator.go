@@ -596,7 +596,7 @@ func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device
 	if err != nil {
 		return []device.Interface{}, err
 	}
-	if c.isRoot() {
+	if c.isHead() {
 		res = normalizeInterfaces(res.([]device.Interface))
 	}
 	return res.([]device.Interface), err
@@ -926,21 +926,17 @@ func (c *networkDeviceCommunicator) isHead() bool {
 	return c.head.GetDeviceClass() == c.GetDeviceClass()
 }
 
-func (c *networkDeviceCommunicator) isRoot() bool {
-	return c.GetDeviceClass() == "generic"
-}
-
 func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
-	for i := range interfaces {
-		if interfaces[i].IfSpeed != nil {
+	for i, interf := range interfaces {
+		if interf.IfSpeed != nil {
 			var speed uint64
-			if interfaces[i].IfHighSpeed != nil && *interfaces[i].IfSpeed == 4294967295 {
-				speed = *interfaces[i].IfHighSpeed * 1000000
+			if interf.IfHighSpeed != nil && *interf.IfSpeed == 4294967295 {
+				speed = *interf.IfHighSpeed * 1000000
 			} else {
-				speed = *interfaces[i].IfSpeed
+				speed = *interf.IfSpeed
 			}
 			//if radio interface
-			if interfaces[i].LevelIn != nil {
+			if interf.LevelIn != nil {
 				speed *= 1000
 			}
 			interfaces[i].IfSpeed = &speed

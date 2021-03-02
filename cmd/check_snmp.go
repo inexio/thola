@@ -11,7 +11,7 @@ func init() {
 }
 
 var checkSNMPCMD = &cobra.Command{
-	Use:   "snmp [host]",
+	Use:   "snmp",
 	Short: "Check whether a device is reachable over snmp",
 	Long: "Check whether a device is reachable over snmp.\n\n" +
 		"All configured SNMP options will be tried.",

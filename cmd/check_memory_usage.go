@@ -15,7 +15,7 @@ func init() {
 }
 
 var checkMemoryUsage = &cobra.Command{
-	Use:   "memory-usage [host]",
+	Use:   "memory-usage",
 	Short: "Check the memory usage of a device",
 	Long: "Checks the memory usage of a device.\n\n" +
 		"The usage will be printed as performance data.",

@@ -10,7 +10,7 @@ func init() {
 }
 
 var readAvailableComponentsCMD = &cobra.Command{
-	Use:   "available-components [host]",
+	Use:   "available-components",
 	Short: "Returns the available components for the device",
 	Long:  "Returns the available components for the device.",
 	Run: func(cmd *cobra.Command, args []string) {
