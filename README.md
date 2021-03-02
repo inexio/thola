@@ -66,8 +66,8 @@ Use the `identify` mode to automatically discover some properties of a network d
     $ thola identify
     
     Usage:
-      thola identify [flags]
-Specify the address of the network device using the `--ip` flag.
+      thola identify [host] [flags]
+Specify the address of the network device in the `[host]` argument.
 The `--format` flag modifies the format of the output. `--format pretty` is set by default and is useful when reading the output manually. Other options are `json` and `xml`.
 
     $ thola identify 10.204.2.90
