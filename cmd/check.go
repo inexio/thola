@@ -63,3 +63,36 @@ func getCheckRequest() request.CheckRequest {
 		PrintPerformanceData: true,
 	}
 }
+
+func generateCheckThresholds(cmd *cobra.Command, warningMin, warningMax, criticalMin, criticalMax string) request.CheckThresholds {
+	var thresholds request.CheckThresholds
+	if flagName := warningMin; flagName != "" && cmd.Flags().Changed(flagName) {
+		v, err := cmd.Flags().GetFloat64(flagName)
+		if err != nil {
+			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
+		}
+		thresholds.WarningMin = &v
+	}
+	if flagName := warningMax; flagName != "" && cmd.Flags().Changed(flagName) {
+		v, err := cmd.Flags().GetFloat64(flagName)
+		if err != nil {
+			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
+		}
+		thresholds.WarningMax = &v
+	}
+	if flagName := criticalMin; flagName != "" && cmd.Flags().Changed(flagName) {
+		v, err := cmd.Flags().GetFloat64(flagName)
+		if err != nil {
+			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
+		}
+		thresholds.CriticalMin = &v
+	}
+	if flagName := criticalMax; flagName != "" && cmd.Flags().Changed(flagName) {
+		v, err := cmd.Flags().GetFloat64(flagName)
+		if err != nil {
+			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
+		}
+		thresholds.CriticalMax = &v
+	}
+	return thresholds
+}

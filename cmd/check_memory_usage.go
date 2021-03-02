@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/inexio/thola/core/request"
-	"github.com/inexio/thola/core/value"
 	"github.com/spf13/cobra"
 )
 
@@ -10,8 +9,8 @@ func init() {
 	addDeviceFlags(checkMemoryUsage)
 	checkCMD.AddCommand(checkMemoryUsage)
 
-	checkMemoryUsage.Flags().String("warning", "", "warning threshold for memory usage")
-	checkMemoryUsage.Flags().String("critical", "", "critical threshold for system voltage")
+	checkMemoryUsage.Flags().Float64("warning", 0, "warning threshold for memory usage")
+	checkMemoryUsage.Flags().Float64("critical", 0, "critical threshold for system voltage")
 }
 
 var checkMemoryUsage = &cobra.Command{
@@ -21,11 +20,8 @@ var checkMemoryUsage = &cobra.Command{
 		"The usage will be printed as performance data.",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckMemoryUsageRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
-			MemoryUsageThresholds: request.CheckThresholds{
-				WarningMax:  value.New(cmd.Flags().Lookup("warning").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("critical").Value),
-			},
+			CheckDeviceRequest:    getCheckDeviceRequest(args[0]),
+			MemoryUsageThresholds: generateCheckThresholds(cmd, "", "warning", "", "critical"),
 		}
 		handleRequest(&r)
 	},

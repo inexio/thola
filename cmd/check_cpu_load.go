@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/inexio/thola/core/request"
-	"github.com/inexio/thola/core/value"
 	"github.com/spf13/cobra"
 )
 
@@ -10,8 +9,8 @@ func init() {
 	addDeviceFlags(checkCpuLoad)
 	checkCMD.AddCommand(checkCpuLoad)
 
-	checkCpuLoad.Flags().String("warning", "", "warning threshold for cpu load")
-	checkCpuLoad.Flags().String("critical", "", "critical threshold for cpu load")
+	checkCpuLoad.Flags().Float64("warning", 0, "warning threshold for cpu load")
+	checkCpuLoad.Flags().Float64("critical", 0, "critical threshold for cpu load")
 }
 
 var checkCpuLoad = &cobra.Command{
@@ -22,10 +21,7 @@ var checkCpuLoad = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckCPULoadRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
-			CPULoadThresholds: request.CheckThresholds{
-				WarningMax:  value.New(cmd.Flags().Lookup("warning").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("critical").Value),
-			},
+			CPULoadThresholds:  generateCheckThresholds(cmd, "", "warning", "", "critical"),
 		}
 		handleRequest(&r)
 	},
