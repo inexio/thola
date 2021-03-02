@@ -1434,7 +1434,19 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 				if !ok {
 					return nil, errors.New("mappings is missing in map string modifier")
 				}
+				var ignoreOnMismatch bool
+				ignoreOnMismatchInterface, ok := m["ignore_on_mismatch"]
+				if ok {
+					ignoreOnMismatchBool, ok := ignoreOnMismatchInterface.(bool)
+					if !ok {
+						return nil, errors.New("ignore_on_mismatch in map modifier needs to be boolean")
+					}
+					ignoreOnMismatch = ignoreOnMismatchBool
+				}
+
 				var mapModifier mapModifier
+				mapModifier.ignoreOnMismatch = ignoreOnMismatch
+
 				mappings, ok := mappingsInterface.(map[interface{}]interface{})
 				if !ok {
 					file, ok := mappingsInterface.(string)

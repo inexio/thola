@@ -260,12 +260,16 @@ func (r *insertReadValueModifier) modify(ctx context.Context, v value.Value) (va
 }
 
 type mapModifier struct {
-	mappings map[string]string
+	ignoreOnMismatch bool
+	mappings         map[string]string
 }
 
 func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
 	if val, ok := r.mappings[v.String()]; ok {
 		return value.New(val), nil
+	}
+	if r.ignoreOnMismatch {
+		return value.Empty(), nil
 	}
 	return value.Empty(), tholaerr.NewNotFoundError("string not found in mapping")
 }
