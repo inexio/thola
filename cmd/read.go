@@ -7,7 +7,6 @@ import (
 )
 
 func init() {
-	addDeviceFlags(readCMD)
 	rootCMD.AddCommand(readCMD)
 }
 

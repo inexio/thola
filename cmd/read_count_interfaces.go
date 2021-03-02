@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readCountInterfacesCMD)
 	readCMD.AddCommand(readCountInterfacesCMD)
 }
 

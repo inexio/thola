@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readMemoryUsageCMD)
 	readCMD.AddCommand(readMemoryUsageCMD)
 }
 

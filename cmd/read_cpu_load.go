@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readCPULoadCMD)
 	readCMD.AddCommand(readCPULoadCMD)
 }
 

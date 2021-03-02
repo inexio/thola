@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readSBCCMD)
 	readCMD.AddCommand(readSBCCMD)
 }
 

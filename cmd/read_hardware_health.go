@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readHardwareHealth)
 	readCMD.AddCommand(readHardwareHealth)
 }
 
