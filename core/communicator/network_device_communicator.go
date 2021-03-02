@@ -928,18 +928,9 @@ func (c *networkDeviceCommunicator) isHead() bool {
 
 func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
 	for i, interf := range interfaces {
-		if interf.IfSpeed != nil {
-			var speed uint64
-			if interf.IfHighSpeed != nil && *interf.IfSpeed == 4294967295 {
-				speed = *interf.IfHighSpeed * 1000000
-			} else {
-				speed = *interf.IfSpeed
-			}
-			//if radio interface
-			if interf.LevelIn != nil {
-				speed *= 1000
-			}
-			interfaces[i].IfSpeed = &speed
+		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == 4294967295 {
+			ifSpeed := *interf.IfHighSpeed * 1000000
+			interfaces[i].IfSpeed = &ifSpeed
 		}
 	}
 	return interfaces
