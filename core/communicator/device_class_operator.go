@@ -139,7 +139,7 @@ func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value
 		return value.Empty(), errors.New("cannot covert argument to decimal number")
 	}
 	b := decimal.NewFromFloat(valueFloat)
-	result := a.Div(b)
+	result := a.DivRound(b, 2)
 	return value.New(result), nil
 }
 
