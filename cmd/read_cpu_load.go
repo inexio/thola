@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readCPULoadCMD)
 	readCMD.AddCommand(readCPULoadCMD)
 }
 
@@ -15,7 +16,7 @@ var readCPULoadCMD = &cobra.Command{
 	Long:  "Read out the CPU load of a device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadCPULoadRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

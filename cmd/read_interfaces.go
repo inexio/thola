@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readInterfacesCMD)
 	readCMD.AddCommand(readInterfacesCMD)
 }
 
@@ -16,7 +17,7 @@ var readInterfacesCMD = &cobra.Command{
 		"Also reads special values based on the interface type.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadInterfacesRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

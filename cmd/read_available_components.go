@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readAvailableComponentsCMD)
 	readCMD.AddCommand(readAvailableComponentsCMD)
 }
 
@@ -15,7 +16,7 @@ var readAvailableComponentsCMD = &cobra.Command{
 	Long:  "Returns the available components for the device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadAvailableComponentsRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

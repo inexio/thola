@@ -7,7 +7,6 @@ import (
 )
 
 func init() {
-	addDeviceFlags(readCMD)
 	rootCMD.AddCommand(readCMD)
 }
 
@@ -22,8 +21,8 @@ var readCMD = &cobra.Command{
 	},
 }
 
-func getReadRequest() request.ReadRequest {
+func getReadRequest(host string) request.ReadRequest {
 	return request.ReadRequest{
-		BaseRequest: getBaseRequest(),
+		BaseRequest: getBaseRequest(host),
 	}
 }

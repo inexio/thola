@@ -111,7 +111,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 	if err1 == nil {
 		return value, nil
 	} else if !tholaerr.IsNotImplementedError(err1) {
-		return nil, errors.Wrap(err1, "an unexpected error occurred while trying to get value through device class")
+		return nil, err1
 	}
 
 	if fCom != nil {
@@ -119,7 +119,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 		if err2 == nil {
 			return value, nil
 		} else if !tholaerr.IsNotImplementedError(err2) {
-			return nil, errors.Wrap(err2, "an unexpected error occurred while trying to get value through communicator")
+			return nil, err2
 		}
 	} else {
 		err2 = tholaerr.NewNotImplementedError("no communicator available")
@@ -130,7 +130,7 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 		if err3 == nil {
 			return value, err3
 		} else if !tholaerr.IsNotFoundError(err3) {
-			return nil, errors.Wrap(err3, "an unexpected error occurred while trying to get value in parent communicator")
+			return nil, err3
 		}
 	} else {
 		err3 = tholaerr.NewNotImplementedError("no parent communicator with implementation available")
@@ -596,7 +596,7 @@ func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device
 	if err != nil {
 		return []device.Interface{}, err
 	}
-	if c.isRoot() {
+	if c.isHead() {
 		res = normalizeInterfaces(res.([]device.Interface))
 	}
 	return res.([]device.Interface), err
@@ -926,24 +926,11 @@ func (c *networkDeviceCommunicator) isHead() bool {
 	return c.head.GetDeviceClass() == c.GetDeviceClass()
 }
 
-func (c *networkDeviceCommunicator) isRoot() bool {
-	return c.GetDeviceClass() == "generic"
-}
-
 func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
-	for i := range interfaces {
-		if interfaces[i].IfSpeed != nil {
-			var speed uint64
-			if interfaces[i].IfHighSpeed != nil && *interfaces[i].IfSpeed == 4294967295 {
-				speed = *interfaces[i].IfHighSpeed * 1000000
-			} else {
-				speed = *interfaces[i].IfSpeed
-			}
-			//if radio interface
-			if interfaces[i].LevelIn != nil {
-				speed *= 1000
-			}
-			interfaces[i].IfSpeed = &speed
+	for i, interf := range interfaces {
+		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == 4294967295 {
+			ifSpeed := *interf.IfHighSpeed * 1000000
+			interfaces[i].IfSpeed = &ifSpeed
 		}
 	}
 	return interfaces

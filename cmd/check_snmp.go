@@ -17,7 +17,7 @@ var checkSNMPCMD = &cobra.Command{
 		"All configured SNMP options will be tried.",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckSNMPRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 		}
 		handleRequest(&r)
 	},

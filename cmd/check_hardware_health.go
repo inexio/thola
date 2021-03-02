@@ -16,7 +16,7 @@ var checkHardwareHealthCMD = &cobra.Command{
 	Long:  "Check hardware-health of a device and return various performance data.",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckHardwareHealthRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 		}
 		handleRequest(&r)
 	},

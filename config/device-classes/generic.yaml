@@ -40,6 +40,7 @@ components:
           operators:
             - type: modify
               modify_method: map
+              ignore_on_mismatch: true
               mappings:
                 "1": "up"
                 "2": "down"
@@ -49,6 +50,7 @@ components:
           operators:
             - type: modify
               modify_method: map
+              ignore_on_mismatch: true
               mappings:
                 "1": "up"
                 "2": "down"

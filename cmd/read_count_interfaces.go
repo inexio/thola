@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readCountInterfacesCMD)
 	readCMD.AddCommand(readCountInterfacesCMD)
 }
 
@@ -15,7 +16,7 @@ var readCountInterfacesCMD = &cobra.Command{
 	Long:  "Count the interfaces of a device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadCountInterfacesRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

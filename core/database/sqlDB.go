@@ -10,6 +10,7 @@ import (
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strconv"
 	"time"
 )
@@ -83,7 +84,8 @@ func (d *sqlDatabase) CheckConnection(ctx context.Context) error {
 	return d.db.PingContext(ctx)
 }
 
-func (d *sqlDatabase) CloseConnection(_ context.Context) error {
+func (d *sqlDatabase) CloseConnection(ctx context.Context) error {
+	log.Ctx(ctx).Trace().Msg("closing connection to mysql database")
 	return d.db.Close()
 }
 

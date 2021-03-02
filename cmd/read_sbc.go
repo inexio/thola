@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readSBCCMD)
 	readCMD.AddCommand(readSBCCMD)
 }
 
@@ -15,7 +16,7 @@ var readSBCCMD = &cobra.Command{
 	Long:  "Read out SPC specific information of a device like global call per second or active local contacts, including information per agent and per realm.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadSBCRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

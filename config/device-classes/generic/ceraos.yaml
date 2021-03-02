@@ -64,10 +64,14 @@ components:
             operators:
               - type: modify
                 modify_method: multiply
-                value: 1000
+                value:
+                  detection: constant
+                  value: 1000
           maxbitrate_in:
             oid: 1.3.6.1.4.1.2281.10.7.4.1.1.11
             operators:
               - type: modify
                 modify_method: multiply
-                value: 1000
+                value:
+                  detection: constant
+                  value: 1000

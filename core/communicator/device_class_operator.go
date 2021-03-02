@@ -100,16 +100,46 @@ func (o *propertyOperators) apply(ctx context.Context, v value.Value) (value.Val
 }
 
 type multiplyNumberModifier struct {
-	value float64
+	value propertyReader
 }
 
-func (m *multiplyNumberModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
+func (m *multiplyNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
 	a, err := decimal.NewFromString(v.String())
 	if err != nil {
 		return value.Empty(), errors.New("cannot covert current value to decimal number")
 	}
-	b := decimal.NewFromFloat(m.value)
+	valueProperty, err := m.value.getProperty(ctx)
+	if err != nil {
+		return value.Empty(), errors.New("cannot read argument")
+	}
+	valueFloat, err := valueProperty.Float64()
+	if err != nil {
+		return value.Empty(), errors.New("cannot covert argument to decimal number")
+	}
+	b := decimal.NewFromFloat(valueFloat)
 	result := a.Mul(b)
+	return value.New(result), nil
+}
+
+type divideNumberModifier struct {
+	value propertyReader
+}
+
+func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
+	a, err := decimal.NewFromString(v.String())
+	if err != nil {
+		return value.Empty(), errors.New("cannot covert current value to decimal number")
+	}
+	valueProperty, err := m.value.getProperty(ctx)
+	if err != nil {
+		return value.Empty(), errors.New("cannot read argument")
+	}
+	valueFloat, err := valueProperty.Float64()
+	if err != nil {
+		return value.Empty(), errors.New("cannot covert argument to decimal number")
+	}
+	b := decimal.NewFromFloat(valueFloat)
+	result := a.DivRound(b, 2)
 	return value.New(result), nil
 }
 
@@ -230,12 +260,16 @@ func (r *insertReadValueModifier) modify(ctx context.Context, v value.Value) (va
 }
 
 type mapModifier struct {
-	mappings map[string]string
+	ignoreOnMismatch bool
+	mappings         map[string]string
 }
 
 func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
 	if val, ok := r.mappings[v.String()]; ok {
 		return value.New(val), nil
+	}
+	if r.ignoreOnMismatch {
+		return value.Empty(), nil
 	}
 	return value.Empty(), tholaerr.NewNotFoundError("string not found in mapping")
 }

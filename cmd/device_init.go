@@ -33,7 +33,6 @@ func buildDeviceFlagSet() *flag.FlagSet {
 	fs := flag.NewFlagSet("device_flags", flag.ContinueOnError)
 
 	addBinarySpecificDeviceFlags(fs)
-	fs.String("ip", "", "IP of the device")
 
 	fs.Int("timeout", defaultRequestTimeout, "Timeout for the request in seconds (0 => no timeout)")
 	fs.Int("snmp-discover-par-requests", defaultSNMPDiscoverParRequests, "The amount of parallel connection requests used while trying to get a valid SNMP connection")
@@ -48,15 +47,9 @@ func buildDeviceFlagSet() *flag.FlagSet {
 }
 
 func addDeviceFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().AddFlagSet(deviceFlagSet)
-
-	err := cmd.MarkPersistentFlagRequired("ip")
-	if err != nil {
-		log.Error().
-			AnErr("Error", err).
-			Msg("Can't make flag ip required")
-		return
-	}
+	cmd.Flags().AddFlagSet(deviceFlagSet)
+	cmd.Args = cobra.ExactArgs(1)
+	cmd.Use += " [host]"
 }
 
 func bindDeviceFlags(cmd *cobra.Command) error {

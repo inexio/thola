@@ -1,0 +1,40 @@
+name: "linux"
+
+config:
+  components:
+    cpu: true
+    memory: true
+
+match:
+  logical_operator: OR
+  conditions:
+    - type: SysObjectID
+      match_mode: startsWith
+      values:
+        - ".1.3.6.1.4.1.8072.3.2.10"
+    - type: SysDescription
+      match_mode: regex
+      values:
+        - '^Linux'
+
+components:
+  cpu:
+    load:
+      - detection: snmpget
+        oid: ".1.3.6.1.4.1.2021.10.1.3.2"
+  memory:
+    usage:
+      - detection: snmpget
+        oid: ".1.3.6.1.4.1.2021.4.6.0"
+        operators:
+          - type: modify
+            modify_method: divide
+            value:
+              detection: snmpget
+              oid: ".1.3.6.1.4.1.2021.4.5.0"
+              operators:
+                - type: modify
+                  modify_method: divide
+                  value:
+                    detection: constant
+                    value: 100

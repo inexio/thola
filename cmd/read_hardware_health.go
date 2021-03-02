@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	addDeviceFlags(readHardwareHealth)
 	readCMD.AddCommand(readHardwareHealth)
 }
 
@@ -15,7 +16,7 @@ var readHardwareHealth = &cobra.Command{
 	Long:  "Read out the hardware health of a device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadHardwareHealthRequest{
-			ReadRequest: getReadRequest(),
+			ReadRequest: getReadRequest(args[0]),
 		}
 		handleRequest(&request)
 	},

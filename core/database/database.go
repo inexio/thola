@@ -38,7 +38,7 @@ type Database interface {
 
 func initDB(ctx context.Context) error {
 	if viper.GetBool("db.no-cache") {
-		log.Trace().Msg("initialized empty database")
+		log.Ctx(ctx).Trace().Msg("initialized empty database")
 		db.Database = &emptyDatabase{}
 		return nil
 	}
@@ -57,7 +57,7 @@ func initDB(ctx context.Context) error {
 		badgerDB := badgerDatabase{}
 		u, err := user.Current()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to get username")
 		}
 		badgerDB.db, err = badger.Open(badger.DefaultOptions(filepath.Join(os.TempDir(), "thola-"+u.Username+"-cache")).WithLogger(nil))
 		if err != nil {
@@ -120,7 +120,7 @@ func initDB(ctx context.Context) error {
 	} else {
 		return errors.New("invalid drivername, only 'built-in', 'mysql' and 'redis' supported")
 	}
-	log.Trace().Msg("initialized " + drivername + " database")
+	log.Ctx(ctx).Trace().Msg("initialized " + drivername + " database")
 	return nil
 }
 

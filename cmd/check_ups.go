@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/inexio/thola/core/request"
-	"github.com/inexio/thola/core/value"
 	"github.com/spf13/cobra"
 )
 
@@ -10,30 +9,30 @@ func init() {
 	addDeviceFlags(checkUPSCMD)
 	checkCMD.AddCommand(checkUPSCMD)
 
-	checkUPSCMD.Flags().String("batt-current-warning-min", "", "Warning min threshold for battery current")
-	checkUPSCMD.Flags().String("batt-current-warning-max", "", "Warning max threshold for battery current")
-	checkUPSCMD.Flags().String("batt-current-critical-min", "", "Critical min threshold for battery current")
-	checkUPSCMD.Flags().String("batt-current-critical-max", "", "Critical max threshold for battery current")
+	checkUPSCMD.Flags().Float64("batt-current-warning-min", 0, "Warning min threshold for battery current")
+	checkUPSCMD.Flags().Float64("batt-current-warning-max", 0, "Warning max threshold for battery current")
+	checkUPSCMD.Flags().Float64("batt-current-critical-min", 0, "Critical min threshold for battery current")
+	checkUPSCMD.Flags().Float64("batt-current-critical-max", 0, "Critical max threshold for battery current")
 
-	checkUPSCMD.Flags().String("batt-temperature-warning-min", "", "Warning min threshold for battery temperature")
-	checkUPSCMD.Flags().String("batt-temperature-warning-max", "", "Warning max threshold for battery temperature")
-	checkUPSCMD.Flags().String("batt-temperature-critical-min", "", "Critical min threshold for battery temperature")
-	checkUPSCMD.Flags().String("batt-temperature-critical-max", "", "Critical max threshold for battery temperature")
+	checkUPSCMD.Flags().Float64("batt-temperature-warning-min", 0, "Warning min threshold for battery temperature")
+	checkUPSCMD.Flags().Float64("batt-temperature-warning-max", 0, "Warning max threshold for battery temperature")
+	checkUPSCMD.Flags().Float64("batt-temperature-critical-min", 0, "Critical min threshold for battery temperature")
+	checkUPSCMD.Flags().Float64("batt-temperature-critical-max", 0, "Critical max threshold for battery temperature")
 
-	checkUPSCMD.Flags().String("current-load-warning-min", "", "Warning min threshold for current load")
-	checkUPSCMD.Flags().String("current-load-warning-max", "", "Warning max threshold for current load")
-	checkUPSCMD.Flags().String("current-load-critical-min", "", "Critical min threshold for current load")
-	checkUPSCMD.Flags().String("current-load-critical-max", "", "Critical max threshold for current load")
+	checkUPSCMD.Flags().Float64("current-load-warning-min", 0, "Warning min threshold for current load")
+	checkUPSCMD.Flags().Float64("current-load-warning-max", 0, "Warning max threshold for current load")
+	checkUPSCMD.Flags().Float64("current-load-critical-min", 0, "Critical min threshold for current load")
+	checkUPSCMD.Flags().Float64("current-load-critical-max", 0, "Critical max threshold for current load")
 
-	checkUPSCMD.Flags().String("rectifier-current-warning-min", "", "Warning min threshold for rectifier current")
-	checkUPSCMD.Flags().String("rectifier-current-warning-max", "", "Warning max threshold for rectifier current")
-	checkUPSCMD.Flags().String("rectifier-current-critical-min", "", "Critical min threshold for rectifier current")
-	checkUPSCMD.Flags().String("rectifier-current-critical-max", "", "Critical max threshold for rectifier current")
+	checkUPSCMD.Flags().Float64("rectifier-current-warning-min", 0, "Warning min threshold for rectifier current")
+	checkUPSCMD.Flags().Float64("rectifier-current-warning-max", 0, "Warning max threshold for rectifier current")
+	checkUPSCMD.Flags().Float64("rectifier-current-critical-min", 0, "Critical min threshold for rectifier current")
+	checkUPSCMD.Flags().Float64("rectifier-current-critical-max", 0, "Critical max threshold for rectifier current")
 
-	checkUPSCMD.Flags().String("system-voltage-warning-min", "", "Warning min threshold for system voltage")
-	checkUPSCMD.Flags().String("system-voltage-warning-max", "", "Warning max threshold for system voltage")
-	checkUPSCMD.Flags().String("system-voltage-critical-min", "", "Critical min threshold for system voltage")
-	checkUPSCMD.Flags().String("system-voltage-critical-max", "", "Critical max threshold for system voltage")
+	checkUPSCMD.Flags().Float64("system-voltage-warning-min", 0, "Warning min threshold for system voltage")
+	checkUPSCMD.Flags().Float64("system-voltage-warning-max", 0, "Warning max threshold for system voltage")
+	checkUPSCMD.Flags().Float64("system-voltage-critical-min", 0, "Critical min threshold for system voltage")
+	checkUPSCMD.Flags().Float64("system-voltage-critical-max", 0, "Critical max threshold for system voltage")
 }
 
 var checkUPSCMD = &cobra.Command{
@@ -43,37 +42,12 @@ var checkUPSCMD = &cobra.Command{
 		"All UPS statistics will be printed as performance data.",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckUPSRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
-			BatteryCurrentThresholds: request.CheckThresholds{
-				WarningMin:  value.New(cmd.Flags().Lookup("batt-current-warning-min").Value),
-				WarningMax:  value.New(cmd.Flags().Lookup("batt-current-warning-max").Value),
-				CriticalMin: value.New(cmd.Flags().Lookup("batt-current-critical-min").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("batt-current-critical-max").Value),
-			},
-			BatteryTemperatureThresholds: request.CheckThresholds{
-				WarningMin:  value.New(cmd.Flags().Lookup("batt-temperature-warning-min").Value),
-				WarningMax:  value.New(cmd.Flags().Lookup("batt-temperature-warning-max").Value),
-				CriticalMin: value.New(cmd.Flags().Lookup("batt-temperature-critical-min").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("batt-temperature-critical-max").Value),
-			},
-			CurrentLoadThresholds: request.CheckThresholds{
-				WarningMin:  value.New(cmd.Flags().Lookup("current-load-warning-min").Value),
-				WarningMax:  value.New(cmd.Flags().Lookup("current-load-warning-max").Value),
-				CriticalMin: value.New(cmd.Flags().Lookup("current-load-critical-min").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("current-load-critical-max").Value),
-			},
-			RectifierCurrentThresholds: request.CheckThresholds{
-				WarningMin:  value.New(cmd.Flags().Lookup("rectifier-current-warning-min").Value),
-				WarningMax:  value.New(cmd.Flags().Lookup("rectifier-current-warning-max").Value),
-				CriticalMin: value.New(cmd.Flags().Lookup("rectifier-current-critical-min").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("rectifier-current-critical-max").Value),
-			},
-			SystemVoltageThresholds: request.CheckThresholds{
-				WarningMin:  value.New(cmd.Flags().Lookup("system-voltage-warning-min").Value),
-				WarningMax:  value.New(cmd.Flags().Lookup("system-voltage-warning-max").Value),
-				CriticalMin: value.New(cmd.Flags().Lookup("system-voltage-critical-min").Value),
-				CriticalMax: value.New(cmd.Flags().Lookup("system-voltage-critical-max").Value),
-			},
+			CheckDeviceRequest:           getCheckDeviceRequest(args[0]),
+			BatteryCurrentThresholds:     generateCheckThresholds(cmd, "batt-current-warning-min", "batt-current-warning-max", "batt-current-critical-min", "batt-current-critical-max"),
+			BatteryTemperatureThresholds: generateCheckThresholds(cmd, "batt-temperature-warning-min", "batt-temperature-warning-max", "batt-temperature-critical-min", "batt-temperature-critical-max"),
+			CurrentLoadThresholds:        generateCheckThresholds(cmd, "current-load-warning-min", "current-load-warning-max", "current-load-warning-max", "current-load-warning-max"),
+			RectifierCurrentThresholds:   generateCheckThresholds(cmd, "rectifier-current-warning-min", "rectifier-current-warning-max", "rectifier-current-critical-min", "rectifier-current-critical-max"),
+			SystemVoltageThresholds:      generateCheckThresholds(cmd, "system-voltage-warning-min", "system-voltage-warning-max", "system-voltage-critical-min", "system-voltage-critical-max"),
 		}
 		handleRequest(&r)
 	},

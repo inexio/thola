@@ -9,6 +9,7 @@ import (
 	"github.com/inexio/thola/core/parser"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 type redisDatabase struct {
@@ -70,6 +71,7 @@ func (d *redisDatabase) CheckConnection(ctx context.Context) error {
 	return err
 }
 
-func (d *redisDatabase) CloseConnection(_ context.Context) error {
+func (d *redisDatabase) CloseConnection(ctx context.Context) error {
+	log.Ctx(ctx).Trace().Msg("closing connection to redis database")
 	return d.db.Close()
 }

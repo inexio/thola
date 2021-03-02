@@ -17,7 +17,7 @@ var identifyCMD = &cobra.Command{
 		"It returns properties like vendor, model, serial number,...",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.IdentifyRequest{
-			BaseRequest: getBaseRequest(),
+			BaseRequest: getBaseRequest(args[0]),
 		}
 		handleRequest(&r)
 	},

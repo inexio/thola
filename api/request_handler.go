@@ -8,8 +8,8 @@ import (
 	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/request"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
@@ -27,9 +27,10 @@ var deviceLocks struct {
 
 // StartAPI starts the API.
 func StartAPI() {
-	log.Trace().Msg("starting the server")
+	ctx := log.Logger.WithContext(context.Background())
 
-	ctx := context.Background()
+	log.Ctx(ctx).Trace().Msg("starting the server")
+
 	db, err := database.GetDB(ctx)
 	if err != nil {
 		log.Fatal().Err(err).Msg("starting the server failed")
@@ -46,7 +47,7 @@ func StartAPI() {
 		"    \\/_/   \\/_/\\/_/   \\/_____/   \\/_____/   \\/_/\\/_/\n\n")
 
 	if (viper.GetString("api.username") != "") && (viper.GetString("api.password") != "") {
-		log.Trace().Msg("set authorization for api")
+		log.Ctx(ctx).Trace().Msg("set authorization for api")
 		e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 			// Be careful to use constant time comparison to prevent timing attacks
 			if subtle.ConstantTimeCompare([]byte(username), []byte(viper.GetString("restapi.username"))) == 1 &&
@@ -58,7 +59,7 @@ func StartAPI() {
 	}
 
 	if viper.GetString("api.ratelimit") != "" {
-		log.Trace().Msg("set ratelimit for api")
+		log.Ctx(ctx).Trace().Msg("set ratelimit for api")
 		e.Use(ipRateLimit())
 	}
 
@@ -563,16 +564,14 @@ func StartAPI() {
 			err = e.Start(":" + viper.GetString("api.port"))
 		}
 
-		log.Trace().Msg("closing connection to the database")
-
 		if dbErr := db.CloseConnection(ctx); dbErr != nil {
-			log.Err(dbErr).Msg("failed to close connection to the db")
+			log.Ctx(ctx).Err(dbErr).Msg("failed to close connection to the db")
 		}
 
 		if err != nil && err == http.ErrServerClosed {
-			log.Info().Msg("shutting down the server")
+			log.Ctx(ctx).Info().Msg("shutting down the server")
 		} else {
-			log.Fatal().Err(err).Msg("unexpected server error")
+			log.Ctx(ctx).Fatal().Err(err).Msg("unexpected server error")
 		}
 	}()
 
@@ -582,13 +581,13 @@ func StartAPI() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	log.Trace().Msg("received shutdown signal")
+	log.Ctx(ctx).Trace().Msg("received shutdown signal")
 
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	if err = e.Shutdown(ctx); err != nil {
-		log.Fatal().Err(err).Msg("shutting down the server failed")
+		log.Ctx(ctx).Fatal().Err(err).Msg("shutting down the server failed")
 	}
 }
 
@@ -849,19 +848,19 @@ func getDeviceLock(ip string) *sync.Mutex {
 }
 
 func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
+	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
+	ctx := logger.WithContext(context.Background())
+
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
 		lock := getDeviceLock(*ip)
 		lock.Lock()
 		defer func() {
 			lock.Unlock()
-			log.Trace().Msg("unlocked IP " + *ip)
+			log.Ctx(ctx).Trace().Msg("unlocked IP " + *ip)
 		}()
 
-		log.Trace().Msg("locked IP " + *ip)
+		log.Ctx(ctx).Trace().Msg("locked IP " + *ip)
 	}
-
-	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
-	ctx := logger.WithContext(context.Background())
 
 	return request.ProcessRequest(ctx, r)
 }

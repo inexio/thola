@@ -31,7 +31,7 @@ var checkInterfaceMetricsCMD = &cobra.Command{
 	Long:  "Reads all interface metrics and prints them as performance data.",
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckInterfaceMetricsRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			PrintInterfaces:    viper.GetBool("checkInterfaceMetrics.print-interfaces"),
 			Filter:             viper.GetStringSlice("checkInterfaceMetrics.filter"),
 		}

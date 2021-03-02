@@ -72,7 +72,7 @@ var checkIdentifyCMD = &cobra.Command{
 		osVersion := cmd.Flags().Lookup("os-version").Value.String()
 
 		r := request.CheckIdentifyRequest{
-			CheckDeviceRequest: getCheckDeviceRequest(),
+			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			Expectations: device.Device{
 				Class: cmd.Flags().Lookup("os").Value.String(),
 				Properties: device.Properties{

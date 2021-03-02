@@ -271,13 +271,14 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 
 	var response []gosnmp.SnmpPDU
 	var err error
-	if s.client.Version == gosnmp.Version1 {
-		response, err = s.client.WalkAll(oid)
-	} else {
+	if s.client.Version != gosnmp.Version1 {
 		response, err = s.client.BulkWalkAll(oid)
 	}
+	if s.client.Version == gosnmp.Version1 || err != nil {
+		response, err = s.client.WalkAll(oid)
+	}
 	if err != nil {
-		return nil, errors.Wrap(err, "snmpwalk all failed")
+		return nil, errors.Wrap(err, "snmpwalk failed")
 	}
 
 	if response == nil {
@@ -353,7 +354,7 @@ func (s *SNMPClient) GetMaxRepetitions() uint8 {
 }
 
 // SetMaxRepetitions sets the maximum repetitions.
-func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint8) {
+func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint32) {
 	s.client.MaxRepetitions = maxRepetitions
 }
 
