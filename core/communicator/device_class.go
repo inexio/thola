@@ -1,3 +1,6 @@
+// Package communicator contains the logic for interacting with device classes.
+// It contains methods that read out the .yaml files representing device classes.
+// On top of that, code communicators that extend .yaml files can be added here.
 package communicator
 
 import (
@@ -32,6 +35,7 @@ const (
 	cpuComponent
 	memoryComponent
 	sbcComponent
+	serverComponent
 	hardwareHealthComponent
 )
 
@@ -69,6 +73,7 @@ type deviceClassComponents struct {
 	cpu            *deviceClassComponentsCPU
 	memory         *deviceClassComponentsMemory
 	sbc            *deviceClassComponentsSBC
+	server         *deviceClassComponentsServer
 	hardwareHealth *deviceClassComponentsHardwareHealth
 }
 
@@ -109,6 +114,13 @@ type deviceClassComponentsSBC struct {
 	licenseCapacity          propertyReader
 	systemRedundancy         propertyReader
 	systemHealthScore        propertyReader
+}
+
+// deviceClassComponentsServer represents the server components part of a device class.
+type deviceClassComponentsServer struct {
+	disk  propertyReader
+	procs propertyReader
+	users propertyReader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
@@ -153,12 +165,13 @@ type deviceClassSNMP struct {
 	MaxRepetitions uint32 `yaml:"max_repetitions"`
 }
 
-// logicalOperator represents a logical operator (OR or AND)
+// logicalOperator represents a logical operator (OR or AND).
 type logicalOperator string
 
 // matchMode represents a match mode that is used to match a condition.
 type matchMode string
 
+// yamlDeviceClass represents the structure and the parts of a yaml device class.
 type yamlDeviceClass struct {
 	Name       string                    `yaml:"name"`
 	Match      interface{}               `yaml:"match"`
@@ -167,19 +180,23 @@ type yamlDeviceClass struct {
 	Components yamlDeviceClassComponents `yaml:"components"`
 }
 
+// yamlDeviceClassIdentify represents the identify part of a yaml device class.
 type yamlDeviceClassIdentify struct {
 	Properties *yamlDeviceClassIdentifyProperties `yaml:"properties"`
 }
 
+// yamlDeviceClassComponents represents the components part of a yaml device class.
 type yamlDeviceClassComponents struct {
 	Interfaces     *yamlComponentsInterfaces               `yaml:"interfaces"`
 	UPS            *yamlComponentsUPSProperties            `yaml:"ups"`
 	CPU            *yamlComponentsCPUProperties            `yaml:"cpu"`
 	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
 	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
+	Server         *yamlComponentsServerProperties         `yaml:"server"`
 	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
 }
 
+// yamlDeviceClassConfig represents the config part of a yaml device class.
 type yamlDeviceClassConfig struct {
 	SNMP       deviceClassSNMP `yaml:"snmp"`
 	Components map[string]bool `yaml:"components"`
@@ -190,6 +207,7 @@ type yamlConditionSet struct {
 	Conditions      []interface{}
 }
 
+// yamlDeviceClassIdentifyProperties represents the identify properties of a yaml device class.
 type yamlDeviceClassIdentifyProperties struct {
 	Vendor       []interface{} `yaml:"vendor"`
 	Model        []interface{} `yaml:"model"`
@@ -198,6 +216,11 @@ type yamlDeviceClassIdentifyProperties struct {
 	OSVersion    []interface{} `yaml:"os_version"`
 }
 
+//
+// Here are definitions of components of yaml device classes.
+//
+
+// yamlComponentsUPSProperties represents the specific properties of ups components of a yaml device class.
 type yamlComponentsUPSProperties struct {
 	AlarmLowVoltageDisconnect []interface{} `yaml:"alarm_low_voltage_disconnect"`
 	BatteryAmperage           []interface{} `yaml:"battery_amperage"`
@@ -212,15 +235,18 @@ type yamlComponentsUPSProperties struct {
 	SystemVoltage             []interface{} `yaml:"system_voltage"`
 }
 
+// yamlComponentsCPUProperties represents the specific properties of cpu components of a yaml device class.
 type yamlComponentsCPUProperties struct {
 	Load        []interface{} `yaml:"load"`
 	Temperature []interface{} `yaml:"temperature"`
 }
 
+// yamlComponentsMemoryProperties represents the specific properties of memory components of a yaml device class.
 type yamlComponentsMemoryProperties struct {
 	Usage []interface{} `yaml:"usage"`
 }
 
+// yamlComponentsSBCProperties represents the specific properties of sbc components of a yaml device class.
 type yamlComponentsSBCProperties struct {
 	Agents                   interface{}   `yaml:"agents"`
 	Realms                   interface{}   `yaml:"realms"`
@@ -233,11 +259,23 @@ type yamlComponentsSBCProperties struct {
 	SystemHealthScore        []interface{} `yaml:"system_health_score"`
 }
 
+// yamlComponentsServerProperties represents the specific properties of server components of a yaml device class.
+type yamlComponentsServerProperties struct {
+	Disk  []interface{} `yaml:"disk"`
+	Procs []interface{} `yaml:"procs"`
+	Users []interface{} `yaml:"users"`
+}
+
+// yamlComponentsHardwareHealthProperties represents the specific properties of hardware health components of a yaml device class.
 type yamlComponentsHardwareHealthProperties struct {
 	EnvironmentMonitorState []interface{} `yaml:"environment_monitor_state"`
 	Fans                    interface{}   `yaml:"fans"`
 	PowerSupply             interface{}   `yaml:"power_supply"`
 }
+
+//
+// Here are definitions of interfaces of yaml device classes.
+//
 
 type yamlComponentsInterfaces struct {
 	Count   string                       `yaml:"count"`
@@ -649,6 +687,14 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.sbc = &sbc
 	}
 
+	if y.Server != nil {
+		server, err := y.Server.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml server properties")
+		}
+		components.server = &server
+	}
+
 	if y.HardwareHealth != nil {
 		hardwareHealth, err := y.HardwareHealth.convert()
 		if err != nil {
@@ -928,6 +974,31 @@ func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory,
 		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer, error) {
+	var properties deviceClassComponentsServer
+	var err error
+
+	if y.Disk != nil {
+		properties.disk, err = convertYamlProperty(y.Disk, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert disk property to property reader")
+		}
+	}
+	if y.Procs != nil {
+		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert procs property to property reader")
+		}
+	}
+	if y.Users != nil {
+		properties.users, err = convertYamlProperty(y.Users, propertyDefault)
+		if err != nil {
+			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
 		}
 	}
 	return properties, nil
@@ -1669,6 +1740,8 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return memoryComponent, nil
 	case "sbc":
 		return sbcComponent, nil
+	case "server":
+		return serverComponent, nil
 	case "hardware_health":
 		return hardwareHealthComponent, nil
 	default:
@@ -1691,6 +1764,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "memory", nil
 	case sbcComponent:
 		return "sbc", nil
+	case serverComponent:
+		return "server", nil
 	case hardwareHealthComponent:
 		return "hardware_health", nil
 	default:

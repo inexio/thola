@@ -632,6 +632,63 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemHealthScore(ctx context.C
 	return result, nil
 }
 
+func (o *deviceClassCommunicator) GetServerComponentDisk(ctx context.Context) (int, error) {
+	if o.components.server == nil || o.components.server.disk == nil {
+		log.Ctx(ctx).Trace().Str("property", "ServerComponentDisk").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "ServerComponentDisk").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.server.disk.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get ServerComponentDisk")
+	}
+	r, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+	return r, nil
+}
+
+func (o *deviceClassCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
+	if o.components.server == nil || o.components.server.procs == nil {
+		log.Ctx(ctx).Trace().Str("property", "ServerComponentProcs").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "ServerComponentProcs").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.server.procs.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get ServerComponentProcs")
+	}
+	r, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+	return r, nil
+}
+
+func (o *deviceClassCommunicator) GetServerComponentUsers(ctx context.Context) (int, error) {
+	if o.components.server == nil || o.components.server.users == nil {
+		log.Ctx(ctx).Trace().Str("property", "ServerComponentUsers").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "ServerComponentUsers").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.server.users.getProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get ServerComponentUsers")
+	}
+	r, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+	return r, nil
+}
+
 func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
 	if o.components.hardwareHealth == nil || o.components.hardwareHealth.environmentMonitorState == nil {
 		log.Ctx(ctx).Trace().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Str("device_class", o.name).Msg("no detection information available")

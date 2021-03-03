@@ -23,6 +23,7 @@ type communicatorAdapter interface {
 	communicatorAdapterUPS
 	communicatorAdapterMemory
 	communicatorAdapterSCB
+	communicatorAdapterServer
 	communicatorAdapterHardwareHealth
 }
 
@@ -33,6 +34,12 @@ type communicatorAdapterCPU interface {
 
 type communicatorAdapterMemory interface {
 	getMemoryUsage(...interface{}) (interface{}, error)
+}
+
+type communicatorAdapterServer interface {
+	getServerDisk(...interface{}) (interface{}, error)
+	getServerProcs(...interface{}) (interface{}, error)
+	getServerUsers(...interface{}) (interface{}, error)
 }
 
 type communicatorAdapterUPS interface {
@@ -115,6 +122,18 @@ func (a *adapter) getCPUTemperature(i ...interface{}) (interface{}, error) {
 
 func (a *adapter) getMemoryUsage(i ...interface{}) (interface{}, error) {
 	return a.com.GetMemoryComponentMemoryUsage(i[0].(context.Context))
+}
+
+func (a *adapter) getServerDisk(i ...interface{}) (interface{}, error) {
+	return a.com.GetServerComponentDisk(i[0].(context.Context))
+}
+
+func (a *adapter) getServerProcs(i ...interface{}) (interface{}, error) {
+	return a.com.GetServerComponentProcs(i[0].(context.Context))
+}
+
+func (a *adapter) getServerUsers(i ...interface{}) (interface{}, error) {
+	return a.com.GetServerComponentUsers(i[0].(context.Context))
 }
 
 func (a *adapter) getUPSComponentAlarmLowVoltageDisconnect(i ...interface{}) (interface{}, error) {
