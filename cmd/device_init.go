@@ -53,15 +53,6 @@ func addDeviceFlags(cmd *cobra.Command) {
 }
 
 func bindDeviceFlags(cmd *cobra.Command) error {
-	if x := cmd.Flags().Lookup("ip"); x != nil {
-		err := viper.BindPFlag("device.ip", x)
-		if err != nil {
-			log.Error().
-				AnErr("Error", err).
-				Msg("Can't bind flag ip")
-			return err
-		}
-	}
 	if x := cmd.Flags().Lookup("timeout"); x != nil {
 		err := viper.BindPFlag("request.timeout", x)
 		if err != nil {
