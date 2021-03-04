@@ -4,11 +4,11 @@
 		"identify": {
 			"class": "arista_eos",
 			"properties": {
-				"vendor": null,
+				"vendor": "Arista Networks",
 				"model": null,
 				"model_series": null,
 				"serial_number": null,
-				"os_version": null
+				"os_version": "4.16.14M"
 			}
 		},
 		"readCountInterfaces": {

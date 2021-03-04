@@ -190,6 +190,13 @@ type UPSComponent struct {
 	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
 }
 
+// ServerComponent represents a server component
+type ServerComponent struct {
+	Disk  *int `yaml:"disk" json:"disk" xml:"disk"`
+	Procs *int `yaml:"procs" json:"procs" xml:"procs"`
+	Users *int `yaml:"users" json:"users" xml:"users"`
+}
+
 // SBCComponent represents a SBC component
 type SBCComponent struct {
 	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents"`

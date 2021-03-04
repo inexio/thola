@@ -312,6 +312,33 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/sbc", checkSBC)
 
+	// swagger:operation POST /check/server check checkServer
+	// ---
+	// summary: Check a linux server.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckServerRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckServerResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/server", checkServer)
+
 	// swagger:operation POST /check/hardware-health check checkSBC
 	// ---
 	// summary: Check an hardware health of an device.
@@ -500,6 +527,33 @@ func StartAPI() {
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/sbc", readSBC)
+
+	// swagger:operation POST /read/server read readServer
+	// ---
+	// summary: Reads out server data of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadServerRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadServerResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/server", readServer)
 
 	// swagger:operation POST /read/hardware-health read hardware health
 	// ---
@@ -699,6 +753,18 @@ func checkSBC(ctx echo.Context) error {
 	return returnInFormat(ctx, http.StatusOK, resp)
 }
 
+func checkServer(ctx echo.Context) error {
+	r := request.CheckServerRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
 func checkHardwareHealth(ctx echo.Context) error {
 	r := request.CheckHardwareHealthRequest{}
 	if err := ctx.Bind(&r); err != nil {
@@ -773,6 +839,18 @@ func readUPS(ctx echo.Context) error {
 
 func readSBC(ctx echo.Context) error {
 	r := request.ReadSBCRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readServer(ctx echo.Context) error {
+	r := request.ReadServerRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}
