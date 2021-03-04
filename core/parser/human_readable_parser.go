@@ -53,7 +53,7 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 	case reflect.Uint64:
 		return strconv.Itoa(int(value.Uint()))
 	case reflect.Float64:
-		return fmt.Sprintf("%f", value.Float())
+		return strconv.FormatFloat(value.Float(), 'f', -1, 64)
 	case reflect.Ptr:
 		if value.IsNil() {
 			return ""
