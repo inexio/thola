@@ -106,6 +106,10 @@ type Interface struct {
 	IfHighSpeed          *uint64 `yaml:"ifHighSpeed" json:"ifHighSpeed" xml:"ifHighSpeed"`
 	IfAlias              *string `yaml:"ifAlias" json:"ifAlias" xml:"ifAlias"`
 
+	// SubType is not set per default and cannot be read out through a device class.
+	// It is used to internally specify a port type, without changing the actual ifType.
+	SubType *string `yaml:"-" json:"-" xml:"-"`
+
 	EthernetLikeInterface       `mapstructure:",squash"`
 	RadioInterface              `mapstructure:",squash"`
 	DWDMInterface               `mapstructure:",squash"`
