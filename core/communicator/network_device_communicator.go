@@ -6,6 +6,7 @@ import (
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
+	"math"
 )
 
 // NetworkDeviceCommunicator represents a communicator for a device
@@ -1024,7 +1025,7 @@ func (c *networkDeviceCommunicator) isHead() bool {
 
 func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
 	for i, interf := range interfaces {
-		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == 4294967295 {
+		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == math.MaxUint32 {
 			ifSpeed := *interf.IfHighSpeed * 1000000
 			interfaces[i].IfSpeed = &ifSpeed
 		}
