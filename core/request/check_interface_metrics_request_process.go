@@ -9,6 +9,7 @@ import (
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/parser"
 	"github.com/pkg/errors"
+	"regexp"
 )
 
 type interfaceCheckOutput struct {
@@ -91,19 +92,39 @@ func (r *CheckInterfaceMetricsRequest) getData(ctx context.Context) (*ReadInterf
 
 	readInterfacesResponse := response.(*ReadInterfacesResponse)
 
-	if len(r.Filter) > 0 {
-		var interfaces []device.Interface
-		for _, filter := range r.Filter {
-			for _, interf := range readInterfacesResponse.Interfaces {
-				if interf.IfType == nil || *interf.IfType != filter {
-					interfaces = append(interfaces, interf)
+	var filterIndices []int
+out:
+	for i, interf := range readInterfacesResponse.Interfaces {
+		for _, filter := range r.IfTypeFilter {
+			if interf.IfType != nil && *interf.IfType == filter {
+				filterIndices = append(filterIndices, i)
+				continue out
+			}
+		}
+		for _, filter := range r.IfNameFilter {
+			if interf.IfName != nil {
+				matched, err := regexp.MatchString(filter, *interf.IfName)
+				if err != nil {
+					return nil, errors.Wrap(err, "ifName filter regex match failed")
+				}
+				if matched {
+					filterIndices = append(filterIndices, i)
+					continue out
 				}
 			}
 		}
-		readInterfacesResponse.Interfaces = interfaces
 	}
 
+	readInterfacesResponse.Interfaces = removeInterface(readInterfacesResponse.Interfaces, filterIndices, 0)
+
 	return readInterfacesResponse, nil
+}
+
+func removeInterface(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
+	if len(toRemove) == 0 {
+		return interfaces
+	}
+	return append(interfaces[:toRemove[0]-alreadyRemoved], removeInterface(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
 }
 
 func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitoringplugin.Response) error {
