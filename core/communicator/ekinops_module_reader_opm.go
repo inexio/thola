@@ -35,13 +35,13 @@ func (m *ekinopsModuleReaderOPM8) readModuleMetrics(ctx context.Context, interfa
 		return nil, errors.Wrap(err, "failed to get interface identifier mappings")
 	}
 
-	for _, opticalOPMInterface := range opticalOPMInterfaces {
+	for i, opticalOPMInterface := range opticalOPMInterfaces {
 		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + *opticalOPMInterface.Identifier
 		idx, ok := mappings[identifier]
 		if !ok {
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
-		interfaces[idx].OpticalOPMInterface = opticalOPMInterface
+		interfaces[idx].OpticalOPM = &opticalOPMInterfaces[i]
 	}
 
 	return interfaces, nil

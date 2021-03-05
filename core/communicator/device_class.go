@@ -158,6 +158,7 @@ type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
 type deviceClassInterfaceTypeDef struct {
 	Detection string
 	Values    deviceClassOIDs
+	Type      string
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -731,9 +732,13 @@ func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, e
 }
 
 func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, error) {
+	err := y.validate()
+	if err != nil {
+		return deviceClassInterfaceTypes{}, err
+	}
 	interfaceTypes := make(map[string]deviceClassInterfaceTypeDef)
 
-	for k, interfaceType := range *y {
+	for t, interfaceType := range *y {
 		if interfaceType.Detection == "" {
 			return deviceClassInterfaceTypes{}, errors.New("detection information missing for special interface type")
 		}
@@ -742,19 +747,35 @@ func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, err
 			if err != nil {
 				return deviceClassInterfaceTypes{}, errors.Wrap(err, "failed to read yaml interfaces types values")
 			}
-			interfaceTypes[k] = deviceClassInterfaceTypeDef{
+			interfaceTypes[t] = deviceClassInterfaceTypeDef{
 				Detection: interfaceType.Detection,
 				Values:    values,
+				Type:      t,
 			}
 		} else {
-			interfaceTypes[k] = deviceClassInterfaceTypeDef{
-				Detection: interfaceType.Detection,
-				Values:    nil,
-			}
+			return deviceClassInterfaceTypes{}, fmt.Errorf("values is missing for interface type '%s'", t)
 		}
 	}
 
 	return interfaceTypes, nil
+}
+
+func (y *yamlComponentsInterfaceTypes) validate() error {
+	for t := range *y {
+		err := validateInterfaceType(t)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateInterfaceType(t string) error {
+	switch t {
+	case "ether_like", "radio", "dwdm", "optical_transponder", "optical_amplifier", "optical_opm":
+		return nil
+	}
+	return fmt.Errorf("unknown interface type '%s'", t)
 }
 
 func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
