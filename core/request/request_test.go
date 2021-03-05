@@ -62,7 +62,7 @@ func TestRemoveInterfaces(t *testing.T) {
 				toRemove = append(toRemove, j)
 			}
 		}
-		interfaces = removeInterface(interfaces, toRemove, 0)
+		interfaces = filterInterfaces(interfaces, toRemove, 0)
 		assert.Equal(t, i/2, len(interfaces), "expected removed length and actual length differs")
 	}
 }

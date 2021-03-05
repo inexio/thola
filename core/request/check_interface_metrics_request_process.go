@@ -115,16 +115,16 @@ out:
 		}
 	}
 
-	readInterfacesResponse.Interfaces = removeInterface(readInterfacesResponse.Interfaces, filterIndices, 0)
+	readInterfacesResponse.Interfaces = filterInterfaces(readInterfacesResponse.Interfaces, filterIndices, 0)
 
 	return readInterfacesResponse, nil
 }
 
-func removeInterface(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
+func filterInterfaces(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
 	if len(toRemove) == 0 {
 		return interfaces
 	}
-	return append(interfaces[:toRemove[0]-alreadyRemoved], removeInterface(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
+	return append(interfaces[:toRemove[0]-alreadyRemoved], filterInterfaces(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
 }
 
 func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitoringplugin.Response) error {
