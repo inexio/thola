@@ -8,6 +8,9 @@ import (
 func init() {
 	addDeviceFlags(checkDiskCMD)
 	checkCMD.AddCommand(checkDiskCMD)
+
+	checkDiskCMD.Flags().Float64("warning", 0, "warning threshold for free disk space")
+	checkDiskCMD.Flags().Float64("critical", 0, "critical threshold for free disk space")
 }
 
 var checkDiskCMD = &cobra.Command{
@@ -18,6 +21,7 @@ var checkDiskCMD = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckDiskRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
+			DiskThresholds:     generateCheckThresholds(cmd, "warning", "", "critical", ""),
 		}
 		handleRequest(&r)
 	},
