@@ -17,13 +17,6 @@ func (r *CheckServerRequest) process(ctx context.Context) (Response, error) {
 	}
 	server := response.(*ReadServerResponse)
 
-	if server.Server.Disk != nil {
-		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("disk_usage", *server.Server.Disk, ""))
-		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
-		}
-	}
 	if server.Server.Procs != nil {
 		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("procs", *server.Server.Procs, ""))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {

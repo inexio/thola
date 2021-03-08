@@ -233,7 +233,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/memory-usage check checkMemoryUsage
 	// ---
-	// summary: Read out the memory usage of a device.
+	// summary: Check the memory usage of a device.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -260,7 +260,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/cpu-load check checkCpuLoad
 	// ---
-	// summary: Read out the cpu load of a device.
+	// summary: Check the cpu load of a device.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -338,6 +338,33 @@ func StartAPI() {
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/server", checkServer)
+
+	// swagger:operation POST /check/disk check checkDisk
+	// ---
+	// summary: Check the disk of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckDiskRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckDiskResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/disk", checkDisk)
 
 	// swagger:operation POST /check/hardware-health check checkSBC
 	// ---
@@ -555,6 +582,33 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/server", readServer)
 
+	// swagger:operation POST /read/disk read readDisk
+	// ---
+	// summary: Reads out disk data of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadDiskRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadDiskResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/disk", readDisk)
+
 	// swagger:operation POST /read/hardware-health read hardware health
 	// ---
 	// summary: Reads out hardware health data of a device.
@@ -765,6 +819,18 @@ func checkServer(ctx echo.Context) error {
 	return returnInFormat(ctx, http.StatusOK, resp)
 }
 
+func checkDisk(ctx echo.Context) error {
+	r := request.CheckDiskRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
 func checkHardwareHealth(ctx echo.Context) error {
 	r := request.CheckHardwareHealthRequest{}
 	if err := ctx.Bind(&r); err != nil {
@@ -851,6 +917,18 @@ func readSBC(ctx echo.Context) error {
 
 func readServer(ctx echo.Context) error {
 	r := request.ReadServerRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readDisk(ctx echo.Context) error {
+	r := request.ReadDiskRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

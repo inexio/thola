@@ -18,6 +18,7 @@ type NetworkDeviceCommunicator interface {
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
 	GetSBCComponent(ctx context.Context) (device.SBCComponent, error)
 	GetServerComponent(ctx context.Context) (device.ServerComponent, error)
+	GetDiskComponent(ctx context.Context) (device.DiskComponent, error)
 	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
 	availableCommunicatorFunctions
 }
@@ -36,6 +37,7 @@ type availableCommunicatorFunctions interface {
 	availableUPSCommunicatorFunctions
 	availableSBCCommunicatorFunctions
 	availableServerCommunicatorFunctions
+	availableDiskCommunicatorFunctions
 	availableHardwareHealthCommunicatorFunctions
 }
 
@@ -75,9 +77,12 @@ type availableSBCCommunicatorFunctions interface {
 }
 
 type availableServerCommunicatorFunctions interface {
-	GetServerComponentDisk(ctx context.Context) (int, error)
 	GetServerComponentProcs(ctx context.Context) (int, error)
 	GetServerComponentUsers(ctx context.Context) (int, error)
+}
+
+type availableDiskCommunicatorFunctions interface {
+	GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error)
 }
 
 type availableHardwareHealthCommunicatorFunctions interface {
@@ -482,16 +487,6 @@ func (c *networkDeviceCommunicator) GetServerComponent(ctx context.Context) (dev
 
 	empty := true
 
-	disk, err := c.head.GetServerComponentDisk(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component disk")
-		}
-	} else {
-		server.Disk = &disk
-		empty = false
-	}
-
 	procs, err := c.head.GetServerComponentProcs(ctx)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
@@ -517,6 +512,32 @@ func (c *networkDeviceCommunicator) GetServerComponent(ctx context.Context) (dev
 	}
 
 	return server, nil
+}
+
+func (c *networkDeviceCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(diskComponent) {
+		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
+	}
+
+	var disk device.DiskComponent
+
+	empty := true
+
+	storages, err := c.head.GetDiskComponentStorages(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.DiskComponent{}, errors.Wrap(err, "error occurred during get disk component storages")
+		}
+	} else {
+		disk.Storages = storages
+		empty = false
+	}
+
+	if empty {
+		return device.DiskComponent{}, tholaerr.NewNotFoundError("no disk data available")
+	}
+
+	return disk, nil
 }
 
 func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
@@ -724,20 +745,6 @@ func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Co
 	return res.(float64), err
 }
 
-func (c *networkDeviceCommunicator) GetServerComponentDisk(ctx context.Context) (int, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getServerDisk
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getServerDisk), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getServerDisk), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
 func (c *networkDeviceCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
 		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
@@ -764,6 +771,17 @@ func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context)
 		return 0, err
 	}
 	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getDiskComponentStorages
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]device.DiskComponentStorage), err
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {

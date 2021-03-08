@@ -13,7 +13,7 @@ func init() {
 var readServerCMD = &cobra.Command{
 	Use:   "server",
 	Short: "Read out server specific information of a device",
-	Long:  "Read out server specific information of a device like disk usage or process count.",
+	Long:  "Read out server specific information of a device like user or process count.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadServerRequest{
 			ReadRequest: getReadRequest(args[0]),

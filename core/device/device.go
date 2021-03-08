@@ -196,9 +196,21 @@ type UPSComponent struct {
 
 // ServerComponent represents a server component
 type ServerComponent struct {
-	Disk  *int `yaml:"disk" json:"disk" xml:"disk"`
 	Procs *int `yaml:"procs" json:"procs" xml:"procs"`
 	Users *int `yaml:"users" json:"users" xml:"users"`
+}
+
+// DiskComponent represents a disk component
+type DiskComponent struct {
+	Storages []DiskComponentStorage `yaml:"storages" json:"storages" xml:"storages"`
+}
+
+// DiskComponentStorage contains information per storage.
+type DiskComponentStorage struct {
+	Type        *string `yaml:"type" json:"type" xml:"type"`
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	Available   *int    `yaml:"available" json:"available" xml:"available"`
+	Used        *int    `yaml:"used" json:"used" xml:"used"`
 }
 
 // SBCComponent represents a SBC component

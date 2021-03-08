@@ -300,6 +300,25 @@ func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Cont
 	return r, nil
 }
 
+func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
+	if o.components.disk == nil || o.components.disk.storages == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "DiskComponentStorages").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.disk.storages.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var storages []device.DiskComponentStorage
+	err = mapstructure.WeakDecode(res, &storages)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into storage struct")
+	}
+	return storages, nil
+}
+
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
 	if o.components.ups == nil || o.components.ups.alarmLowVoltageDisconnect == nil {
 		log.Ctx(ctx).Trace().Str("property", "UPSComponentAlarmLowVoltageDisconnect").Str("device_class", o.name).Msg("no detection information available")
@@ -678,25 +697,6 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemHealthScore(ctx context.C
 		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
 	}
 	return result, nil
-}
-
-func (o *deviceClassCommunicator) GetServerComponentDisk(ctx context.Context) (int, error) {
-	if o.components.server == nil || o.components.server.disk == nil {
-		log.Ctx(ctx).Trace().Str("property", "ServerComponentDisk").Str("device_class", o.name).Msg("no detection information available")
-		return 0, tholaerr.NewNotImplementedError("no detection information available")
-	}
-	logger := log.Ctx(ctx).With().Str("property", "ServerComponentDisk").Logger()
-	ctx = logger.WithContext(ctx)
-	res, err := o.components.server.disk.getProperty(ctx)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
-		return 0, errors.Wrap(err, "failed to get ServerComponentDisk")
-	}
-	r, err := res.Int()
-	if err != nil {
-		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
-	}
-	return r, nil
 }
 
 func (o *deviceClassCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
