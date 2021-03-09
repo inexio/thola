@@ -273,6 +273,9 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	var err error
 	if s.client.Version != gosnmp.Version1 {
 		response, err = s.client.BulkWalkAll(oid)
+		if err != nil {
+			log.Ctx(ctx).Trace().Err(err).Msg("bulk walk failed")
+		}
 	}
 	if s.client.Version == gosnmp.Version1 || err != nil {
 		response, err = s.client.WalkAll(oid)

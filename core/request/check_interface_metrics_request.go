@@ -7,6 +7,7 @@ package request
 // swagger:model
 type CheckInterfaceMetricsRequest struct {
 	PrintInterfaces bool     `yaml:"print_interfaces" json:"print_interfaces" xml:"print_interfaces"`
-	Filter          []string `yaml:"filter" json:"filter" xml:"filter"`
+	IfTypeFilter    []string `yaml:"ifType_filter" json:"ifType_filter" xml:"ifType_filter"`
+	IfNameFilter    []string `yaml:"ifName_filter" json:"ifName_filter" xml:"ifName_filter"`
 	CheckDeviceRequest
 }

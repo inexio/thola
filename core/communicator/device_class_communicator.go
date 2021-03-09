@@ -110,7 +110,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 		return nil, errors.Wrap(err, "failed to get ifTable")
 	}
 
-	for _, typeDef := range o.components.interfaces.Types {
+	for t, typeDef := range o.components.interfaces.Types {
 		specialInterfacesRaw, err := o.getValuesBySNMPWalk(ctx, typeDef.Values)
 		if err != nil {
 			return nil, err
@@ -118,7 +118,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 
 		for i, networkInterface := range networkInterfaces {
 			if specialValues, ok := specialInterfacesRaw[fmt.Sprint(*networkInterface.IfIndex)]; ok {
-				err := mapstructure.WeakDecode(specialValues, &networkInterfaces[i])
+				err := addSpecialInterfacesValuesToInterface(t, &networkInterfaces[i], specialValues)
 				if err != nil {
 					log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
 					return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
@@ -128,6 +128,54 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 	}
 
 	return networkInterfaces, nil
+}
+
+func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues interface{}) error {
+	switch interfaceType {
+	case "ether_like":
+		var specialValuesStruct device.EthernetLikeInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.EthernetLike = &specialValuesStruct
+	case "radio":
+		var specialValuesStruct device.RadioInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.Radio = &specialValuesStruct
+	case "dwdm":
+		var specialValuesStruct device.DWDMInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.DWDM = &specialValuesStruct
+	case "optical_transponder":
+		var specialValuesStruct device.OpticalTransponderInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalTransponder = &specialValuesStruct
+	case "optical_amplifier":
+		var specialValuesStruct device.OpticalAmplifierInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalAmplifier = &specialValuesStruct
+	case "optical_opm":
+		var specialValuesStruct device.OpticalOPMInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalOPM = &specialValuesStruct
+	}
+	return nil
 }
 
 func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
@@ -141,19 +189,7 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 		return nil, err
 	}
 
-	var networkInterfaces []device.Interface
-
-	for _, oidValue := range networkInterfacesRaw {
-		var networkInterface device.Interface
-		err := mapstructure.WeakDecode(oidValue, &networkInterface)
-		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
-		}
-		networkInterfaces = append(networkInterfaces, networkInterface)
-	}
-
-	return networkInterfaces, nil
+	return convertRawInterfaces(ctx, networkInterfacesRaw)
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
@@ -250,6 +286,32 @@ func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Cont
 		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
 	}
 	return r, nil
+}
+
+func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
+	if o.components.disk == nil || o.components.disk.storages == nil {
+		log.Ctx(ctx).Trace().Str("groupProperty", "DiskComponentStorages").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.disk.storages.getProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var storages []device.DiskComponentStorage
+	err = mapstructure.WeakDecode(res, &storages)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into storage struct")
+	}
+	// ignore non-physical storage types
+	var filtered []device.DiskComponentStorage
+	for _, storage := range storages {
+		if *storage.Type != "Other" && *storage.Type != "RAM" && *storage.Type != "Virtual Memory" {
+			filtered = append(filtered, storage)
+		}
+	}
+	return filtered, nil
 }
 
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
@@ -632,25 +694,6 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemHealthScore(ctx context.C
 	return result, nil
 }
 
-func (o *deviceClassCommunicator) GetServerComponentDisk(ctx context.Context) (int, error) {
-	if o.components.server == nil || o.components.server.disk == nil {
-		log.Ctx(ctx).Trace().Str("property", "ServerComponentDisk").Str("device_class", o.name).Msg("no detection information available")
-		return 0, tholaerr.NewNotImplementedError("no detection information available")
-	}
-	logger := log.Ctx(ctx).With().Str("property", "ServerComponentDisk").Logger()
-	ctx = logger.WithContext(ctx)
-	res, err := o.components.server.disk.getProperty(ctx)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get property")
-		return 0, errors.Wrap(err, "failed to get ServerComponentDisk")
-	}
-	r, err := res.Int()
-	if err != nil {
-		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
-	}
-	return r, nil
-}
-
 func (o *deviceClassCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
 	if o.components.server == nil || o.components.server.procs == nil {
 		log.Ctx(ctx).Trace().Str("property", "ServerComponentProcs").Str("device_class", o.name).Msg("no detection information available")
@@ -744,6 +787,22 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 		return nil, errors.Wrap(err, "failed to decode property into power supply struct")
 	}
 	return powerSupply, nil
+}
+
+func convertRawInterfaces(ctx context.Context, interfacesRaw []map[string]value.Value) ([]device.Interface, error) {
+	var networkInterfaces []device.Interface
+
+	for _, oidValue := range interfacesRaw {
+		var networkInterface device.Interface
+		err := mapstructure.WeakDecode(oidValue, &networkInterface)
+		if err != nil {
+			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
+			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
+		}
+		networkInterfaces = append(networkInterfaces, networkInterface)
+	}
+
+	return networkInterfaces, nil
 }
 
 func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {

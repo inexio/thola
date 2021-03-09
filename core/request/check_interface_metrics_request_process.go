@@ -9,6 +9,7 @@ import (
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/parser"
 	"github.com/pkg/errors"
+	"regexp"
 )
 
 type interfaceCheckOutput struct {
@@ -20,6 +21,8 @@ type interfaceCheckOutput struct {
 	IfPhysAddress string `json:"ifPhysAddress"`
 	IfAdminStatus string `json:"ifAdminStatus"`
 	IfOperStatus  string `json:"ifOperStatus"`
+
+	SubType string `json:"subType"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -59,6 +62,9 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			if interf.IfOperStatus != nil {
 				x.IfOperStatus = string(*interf.IfOperStatus)
 			}
+			if interf.SubType != nil {
+				x.SubType = *interf.SubType
+			}
 			interfaces = append(interfaces, x)
 		}
 		output, err := parser.Parse(interfaces, "json")
@@ -86,19 +92,39 @@ func (r *CheckInterfaceMetricsRequest) getData(ctx context.Context) (*ReadInterf
 
 	readInterfacesResponse := response.(*ReadInterfacesResponse)
 
-	if len(r.Filter) > 0 {
-		var interfaces []device.Interface
-		for _, filter := range r.Filter {
-			for _, interf := range readInterfacesResponse.Interfaces {
-				if interf.IfType == nil || *interf.IfType != filter {
-					interfaces = append(interfaces, interf)
+	var filterIndices []int
+out:
+	for i, interf := range readInterfacesResponse.Interfaces {
+		for _, filter := range r.IfTypeFilter {
+			if interf.IfType != nil && *interf.IfType == filter {
+				filterIndices = append(filterIndices, i)
+				continue out
+			}
+		}
+		for _, filter := range r.IfNameFilter {
+			if interf.IfName != nil {
+				matched, err := regexp.MatchString(filter, *interf.IfName)
+				if err != nil {
+					return nil, errors.Wrap(err, "ifName filter regex match failed")
+				}
+				if matched {
+					filterIndices = append(filterIndices, i)
+					continue out
 				}
 			}
 		}
-		readInterfacesResponse.Interfaces = interfaces
 	}
 
+	readInterfacesResponse.Interfaces = filterInterfaces(readInterfacesResponse.Interfaces, filterIndices, 0)
+
 	return readInterfacesResponse, nil
+}
+
+func filterInterfaces(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
+	if len(toRemove) == 0 {
+		return interfaces
+	}
+	return append(interfaces[:toRemove[0]-alreadyRemoved], filterInterfaces(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
 }
 
 func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitoringplugin.Response) error {
@@ -309,201 +335,217 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 		}
 
 		//ethernet like interface metrics
-		if i.Dot3StatsAlignmentErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_alignment_errors", *i.Dot3StatsAlignmentErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+		if i.EthernetLike != nil {
+			if i.EthernetLike.Dot3StatsAlignmentErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_alignment_errors", *i.EthernetLike.Dot3StatsAlignmentErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsFCSErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_FCSErrors", *i.Dot3StatsFCSErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsFCSErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_FCSErrors", *i.EthernetLike.Dot3StatsFCSErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsSingleCollisionFrames != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_single_collision_frames", *i.Dot3StatsSingleCollisionFrames, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsSingleCollisionFrames != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_single_collision_frames", *i.EthernetLike.Dot3StatsSingleCollisionFrames, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsMultipleCollisionFrames != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_multiple_collision_frames", *i.Dot3StatsMultipleCollisionFrames, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsMultipleCollisionFrames != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_multiple_collision_frames", *i.EthernetLike.Dot3StatsMultipleCollisionFrames, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsSQETestErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_SQETest_errors", *i.Dot3StatsSQETestErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsSQETestErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_SQETest_errors", *i.EthernetLike.Dot3StatsSQETestErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsDeferredTransmissions != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_deferred_transmissions", *i.Dot3StatsDeferredTransmissions, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsDeferredTransmissions != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_deferred_transmissions", *i.EthernetLike.Dot3StatsDeferredTransmissions, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsLateCollisions != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_late_collisions", *i.Dot3StatsLateCollisions, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsLateCollisions != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_late_collisions", *i.EthernetLike.Dot3StatsLateCollisions, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsExcessiveCollisions != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_excessive_collisions", *i.Dot3StatsExcessiveCollisions, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsExcessiveCollisions != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_excessive_collisions", *i.EthernetLike.Dot3StatsExcessiveCollisions, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsInternalMacTransmitErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_transmit_errors", *i.Dot3StatsInternalMacTransmitErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsInternalMacTransmitErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_transmit_errors", *i.EthernetLike.Dot3StatsInternalMacTransmitErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsCarrierSenseErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_carrier_sense_errors", *i.Dot3StatsCarrierSenseErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsCarrierSenseErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_carrier_sense_errors", *i.EthernetLike.Dot3StatsCarrierSenseErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsFrameTooLongs != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_frame_too_longs", *i.Dot3StatsFrameTooLongs, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsFrameTooLongs != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_frame_too_longs", *i.EthernetLike.Dot3StatsFrameTooLongs, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3StatsInternalMacReceiveErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_receive_errors", *i.Dot3StatsInternalMacReceiveErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3StatsInternalMacReceiveErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_receive_errors", *i.EthernetLike.Dot3StatsInternalMacReceiveErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.Dot3HCStatsFCSErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_dot3HCStatsFCSErrors", *i.Dot3HCStatsFCSErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.Dot3HCStatsFCSErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_dot3HCStatsFCSErrors", *i.EthernetLike.Dot3HCStatsFCSErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.EtherStatsCRCAlignErrors != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_CRCAlign_errors", *i.EtherStatsCRCAlignErrors, "c").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.EthernetLike.EtherStatsCRCAlignErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_CRCAlign_errors", *i.EthernetLike.EtherStatsCRCAlignErrors, "c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
 		}
 
 		//radio interface metrics
-		if i.LevelOut != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_level_out", *i.LevelOut, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+		if i.Radio != nil {
+			if i.Radio.LevelOut != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_level_out", *i.Radio.LevelOut, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.LevelIn != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_level_in", *i.LevelIn, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.Radio.LevelIn != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_level_in", *i.Radio.LevelIn, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.MaxbitrateOut != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *i.MaxbitrateOut, "B").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.Radio.MaxbitrateOut != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *i.Radio.MaxbitrateOut, "B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
 
-		if i.MaxbitrateIn != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *i.MaxbitrateIn, "B").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.Radio.MaxbitrateIn != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *i.Radio.MaxbitrateIn, "B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
 		}
 
 		//DWDM interface metrics
-		if i.RXLevel != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_level", *i.RXLevel, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+		if i.DWDM != nil {
+			if i.DWDM.RXLevel != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_level", *i.DWDM.RXLevel, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+
+			if i.DWDM.TXLevel != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_level", *i.DWDM.TXLevel, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
 		}
 
-		if i.TXLevel != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_level", *i.TXLevel, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+		//OpticalAmplifier
+		if i.OpticalAmplifier != nil {
+			if i.OpticalAmplifier.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalAmplifier.RXPower, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+			if i.OpticalAmplifier.TXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalAmplifier.TXPower, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+			if i.OpticalAmplifier.Gain != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("gain", *i.OpticalAmplifier.Gain, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
 		}
 
-		//OpticalAmplifierInterface
-		if i.OpticalAmplifierInterface.RXPower != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalAmplifierInterface.RXPower, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+		//OpticalTransponder
+		if i.OpticalTransponder != nil {
+			if i.OpticalTransponder.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalTransponder.RXPower, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
-		if i.OpticalAmplifierInterface.TXPower != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalAmplifierInterface.TXPower, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.OpticalTransponder.TXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalTransponder.TXPower, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
-		if i.OpticalAmplifierInterface.Gain != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("gain", *i.OpticalAmplifierInterface.Gain, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.OpticalTransponder.CorrectedFEC != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec_counter", *i.OpticalTransponder.CorrectedFEC, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
-		}
-
-		//OpticalTransponderInterface
-		if i.OpticalTransponderInterface.RXPower != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalTransponderInterface.RXPower, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		}
-		if i.OpticalTransponderInterface.TXPower != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.OpticalTransponderInterface.TXPower, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		}
-		if i.OpticalTransponderInterface.CorrectedFEC != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec", *i.OpticalTransponderInterface.CorrectedFEC, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		}
-		if i.OpticalTransponderInterface.UncorrectedFEC != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec", *i.OpticalTransponderInterface.UncorrectedFEC, "").SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
+			if i.OpticalTransponder.UncorrectedFEC != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec_counter", *i.OpticalTransponder.UncorrectedFEC, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
 			}
 		}
 
-		//OpticalOPMInterface
-		if i.OpticalOPMInterface.RXPower != nil {
-			for _, channel := range i.OpticalOPMInterface.Channels {
-				if channel.RXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower, "").SetLabel(*i.IfDescr + "_" + channel.Channel))
-					if err != nil {
-						return err
+		//OpticalOPM
+		if i.OpticalOPM != nil {
+			if i.OpticalOPM.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalOPM.RXPower, "").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+				for _, channel := range i.OpticalOPM.Channels {
+					if channel.RXPower != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower, "").SetLabel(*i.IfDescr + "_" + channel.Channel))
+						if err != nil {
+							return err
+						}
 					}
 				}
 			}

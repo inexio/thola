@@ -36,6 +36,7 @@ const (
 	memoryComponent
 	sbcComponent
 	serverComponent
+	diskComponent
 	hardwareHealthComponent
 )
 
@@ -74,6 +75,7 @@ type deviceClassComponents struct {
 	memory         *deviceClassComponentsMemory
 	sbc            *deviceClassComponentsSBC
 	server         *deviceClassComponentsServer
+	disk           *deviceClassComponentsDisk
 	hardwareHealth *deviceClassComponentsHardwareHealth
 }
 
@@ -98,7 +100,7 @@ type deviceClassComponentsCPU struct {
 	temperature propertyReader
 }
 
-// deviceClassComponentsCPU represents the memory components part of a device class.
+// deviceClassComponentsMemory represents the memory components part of a device class.
 type deviceClassComponentsMemory struct {
 	usage propertyReader
 }
@@ -118,9 +120,13 @@ type deviceClassComponentsSBC struct {
 
 // deviceClassComponentsServer represents the server components part of a device class.
 type deviceClassComponentsServer struct {
-	disk  propertyReader
 	procs propertyReader
 	users propertyReader
+}
+
+// deviceClassComponentsDisk represents the disk component part of a device class.
+type deviceClassComponentsDisk struct {
+	storages groupPropertyReader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
@@ -158,6 +164,7 @@ type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
 type deviceClassInterfaceTypeDef struct {
 	Detection string
 	Values    deviceClassOIDs
+	Type      string
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -193,6 +200,7 @@ type yamlDeviceClassComponents struct {
 	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
 	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
 	Server         *yamlComponentsServerProperties         `yaml:"server"`
+	Disk           *yamlComponentsDiskProperties           `yaml:"disk"`
 	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
 }
 
@@ -261,9 +269,13 @@ type yamlComponentsSBCProperties struct {
 
 // yamlComponentsServerProperties represents the specific properties of server components of a yaml device class.
 type yamlComponentsServerProperties struct {
-	Disk  []interface{} `yaml:"disk"`
 	Procs []interface{} `yaml:"procs"`
 	Users []interface{} `yaml:"users"`
+}
+
+// yamlComponentsDiskProperties represents the specific properties of disk components of a yaml device class.
+type yamlComponentsDiskProperties struct {
+	Storages interface{} `yaml:"storages"`
 }
 
 // yamlComponentsHardwareHealthProperties represents the specific properties of hardware health components of a yaml device class.
@@ -695,6 +707,14 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 		components.server = &server
 	}
 
+	if y.Disk != nil {
+		disk, err := y.Disk.convert()
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml disk properties")
+		}
+		components.disk = &disk
+	}
+
 	if y.HardwareHealth != nil {
 		hardwareHealth, err := y.HardwareHealth.convert()
 		if err != nil {
@@ -731,9 +751,13 @@ func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, e
 }
 
 func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, error) {
+	err := y.validate()
+	if err != nil {
+		return deviceClassInterfaceTypes{}, err
+	}
 	interfaceTypes := make(map[string]deviceClassInterfaceTypeDef)
 
-	for k, interfaceType := range *y {
+	for t, interfaceType := range *y {
 		if interfaceType.Detection == "" {
 			return deviceClassInterfaceTypes{}, errors.New("detection information missing for special interface type")
 		}
@@ -742,19 +766,35 @@ func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, err
 			if err != nil {
 				return deviceClassInterfaceTypes{}, errors.Wrap(err, "failed to read yaml interfaces types values")
 			}
-			interfaceTypes[k] = deviceClassInterfaceTypeDef{
+			interfaceTypes[t] = deviceClassInterfaceTypeDef{
 				Detection: interfaceType.Detection,
 				Values:    values,
+				Type:      t,
 			}
 		} else {
-			interfaceTypes[k] = deviceClassInterfaceTypeDef{
-				Detection: interfaceType.Detection,
-				Values:    nil,
-			}
+			return deviceClassInterfaceTypes{}, fmt.Errorf("values is missing for interface type '%s'", t)
 		}
 	}
 
 	return interfaceTypes, nil
+}
+
+func (y *yamlComponentsInterfaceTypes) validate() error {
+	for t := range *y {
+		err := validateInterfaceType(t)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateInterfaceType(t string) error {
+	switch t {
+	case "ether_like", "radio", "dwdm", "optical_transponder", "optical_amplifier", "optical_opm":
+		return nil
+	}
+	return fmt.Errorf("unknown interface type '%s'", t)
 }
 
 func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
@@ -983,12 +1023,6 @@ func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer,
 	var properties deviceClassComponentsServer
 	var err error
 
-	if y.Disk != nil {
-		properties.disk, err = convertYamlProperty(y.Disk, propertyDefault)
-		if err != nil {
-			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert disk property to property reader")
-		}
-	}
 	if y.Procs != nil {
 		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault)
 		if err != nil {
@@ -999,6 +1033,19 @@ func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer,
 		properties.users, err = convertYamlProperty(y.Users, propertyDefault)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
+		}
+	}
+	return properties, nil
+}
+
+func (y *yamlComponentsDiskProperties) convert() (deviceClassComponentsDisk, error) {
+	var properties deviceClassComponentsDisk
+	var err error
+
+	if y.Storages != nil {
+		properties.storages, err = interface2GroupPropertyReader(y.Storages)
+		if err != nil {
+			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
 	}
 	return properties, nil
@@ -1742,6 +1789,8 @@ func createComponent(component string) (deviceClassComponent, error) {
 		return sbcComponent, nil
 	case "server":
 		return serverComponent, nil
+	case "disk":
+		return diskComponent, nil
 	case "hardware_health":
 		return hardwareHealthComponent, nil
 	default:
@@ -1766,6 +1815,8 @@ func (d *deviceClassComponent) toString() (string, error) {
 		return "sbc", nil
 	case serverComponent:
 		return "server", nil
+	case diskComponent:
+		return "disk", nil
 	case hardwareHealthComponent:
 		return "hardware_health", nil
 	default:

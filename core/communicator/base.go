@@ -59,16 +59,16 @@ func (c *baseCommunicator) GetMemoryComponentMemoryUsage(_ context.Context) (flo
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *baseCommunicator) GetServerComponentDisk(_ context.Context) (int, error) {
-	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
-}
-
 func (c *baseCommunicator) GetServerComponentProcs(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
 func (c *baseCommunicator) GetServerComponentUsers(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *baseCommunicator) GetDiskComponentStorages(_ context.Context) ([]device.DiskComponentStorage, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
 func (c *baseCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(_ context.Context) (int, error) {

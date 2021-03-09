@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"regexp"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ type ekinopsCommunicator struct {
 }
 
 func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.sub.GetInterfaces(ctx)
+	interfaces, err := c.GetIfTable(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +69,28 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 	return normalizeEkinopsInterfaces(interfaces)
 }
 
+func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
+	if genericDeviceClass.components.interfaces.IfTable == nil {
+		return nil, errors.New("ifTable information is empty")
+	}
+
+	reader := *genericDeviceClass.components.interfaces.IfTable.(*snmpGroupPropertyReader)
+	oids := make(deviceClassOIDs)
+	for oid, value := range reader.oids {
+		if ok, err := regexp.MatchString("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)", oid); err == nil && ok {
+			oids[oid] = value
+		}
+	}
+	reader.oids = oids
+
+	networkInterfacesRaw, err := reader.getProperty(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return convertRawInterfaces(ctx, networkInterfacesRaw)
+}
+
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
 	m := make(map[string]int)
 	for k, interf := range interfaces {
@@ -93,20 +116,20 @@ func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interfa
 			return nil, fmt.Errorf("no IfDescr set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
 
-		// change ifType of ports of slots > 1 to "fibreChannel" if ifType equals "other"
+		// change ifType of ports of slots > 1 to "opticalChannel" if ifType equals "other"
 		slotNumber := strings.Split(*interf.IfName, "/")[2]
 		if !(slotNumber == "0" || slotNumber == "1") {
 			if interf.IfType == nil || *interf.IfType == "other" {
-				fibreChannel := "fibreChannel"
-				interf.IfType = &fibreChannel
+				opticalChannel := "opticalChannel"
+				interf.IfType = &opticalChannel
 			}
 		}
 
 		// change ifType of OPM8 ports
 		moduleName := strings.Split(*interf.IfDescr, "/")[3]
 		if moduleName == "PM_OPM8" {
-			ifType := "ChannelMonitoring" //TODO switch ifType name
-			interf.IfType = &ifType
+			subType := "OPM8"
+			interf.SubType = &subType
 		}
 
 		// change ifDescr and ifName of every interface

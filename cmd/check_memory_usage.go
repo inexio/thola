@@ -10,7 +10,7 @@ func init() {
 	checkCMD.AddCommand(checkMemoryUsage)
 
 	checkMemoryUsage.Flags().Float64("warning", 0, "warning threshold for memory usage")
-	checkMemoryUsage.Flags().Float64("critical", 0, "critical threshold for system voltage")
+	checkMemoryUsage.Flags().Float64("critical", 0, "critical threshold for memory usage")
 }
 
 var checkMemoryUsage = &cobra.Command{

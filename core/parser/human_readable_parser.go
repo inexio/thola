@@ -7,89 +7,65 @@ import (
 	"strings"
 )
 
-func toHumanReadable(value reflect.Value, insertion int) []byte {
-	var outputString []byte
-
+func toHumanReadable(value reflect.Value, insertion int) string {
 	kind := value.Kind()
 
 	switch kind {
 	case reflect.Struct:
-		valueField := ""
-		if insertion > 0 {
-			valueField += "\n"
-		}
-		for index := 0; index < value.NumField(); index++ {
-			valueField += strings.Repeat("  ", insertion)
-			valueField += value.Type().Field(index).Name + ": "
-			arg := toHumanReadable(value.Field(index), insertion+1)
-			if arg == nil || string(arg) == "null" {
-				valueField = ""
+		output := "\n"
+		for i := 0; i < value.NumField(); i++ {
+			fieldValue := toHumanReadable(value.Field(i), insertion+1)
+			if strings.TrimSpace(fieldValue) == "" {
 				continue
 			}
-			outputString = append(outputString, valueField...)
-			outputString = append(outputString, arg...)
-			fKind := value.Field(index).Type().Kind()
-			if fKind == reflect.String || fKind == reflect.Int || fKind == reflect.Float64 || fKind == reflect.Ptr {
-				outputString = append(outputString, "\n"...)
-			}
-			valueField = ""
+			output += strings.Repeat("  ", insertion)
+			output += value.Type().Field(i).Name + ": "
+			output += fieldValue
+			output += "\n"
 		}
+		return output
 	case reflect.Slice:
 		if value.IsNil() {
-			fieldValue := "null"
-			outputString = append(outputString, fieldValue...)
-			return outputString
+			return ""
 		}
-		outputString = append(outputString, "["+strconv.Itoa(value.Len())+"] "...)
-		for index := 0; index < value.Len(); index++ {
-			arg := toHumanReadable(value.Index(index), insertion+1)
-			outputString = append(outputString, arg...)
-			outputString = append(outputString, " "...)
+		output := "[" + strconv.Itoa(value.Len()) + "] "
+		for i := 0; i < value.Len(); i++ {
+			output += toHumanReadable(value.Index(i), insertion+1)
+			output += " "
 		}
-		outputString = append(outputString, "\n"...)
+		output += "\n"
+		return output
 	case reflect.Map:
-		outputString = append(outputString, "("+strconv.Itoa(value.Len())+") \n"...)
+		output := "(" + strconv.Itoa(value.Len()) + ") \n"
 		for _, key := range value.MapKeys() {
-			outputString = append(outputString, strings.Repeat("  ", insertion)...)
-			outputString = append(outputString, key.String()+": "...)
-			arg := toHumanReadable(value.MapIndex(key), insertion+1)
-			outputString = append(outputString, arg...)
-			outputString = append(outputString, "\n"...)
+			output += strings.Repeat("  ", insertion)
+			output += key.String() + ": "
+			output += toHumanReadable(value.MapIndex(key), insertion+1)
+			output += "\n"
 		}
+		return output
 	case reflect.String:
-		fieldValue := value.String()
-		outputString = append(outputString, fieldValue...)
+		return value.String()
 	case reflect.Int:
-		fieldValue := strconv.Itoa(int(value.Int()))
-		outputString = append(outputString, fieldValue...)
+		return strconv.Itoa(int(value.Int()))
 	case reflect.Uint:
-		fieldValue := strconv.Itoa(int(value.Uint()))
-		outputString = append(outputString, fieldValue...)
+		return strconv.Itoa(int(value.Uint()))
 	case reflect.Uint64:
-		fieldValue := strconv.Itoa(int(value.Uint()))
-		outputString = append(outputString, fieldValue...)
+		return strconv.Itoa(int(value.Uint()))
 	case reflect.Float64:
-		fieldValue := strconv.FormatFloat(value.Float(), 'f', -1, 64)
-		outputString = append(outputString, fieldValue...)
+		return strconv.FormatFloat(value.Float(), 'f', -1, 64)
 	case reflect.Ptr:
 		if value.IsNil() {
-			fieldValue := "null"
-			outputString = append(outputString, fieldValue...)
-			return outputString
+			return ""
 		}
-		arg := toHumanReadable(reflect.Indirect(value), insertion)
-		outputString = append(outputString, arg...)
+		return toHumanReadable(reflect.Indirect(value), insertion)
 	case reflect.Interface:
-		ifValue := reflect.ValueOf(value.Interface())
-		outputString = append(outputString, toHumanReadable(ifValue, insertion)...)
+		return toHumanReadable(reflect.ValueOf(value.Interface()), insertion)
 	default:
 		if !value.IsValid() {
-			outputString = append(outputString, " "...)
-
+			return ""
 		} else {
-			outputString = append(outputString, fmt.Sprint(value.Interface())...)
+			return fmt.Sprint(value.Interface())
 		}
 	}
-
-	return outputString
 }
