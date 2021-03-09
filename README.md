@@ -36,6 +36,8 @@ Thola currently has three main modes of operation with various subcommands:
     - `read count-interfaces` counts the interfaces.
     - `read cpu-load` returns the current cpu load of all CPUs.
     - `read memory-usage` reads out the current memory usage.
+    - `read disk` reads storage utilizations.
+    - `read server` outputs server specific information like users and process count.
     - `read ups` outputs the special values of a UPS device.
     - `read sbc` reads out SBC specific information.
 - `check` performs checks that can be used in monitoring systems. Output is by default in check plugin format.
@@ -45,6 +47,8 @@ Thola currently has three main modes of operation with various subcommands:
     - `check cpu-load` checks the average CPU load of all CPUs against given thresholds and outputs the current load of all CPUs as performance data.
     - `check memory-usage` checks the current memory usage against given thresholds.
     - `check ups` checks if a UPS device has its main voltage applied and outputs additional performance data like battery capacity or current load, and compares them to optionally given thresholds.
+    - `check disk` checks the free space of storages.
+    - `check server` checks server specific information.
     - `check thola-server` checks reachability of a Thola API.
     - `check sbc` checks an SBC device and outputs metrics for each realm and agent as performance data.
 
