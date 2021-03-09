@@ -54,6 +54,7 @@ func (m *ekinopsModuleReaderAmplifier) readModuleMetrics(ctx context.Context, in
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
 		interfaces[idx].OpticalAmplifier = &opticalAmplifierInterfaces[i]
+		interfaces[idx].IfAlias = interfaces[idx].OpticalAmplifier.Label
 	}
 	return interfaces, nil
 }

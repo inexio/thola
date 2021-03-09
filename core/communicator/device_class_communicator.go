@@ -189,19 +189,7 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 		return nil, err
 	}
 
-	var networkInterfaces []device.Interface
-
-	for _, oidValue := range networkInterfacesRaw {
-		var networkInterface device.Interface
-		err := mapstructure.WeakDecode(oidValue, &networkInterface)
-		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
-		}
-		networkInterfaces = append(networkInterfaces, networkInterface)
-	}
-
-	return networkInterfaces, nil
+	return convertRawInterfaces(ctx, networkInterfacesRaw)
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
@@ -799,6 +787,22 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 		return nil, errors.Wrap(err, "failed to decode property into power supply struct")
 	}
 	return powerSupply, nil
+}
+
+func convertRawInterfaces(ctx context.Context, interfacesRaw []map[string]value.Value) ([]device.Interface, error) {
+	var networkInterfaces []device.Interface
+
+	for _, oidValue := range interfacesRaw {
+		var networkInterface device.Interface
+		err := mapstructure.WeakDecode(oidValue, &networkInterface)
+		if err != nil {
+			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
+			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
+		}
+		networkInterfaces = append(networkInterfaces, networkInterface)
+	}
+
+	return networkInterfaces, nil
 }
 
 func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {

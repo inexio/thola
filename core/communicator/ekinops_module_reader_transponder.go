@@ -56,6 +56,7 @@ func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, 
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
 		interfaces[idx].OpticalTransponder = &OpticalTransponderInterfaces[i]
+		interfaces[idx].IfAlias = interfaces[idx].OpticalTransponder.Label
 	}
 	return interfaces, nil
 }

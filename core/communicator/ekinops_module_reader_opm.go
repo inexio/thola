@@ -42,6 +42,7 @@ func (m *ekinopsModuleReaderOPM8) readModuleMetrics(ctx context.Context, interfa
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
 		}
 		interfaces[idx].OpticalOPM = &opticalOPMInterfaces[i]
+		interfaces[idx].IfAlias = interfaces[idx].OpticalOPM.Label
 	}
 
 	return interfaces, nil
