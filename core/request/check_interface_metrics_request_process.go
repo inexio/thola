@@ -520,13 +520,13 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 			if i.OpticalTransponder.CorrectedFEC != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec_counter", *i.OpticalTransponder.CorrectedFEC, "").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec_counter", *i.OpticalTransponder.CorrectedFEC, "c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 			if i.OpticalTransponder.UncorrectedFEC != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec_counter", *i.OpticalTransponder.UncorrectedFEC, "").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec_counter", *i.OpticalTransponder.UncorrectedFEC, "c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

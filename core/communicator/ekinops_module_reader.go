@@ -220,11 +220,11 @@ func (m *ekinopsModuleReaderWrapper) readModuleMetrics(ctx context.Context, inte
 type ekinopsPowerTransformFunc func(float64) float64
 
 func ekinopsPowerTransform10Log10XMinus40(f float64) float64 {
-	return 10*math.Log10(f) - 40
+	return ekinopsPowerTransformCheckInfinity(10*math.Log10(f) - 40)
 }
 
 func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
-	return 10 * math.Log10(f/10000)
+	return ekinopsPowerTransformCheckInfinity(10 * math.Log10(f/10000))
 }
 
 func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
@@ -245,4 +245,11 @@ func ekinopsPowerTransformOPM8(f float64) float64 {
 	} else {
 		return f/256 - 256
 	}
+}
+
+func ekinopsPowerTransformCheckInfinity(f float64) float64 {
+	if math.IsInf(f, -1) || math.IsNaN(f) {
+		f = -99999
+	}
+	return f
 }
