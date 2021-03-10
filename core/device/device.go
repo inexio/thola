@@ -9,7 +9,7 @@ type ctxKey int
 
 const devicePropertiesKey ctxKey = iota + 1
 
-// Status represents an interface status
+// Status represents an interface status.
 type Status string
 
 // All status codes with the corresponding label
@@ -30,43 +30,47 @@ const (
 //
 // swagger:model
 type Device struct {
-	// The os of the device
+	// Class of the device.
 	//
 	// example: routerOS
 	Class string `yaml:"class" json:"class" xml:"class"`
-	// The properties of the device
+	// Properties of the device.
 	Properties Properties `yaml:"properties" json:"properties" xml:"properties"`
 }
 
 // Properties
 //
-// Properties are properties that can be determined for a device
+// Properties are properties that can be determined for a device.
 //
 // swagger:model
 type Properties struct {
-	// Vendor of the device
+	// Vendor of the device.
 	//
 	// example: Mikrotik
 	Vendor *string `yaml:"vendor" json:"vendor" xml:"vendor"`
-	// Model of the device
+	// Model of the device.
 	//
 	// example: CHR
 	Model *string `yaml:"model" json:"model" xml:"model"`
-	// ModelSeries of the device
+	// ModelSeries of the device.
 	//
 	// example: null
 	ModelSeries *string `yaml:"model_series" json:"model_series" xml:"model_series"`
-	// SerialNumber of the device
+	// SerialNumber of the device.
 	//
 	// example: null
 	SerialNumber *string `yaml:"serial_number" json:"serial_number" xml:"serial_number"`
-	// OSVersion of the device
+	// OSVersion of the device.
 	//
 	// example: 6.44.6
 	OSVersion *string `yaml:"os_version" json:"os_version" xml:"os_version"`
 }
 
-// Interface represents all interface values which can be read
+// Interface
+//
+// Interface represents all interface values which can be read.
+//
+// swagger:model
 type Interface struct {
 	IfIndex              *uint64 `yaml:"ifIndex" json:"ifIndex" xml:"ifIndex"`
 	IfDescr              *string `yaml:"ifDescr" json:"ifDescr" xml:"ifDescr"`
@@ -118,7 +122,15 @@ type Interface struct {
 	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty"`
 }
 
-// EthernetLikeInterface represents an ethernet like interface
+//
+// Special interface types are defined here.
+//
+
+// EthernetLikeInterface
+//
+// EthernetLikeInterface represents an ethernet like interface.
+//
+// swagger:model
 type EthernetLikeInterface struct {
 	Dot3StatsAlignmentErrors           *uint64 `yaml:"dot3StatsAlignmentErrors,omitempty" json:"dot3StatsAlignmentErrors,omitempty" xml:"dot3StatsAlignmentErrors,omitempty"`
 	Dot3StatsFCSErrors                 *uint64 `yaml:"dot3StatsFCSErrors,omitempty" json:"dot3StatsFCSErrors,omitempty" xml:"dot3StatsFCSErrors,omitempty"`
@@ -136,7 +148,11 @@ type EthernetLikeInterface struct {
 	EtherStatsCRCAlignErrors           *uint64 `yaml:"etherStatsCRCAlignErrors ,omitempty" json:"etherStatsCRCAlignErrors,omitempty" xml:"etherStatsCRCAlignErrors,omitempty"`
 }
 
-// RadioInterface represents a radio interface
+// RadioInterface
+//
+// RadioInterface represents a radio interface.
+//
+// swagger:model
 type RadioInterface struct {
 	LevelOut      *int64  `yaml:"level_out,omitempty" json:"level_out,omitempty" xml:"level_out,omitempty" mapstructure:"level_out"`
 	LevelIn       *int64  `yaml:"level_in,omitempty" json:"level_in,omitempty" xml:"level_in,omitempty" mapstructure:"level_in"`
@@ -144,12 +160,21 @@ type RadioInterface struct {
 	MaxbitrateIn  *uint64 `yaml:"maxbitrate_in,omitempty" json:"maxbitrate_in,omitempty" xml:"maxbitrate_in,omitempty" mapstructure:"maxbitrate_in"`
 }
 
-// DWDMInterface represents a DWDM interface
+// DWDMInterface
+//
+// DWDMInterface represents a DWDM interface.
+//
+// swagger:model
 type DWDMInterface struct {
 	RXLevel *float64 `yaml:"rx_level,omitempty" json:"rx_level,omitempty" xml:"rx_level,omitempty" mapstructure:"rx_level"`
 	TXLevel *float64 `yaml:"tx_level,omitempty" json:"tx_level,omitempty" xml:"tx_level,omitempty" mapstructure:"tx_level"`
 }
 
+// OpticalTransponderInterface
+//
+// OpticalTransponderInterface represents an optical transponder interface.
+//
+// swagger:model
 type OpticalTransponderInterface struct {
 	Identifier     *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
 	Label          *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
@@ -159,6 +184,11 @@ type OpticalTransponderInterface struct {
 	UncorrectedFEC *uint64  `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
 }
 
+// OpticalAmplifierInterface
+//
+// OpticalAmplifierInterface represents an optical amplifier interface.
+//
+// swagger:model
 type OpticalAmplifierInterface struct {
 	Identifier *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
 	Label      *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
@@ -167,6 +197,11 @@ type OpticalAmplifierInterface struct {
 	Gain       *float64 `yaml:"gain,omitempty" json:"gain,omitempty" xml:"gain,omitempty" mapstructure:"gain"`
 }
 
+// OpticalOPMInterface
+//
+// OpticalOPMInterface represents an optical opm interface.
+//
+// swagger:model
 type OpticalOPMInterface struct {
 	Identifier *string             `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
 	Label      *string             `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
@@ -174,12 +209,56 @@ type OpticalOPMInterface struct {
 	Channels   []OpticalOPMChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
+// OpticalOPMChannel
+//
+// OpticalOPMChannel represents an optical opm channel of an optical opm interface.
+//
+// swagger:model
 type OpticalOPMChannel struct {
 	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
 	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
 }
 
-// UPSComponent represents a UPS component
+//
+// Special device components are defined here.
+//
+
+// CPUComponent
+//
+// CPUComponent represents a CPU component.
+//
+// swagger:model
+type CPUComponent struct {
+	Load        []float64 `yaml:"load" json:"load" xml:"load"`
+	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
+}
+
+// DiskComponent
+//
+// DiskComponent represents a disk component.
+//
+// swagger:model
+type DiskComponent struct {
+	Storages []DiskComponentStorage `yaml:"storages" json:"storages" xml:"storages"`
+}
+
+// DiskComponentStorage
+//
+// DiskComponentStorage contains information per storage.
+//
+// swagger:model
+type DiskComponentStorage struct {
+	Type        *string `yaml:"type" json:"type" xml:"type"`
+	Description *string `yaml:"description" json:"description" xml:"description"`
+	Available   *int    `yaml:"available" json:"available" xml:"available"`
+	Used        *int    `yaml:"used" json:"used" xml:"used"`
+}
+
+// UPSComponent
+//
+// UPSComponent represents a UPS component.
+//
+// swagger:model
 type UPSComponent struct {
 	AlarmLowVoltageDisconnect *int     `yaml:"alarm_low_voltage_disconnect" json:"alarm_low_voltage_disconnect" xml:"alarm_low_voltage_disconnect"`
 	BatteryAmperage           *float64 `yaml:"battery_amperage " json:"battery_amperage " xml:"battery_amperage"`
@@ -194,26 +273,21 @@ type UPSComponent struct {
 	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
 }
 
-// ServerComponent represents a server component
+// ServerComponent
+//
+// ServerComponent represents a server component.
+//
+// swagger:model
 type ServerComponent struct {
 	Procs *int `yaml:"procs" json:"procs" xml:"procs"`
 	Users *int `yaml:"users" json:"users" xml:"users"`
 }
 
-// DiskComponent represents a disk component
-type DiskComponent struct {
-	Storages []DiskComponentStorage `yaml:"storages" json:"storages" xml:"storages"`
-}
-
-// DiskComponentStorage contains information per storage.
-type DiskComponentStorage struct {
-	Type        *string `yaml:"type" json:"type" xml:"type"`
-	Description *string `yaml:"description" json:"description" xml:"description"`
-	Available   *int    `yaml:"available" json:"available" xml:"available"`
-	Used        *int    `yaml:"used" json:"used" xml:"used"`
-}
-
-// SBCComponent represents a SBC component
+// SBCComponent
+//
+// SBCComponent represents a SBC component.
+//
+// swagger:model
 type SBCComponent struct {
 	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents"`
 	Realms                   []SBCComponentRealm `yaml:"realms" json:"realms" xml:"realms"`
@@ -226,7 +300,11 @@ type SBCComponent struct {
 	SystemHealthScore        *int                `yaml:"system_health_score" json:"system_health_score" xml:"system_health_score"`
 }
 
+// SBCComponentAgent
+//
 // SBCComponentAgent contains information per agent. (Voice)
+//
+// swagger:model
 type SBCComponentAgent struct {
 	Hostname                      string `yaml:"hostname" json:"hostname" xml:"hostname" mapstructure:"hostname"`
 	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
@@ -237,7 +315,11 @@ type SBCComponentAgent struct {
 	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
+// SBCComponentRealm
+//
 // SBCComponentRealm contains information per realm. (Voice)
+//
+// swagger:model
 type SBCComponentRealm struct {
 	Name                          string `yaml:"name" json:"name" xml:"name"`
 	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
@@ -249,41 +331,49 @@ type SBCComponentRealm struct {
 	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
-// CPUComponent represents a CPU component
-type CPUComponent struct {
-	Load        []float64 `yaml:"load" json:"load" xml:"load"`
-	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
-}
-
-// HardwareHealthComponent represents hardware health information of a device
+// HardwareHealthComponent
+//
+// HardwareHealthComponent represents hardware health information of a device.
+//
+// swagger:model
 type HardwareHealthComponent struct {
 	EnvironmentMonitorState *int                                 `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
 	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
 	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
 }
 
+// HardwareHealthComponentFan
+//
+// HardwareHealthComponentFan represents one fan of a device.
+//
+// swagger:model
 type HardwareHealthComponentFan struct {
 	Description *string `yaml:"description" json:"description" xml:"description"`
 	State       *int    `yaml:"state" json:"state" xml:"state"`
 }
 
+// HardwareHealthComponentPowerSupply
+//
+// HardwareHealthComponentPowerSupply represents one power supply of a device.
+//
+// swagger:model
 type HardwareHealthComponentPowerSupply struct {
 	Description *string `yaml:"description" json:"description" xml:"description"`
 	State       *int    `yaml:"state" json:"state" xml:"state"`
 }
 
-// NewContextWithDeviceProperties returns a new context with the device properties
+// NewContextWithDeviceProperties returns a new context with the device properties.
 func NewContextWithDeviceProperties(ctx context.Context, properties Device) context.Context {
 	return context.WithValue(ctx, devicePropertiesKey, properties)
 }
 
-// DevicePropertiesFromContext returns the device properties from the context
+// DevicePropertiesFromContext returns the device properties from the context.
 func DevicePropertiesFromContext(ctx context.Context) (Device, bool) {
 	properties, ok := ctx.Value(devicePropertiesKey).(Device)
 	return properties, ok
 }
 
-// ToStatusCode returns the status as a code
+// ToStatusCode returns the status as a code.
 func (s Status) ToStatusCode() (int, error) {
 	switch s {
 	case StatusUp:

@@ -2,7 +2,7 @@ package network
 
 // ConnectionData
 //
-// ConnectionData includes all connection data for a device
+// ConnectionData includes all connection data for a device.
 //
 // swagger:model
 type ConnectionData struct {
@@ -14,7 +14,7 @@ type ConnectionData struct {
 
 // SNMPConnectionData
 //
-// SNMPConnectionData includes all snmp connection data for a device
+// SNMPConnectionData includes all snmp connection data for a device.
 //
 // swagger:model
 type SNMPConnectionData struct {
@@ -53,7 +53,7 @@ type SNMPCredentials struct {
 
 // HTTPConnectionData
 //
-// HTTPConnectionData includes all http connection data for a device
+// HTTPConnectionData includes all http connection data for a device.
 //
 // swagger:model
 type HTTPConnectionData struct {
