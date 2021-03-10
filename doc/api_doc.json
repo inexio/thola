@@ -45,7 +45,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CheckCpuLoadRequest"
+              "$ref": "#/definitions/CheckCPULoadRequest"
             }
           }
         ],
@@ -53,7 +53,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckCpuLoadResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -95,7 +95,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckDiskResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -121,7 +121,7 @@
           "check"
         ],
         "summary": "Check an hardware health of an device.",
-        "operationId": "checkSBC",
+        "operationId": "checkHardwareHealth",
         "parameters": [
           {
             "description": "Request to process.",
@@ -137,7 +137,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckHardwareHealthResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -263,7 +263,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckMemoryUsageResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -305,7 +305,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckSBCResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -347,7 +347,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckServerResponse"
+              "$ref": "#/definitions/CheckResponse"
             }
           },
           "400": {
@@ -706,11 +706,10 @@
           "application/xml"
         ],
         "tags": [
-          "read",
-          "hardware"
+          "read"
         ],
         "summary": "Reads out hardware health data of a device.",
-        "operationId": "health",
+        "operationId": "hardware-health",
         "parameters": [
           {
             "description": "Request to process.",
@@ -1441,7 +1440,7 @@
       "x-go-package": "github.com/inexio/thola/core/request"
     },
     "ConnectionData": {
-      "description": "ConnectionData includes all connection data for a device",
+      "description": "ConnectionData includes all connection data for a device.",
       "type": "object",
       "title": "ConnectionData",
       "properties": {
@@ -1626,24 +1625,24 @@
       "x-go-package": "github.com/inexio/thola/core/device"
     },
     "HTTPConnectionData": {
-      "description": "HTTPConnectionData includes all http connection data for a device",
+      "description": "HTTPConnectionData includes all http connection data for a device.",
       "type": "object",
       "title": "HTTPConnectionData",
       "properties": {
         "auth_password": {
-          "description": "The password for authorization on the device",
+          "description": "The password for authorization on the device.",
           "type": "string",
           "x-go-name": "AuthPassword",
           "example": "password"
         },
         "auth_username": {
-          "description": "The username for authorization on the device",
+          "description": "The username for authorization on the device.",
           "type": "string",
           "x-go-name": "AuthUsername",
           "example": "username"
         },
         "http_ports": {
-          "description": "The http port(s) of the device",
+          "description": "The http port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -1653,7 +1652,7 @@
           "example": "80"
         },
         "https_ports": {
-          "description": "The https port(s) of the device",
+          "description": "The https port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -2719,12 +2718,12 @@
       "x-go-package": "github.com/inexio/thola/core/device"
     },
     "SNMPConnectionData": {
-      "description": "SNMPConnectionData includes all snmp connection data for a device",
+      "description": "SNMPConnectionData includes all snmp connection data for a device.",
       "type": "object",
       "title": "SNMPConnectionData",
       "properties": {
         "communities": {
-          "description": "The snmp community string(s) for the device",
+          "description": "The snmp community string(s) for the device.",
           "type": "array",
           "items": {
             "type": "string"
@@ -2733,28 +2732,28 @@
           "example": "public"
         },
         "discoverParallelRequests": {
-          "description": "The amount of parallel connection requests used while trying to get a valid SNMP connection",
+          "description": "The amount of parallel connection requests used while trying to get a valid SNMP connection.",
           "type": "integer",
           "format": "int64",
           "x-go-name": "DiscoverParallelRequests",
           "example": 5
         },
         "discoverRetries": {
-          "description": "The retries used while trying to get a valid SNMP connection",
+          "description": "The retries used while trying to get a valid SNMP connection.",
           "type": "integer",
           "format": "int64",
           "x-go-name": "DiscoverRetries",
           "example": 0
         },
         "discoverTimeout": {
-          "description": "The timeout in seconds used while trying to get a valid SNMP connection",
+          "description": "The timeout in seconds used while trying to get a valid SNMP connection.",
           "type": "integer",
           "format": "int64",
           "x-go-name": "DiscoverTimeout",
           "example": 2
         },
         "ports": {
-          "description": "The snmp port(s) of the device",
+          "description": "The snmp port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -2764,7 +2763,7 @@
           "example": "161"
         },
         "versions": {
-          "description": "The snmp version(s) of the device",
+          "description": "The snmp version(s) of the device.",
           "type": "array",
           "items": {
             "type": "string"

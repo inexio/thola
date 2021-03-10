@@ -251,7 +251,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckMemoryUsageResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -273,12 +273,12 @@ func StartAPI() {
 	//   description: Request to process.
 	//   required: true
 	//   schema:
-	//     $ref: '#/definitions/CheckCpuLoadRequest'
+	//     $ref: '#/definitions/CheckCPULoadRequest'
 	// responses:
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckCpuLoadResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -305,7 +305,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckSBCResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -332,7 +332,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckServerResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -359,14 +359,14 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckDiskResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/disk", checkDisk)
 
-	// swagger:operation POST /check/hardware-health check checkSBC
+	// swagger:operation POST /check/hardware-health check checkHardwareHealth
 	// ---
 	// summary: Check an hardware health of an device.
 	// consumes:
@@ -386,7 +386,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckHardwareHealthResponse'
+	//       $ref: '#/definitions/CheckResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -609,7 +609,7 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/disk", readDisk)
 
-	// swagger:operation POST /read/hardware-health read hardware health
+	// swagger:operation POST /read/hardware-health read hardware-health
 	// ---
 	// summary: Reads out hardware health data of a device.
 	// consumes:
