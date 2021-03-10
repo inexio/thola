@@ -220,18 +220,18 @@ func (m *ekinopsModuleReaderWrapper) readModuleMetrics(ctx context.Context, inte
 type ekinopsPowerTransformFunc func(float64) float64
 
 func ekinopsPowerTransform10Log10XMinus40(f float64) float64 {
-	return ekinopsPowerTransformCheckTooSmall(10*math.Log10(f) - 40)
+	return ekinopsPowerTransformCheckInfinity(10*math.Log10(f) - 40)
 }
 
 func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
-	return ekinopsPowerTransformCheckTooSmall(10 * math.Log10(f/10000))
+	return ekinopsPowerTransformCheckInfinity(10 * math.Log10(f/10000))
 }
 
 func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
 	if f < 32768 {
-		return ekinopsPowerTransformCheckTooSmall(f / 100)
+		return f / 100
 	} else {
-		return ekinopsPowerTransformCheckTooSmall((f - 65536) / 100)
+		return (f - 65536) / 100
 	}
 }
 
@@ -241,15 +241,15 @@ func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
 
 func ekinopsPowerTransformOPM8(f float64) float64 {
 	if f < 32768 {
-		return ekinopsPowerTransformCheckTooSmall(f / 256)
+		return f / 256
 	} else {
-		return ekinopsPowerTransformCheckTooSmall(f/256 - 256)
+		return f/256 - 256
 	}
 }
 
-func ekinopsPowerTransformCheckTooSmall(f float64) float64 {
-	if math.IsInf(f, 0) || math.IsNaN(f) || f < -100 {
-		f = -100
+func ekinopsPowerTransformCheckInfinity(f float64) float64 {
+	if math.IsInf(f, -1) || math.IsNaN(f) {
+		f = -99999
 	}
 	return f
 }
