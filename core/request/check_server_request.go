@@ -1,6 +1,9 @@
 package request
 
-import "context"
+import (
+	"context"
+	"github.com/inexio/go-monitoringplugin"
+)
 
 // CheckServerRequest
 //
@@ -9,11 +12,11 @@ import "context"
 // swagger:model
 type CheckServerRequest struct {
 	CheckDeviceRequest
-	ServerThresholds CheckThresholds `json:"serverThresholds" xml:"serverThresholds"`
+	ServerThresholds monitoringplugin.Thresholds `json:"serverThresholds" xml:"serverThresholds"`
 }
 
 func (r *CheckServerRequest) validate(ctx context.Context) error {
-	if err := r.ServerThresholds.validate(); err != nil {
+	if err := r.ServerThresholds.Validate(); err != nil {
 		return err
 	}
 	return r.CheckDeviceRequest.validate(ctx)

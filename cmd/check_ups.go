@@ -43,11 +43,11 @@ var checkUPSCMD = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckUPSRequest{
 			CheckDeviceRequest:           getCheckDeviceRequest(args[0]),
-			BatteryCurrentThresholds:     generateCheckThresholds(cmd, "batt-current-warning-min", "batt-current-warning-max", "batt-current-critical-min", "batt-current-critical-max"),
-			BatteryTemperatureThresholds: generateCheckThresholds(cmd, "batt-temperature-warning-min", "batt-temperature-warning-max", "batt-temperature-critical-min", "batt-temperature-critical-max"),
-			CurrentLoadThresholds:        generateCheckThresholds(cmd, "current-load-warning-min", "current-load-warning-max", "current-load-warning-max", "current-load-warning-max"),
-			RectifierCurrentThresholds:   generateCheckThresholds(cmd, "rectifier-current-warning-min", "rectifier-current-warning-max", "rectifier-current-critical-min", "rectifier-current-critical-max"),
-			SystemVoltageThresholds:      generateCheckThresholds(cmd, "system-voltage-warning-min", "system-voltage-warning-max", "system-voltage-critical-min", "system-voltage-critical-max"),
+			BatteryCurrentThresholds:     generateCheckThresholds(cmd, "batt-current-warning-min", "batt-current-warning-max", "batt-current-critical-min", "batt-current-critical-max", false),
+			BatteryTemperatureThresholds: generateCheckThresholds(cmd, "batt-temperature-warning-min", "batt-temperature-warning-max", "batt-temperature-critical-min", "batt-temperature-critical-max", false),
+			CurrentLoadThresholds:        generateCheckThresholds(cmd, "current-load-warning-min", "current-load-warning-max", "current-load-warning-max", "current-load-warning-max", false),
+			RectifierCurrentThresholds:   generateCheckThresholds(cmd, "rectifier-current-warning-min", "rectifier-current-warning-max", "rectifier-current-critical-min", "rectifier-current-critical-max", false),
+			SystemVoltageThresholds:      generateCheckThresholds(cmd, "system-voltage-warning-min", "system-voltage-warning-max", "system-voltage-critical-min", "system-voltage-critical-max", false),
 		}
 		handleRequest(&r)
 	},

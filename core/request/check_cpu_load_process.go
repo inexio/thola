@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/inexio/thola/core/value"
 	"strconv"
 )
 
@@ -23,30 +22,27 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 
 	for k, cpuLoad := range response.(*ReadCPULoadResponse).CPULoad {
 		cpuSum += cpuLoad
-		val := value.New(cpuLoad)
 
 		performanceDataLabel := "cpu_load"
 		if cpuAmount > 1 {
 			performanceDataLabel += "_" + strconv.Itoa(k)
 		}
-		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint(performanceDataLabel, val.String(), "%"))
+		point := monitoringplugin.NewPerformanceDataPoint(performanceDataLabel, cpuLoad).SetUnit("%")
+		if cpuAmount == 1 {
+			point.SetThresholds(r.CPULoadThresholds)
+		}
+		err = r.mon.AddPerformanceDataPoint(point)
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	val := value.New(cpuSum / float64(cpuAmount))
-	if !r.CPULoadThresholds.isEmpty() {
-		code := r.CPULoadThresholds.checkValue(val)
-		r.mon.UpdateStatusIf(code != monitoringplugin.OK, code, fmt.Sprintf("average cpu load is %s%%", val))
-	}
-
 	if cpuAmount > 1 {
-		fl, err := val.Float64()
-		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "can't parse value to error", true) {
-			return &CheckResponse{r.mon.GetInfo()}, nil
-		}
-		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("cpu_load_average", fmt.Sprintf("%.3f", fl), "%"))
+		val := cpuSum / float64(cpuAmount)
+		err = r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("cpu_load_average", fmt.Sprintf("%.3f", val)).
+				SetUnit("%").
+				SetThresholds(r.CPULoadThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}

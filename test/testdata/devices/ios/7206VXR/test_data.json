@@ -633,7 +633,7 @@
 				{
 					"metric": "cpu_load",
 					"label": "",
-					"value": "5",
+					"value": 5,
 					"unit": "%",
 					"warn": null,
 					"crit": null,

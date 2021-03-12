@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/core/request"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -64,35 +65,45 @@ func getCheckRequest() request.CheckRequest {
 	}
 }
 
-func generateCheckThresholds(cmd *cobra.Command, warningMin, warningMax, criticalMin, criticalMax string) request.CheckThresholds {
-	var thresholds request.CheckThresholds
+func generateCheckThresholds(cmd *cobra.Command, warningMin, warningMax, criticalMin, criticalMax string, setMinToZeroIfEmpty bool) monitoringplugin.Thresholds {
+	var thresholds monitoringplugin.Thresholds
 	if flagName := warningMin; flagName != "" && cmd.Flags().Changed(flagName) {
 		v, err := cmd.Flags().GetFloat64(flagName)
 		if err != nil {
 			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
 		}
-		thresholds.WarningMin = &v
+		thresholds.WarningMin = v
 	}
 	if flagName := warningMax; flagName != "" && cmd.Flags().Changed(flagName) {
 		v, err := cmd.Flags().GetFloat64(flagName)
 		if err != nil {
 			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
 		}
-		thresholds.WarningMax = &v
+		thresholds.WarningMax = v
 	}
 	if flagName := criticalMin; flagName != "" && cmd.Flags().Changed(flagName) {
 		v, err := cmd.Flags().GetFloat64(flagName)
 		if err != nil {
 			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
 		}
-		thresholds.CriticalMin = &v
+		thresholds.CriticalMin = v
 	}
 	if flagName := criticalMax; flagName != "" && cmd.Flags().Changed(flagName) {
 		v, err := cmd.Flags().GetFloat64(flagName)
 		if err != nil {
 			log.Fatal().Err(err).Msgf("flag '%s' is not a float64", flagName)
 		}
-		thresholds.CriticalMax = &v
+		thresholds.CriticalMax = v
 	}
+
+	if setMinToZeroIfEmpty {
+		if thresholds.HasWarning() && thresholds.WarningMin == nil {
+			thresholds.WarningMin = 0
+		}
+		if thresholds.HasCritical() && thresholds.CriticalMin == nil {
+			thresholds.CriticalMin = 0
+		}
+	}
+
 	return thresholds
 }

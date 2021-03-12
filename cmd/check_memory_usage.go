@@ -21,7 +21,7 @@ var checkMemoryUsage = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckMemoryUsageRequest{
 			CheckDeviceRequest:    getCheckDeviceRequest(args[0]),
-			MemoryUsageThresholds: generateCheckThresholds(cmd, "", "warning", "", "critical"),
+			MemoryUsageThresholds: generateCheckThresholds(cmd, "", "warning", "", "critical", true),
 		}
 		handleRequest(&r)
 	},

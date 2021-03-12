@@ -542,7 +542,7 @@ func (c *networkDeviceCommunicator) GetDiskComponent(ctx context.Context) (devic
 
 func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(hardwareHealthComponent) {
-		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
 	}
 
 	var hardwareHealth device.HardwareHealthComponent

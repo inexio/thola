@@ -21,7 +21,7 @@ var checkCpuLoad = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckCPULoadRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
-			CPULoadThresholds:  generateCheckThresholds(cmd, "", "warning", "", "critical"),
+			CPULoadThresholds:  generateCheckThresholds(cmd, "", "warning", "", "critical", true),
 		}
 		handleRequest(&r)
 	},

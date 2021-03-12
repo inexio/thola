@@ -1,6 +1,9 @@
 package request
 
-import "context"
+import (
+	"context"
+	"github.com/inexio/go-monitoringplugin"
+)
 
 // CheckSBCRequest
 //
@@ -9,11 +12,11 @@ import "context"
 // swagger:model
 type CheckSBCRequest struct {
 	CheckDeviceRequest
-	SystemHealthScoreThresholds CheckThresholds
+	SystemHealthScoreThresholds monitoringplugin.Thresholds
 }
 
 func (r *CheckSBCRequest) validate(ctx context.Context) error {
-	if err := r.SystemHealthScoreThresholds.validate(); err != nil {
+	if err := r.SystemHealthScoreThresholds.Validate(); err != nil {
 		return err
 	}
 	return r.CheckDeviceRequest.validate(ctx)
