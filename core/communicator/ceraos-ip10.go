@@ -11,6 +11,8 @@ type ceraosIP10Communicator struct {
 	baseCommunicator
 }
 
+// GetIfTable returns the ifTable of ceraos/ip10 devices.
+// These devices need special behavior radio and ethernet interfaces.
 func (c *ceraosIP10Communicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	subInterfaces, err := c.sub.GetIfTable(ctx)
 	if err != nil {

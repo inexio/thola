@@ -15,6 +15,7 @@ type ekinopsCommunicator struct {
 	baseCommunicator
 }
 
+// GetInterfaces returns the interfaces of ekinops devices.
 func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
 	interfaces, err := c.GetIfTable(ctx)
 	if err != nil {
@@ -69,6 +70,8 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 	return normalizeEkinopsInterfaces(interfaces)
 }
 
+// GetInterfaces returns the interfaces of ekinops devices.
+// For ekinops devices, only a few interface values are required.
 func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	if genericDeviceClass.components.interfaces.IfTable == nil {
 		return nil, errors.New("ifTable information is empty")
