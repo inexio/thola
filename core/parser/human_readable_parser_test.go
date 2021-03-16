@@ -24,16 +24,14 @@ func TestToHumanReadableFloat(t *testing.T) {
 }
 
 func TestToHumanReadablePointer1(t *testing.T) {
-	var i uint64
-	i = 2
+	var i uint64 = 2
 	output, err := ToHumanReadable(&i)
 	assert.Nil(t, err)
 	assert.Equal(t, "2", string(output))
 }
 
 func TestToHumanReadablePointer2(t *testing.T) {
-	var str []string
-	str = nil
+	var str []string = nil
 	output, err := ToHumanReadable(&str)
 	assert.Nil(t, err)
 	assert.Equal(t, "", string(output))
