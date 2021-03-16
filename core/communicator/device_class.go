@@ -47,7 +47,6 @@ type deviceClass struct {
 	config            deviceClassConfig
 	identify          deviceClassIdentify
 	components        deviceClassComponents
-	yamlFile          string
 	parentDeviceClass *deviceClass
 	subDeviceClasses  map[string]*deviceClass
 	tryToMatchLast    bool
@@ -838,15 +837,15 @@ func (d *deviceClassOIDs) validate() error {
 }
 
 func conditionContainsUniqueRequest(c condition) bool {
-	switch c.(type) {
+	switch c := c.(type) {
 	case *SnmpCondition:
-		if c.(*SnmpCondition).Type == "snmpget" {
+		if c.Type == "snmpget" {
 			return true
 		}
 	case *HTTPCondition:
 		return true
 	case *ConditionSet:
-		for _, con := range c.(*ConditionSet).Conditions {
+		for _, con := range c.Conditions {
 			if conditionContainsUniqueRequest(con) {
 				return true
 			}

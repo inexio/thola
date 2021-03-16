@@ -6,13 +6,13 @@ on:
       - '*'
 
 jobs:
-  fmt:
-    name: fmt
+  golangci:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: check
-        uses: grandcolline/golang-github-actions@v1.1.0
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
         with:
-          run: fmt
-          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --disable unused

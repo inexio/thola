@@ -368,12 +368,14 @@ func buildRecursiveTestDevices(dir, relativePath string) ([]testDevice, error) {
 	}
 	var subDirs []os.FileInfo
 	files := make(map[string]string)
+
+	regex, err := regexp.Compile(`^\..*`)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
+
 	for _, f := range fileDir {
-		res, err := regexp.MatchString("^\\..*", f.Name())
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to match regex")
-		}
-		if !res {
+		if !regex.MatchString(f.Name()) {
 			if f.IsDir() {
 				subDirs = append(subDirs, f)
 			} else {

@@ -13,8 +13,6 @@ type CheckIdentifyRequest struct {
 	CheckDeviceRequest
 	Expectations device.Device `yaml:"expectations" json:"expectations" xml:"expectations"`
 
-	failedExpectations map[string]IdentifyExpectationResult
-
 	OsDiffWarning           bool `yaml:"os_diff_warning" json:"os_diff_warning" xml:"os_diff_warning"`
 	VendorDiffWarning       bool `yaml:"vendor_diff_warning" json:"vendor_diff_warning" xml:"vendor_diff_warning"`
 	ModelDiffWarning        bool `yaml:"model_diff_warning" json:"model_diff_warning" xml:"model_diff_warning"`

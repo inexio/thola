@@ -76,8 +76,14 @@ func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interfac
 
 	reader := *genericDeviceClass.components.interfaces.IfTable.(*snmpGroupPropertyReader)
 	oids := make(deviceClassOIDs)
+
+	regex, err := regexp.Compile("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
+
 	for oid, value := range reader.oids {
-		if ok, err := regexp.MatchString("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)", oid); err == nil && ok {
+		if regex.MatchString(oid) {
 			oids[oid] = value
 		}
 	}
