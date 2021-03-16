@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"strconv"
+	"strings"
 )
 
 type ekinopsModuleReaderAmplifier struct {
@@ -48,7 +49,7 @@ func (m *ekinopsModuleReaderAmplifier) readModuleMetrics(ctx context.Context, in
 	}
 
 	for i, opticalAmplifierInterface := range opticalAmplifierInterfaces {
-		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + *opticalAmplifierInterface.Identifier
+		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + strings.Split(*opticalAmplifierInterface.Identifier, "(")[0]
 		idx, ok := mappings[identifier]
 		if !ok {
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)

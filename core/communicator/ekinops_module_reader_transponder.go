@@ -50,7 +50,7 @@ func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, 
 	}
 
 	for i, opticalTransponderInterface := range OpticalTransponderInterfaces {
-		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + *opticalTransponderInterface.Identifier
+		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + strings.Split(*opticalTransponderInterface.Identifier, "(")[0]
 		idx, ok := mappings[identifier]
 		if !ok {
 			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)

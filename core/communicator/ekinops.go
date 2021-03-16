@@ -103,7 +103,7 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 		if interf.IfName == nil {
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
-		identifier := strings.Join(strings.Split(*interf.IfName, "/")[2:], "/")
+		identifier := strings.Split(strings.Join(strings.Split(*interf.IfName, "/")[2:], "/"), "(")[0]
 
 		if _, ok := m[identifier]; ok {
 			return nil, fmt.Errorf("interface identifier `%s` exists multiple times", *interf.IfName)
