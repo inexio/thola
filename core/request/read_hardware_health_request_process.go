@@ -15,7 +15,7 @@ func (r *ReadHardwareHealthRequest) process(ctx context.Context) (Response, erro
 
 	result, err := com.GetHardwareHealthComponent(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't get cpu load")
+		return nil, errors.Wrap(err, "failed to get hardware health component")
 	}
 
 	return &ReadHardwareHealthResponse{

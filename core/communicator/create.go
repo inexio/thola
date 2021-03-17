@@ -18,7 +18,7 @@ func CreateNetworkDeviceCommunicator(ctx context.Context, deviceClassIdentifier 
 	return createCommunicatorByDeviceClass(ctx, deviceClass)
 }
 
-// IdentifyNetworkDeviceCommunicator identifies a devices and creates a network device communicator
+// IdentifyNetworkDeviceCommunicator identifies a devices and creates a network device communicator.
 func IdentifyNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommunicator, error) {
 	deviceClass, err := identifyDeviceClass(ctx)
 	if err != nil {
@@ -32,7 +32,7 @@ func IdentifyNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommun
 	return com, nil
 }
 
-// MatchDeviceClass checks if the device class in the context matches the given identifier
+// MatchDeviceClass checks if the device class in the context matches the given identifier.
 func MatchDeviceClass(ctx context.Context, identifier string) (bool, error) {
 	deviceClass, err := getDeviceClass(identifier)
 	if err != nil {

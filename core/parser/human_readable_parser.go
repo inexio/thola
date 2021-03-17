@@ -12,7 +12,7 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 
 	switch kind {
 	case reflect.Struct:
-		output := "\n"
+		var output string
 		for i := 0; i < value.NumField(); i++ {
 			fieldValue := toHumanReadable(value.Field(i), insertion+1)
 			if strings.TrimSpace(fieldValue) == "" {
@@ -23,7 +23,7 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 			output += fieldValue
 			output += "\n"
 		}
-		return output
+		return "\n" + strings.Repeat("  ", insertion) + strings.TrimSpace(output) + "\n"
 	case reflect.Slice:
 		if value.IsNil() {
 			return ""
@@ -39,11 +39,11 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 		output := "(" + strconv.Itoa(value.Len()) + ") \n"
 		for _, key := range value.MapKeys() {
 			output += strings.Repeat("  ", insertion)
-			output += key.String() + ": "
+			output += toHumanReadable(key, insertion+1) + ": "
 			output += toHumanReadable(value.MapIndex(key), insertion+1)
 			output += "\n"
 		}
-		return output
+		return "\n" + strings.Repeat("  ", insertion) + strings.TrimSpace(output) + "\n"
 	case reflect.String:
 		return value.String()
 	case reflect.Int:

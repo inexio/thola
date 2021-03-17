@@ -9,29 +9,67 @@ import (
 	"math"
 )
 
-// NetworkDeviceCommunicator represents a communicator for a device
+// NetworkDeviceCommunicator represents a communicator for a device.
 type NetworkDeviceCommunicator interface {
+
+	// GetDeviceClass returns the device class of a network device.
 	GetDeviceClass() string
+
+	// GetAvailableComponents returns the components available for a network device.
 	GetAvailableComponents() []string
+
+	// GetIdentifyProperties returns the identify properties of a device like vendor, model...
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
+
+	// GetCPUComponent returns the cpu component of a device if available.
 	GetCPUComponent(ctx context.Context) (device.CPUComponent, error)
+
+	// GetUPSComponent returns the ups component of a device if available.
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
+
+	// GetSBCComponent returns the sbc component of a device if available.
 	GetSBCComponent(ctx context.Context) (device.SBCComponent, error)
+
+	// GetServerComponent returns the sbc component of a device if available.
 	GetServerComponent(ctx context.Context) (device.ServerComponent, error)
+
+	// GetDiskComponent returns the disk component of a device if available.
 	GetDiskComponent(ctx context.Context) (device.DiskComponent, error)
+
+	// GetHardwareHealthComponent returns the hardware health component of a device if available.
 	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
+
 	availableCommunicatorFunctions
 }
 
 type availableCommunicatorFunctions interface {
+
+	// GetVendor returns the vendor of a device.
 	GetVendor(ctx context.Context) (string, error)
+
+	// GetModel returns the model of a device.
 	GetModel(ctx context.Context) (string, error)
+
+	// GetModelSeries returns the model series of a device.
 	GetModelSeries(ctx context.Context) (string, error)
+
+	// GetSerialNumber returns the serial number of a device.
 	GetSerialNumber(ctx context.Context) (string, error)
+
+	// GetOSVersion returns the os version of a device.
 	GetOSVersion(ctx context.Context) (string, error)
+
+	// GetIfTable returns the ifTable of a device.
+	// This only contains the standard ifTable values.
 	GetIfTable(ctx context.Context) ([]device.Interface, error)
+
+	// GetInterfaces returns the interfaces of a device.
+	// This includes special interface values.
 	GetInterfaces(ctx context.Context) ([]device.Interface, error)
+
+	// GetCountInterfaces returns the count of interfaces of a device.
 	GetCountInterfaces(ctx context.Context) (int, error)
+
 	availableCPUCommunicatorFunctions
 	availableMemoryCommunicatorFunctions
 	availableUPSCommunicatorFunctions
@@ -42,52 +80,110 @@ type availableCommunicatorFunctions interface {
 }
 
 type availableCPUCommunicatorFunctions interface {
+
+	// GetCPUComponentCPULoad returns the cpu load of the device.
 	GetCPUComponentCPULoad(ctx context.Context) ([]float64, error)
+
+	// GetCPUComponentCPUTemperature returns the cpu temperature of the device.
 	GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error)
 }
 
 type availableMemoryCommunicatorFunctions interface {
+
+	// GetMemoryComponentMemoryUsage returns the memory usage of the device.
 	GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error)
 }
 
-type availableUPSCommunicatorFunctions interface {
-	GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error)
-	GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error)
-	GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error)
-	GetUPSComponentBatteryCurrent(ctx context.Context) (float64, error)
-	GetUPSComponentBatteryRemainingTime(ctx context.Context) (float64, error)
-	GetUPSComponentBatteryTemperature(ctx context.Context) (float64, error)
-	GetUPSComponentBatteryVoltage(ctx context.Context) (float64, error)
-	GetUPSComponentCurrentLoad(ctx context.Context) (float64, error)
-	GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error)
-	GetUPSComponentRectifierCurrent(ctx context.Context) (float64, error)
-	GetUPSComponentSystemVoltage(ctx context.Context) (float64, error)
-}
-
-type availableSBCCommunicatorFunctions interface {
-	GetSBCComponentAgents(ctx context.Context) ([]device.SBCComponentAgent, error)
-	GetSBCComponentRealms(ctx context.Context) ([]device.SBCComponentRealm, error)
-	GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error)
-	GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error)
-	GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error)
-	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
-	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
-	GetSBCComponentSystemRedundancy(ctx context.Context) (int, error)
-	GetSBCComponentSystemHealthScore(ctx context.Context) (int, error)
-}
-
-type availableServerCommunicatorFunctions interface {
-	GetServerComponentProcs(ctx context.Context) (int, error)
-	GetServerComponentUsers(ctx context.Context) (int, error)
-}
-
 type availableDiskCommunicatorFunctions interface {
+
+	// GetDiskComponentStorages returns the storages of the device.
 	GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error)
 }
 
+type availableUPSCommunicatorFunctions interface {
+
+	// GetUPSComponentAlarmLowVoltageDisconnect returns the low voltage disconnect alarm of the ups device.
+	GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error)
+
+	// GetUPSComponentBatteryAmperage returns the battery amperage of the ups device.
+	GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error)
+
+	// GetUPSComponentBatteryCapacity returns the battery capacity of the ups device.
+	GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error)
+
+	// GetUPSComponentBatteryCurrent returns the current battery of the ups device.
+	GetUPSComponentBatteryCurrent(ctx context.Context) (float64, error)
+
+	// GetUPSComponentBatteryRemainingTime returns the battery remaining time of the ups device.
+	GetUPSComponentBatteryRemainingTime(ctx context.Context) (float64, error)
+
+	// GetUPSComponentBatteryTemperature returns the battery temperature of the ups device.
+	GetUPSComponentBatteryTemperature(ctx context.Context) (float64, error)
+
+	// GetUPSComponentBatteryVoltage returns the battery voltage of the ups device.
+	GetUPSComponentBatteryVoltage(ctx context.Context) (float64, error)
+
+	// GetUPSComponentCurrentLoad returns the current load of the ups device.
+	GetUPSComponentCurrentLoad(ctx context.Context) (float64, error)
+
+	// GetUPSComponentMainsVoltageApplied returns if the main voltage of the ups device is applied.
+	GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error)
+
+	// GetUPSComponentRectifierCurrent returns the current rectifier of the ups device.
+	GetUPSComponentRectifierCurrent(ctx context.Context) (float64, error)
+
+	// GetUPSComponentSystemVoltage returns the system voltage of the ups device.
+	GetUPSComponentSystemVoltage(ctx context.Context) (float64, error)
+}
+
+type availableServerCommunicatorFunctions interface {
+
+	// GetServerComponentProcs returns the process count of the device.
+	GetServerComponentProcs(ctx context.Context) (int, error)
+
+	// GetServerComponentUsers returns the user count of the device.
+	GetServerComponentUsers(ctx context.Context) (int, error)
+}
+
+type availableSBCCommunicatorFunctions interface {
+
+	// GetSBCComponentAgents returns the agents of the sbc device.
+	GetSBCComponentAgents(ctx context.Context) ([]device.SBCComponentAgent, error)
+
+	// GetSBCComponentRealms returns the realms of the sbc device.
+	GetSBCComponentRealms(ctx context.Context) ([]device.SBCComponentRealm, error)
+
+	// GetSBCComponentGlobalCallPerSecond returns the global calls per second of the sbc device.
+	GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error)
+
+	// GetSBCComponentGlobalConcurrentSessions returns the global concurrent sessions of the sbc device.
+	GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error)
+
+	// GetSBCComponentActiveLocalContacts returns the active local contacts of the sbc device.
+	GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error)
+
+	// GetSBCComponentTranscodingCapacity returns the transcoding capacity of the sbc device.
+	GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error)
+
+	// GetSBCComponentLicenseCapacity returns the license capacity of the sbc device.
+	GetSBCComponentLicenseCapacity(ctx context.Context) (int, error)
+
+	// GetSBCComponentSystemRedundancy returns the system redundancy of the sbc device.
+	GetSBCComponentSystemRedundancy(ctx context.Context) (int, error)
+
+	// GetSBCComponentSystemHealthScore returns the system health score of the sbc device.
+	GetSBCComponentSystemHealthScore(ctx context.Context) (int, error)
+}
+
 type availableHardwareHealthCommunicatorFunctions interface {
+
+	// GetHardwareHealthComponentFans returns the fans of the device.
 	GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error)
+
+	// GetHardwareHealthComponentPowerSupply returns the power supply of the device.
 	GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error)
+
+	// GetHardwareHealthComponentEnvironmentMonitorState returns the environment monitoring state of the device.
 	GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error)
 }
 
@@ -156,6 +252,10 @@ func (c *networkDeviceCommunicator) executeWithRecursion(fClass, fCom, fSub adap
 	return nil, tholaerr.NewNotFoundError("failed to get information through any device class")
 }
 
+//
+// Identify properties functions are defined here.
+//
+
 func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
 	dev := device.Device{
 		Class:      c.head.GetDeviceClass(),
@@ -214,6 +314,141 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 	return dev.Properties, nil
 }
 
+func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getVendor
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getVendor), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getVendor), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return "", err
+	}
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
+}
+
+func (c *networkDeviceCommunicator) GetModel(ctx context.Context) (string, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getModel
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getModel), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getModel), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return "", err
+	}
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
+}
+
+func (c *networkDeviceCommunicator) GetModelSeries(ctx context.Context) (string, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getModelSeries
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getModelSeries), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getModelSeries), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return "", err
+	}
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
+}
+
+func (c *networkDeviceCommunicator) GetSerialNumber(ctx context.Context) (string, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSerialNumber
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSerialNumber), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSerialNumber), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return "", err
+	}
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
+}
+
+func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getOSVersion
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getOSVersion), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getOSVersion), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return "", err
+	}
+	s := res.(string)
+	if s == "" {
+		return "", tholaerr.NewNotFoundError("empty string returned")
+	}
+	return s, err
+}
+
+//
+// Interface component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(interfacesComponent) {
+		return []device.Interface{}, tholaerr.NewComponentNotFoundError("no interfaces component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getInterfaces
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getInterfaces), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getInterfaces), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return []device.Interface{}, err
+	}
+	if c.isHead() {
+		res = normalizeInterfaces(res.([]device.Interface))
+	}
+	return res.([]device.Interface), err
+}
+
+func (c *networkDeviceCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
+	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(interfacesComponent) {
+		return []device.Interface{}, tholaerr.NewComponentNotFoundError("no interfaces component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getIfTable
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getIfTable), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getIfTable), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return []device.Interface{}, err
+	}
+	return res.([]device.Interface), err
+}
+
+func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCountInterfaces
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
+	for i, interf := range interfaces {
+		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == math.MaxUint32 {
+			ifSpeed := *interf.IfHighSpeed * 1000000
+			interfaces[i].IfSpeed = &ifSpeed
+		}
+	}
+	return interfaces
+}
+
+//
+// CPU component functions are defined here.
+//
+
 func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device.CPUComponent, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
 		return device.CPUComponent{}, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
@@ -247,6 +482,97 @@ func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device
 	}
 	return cpu, nil
 }
+
+func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
+		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPULoad
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPULoad), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPULoad), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]float64), err
+}
+
+func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
+		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPUTemperature
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]float64), err
+}
+
+//
+// Memory component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(memoryComponent) {
+		return 0, tholaerr.NewComponentNotFoundError("no memory component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getMemoryUsage
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(float64), err
+}
+
+//
+// Disk component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(diskComponent) {
+		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
+	}
+
+	var disk device.DiskComponent
+
+	empty := true
+
+	storages, err := c.head.GetDiskComponentStorages(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.DiskComponent{}, errors.Wrap(err, "error occurred during get disk component storages")
+		}
+	} else {
+		disk.Storages = storages
+		empty = false
+	}
+
+	if empty {
+		return device.DiskComponent{}, tholaerr.NewNotFoundError("no disk data available")
+	}
+
+	return disk, nil
+}
+
+func (c *networkDeviceCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getDiskComponentStorages
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return res.([]device.DiskComponentStorage), err
+}
+
+//
+// UPS component functions are defined here.
+//
 
 func (c *networkDeviceCommunicator) GetUPSComponent(ctx context.Context) (device.UPSComponent, error) {
 	if !c.deviceClassCommunicator.hasAvailableComponent(upsComponent) {
@@ -372,418 +698,6 @@ func (c *networkDeviceCommunicator) GetUPSComponent(ctx context.Context) (device
 	return ups, nil
 }
 
-func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device.SBCComponent, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(sbcComponent) {
-		return device.SBCComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
-	}
-
-	var sbc device.SBCComponent
-
-	empty := true
-
-	agents, err := c.head.GetSBCComponentAgents(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component agents")
-		}
-	} else {
-		sbc.Agents = agents
-		empty = false
-	}
-
-	realms, err := c.head.GetSBCComponentRealms(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component realms")
-		}
-	} else {
-		sbc.Realms = realms
-		empty = false
-	}
-
-	globalCPS, err := c.head.GetSBCComponentGlobalCallPerSecond(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
-		}
-	} else {
-		sbc.GlobalCallPerSecond = &globalCPS
-		empty = false
-	}
-
-	globalConcurrentSessions, err := c.head.GetSBCComponentGlobalConcurrentSessions(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc global concurrent sessions")
-		}
-	} else {
-		sbc.GlobalConcurrentSessions = &globalConcurrentSessions
-		empty = false
-	}
-
-	activeLocalContacts, err := c.head.GetSBCComponentActiveLocalContacts(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get active local contacts")
-		}
-	} else {
-		sbc.ActiveLocalContacts = &activeLocalContacts
-		empty = false
-	}
-
-	transcodingCapacity, err := c.head.GetSBCComponentTranscodingCapacity(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get transcoding capacity")
-		}
-	} else {
-		sbc.TranscodingCapacity = &transcodingCapacity
-		empty = false
-	}
-
-	licenseCapacity, err := c.head.GetSBCComponentLicenseCapacity(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get license capacity")
-		}
-	} else {
-		sbc.LicenseCapacity = &licenseCapacity
-		empty = false
-	}
-
-	systemRedundancy, err := c.head.GetSBCComponentSystemRedundancy(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system redundancy")
-		}
-	} else {
-		sbc.SystemRedundancy = &systemRedundancy
-		empty = false
-	}
-
-	systemHealthScore, err := c.head.GetSBCComponentSystemHealthScore(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system health score")
-		}
-	} else {
-		sbc.SystemHealthScore = &systemHealthScore
-		empty = false
-	}
-
-	if empty {
-		return device.SBCComponent{}, tholaerr.NewNotFoundError("no sbc data available")
-	}
-
-	return sbc, nil
-}
-
-func (c *networkDeviceCommunicator) GetServerComponent(ctx context.Context) (device.ServerComponent, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
-		return device.ServerComponent{}, tholaerr.NewComponentNotFoundError("no server component available for this device")
-	}
-
-	var server device.ServerComponent
-
-	empty := true
-
-	procs, err := c.head.GetServerComponentProcs(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component procs")
-		}
-	} else {
-		server.Procs = &procs
-		empty = false
-	}
-
-	users, err := c.head.GetServerComponentUsers(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component users")
-		}
-	} else {
-		server.Users = &users
-		empty = false
-	}
-
-	if empty {
-		return device.ServerComponent{}, tholaerr.NewNotFoundError("no server data available")
-	}
-
-	return server, nil
-}
-
-func (c *networkDeviceCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(diskComponent) {
-		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
-	}
-
-	var disk device.DiskComponent
-
-	empty := true
-
-	storages, err := c.head.GetDiskComponentStorages(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.DiskComponent{}, errors.Wrap(err, "error occurred during get disk component storages")
-		}
-	} else {
-		disk.Storages = storages
-		empty = false
-	}
-
-	if empty {
-		return device.DiskComponent{}, tholaerr.NewNotFoundError("no disk data available")
-	}
-
-	return disk, nil
-}
-
-func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(hardwareHealthComponent) {
-		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
-	}
-
-	var hardwareHealth device.HardwareHealthComponent
-
-	empty := true
-
-	state, err := c.head.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get environment monitor states")
-		}
-	} else {
-		hardwareHealth.EnvironmentMonitorState = &state
-		empty = false
-	}
-
-	fans, err := c.head.GetHardwareHealthComponentFans(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get fans")
-		}
-	} else {
-		hardwareHealth.Fans = fans
-		empty = false
-	}
-
-	powerSupply, err := c.head.GetHardwareHealthComponentPowerSupply(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
-		}
-	} else {
-		hardwareHealth.PowerSupply = powerSupply
-		empty = false
-	}
-
-	if empty {
-		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no sbc data available")
-	}
-
-	return hardwareHealth, nil
-}
-
-func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getVendor
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getVendor), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getVendor), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return "", err
-	}
-	s := res.(string)
-	if s == "" {
-		return "", tholaerr.NewNotFoundError("empty string returned")
-	}
-	return s, err
-}
-
-func (c *networkDeviceCommunicator) GetModel(ctx context.Context) (string, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getModel
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getModel), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getModel), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return "", err
-	}
-	s := res.(string)
-	if s == "" {
-		return "", tholaerr.NewNotFoundError("empty string returned")
-	}
-	return s, err
-}
-
-func (c *networkDeviceCommunicator) GetModelSeries(ctx context.Context) (string, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getModelSeries
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getModelSeries), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getModelSeries), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return "", err
-	}
-	s := res.(string)
-	if s == "" {
-		return "", tholaerr.NewNotFoundError("empty string returned")
-	}
-	return s, err
-}
-
-func (c *networkDeviceCommunicator) GetSerialNumber(ctx context.Context) (string, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSerialNumber
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSerialNumber), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getSerialNumber), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return "", err
-	}
-	s := res.(string)
-	if s == "" {
-		return "", tholaerr.NewNotFoundError("empty string returned")
-	}
-	return s, err
-}
-
-func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getOSVersion
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getOSVersion), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getOSVersion), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return "", err
-	}
-	s := res.(string)
-	if s == "" {
-		return "", tholaerr.NewNotFoundError("empty string returned")
-	}
-	return s, err
-}
-
-func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(interfacesComponent) {
-		return []device.Interface{}, tholaerr.NewComponentNotFoundError("no interfaces component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getInterfaces
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getInterfaces), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getInterfaces), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return []device.Interface{}, err
-	}
-	if c.isHead() {
-		res = normalizeInterfaces(res.([]device.Interface))
-	}
-	return res.([]device.Interface), err
-}
-
-func (c *networkDeviceCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(interfacesComponent) {
-		return []device.Interface{}, tholaerr.NewComponentNotFoundError("no interfaces component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getIfTable
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getIfTable), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getIfTable), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return []device.Interface{}, err
-	}
-	return res.([]device.Interface), err
-}
-
-func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCountInterfaces
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCountInterfaces), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
-func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
-		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPULoad
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPULoad), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPULoad), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return nil, err
-	}
-	return res.([]float64), err
-}
-
-func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(cpuComponent) {
-		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getCPUTemperature
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getCPUTemperature), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return nil, err
-	}
-	return res.([]float64), err
-}
-
-func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
-	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(memoryComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no memory component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getMemoryUsage
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getMemoryUsage), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(float64), err
-}
-
-func (c *networkDeviceCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getServerProcs
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getServerProcs), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getServerProcs), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
-func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context) (int, error) {
-	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
-		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getServerUsers
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getServerUsers), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getServerUsers), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.(int), err
-}
-
-func (c *networkDeviceCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getDiskComponentStorages
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getDiskComponentStorages), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return nil, err
-	}
-	return res.([]device.DiskComponentStorage), err
-}
-
 func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getUPSComponentAlarmLowVoltageDisconnect
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getUPSComponentAlarmLowVoltageDisconnect), emptyAdapterFunc).(adapterFunc)
@@ -905,6 +819,184 @@ func (c *networkDeviceCommunicator) GetUPSComponentSystemVoltage(ctx context.Con
 	return res.(float64), err
 }
 
+//
+// Server component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetServerComponent(ctx context.Context) (device.ServerComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
+		return device.ServerComponent{}, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+
+	var server device.ServerComponent
+
+	empty := true
+
+	procs, err := c.head.GetServerComponentProcs(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component procs")
+		}
+	} else {
+		server.Procs = &procs
+		empty = false
+	}
+
+	users, err := c.head.GetServerComponentUsers(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component users")
+		}
+	} else {
+		server.Users = &users
+		empty = false
+	}
+
+	if empty {
+		return device.ServerComponent{}, tholaerr.NewNotFoundError("no server data available")
+	}
+
+	return server, nil
+}
+
+func (c *networkDeviceCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
+		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getServerProcs
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getServerProcs), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getServerProcs), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context) (int, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(serverComponent) {
+		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getServerUsers
+	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getServerUsers), emptyAdapterFunc).(adapterFunc)
+	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getServerUsers), emptyAdapterFunc).(adapterFunc)
+	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
+	if err != nil {
+		return 0, err
+	}
+	return res.(int), err
+}
+
+//
+// SBC component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetSBCComponent(ctx context.Context) (device.SBCComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(sbcComponent) {
+		return device.SBCComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
+	var sbc device.SBCComponent
+
+	empty := true
+
+	agents, err := c.head.GetSBCComponentAgents(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component agents")
+		}
+	} else {
+		sbc.Agents = agents
+		empty = false
+	}
+
+	realms, err := c.head.GetSBCComponentRealms(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component realms")
+		}
+	} else {
+		sbc.Realms = realms
+		empty = false
+	}
+
+	globalCPS, err := c.head.GetSBCComponentGlobalCallPerSecond(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+		}
+	} else {
+		sbc.GlobalCallPerSecond = &globalCPS
+		empty = false
+	}
+
+	globalConcurrentSessions, err := c.head.GetSBCComponentGlobalConcurrentSessions(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc global concurrent sessions")
+		}
+	} else {
+		sbc.GlobalConcurrentSessions = &globalConcurrentSessions
+		empty = false
+	}
+
+	activeLocalContacts, err := c.head.GetSBCComponentActiveLocalContacts(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get active local contacts")
+		}
+	} else {
+		sbc.ActiveLocalContacts = &activeLocalContacts
+		empty = false
+	}
+
+	transcodingCapacity, err := c.head.GetSBCComponentTranscodingCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get transcoding capacity")
+		}
+	} else {
+		sbc.TranscodingCapacity = &transcodingCapacity
+		empty = false
+	}
+
+	licenseCapacity, err := c.head.GetSBCComponentLicenseCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get license capacity")
+		}
+	} else {
+		sbc.LicenseCapacity = &licenseCapacity
+		empty = false
+	}
+
+	systemRedundancy, err := c.head.GetSBCComponentSystemRedundancy(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system redundancy")
+		}
+	} else {
+		sbc.SystemRedundancy = &systemRedundancy
+		empty = false
+	}
+
+	systemHealthScore, err := c.head.GetSBCComponentSystemHealthScore(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system health score")
+		}
+	} else {
+		sbc.SystemHealthScore = &systemHealthScore
+		empty = false
+	}
+
+	if empty {
+		return device.SBCComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+	}
+
+	return sbc, nil
+}
+
 func (c *networkDeviceCommunicator) GetSBCComponentAgents(ctx context.Context) ([]device.SBCComponentAgent, error) {
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getSBCComponentAgents
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getSBCComponentAgents), emptyAdapterFunc).(adapterFunc)
@@ -1004,6 +1096,56 @@ func (c *networkDeviceCommunicator) GetSBCComponentSystemHealthScore(ctx context
 	return res.(int), err
 }
 
+//
+// Hardware health component functions are defined here.
+//
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
+	if !c.deviceClassCommunicator.hasAvailableComponent(hardwareHealthComponent) {
+		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
+	var hardwareHealth device.HardwareHealthComponent
+
+	empty := true
+
+	state, err := c.head.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get environment monitor states")
+		}
+	} else {
+		hardwareHealth.EnvironmentMonitorState = &state
+		empty = false
+	}
+
+	fans, err := c.head.GetHardwareHealthComponentFans(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get fans")
+		}
+	} else {
+		hardwareHealth.Fans = fans
+		empty = false
+	}
+
+	powerSupply, err := c.head.GetHardwareHealthComponentPowerSupply(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+		}
+	} else {
+		hardwareHealth.PowerSupply = powerSupply
+		empty = false
+	}
+
+	if empty {
+		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+	}
+
+	return hardwareHealth, nil
+}
+
 func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
 	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getHardwareHealthComponentEnvironmentMonitorState
 	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getHardwareHealthComponentEnvironmentMonitorState), emptyAdapterFunc).(adapterFunc)
@@ -1039,14 +1181,4 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponentPowerSupply(ctx co
 
 func (c *networkDeviceCommunicator) isHead() bool {
 	return c.head.GetDeviceClass() == c.GetDeviceClass()
-}
-
-func normalizeInterfaces(interfaces []device.Interface) []device.Interface {
-	for i, interf := range interfaces {
-		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == math.MaxUint32 {
-			ifSpeed := *interf.IfHighSpeed * 1000000
-			interfaces[i].IfSpeed = &ifSpeed
-		}
-	}
-	return interfaces
 }

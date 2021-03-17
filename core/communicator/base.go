@@ -12,7 +12,8 @@ type baseCommunicator struct {
 
 type relatedNetworkDeviceCommunicators struct {
 	head NetworkDeviceCommunicator
-	sub  NetworkDeviceCommunicator
+	//nolint
+	sub NetworkDeviceCommunicator
 }
 
 func (c *baseCommunicator) GetVendor(_ context.Context) (string, error) {

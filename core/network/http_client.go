@@ -157,10 +157,6 @@ func (h *HTTPClient) Request(ctx context.Context, method, path, body string, hea
 	}
 
 	var response *resty.Response
-	response = nil
-
-	var err error
-	err = nil
 
 	URLStr := "https"
 	if !h.useHTTPS {

@@ -1,6 +1,9 @@
 package request
 
-import "context"
+import (
+	"context"
+	"github.com/inexio/go-monitoringplugin"
+)
 
 // CheckUPSRequest
 //
@@ -9,31 +12,31 @@ import "context"
 // swagger:model
 type CheckUPSRequest struct {
 	CheckDeviceRequest
-	BatteryCurrentThresholds     CheckThresholds `json:"batteryCurrentThresholds" xml:"batteryCurrentThresholds"`
-	BatteryTemperatureThresholds CheckThresholds `json:"batteryTemperatureThresholds" xml:"batteryTemperatureThresholds"`
-	CurrentLoadThresholds        CheckThresholds `json:"currentLoadThresholds" xml:"currentLoadThresholds"`
-	RectifierCurrentThresholds   CheckThresholds `json:"rectifierCurrentThresholds" xml:"rectifierCurrentThresholds"`
-	SystemVoltageThresholds      CheckThresholds `json:"systemVoltageThresholds" xml:"systemVoltageThresholds"`
+	BatteryCurrentThresholds     monitoringplugin.Thresholds `json:"batteryCurrentThresholds" xml:"batteryCurrentThresholds"`
+	BatteryTemperatureThresholds monitoringplugin.Thresholds `json:"batteryTemperatureThresholds" xml:"batteryTemperatureThresholds"`
+	CurrentLoadThresholds        monitoringplugin.Thresholds `json:"currentLoadThresholds" xml:"currentLoadThresholds"`
+	RectifierCurrentThresholds   monitoringplugin.Thresholds `json:"rectifierCurrentThresholds" xml:"rectifierCurrentThresholds"`
+	SystemVoltageThresholds      monitoringplugin.Thresholds `json:"systemVoltageThresholds" xml:"systemVoltageThresholds"`
 }
 
 func (r *CheckUPSRequest) validate(ctx context.Context) error {
-	if err := r.BatteryCurrentThresholds.validate(); err != nil {
+	if err := r.BatteryCurrentThresholds.Validate(); err != nil {
 		return err
 	}
 
-	if err := r.BatteryTemperatureThresholds.validate(); err != nil {
+	if err := r.BatteryTemperatureThresholds.Validate(); err != nil {
 		return err
 	}
 
-	if err := r.CurrentLoadThresholds.validate(); err != nil {
+	if err := r.CurrentLoadThresholds.Validate(); err != nil {
 		return err
 	}
 
-	if err := r.RectifierCurrentThresholds.validate(); err != nil {
+	if err := r.RectifierCurrentThresholds.Validate(); err != nil {
 		return err
 	}
 
-	if err := r.SystemVoltageThresholds.validate(); err != nil {
+	if err := r.SystemVoltageThresholds.Validate(); err != nil {
 		return err
 	}
 

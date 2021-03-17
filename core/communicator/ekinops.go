@@ -15,6 +15,7 @@ type ekinopsCommunicator struct {
 	baseCommunicator
 }
 
+// GetInterfaces returns the interfaces of ekinops devices.
 func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
 	interfaces, err := c.GetIfTable(ctx)
 	if err != nil {
@@ -69,6 +70,8 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 	return normalizeEkinopsInterfaces(interfaces)
 }
 
+// GetInterfaces returns the interfaces of ekinops devices.
+// For ekinops devices, only a few interface values are required.
 func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	if genericDeviceClass.components.interfaces.IfTable == nil {
 		return nil, errors.New("ifTable information is empty")
@@ -76,8 +79,14 @@ func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interfac
 
 	reader := *genericDeviceClass.components.interfaces.IfTable.(*snmpGroupPropertyReader)
 	oids := make(deviceClassOIDs)
+
+	regex, err := regexp.Compile("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
+
 	for oid, value := range reader.oids {
-		if ok, err := regexp.MatchString("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)", oid); err == nil && ok {
+		if regex.MatchString(oid) {
 			oids[oid] = value
 		}
 	}
@@ -97,7 +106,7 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 		if interf.IfName == nil {
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
-		identifier := strings.Join(strings.Split(*interf.IfName, "/")[2:], "/")
+		identifier := strings.Split(strings.Join(strings.Split(*interf.IfName, "/")[2:], "/"), "(")[0]
 
 		if _, ok := m[identifier]; ok {
 			return nil, fmt.Errorf("interface identifier `%s` exists multiple times", *interf.IfName)

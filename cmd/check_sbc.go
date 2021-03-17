@@ -20,7 +20,7 @@ var checkSBCCMD = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckSBCRequest{
 			CheckDeviceRequest:          getCheckDeviceRequest(args[0]),
-			SystemHealthScoreThresholds: generateCheckThresholds(cmd, "system-health-score-warning", "", "system-health-score-critical", ""),
+			SystemHealthScoreThresholds: generateCheckThresholds(cmd, "system-health-score-warning", "", "system-health-score-critical", "", false),
 		}
 		handleRequest(&r)
 	},

@@ -11,6 +11,8 @@ type ceraosIP10Communicator struct {
 	baseCommunicator
 }
 
+// GetIfTable returns the ifTable of ceraos/ip10 devices.
+// These devices need special behavior radio and ethernet interfaces.
 func (c *ceraosIP10Communicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	subInterfaces, err := c.sub.GetIfTable(ctx)
 	if err != nil {
@@ -19,13 +21,13 @@ func (c *ceraosIP10Communicator) GetIfTable(ctx context.Context) ([]device.Inter
 
 	var targetInterface device.Interface
 
-	for i, inter := range subInterfaces {
-		ok, err := regexp.MatchString("^Ethernet #8$", *inter.IfDescr)
-		if err != nil {
-			return nil, errors.Wrap(err, "an unexpected error occurred while trying to match a regexp")
-		}
+	regex, err := regexp.Compile("^Ethernet #8$")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
 
-		if ok {
+	for i, inter := range subInterfaces {
+		if regex.MatchString(*inter.IfDescr) {
 			targetInterface = inter
 			copy(subInterfaces[i:], subInterfaces[i+1:])
 			subInterfaces = subInterfaces[:len(subInterfaces)-1]
@@ -33,13 +35,13 @@ func (c *ceraosIP10Communicator) GetIfTable(ctx context.Context) ([]device.Inter
 		}
 	}
 
-	for i := range subInterfaces {
-		ok, err := regexp.MatchString("^Radio Interface #[0-9]+$", *subInterfaces[i].IfDescr)
-		if err != nil {
-			return nil, errors.Wrap(err, "an unexpected error occurred while trying to match a regexp")
-		}
+	regex, err = regexp.Compile("^Radio Interface #[0-9]+$")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
 
-		if ok {
+	for i := range subInterfaces {
+		if regex.MatchString(*subInterfaces[i].IfDescr) {
 			subInterfaces[i].IfHCInOctets = targetInterface.IfHCInOctets
 			subInterfaces[i].IfHCOutOctets = targetInterface.IfHCOutOctets
 			subInterfaces[i].IfOperStatus = targetInterface.IfOperStatus

@@ -1,6 +1,9 @@
 package request
 
-import "context"
+import (
+	"context"
+	"github.com/inexio/go-monitoringplugin"
+)
 
 // CheckMemoryUsageRequest
 //
@@ -9,11 +12,11 @@ import "context"
 // swagger:model
 type CheckMemoryUsageRequest struct {
 	CheckDeviceRequest
-	MemoryUsageThresholds CheckThresholds `json:"memoryUsageThresholds" xml:"memoryUsageThresholds"`
+	MemoryUsageThresholds monitoringplugin.Thresholds `json:"memoryUsageThresholds" xml:"memoryUsageThresholds"`
 }
 
 func (r *CheckMemoryUsageRequest) validate(ctx context.Context) error {
-	if err := r.MemoryUsageThresholds.validate(); err != nil {
+	if err := r.MemoryUsageThresholds.Validate(); err != nil {
 		return err
 	}
 	return r.CheckDeviceRequest.validate(ctx)

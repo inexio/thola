@@ -20,7 +20,7 @@ type statistics struct {
 	totalResponseTime time.Duration
 }
 
-// Statistics includes stats of all requests handled by the api
+// Statistics includes stats of all requests handled by the api.
 type Statistics struct {
 	UpSince             time.Time
 	TotalCount          int
@@ -41,7 +41,7 @@ func handlerFunc(h http.Handler) http.Handler {
 	})
 }
 
-// Middleware represents an API middleware
+// Middleware represents an API middleware.
 func Middleware() echo.MiddlewareFunc {
 	stats.Do(func() {
 		stats.init()
@@ -66,7 +66,7 @@ func (s *statistics) add(startTime time.Time, statusCode int) {
 	}
 }
 
-// GetStatistics returns the current statistics
+// GetStatistics returns the current statistics.
 func GetStatistics() (Statistics, error) {
 	stats.RLock()
 	defer stats.RUnlock()

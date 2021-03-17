@@ -15,10 +15,12 @@ type poweronePCCCommunicator struct {
 	baseCommunicator
 }
 
+// GetUPSComponentMainsVoltageApplied returns the ups state of powerone/acc devices.
 func (c *poweroneACCCommunicator) GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error) {
 	return getPoweroneMainsVoltageApplied(ctx, ".1.3.6.1.4.1.5961.4.3.2.0")
 }
 
+// GetUPSComponentMainsVoltageApplied returns the ups state of powerone/pcc devices.
 func (c *poweronePCCCommunicator) GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error) {
 	return getPoweroneMainsVoltageApplied(ctx, ".1.3.6.1.4.1.5961.3.3.2.0")
 }

@@ -12,6 +12,7 @@ type ironwareCommunicator struct {
 	baseCommunicator
 }
 
+// GetCPUComponentCPULoad returns the cpu load of ironware devices.
 func (c *ironwareCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {

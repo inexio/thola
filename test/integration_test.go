@@ -368,12 +368,14 @@ func buildRecursiveTestDevices(dir, relativePath string) ([]testDevice, error) {
 	}
 	var subDirs []os.FileInfo
 	files := make(map[string]string)
+
+	regex, err := regexp.Compile(`^\..*`)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to build regex")
+	}
+
 	for _, f := range fileDir {
-		res, err := regexp.MatchString("^\\..*", f.Name())
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to match regex")
-		}
-		if !res {
+		if !regex.MatchString(f.Name()) {
 			if f.IsDir() {
 				subDirs = append(subDirs, f)
 			} else {
@@ -491,8 +493,8 @@ func metricsRawOutputFilter() cmp.Option {
 }
 
 func metricsTransformer() cmp.Option {
-	return cmp.Transformer("Sort", func(in []monitoringplugin.PerformanceDataPointInfo) []monitoringplugin.PerformanceDataPointInfo {
-		out := make([]monitoringplugin.PerformanceDataPointInfo, len(in))
+	return cmp.Transformer("Sort", func(in []monitoringplugin.PerformanceDataPoint) []monitoringplugin.PerformanceDataPoint {
+		out := make([]monitoringplugin.PerformanceDataPoint, len(in))
 		copy(out, in)
 		sort.Slice(out, func(i, j int) bool {
 			return out[i].Label+out[i].Metric < out[j].Label+out[j].Metric
@@ -502,7 +504,7 @@ func metricsTransformer() cmp.Option {
 }
 
 func performanceDataPointComparer() cmp.Option {
-	return cmp.Comparer(func(x, y monitoringplugin.PerformanceDataPointInfo) bool {
+	return cmp.Comparer(func(x, y monitoringplugin.PerformanceDataPoint) bool {
 		return fmt.Sprint(x) == fmt.Sprint(y)
 	})
 }

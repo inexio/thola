@@ -5,9 +5,7 @@ package request
 import (
 	"context"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/utility"
-	"github.com/inexio/thola/core/value"
 )
 
 func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
@@ -19,53 +17,102 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
-	err = addCheckUPSPerformanceData(readUPSResponse.UPS, r.mon)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
-		r.mon.PrintPerformanceData(false)
-		return &CheckResponse{r.mon.GetInfo()}, nil
+	if readUPSResponse.UPS.AlarmLowVoltageDisconnect != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm_low_voltage_disconnect", *readUPSResponse.UPS.AlarmLowVoltageDisconnect))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryAmperage != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_amperage", *readUPSResponse.UPS.BatteryAmperage))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryRemainingTime != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_remaining_time", *readUPSResponse.UPS.BatteryRemainingTime))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryCapacity != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *readUPSResponse.UPS.BatteryCapacity))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryCurrent != nil {
+		err := r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("batt_current", *readUPSResponse.UPS.BatteryCurrent).
+				SetThresholds(r.BatteryCurrentThresholds))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryTemperature != nil {
+		err := r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("batt_temperature", *readUPSResponse.UPS.BatteryTemperature).
+				SetThresholds(r.BatteryTemperatureThresholds))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.BatteryVoltage != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_voltage", *readUPSResponse.UPS.BatteryVoltage))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if readUPSResponse.UPS.CurrentLoad != nil {
+		err := r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("current_load", *readUPSResponse.UPS.CurrentLoad).
+				SetThresholds(r.CurrentLoadThresholds))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
 	}
 
 	if readUPSResponse.UPS.MainsVoltageApplied != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("mains_voltage_applied", utility.IfThenElse(*readUPSResponse.UPS.MainsVoltageApplied, 1, 0)))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
 		r.mon.UpdateStatusIfNot(*readUPSResponse.UPS.MainsVoltageApplied, monitoringplugin.CRITICAL, "Mains voltage is not applied")
 	}
 
-	if !r.BatteryCurrentThresholds.isEmpty() {
-		if readUPSResponse.UPS.BatteryCurrent == nil {
-			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "battery current value is empty")
-		} else if status := r.BatteryCurrentThresholds.checkValue(value.New(*readUPSResponse.UPS.BatteryCurrent)); status != monitoringplugin.OK {
-			r.mon.UpdateStatus(status, "battery current is outside of threshold")
+	if readUPSResponse.UPS.RectifierCurrent != nil {
+		err := r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("rectifier_current", *readUPSResponse.UPS.RectifierCurrent).
+				SetThresholds(r.RectifierCurrentThresholds))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if !r.BatteryTemperatureThresholds.isEmpty() {
-		if readUPSResponse.UPS.BatteryTemperature == nil {
-			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "battery temperature value is empty")
-		} else if status := r.BatteryTemperatureThresholds.checkValue(value.New(*readUPSResponse.UPS.BatteryTemperature)); status != monitoringplugin.OK {
-			r.mon.UpdateStatus(status, "battery temperature is outside of threshold")
-		}
-	}
-
-	if !r.CurrentLoadThresholds.isEmpty() {
-		if readUPSResponse.UPS.CurrentLoad == nil {
-			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "current load value is empty")
-		} else if status := r.CurrentLoadThresholds.checkValue(value.New(*readUPSResponse.UPS.CurrentLoad)); status != monitoringplugin.OK {
-			r.mon.UpdateStatus(status, "current load is outside of threshold")
-		}
-	}
-
-	if !r.RectifierCurrentThresholds.isEmpty() {
-		if readUPSResponse.UPS.RectifierCurrent == nil {
-			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "rectifier current value is empty")
-		} else if status := r.RectifierCurrentThresholds.checkValue(value.New(*readUPSResponse.UPS.RectifierCurrent)); status != monitoringplugin.OK {
-			r.mon.UpdateStatus(status, "rectifier current is outside of threshold")
-		}
-	}
-
-	if !r.SystemVoltageThresholds.isEmpty() {
-		if readUPSResponse.UPS.SystemVoltage == nil {
-			r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "system voltage value is empty")
-		} else if status := r.SystemVoltageThresholds.checkValue(value.New(*readUPSResponse.UPS.SystemVoltage)); status != monitoringplugin.OK {
-			r.mon.UpdateStatus(status, "system voltage is outside of threshold")
+	if readUPSResponse.UPS.SystemVoltage != nil {
+		err := r.mon.AddPerformanceDataPoint(
+			monitoringplugin.NewPerformanceDataPoint("sys_voltage", *readUPSResponse.UPS.SystemVoltage).
+				SetThresholds(r.SystemVoltageThresholds))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
@@ -81,84 +128,4 @@ func (r *CheckUPSRequest) getData(ctx context.Context) (*ReadUPSResponse, error)
 
 	readUPSResponse := response.(*ReadUPSResponse)
 	return readUPSResponse, nil
-}
-
-func addCheckUPSPerformanceData(ups device.UPSComponent, r *monitoringplugin.Response) error {
-	if ups.AlarmLowVoltageDisconnect != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm_low_voltage_disconnect", *ups.AlarmLowVoltageDisconnect, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryAmperage != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_amperage", *ups.BatteryAmperage, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryRemainingTime != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_remaining_time", *ups.BatteryRemainingTime, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryCapacity != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *ups.BatteryCapacity, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryCurrent != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_current", *ups.BatteryCurrent, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryTemperature != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_temperature", *ups.BatteryTemperature, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.BatteryVoltage != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_voltage", *ups.BatteryVoltage, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.CurrentLoad != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("current_load", *ups.CurrentLoad, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.MainsVoltageApplied != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("mains_voltage_applied", utility.IfThenElse(*ups.MainsVoltageApplied, 1, 0), ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.RectifierCurrent != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rectifier_current", *ups.RectifierCurrent, ""))
-		if err != nil {
-			return err
-		}
-	}
-
-	if ups.SystemVoltage != nil {
-		err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("sys_voltage", *ups.SystemVoltage, ""))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

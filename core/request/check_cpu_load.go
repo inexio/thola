@@ -1,6 +1,9 @@
 package request
 
-import "context"
+import (
+	"context"
+	"github.com/inexio/go-monitoringplugin"
+)
 
 // CheckCPULoadRequest
 //
@@ -9,11 +12,11 @@ import "context"
 // swagger:model
 type CheckCPULoadRequest struct {
 	CheckDeviceRequest
-	CPULoadThresholds CheckThresholds `json:"cpuLoadThresholds" xml:"cpuLoadThresholds"`
+	CPULoadThresholds monitoringplugin.Thresholds `json:"cpuLoadThresholds" xml:"cpuLoadThresholds"`
 }
 
 func (r *CheckCPULoadRequest) validate(ctx context.Context) error {
-	if err := r.CPULoadThresholds.validate(); err != nil {
+	if err := r.CPULoadThresholds.Validate(); err != nil {
 		return err
 	}
 	return r.CheckDeviceRequest.validate(ctx)

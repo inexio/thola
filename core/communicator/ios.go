@@ -11,6 +11,7 @@ type iosCommunicator struct {
 	baseCommunicator
 }
 
+// GetCPUComponentCPULoad returns the cpu load of ios devices.
 func (c *iosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
