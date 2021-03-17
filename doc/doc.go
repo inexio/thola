@@ -27,4 +27,4 @@
 // swagger:meta
 package doc
 
-const Version = "v0.2.2"
+const Version = "v0.2.3"
