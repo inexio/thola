@@ -165,7 +165,7 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 		for channelIdx := 16; channelIdx <= 776; channelIdx += 8 {
 			rxPower := channelValues[k][channelIdx]
 
-			channel := device.OpticalOPMChannel{
+			channel := device.OpticalChannel{
 				Channel: fmt.Sprintf("C%.2f", channelNum),
 				RXPower: &rxPower,
 			}

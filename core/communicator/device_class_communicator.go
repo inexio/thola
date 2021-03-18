@@ -111,7 +111,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 	}
 
 	for t, typeDef := range o.components.interfaces.Types {
-		specialInterfacesRaw, err := o.getValuesBySNMPWalk(ctx, typeDef.Values)
+		specialInterfacesRaw, err := getValuesBySNMPWalk(ctx, typeDef.Values)
 		if err != nil {
 			return nil, err
 		}
@@ -128,54 +128,6 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 	}
 
 	return networkInterfaces, nil
-}
-
-func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues interface{}) error {
-	switch interfaceType {
-	case "ether_like":
-		var specialValuesStruct device.EthernetLikeInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.EthernetLike = &specialValuesStruct
-	case "radio":
-		var specialValuesStruct device.RadioInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.Radio = &specialValuesStruct
-	case "dwdm":
-		var specialValuesStruct device.DWDMInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.DWDM = &specialValuesStruct
-	case "optical_transponder":
-		var specialValuesStruct device.OpticalTransponderInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalTransponder = &specialValuesStruct
-	case "optical_amplifier":
-		var specialValuesStruct device.OpticalAmplifierInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalAmplifier = &specialValuesStruct
-	case "optical_opm":
-		var specialValuesStruct device.OpticalOPMInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalOPM = &specialValuesStruct
-	}
-	return nil
 }
 
 func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
@@ -805,7 +757,7 @@ func convertRawInterfaces(ctx context.Context, interfacesRaw []map[string]value.
 	return networkInterfaces, nil
 }
 
-func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
+func getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
 	networkInterfaces := make(map[string]map[string]interface{})
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
@@ -848,4 +800,52 @@ func (o *deviceClassCommunicator) getValuesBySNMPWalk(ctx context.Context, oids 
 	}
 
 	return networkInterfaces, nil
+}
+
+func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues map[string]interface{}) error {
+	switch interfaceType {
+	case "ether_like":
+		var specialValuesStruct device.EthernetLikeInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.EthernetLike = &specialValuesStruct
+	case "radio":
+		var specialValuesStruct device.RadioInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.Radio = &specialValuesStruct
+	case "dwdm":
+		var specialValuesStruct device.DWDMInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.DWDM = &specialValuesStruct
+	case "optical_transponder":
+		var specialValuesStruct device.OpticalTransponderInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalTransponder = &specialValuesStruct
+	case "optical_amplifier":
+		var specialValuesStruct device.OpticalAmplifierInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalAmplifier = &specialValuesStruct
+	case "optical_opm":
+		var specialValuesStruct device.OpticalOPMInterface
+		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
+		if err != nil {
+			return errors.Wrap(err, "failed to decode special values")
+		}
+		interf.OpticalOPM = &specialValuesStruct
+	}
+	return nil
 }

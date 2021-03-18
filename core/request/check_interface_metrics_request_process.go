@@ -468,15 +468,29 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//DWDM interface metrics
 		if i.DWDM != nil {
-			if i.DWDM.RXLevel != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_level", *i.DWDM.RXLevel).SetLabel(*i.IfDescr))
+			if i.DWDM.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.DWDM.RXPower).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 
-			if i.DWDM.TXLevel != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_level", *i.DWDM.TXLevel).SetLabel(*i.IfDescr))
+			if i.DWDM.TXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.DWDM.TXPower).SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+
+			if i.DWDM.RXPower100G != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power_100_g", *i.DWDM.RXPower100G).SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+
+			if i.DWDM.TXPower100G != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power_100_g", *i.DWDM.TXPower100G).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
