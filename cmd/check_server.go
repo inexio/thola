@@ -8,6 +8,11 @@ import (
 func init() {
 	addDeviceFlags(checkServerCMD)
 	checkCMD.AddCommand(checkServerCMD)
+
+	checkServerCMD.Flags().Float64("procs-warning", 0, "warning threshold for procs count")
+	checkServerCMD.Flags().Float64("procs-critical", 0, "critical threshold for procs count")
+	checkServerCMD.Flags().Float64("users-warning", 0, "warning threshold for users count")
+	checkServerCMD.Flags().Float64("users-critical", 0, "critical threshold for users count")
 }
 
 var checkServerCMD = &cobra.Command{
@@ -18,6 +23,8 @@ var checkServerCMD = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckServerRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
+			UsersThreshold:     generateCheckThresholds(cmd, "", "users-warning", "", "users-critical", true),
+			ProcsThreshold:     generateCheckThresholds(cmd, "", "procs-warning", "", "procs-critical", true),
 		}
 		handleRequest(&r)
 	},
