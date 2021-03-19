@@ -495,6 +495,22 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 					return err
 				}
 			}
+
+			for _, channel := range i.DWDM.Channels {
+				if channel.RXPower != nil {
+					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
+					if err != nil {
+						return err
+					}
+				}
+
+				if channel.TXPower != nil {
+					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *channel.TXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
+					if err != nil {
+						return err
+					}
+				}
+			}
 		}
 
 		//OpticalAmplifier
