@@ -25,11 +25,11 @@ func (c *advaCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfac
 		return nil, err
 	}
 
-	if advaGetDWDMInterfaces(ctx, interfaces) != nil {
+	if err = advaGetDWDMInterfaces(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
-	if advaGetChannelMatrix(ctx, interfaces) != nil {
+	if err = advaGetChannelMatrix(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
@@ -109,6 +109,46 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 			}
 			if txOK {
 				interfaces[i].DWDM.TXPower100G = &txVal
+			}
+		}
+
+		if interf.IfIndex != nil {
+			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2."+fmt.Sprint(*interf.IfIndex)+".1")
+			if err == nil && len(res) == 1 {
+				valString, err := res[0].GetValueString()
+				if err != nil {
+					return errors.Wrap(err, "failed to get corrected bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+				}
+
+				val, err := strconv.ParseUint(valString, 0, 64)
+				if err != nil {
+					return errors.Wrap(err, "failed to parse corrected bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+				}
+
+				if interfaces[i].DWDM == nil {
+					interfaces[i].DWDM = &device.DWDMInterface{}
+				}
+
+				interfaces[i].DWDM.CorrectedBitErrorRate = &val
+			}
+
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3."+fmt.Sprint(*interf.IfIndex)+".1")
+			if err == nil && len(res) == 1 {
+				valString, err := res[0].GetValueString()
+				if err != nil {
+					return errors.Wrap(err, "failed to get uncorrected bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+				}
+
+				val, err := strconv.ParseUint(valString, 0, 64)
+				if err != nil {
+					return errors.Wrap(err, "failed to parse uncorrected bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+				}
+
+				if interfaces[i].DWDM == nil {
+					interfaces[i].DWDM = &device.DWDMInterface{}
+				}
+
+				interfaces[i].DWDM.UncorrectedBitErrorRate = &val
 			}
 		}
 	}

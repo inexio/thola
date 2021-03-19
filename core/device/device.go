@@ -166,11 +166,13 @@ type RadioInterface struct {
 //
 // swagger:model
 type DWDMInterface struct {
-	RXPower     *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower     *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	RXPower100G *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
-	TXPower100G *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
-	Channels    []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	RXPower                 *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower                 *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	RXPower100G             *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
+	TXPower100G             *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
+	CorrectedBitErrorRate   *uint64          `yaml:"corrected_bit_error_rate,omitempty" json:"corrected_bit_error_rate,omitempty" xml:"corrected_bit_error_rate,omitempty" mapstructure:"corrected_bit_error_rate"`
+	UncorrectedBitErrorRate *uint64          `yaml:"uncorrected_bit_error_rate,omitempty" json:"uncorrected_bit_error_rate,omitempty" xml:"uncorrected_bit_error_rate,omitempty" mapstructure:"uncorrected_bit_error_rate"`
+	Channels                []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
 // OpticalTransponderInterface

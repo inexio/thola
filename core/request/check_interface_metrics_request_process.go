@@ -496,6 +496,20 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 
+			if i.DWDM.CorrectedBitErrorRate != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_bit_error_rate", *i.DWDM.CorrectedBitErrorRate).SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+
+			if i.DWDM.UncorrectedBitErrorRate != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_bit_error_rate", *i.DWDM.UncorrectedBitErrorRate).SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+
 			for _, channel := range i.DWDM.Channels {
 				if channel.RXPower != nil {
 					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
