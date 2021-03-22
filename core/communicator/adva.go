@@ -93,12 +93,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 
 	rx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.21")
 	if err != nil {
-		return errors.Wrap(err, "failed to get rx 100 values")
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get rx 100 values")
 	}
 
 	tx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.22")
 	if err != nil {
-		return errors.Wrap(err, "failed to get tx 100 values")
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to get tx 100 values")
 	}
 
 	for i, interf := range interfaces {
@@ -117,6 +117,7 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 		}
 
 		if interf.IfIndex != nil {
+			// corrected bit error rate
 			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2."+fmt.Sprint(*interf.IfIndex)+".1")
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
@@ -136,6 +137,7 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 				interfaces[i].DWDM.CorrectedBitErrorRate = &val
 			}
 
+			// uncorrected bit error rate
 			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3."+fmt.Sprint(*interf.IfIndex)+".1")
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
@@ -221,6 +223,9 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 		channels[i].TXPower = &valFin
 
 		p := strings.Split(strings.ReplaceAll(strings.Trim(subtree, "."), "33152", "N"), ".")
+		if len(p) < 3 {
+			return errors.New("invalid channel identifier")
+		}
 		regex, err := regexp.Compile("-" + p[0] + "-" + p[1] + "-" + p[2])
 		if err != nil {
 			return errors.Wrap(err, "failed to build regex")
@@ -344,7 +349,7 @@ func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, er
 
 	values, err := con.SNMP.SnmpClient.SNMPWalk(ctx, oid)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to walk facilityPhysInstValueCalculatedTotalPower")
+		return nil, errors.Wrap(err, "failed to walk "+oid)
 	}
 
 	descrToValues := make(map[string]float64)
@@ -353,7 +358,7 @@ func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, er
 		subtree := strings.TrimPrefix(val.GetOID(), oid)
 		subtreeSplit := strings.Split(strings.Trim(subtree, "."), ".")
 		if len(subtreeSplit) < 3 {
-			return nil, errors.New("invalid facilityPhysInstValueCalculatedTotalPower value")
+			return nil, errors.New("invalid value for oid " + oid)
 		}
 
 		valueString, err := val.GetValueString()
