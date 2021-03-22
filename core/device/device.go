@@ -173,6 +173,7 @@ type DWDMInterface struct {
 	CorrectedBitErrorRate   *uint64          `yaml:"corrected_bit_error_rate,omitempty" json:"corrected_bit_error_rate,omitempty" xml:"corrected_bit_error_rate,omitempty" mapstructure:"corrected_bit_error_rate"`
 	UncorrectedBitErrorRate *uint64          `yaml:"uncorrected_bit_error_rate,omitempty" json:"uncorrected_bit_error_rate,omitempty" xml:"uncorrected_bit_error_rate,omitempty" mapstructure:"uncorrected_bit_error_rate"`
 	Channels                []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	Channels100G            []OpticalChannel `yaml:"channels_100_g,omitempty" json:"channels_100_g,omitempty" xml:"channels_100_g,omitempty" mapstructure:"channels_100_g"`
 }
 
 // OpticalTransponderInterface
