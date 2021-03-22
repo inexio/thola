@@ -1001,7 +1001,7 @@
       "title": "CheckCPULoadRequest",
       "properties": {
         "cpuLoadThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "device_data": {
           "$ref": "#/definitions/DeviceData"
@@ -1057,7 +1057,7 @@
           "$ref": "#/definitions/DeviceData"
         },
         "diskThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "json_metrics": {
           "type": "boolean",
@@ -1209,7 +1209,7 @@
           "x-go-name": "JSONMetrics"
         },
         "memoryUsageThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "print_performance_data": {
           "type": "boolean",
@@ -1255,7 +1255,7 @@
         "performance_data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/PerformanceDataPointInfo"
+            "$ref": "#/definitions/PerformanceDataPoint"
           },
           "x-go-name": "PerformanceData"
         },
@@ -1277,7 +1277,7 @@
       "title": "CheckSBCRequest",
       "properties": {
         "SystemHealthScoreThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "device_data": {
           "$ref": "#/definitions/DeviceData"
@@ -1340,14 +1340,17 @@
           "type": "boolean",
           "x-go-name": "PrintPerformanceData"
         },
-        "serverThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+        "procsThreshold": {
+          "$ref": "#/definitions/Thresholds"
         },
         "timeout": {
           "description": "Timeout for the request (0 =\u003e no timeout)",
           "type": "integer",
           "format": "int64",
           "x-go-name": "Timeout"
+        },
+        "usersThreshold": {
+          "$ref": "#/definitions/Thresholds"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/request"
@@ -1373,45 +1376,19 @@
       },
       "x-go-package": "github.com/inexio/thola/core/request"
     },
-    "CheckThresholds": {
-      "type": "object",
-      "properties": {
-        "criticalMax": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "CriticalMax"
-        },
-        "criticalMin": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "CriticalMin"
-        },
-        "warningMax": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "WarningMax"
-        },
-        "warningMin": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "WarningMin"
-        }
-      },
-      "x-go-package": "github.com/inexio/thola/core/request"
-    },
     "CheckUPSRequest": {
       "description": "CheckUPSRequest is a the request struct for the check ups request.",
       "type": "object",
       "title": "CheckUPSRequest",
       "properties": {
         "batteryCurrentThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "batteryTemperatureThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "currentLoadThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "device_data": {
           "$ref": "#/definitions/DeviceData"
@@ -1425,10 +1402,10 @@
           "x-go-name": "PrintPerformanceData"
         },
         "rectifierCurrentThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "systemVoltageThresholds": {
-          "$ref": "#/definitions/CheckThresholds"
+          "$ref": "#/definitions/Thresholds"
         },
         "timeout": {
           "description": "Timeout for the request (0 =\u003e no timeout)",
@@ -1458,15 +1435,32 @@
       "type": "object",
       "title": "DWDMInterface",
       "properties": {
-        "rx_level": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "RXLevel"
+        "channels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OpticalChannel"
+          },
+          "x-go-name": "Channels"
         },
-        "tx_level": {
+        "rx_power": {
           "type": "number",
           "format": "double",
-          "x-go-name": "TXLevel"
+          "x-go-name": "RXPower"
+        },
+        "rx_power_100_g": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "RXPower100G"
+        },
+        "tx_power": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TXPower"
+        },
+        "tx_power_100_g": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TXPower100G"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
@@ -1991,10 +1985,10 @@
       },
       "x-go-package": "github.com/inexio/thola/core/device"
     },
-    "OpticalOPMChannel": {
-      "description": "OpticalOPMChannel represents an optical opm channel of an optical opm interface.",
+    "OpticalChannel": {
+      "description": "OpticalChannel represents an optical channel.",
       "type": "object",
-      "title": "OpticalOPMChannel",
+      "title": "OpticalChannel",
       "properties": {
         "channel": {
           "type": "string",
@@ -2004,6 +1998,11 @@
           "type": "number",
           "format": "double",
           "x-go-name": "RXPower"
+        },
+        "tx_power": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TXPower"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
@@ -2016,7 +2015,7 @@
         "channels": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/OpticalOPMChannel"
+            "$ref": "#/definitions/OpticalChannel"
           },
           "x-go-name": "Channels"
         },
@@ -2100,14 +2099,10 @@
       },
       "x-go-package": "github.com/inexio/go-monitoringplugin"
     },
-    "PerformanceDataPointInfo": {
-      "description": "PerformanceDataPointInfo has all information to one performance data point as exported variables. It is returned by\nPerformanceDataPoint.GetInfo()",
+    "PerformanceDataPoint": {
       "type": "object",
+      "title": "PerformanceDataPoint contains all information of one PerformanceDataPoint.",
       "properties": {
-        "crit": {
-          "type": "object",
-          "x-go-name": "Crit"
-        },
         "label": {
           "type": "string",
           "x-go-name": "Label"
@@ -2124,6 +2119,9 @@
           "type": "object",
           "x-go-name": "Min"
         },
+        "thresholds": {
+          "$ref": "#/definitions/Thresholds"
+        },
         "unit": {
           "type": "string",
           "x-go-name": "Unit"
@@ -2131,10 +2129,6 @@
         "value": {
           "type": "object",
           "x-go-name": "Value"
-        },
-        "warn": {
-          "type": "object",
-          "x-go-name": "Warn"
         }
       },
       "x-go-package": "github.com/inexio/go-monitoringplugin"
@@ -2555,7 +2549,7 @@
         "performance_data": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/PerformanceDataPointInfo"
+            "$ref": "#/definitions/PerformanceDataPoint"
           },
           "x-go-name": "PerformanceData"
         },
@@ -2796,6 +2790,29 @@
       "type": "string",
       "title": "Status represents an interface status.",
       "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "Thresholds": {
+      "description": "Thresholds contains all threshold values",
+      "type": "object",
+      "properties": {
+        "criticalMax": {
+          "type": "object",
+          "x-go-name": "CriticalMax"
+        },
+        "criticalMin": {
+          "type": "object",
+          "x-go-name": "CriticalMin"
+        },
+        "warningMax": {
+          "type": "object",
+          "x-go-name": "WarningMax"
+        },
+        "warningMin": {
+          "type": "object",
+          "x-go-name": "WarningMin"
+        }
+      },
+      "x-go-package": "github.com/inexio/go-monitoringplugin"
     },
     "UPSComponent": {
       "description": "UPSComponent represents a UPS component.",

@@ -166,8 +166,14 @@ type RadioInterface struct {
 //
 // swagger:model
 type DWDMInterface struct {
-	RXLevel *float64 `yaml:"rx_level,omitempty" json:"rx_level,omitempty" xml:"rx_level,omitempty" mapstructure:"rx_level"`
-	TXLevel *float64 `yaml:"tx_level,omitempty" json:"tx_level,omitempty" xml:"tx_level,omitempty" mapstructure:"tx_level"`
+	RXPower                 *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower                 *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	RXPower100G             *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
+	TXPower100G             *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
+	CorrectedBitErrorRate   *uint64          `yaml:"corrected_bit_error_rate,omitempty" json:"corrected_bit_error_rate,omitempty" xml:"corrected_bit_error_rate,omitempty" mapstructure:"corrected_bit_error_rate"`
+	UncorrectedBitErrorRate *uint64          `yaml:"uncorrected_bit_error_rate,omitempty" json:"uncorrected_bit_error_rate,omitempty" xml:"uncorrected_bit_error_rate,omitempty" mapstructure:"uncorrected_bit_error_rate"`
+	Channels                []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	Channels100G            []OpticalChannel `yaml:"channels_100_g,omitempty" json:"channels_100_g,omitempty" xml:"channels_100_g,omitempty" mapstructure:"channels_100_g"`
 }
 
 // OpticalTransponderInterface
@@ -203,20 +209,21 @@ type OpticalAmplifierInterface struct {
 //
 // swagger:model
 type OpticalOPMInterface struct {
-	Identifier *string             `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label      *string             `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower    *float64            `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	Channels   []OpticalOPMChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	Identifier *string          `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
+	Label      *string          `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
+	RXPower    *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	Channels   []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
-// OpticalOPMChannel
+// OpticalChannel
 //
-// OpticalOPMChannel represents an optical opm channel of an optical opm interface.
+// OpticalChannel represents an optical channel.
 //
 // swagger:model
-type OpticalOPMChannel struct {
+type OpticalChannel struct {
 	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
 	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
 }
 
 //
