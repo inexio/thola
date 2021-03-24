@@ -496,15 +496,15 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 
-			if i.DWDM.CorrectedBitErrorRate != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_bit_error_rate", *i.DWDM.CorrectedBitErrorRate).SetLabel(*i.IfDescr))
+			for _, rate := range i.DWDM.CorrectedFEC {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_rate_corrected_fec_"+rate.Time, rate.Value).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 
-			if i.DWDM.UncorrectedBitErrorRate != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_bit_error_rate", *i.DWDM.UncorrectedBitErrorRate).SetLabel(*i.IfDescr))
+			for _, rate := range i.DWDM.UncorrectedFEC {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_rate_uncorrected_fec_"+rate.Time, rate.Value).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -520,22 +520,6 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 				if channel.TXPower != nil {
 					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *channel.TXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
-					if err != nil {
-						return err
-					}
-				}
-			}
-
-			for _, channel := range i.DWDM.Channels100G {
-				if channel.RXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power_100_g", *channel.RXPower).SetLabel(channel.Channel))
-					if err != nil {
-						return err
-					}
-				}
-
-				if channel.TXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power_100_g", *channel.TXPower).SetLabel(channel.Channel))
 					if err != nil {
 						return err
 					}
@@ -580,13 +564,13 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 			if i.OpticalTransponder.CorrectedFEC != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("corrected_fec_counter", *i.OpticalTransponder.CorrectedFEC).SetUnit("c").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_corrected_fec", *i.OpticalTransponder.CorrectedFEC).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 			if i.OpticalTransponder.UncorrectedFEC != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("uncorrected_fec_counter", *i.OpticalTransponder.UncorrectedFEC).SetUnit("c").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_uncorrected_fec", *i.OpticalTransponder.UncorrectedFEC).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

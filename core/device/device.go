@@ -166,14 +166,13 @@ type RadioInterface struct {
 //
 // swagger:model
 type DWDMInterface struct {
-	RXPower                 *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower                 *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	RXPower100G             *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
-	TXPower100G             *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
-	CorrectedBitErrorRate   *uint64          `yaml:"corrected_bit_error_rate,omitempty" json:"corrected_bit_error_rate,omitempty" xml:"corrected_bit_error_rate,omitempty" mapstructure:"corrected_bit_error_rate"`
-	UncorrectedBitErrorRate *uint64          `yaml:"uncorrected_bit_error_rate,omitempty" json:"uncorrected_bit_error_rate,omitempty" xml:"uncorrected_bit_error_rate,omitempty" mapstructure:"uncorrected_bit_error_rate"`
-	Channels                []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
-	Channels100G            []OpticalChannel `yaml:"channels_100_g,omitempty" json:"channels_100_g,omitempty" xml:"channels_100_g,omitempty" mapstructure:"channels_100_g"`
+	RXPower        *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower        *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	RXPower100G    *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
+	TXPower100G    *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
+	CorrectedFEC   []Rate           `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
+	UncorrectedFEC []Rate           `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
+	Channels       []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
 // OpticalTransponderInterface
@@ -367,6 +366,16 @@ type HardwareHealthComponentFan struct {
 type HardwareHealthComponentPowerSupply struct {
 	Description *string `yaml:"description" json:"description" xml:"description"`
 	State       *int    `yaml:"state" json:"state" xml:"state"`
+}
+
+// Rate
+//
+// Rate encapsulates values which refer to a time span.
+//
+// swagger:model
+type Rate struct {
+	Time  string  `yaml:"time" json:"time" xml:"time"`
+	Value float64 `yaml:"value" json:"value" xml:"value"`
 }
 
 // NewContextWithDeviceProperties returns a new context with the device properties.
