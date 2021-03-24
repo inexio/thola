@@ -136,7 +136,7 @@ func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interfa
 
 		// change subType of OPM8 ports
 		if moduleName == "PM_OPM8" {
-			subType := "OPM8"
+			subType := "channelMonitoring"
 			interf.SubType = &subType
 		}
 

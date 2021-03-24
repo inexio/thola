@@ -223,11 +223,12 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 	facilityPhysInstValueInputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2"
 	facilityPhysInstValueInputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueInputPower)
 	if err != nil {
-		return []device.Interface{}, errors.Wrap(err, "failed to walk facilityPhysInstValueInputPower")
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk facilityPhysInstValueInputPower")
 	}
 
 	var subtrees []string
 	channels := make(map[string]device.OpticalChannel)
+	subtype := "channelMonitoring"
 
 	for _, res := range facilityPhysInstValueInputPowerValues {
 		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueInputPower)
@@ -290,6 +291,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 					interfaces[j].DWDM = &device.DWDMInterface{}
 				}
 				interfaces[j].DWDM.Channels = append(interfaces[j].DWDM.Channels, channel)
+				interfaces[j].SubType = &subtype
 				break
 			}
 		}
