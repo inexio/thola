@@ -1442,6 +1442,13 @@
           },
           "x-go-name": "Channels"
         },
+        "corrected_fec": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Rate"
+          },
+          "x-go-name": "CorrectedFEC"
+        },
         "rx_power": {
           "type": "number",
           "format": "double",
@@ -1461,6 +1468,13 @@
           "type": "number",
           "format": "double",
           "x-go-name": "TXPower100G"
+        },
+        "uncorrected_fec": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Rate"
+          },
+          "x-go-name": "UncorrectedFEC"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
@@ -2195,6 +2209,23 @@
           "type": "integer",
           "format": "uint64",
           "x-go-name": "MaxbitrateOut"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "Rate": {
+      "description": "Rate encapsulates values which refer to a time span.",
+      "type": "object",
+      "title": "Rate",
+      "properties": {
+        "time": {
+          "type": "string",
+          "x-go-name": "Time"
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Value"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"

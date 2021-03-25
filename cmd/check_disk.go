@@ -21,7 +21,7 @@ var checkDiskCMD = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		r := request.CheckDiskRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
-			DiskThresholds:     generateCheckThresholds(cmd, "warning", "", "critical", "", false),
+			DiskThresholds:     generateCheckThresholds(cmd, "", "warning", "", "critical", true),
 		}
 		handleRequest(&r)
 	},
