@@ -13,16 +13,15 @@ import (
 )
 
 type interfaceCheckOutput struct {
-	IfIndex       string `json:"ifIndex"`
-	IfDescr       string `json:"ifDescr"`
-	IfType        string `json:"ifType"`
-	IfName        string `json:"ifName"`
-	IfAlias       string `json:"ifAlias"`
-	IfPhysAddress string `json:"ifPhysAddress"`
-	IfAdminStatus string `json:"ifAdminStatus"`
-	IfOperStatus  string `json:"ifOperStatus"`
-
-	SubType string `json:"subType"`
+	IfIndex       *string `json:"ifIndex"`
+	IfDescr       *string `json:"ifDescr"`
+	IfType        *string `json:"ifType"`
+	IfName        *string `json:"ifName"`
+	IfAlias       *string `json:"ifAlias"`
+	IfPhysAddress *string `json:"ifPhysAddress"`
+	IfAdminStatus *string `json:"ifAdminStatus"`
+	IfOperStatus  *string `json:"ifOperStatus"`
+	SubType       *string `json:"subType"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -37,34 +36,24 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 	if r.PrintInterfaces {
 		var interfaces []interfaceCheckOutput
 		for _, interf := range readInterfacesResponse.Interfaces {
-			x := interfaceCheckOutput{}
+			var index *string
 			if interf.IfIndex != nil {
-				x.IfIndex = fmt.Sprint(*interf.IfIndex)
+				i := fmt.Sprint(*interf.IfIndex)
+				index = &i
 			}
-			if interf.IfDescr != nil {
-				x.IfDescr = *interf.IfDescr
+
+			x := interfaceCheckOutput{
+				IfIndex:       index,
+				IfDescr:       interf.IfDescr,
+				IfName:        interf.IfName,
+				IfType:        interf.IfType,
+				IfAlias:       interf.IfAlias,
+				IfPhysAddress: interf.IfPhysAddress,
+				IfAdminStatus: (*string)(interf.IfAdminStatus),
+				IfOperStatus:  (*string)(interf.IfOperStatus),
+				SubType:       interf.SubType,
 			}
-			if interf.IfName != nil {
-				x.IfName = *interf.IfName
-			}
-			if interf.IfType != nil {
-				x.IfType = *interf.IfType
-			}
-			if interf.IfAlias != nil {
-				x.IfAlias = *interf.IfAlias
-			}
-			if interf.IfPhysAddress != nil {
-				x.IfPhysAddress = *interf.IfPhysAddress
-			}
-			if interf.IfAdminStatus != nil {
-				x.IfAdminStatus = string(*interf.IfAdminStatus)
-			}
-			if interf.IfOperStatus != nil {
-				x.IfOperStatus = string(*interf.IfOperStatus)
-			}
-			if interf.SubType != nil {
-				x.SubType = *interf.SubType
-			}
+
 			interfaces = append(interfaces, x)
 		}
 		output, err := parser.Parse(interfaces, "json")
