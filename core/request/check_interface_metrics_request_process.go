@@ -583,6 +583,30 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 		}
+
+		//SAP
+		if i.SAP != nil {
+			if i.SAP.Inbound != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+			if i.SAP.Outbound != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+		}
 	}
 	return nil
 }

@@ -120,6 +120,7 @@ type Interface struct {
 	OpticalTransponder *OpticalTransponderInterface `yaml:"optical_transponder,omitempty" json:"optical_transponder,omitempty" xml:"optical_transponder,omitempty"`
 	OpticalAmplifier   *OpticalAmplifierInterface   `yaml:"optical_amplifier,omitempty" json:"optical_amplifier,omitempty" xml:"optical_amplifier,omitempty"`
 	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty"`
+	SAP                *SAPInterface                `yaml:"sap,omitempty" json:"sap,omitempty" xml:"sap,omitempty"`
 }
 
 //
@@ -212,6 +213,16 @@ type OpticalOPMInterface struct {
 	Label      *string          `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
 	RXPower    *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
 	Channels   []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+}
+
+// SAPInterface
+//
+// SAPInterface represents a service access point interface.
+//
+// swagger:model
+type SAPInterface struct {
+	Inbound  *uint64 `yaml:"inbound,omitempty" json:"inbound,omitempty" xml:"inbound,omitempty" mapstructure:"inbound"`
+	Outbound *uint64 `yaml:"outbound,omitempty" json:"outbound,omitempty" xml:"outbound,omitempty" mapstructure:"outbound"`
 }
 
 // OpticalChannel
