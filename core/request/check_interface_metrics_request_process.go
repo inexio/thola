@@ -33,6 +33,12 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
+	err = addCheckInterfacePerformanceData(readInterfacesResponse.Interfaces, r.mon)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
 	if r.PrintInterfaces {
 		var interfaces []interfaceCheckOutput
 		for _, interf := range readInterfacesResponse.Interfaces {
@@ -62,11 +68,6 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 		r.mon.UpdateStatus(monitoringplugin.OK, string(output))
-	}
-
-	err = addCheckInterfacePerformanceData(readInterfacesResponse.Interfaces, r.mon)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
-		r.mon.PrintPerformanceData(false)
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil
@@ -466,20 +467,6 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 			if i.DWDM.TXPower != nil {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *i.DWDM.TXPower).SetLabel(*i.IfDescr))
-				if err != nil {
-					return err
-				}
-			}
-
-			if i.DWDM.RXPower100G != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power_100_g", *i.DWDM.RXPower100G).SetLabel(*i.IfDescr))
-				if err != nil {
-					return err
-				}
-			}
-
-			if i.DWDM.TXPower100G != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power_100_g", *i.DWDM.TXPower100G).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

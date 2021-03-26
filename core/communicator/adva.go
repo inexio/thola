@@ -108,11 +108,11 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			if (rxOK || txOK) && interf.DWDM == nil {
 				interfaces[i].DWDM = &device.DWDMInterface{}
 			}
-			if rxOK {
-				interfaces[i].DWDM.RXPower100G = &rxVal
+			if rxOK && (interfaces[i].DWDM.RXPower == nil || *interfaces[i].DWDM.RXPower == -6553.5) {
+				interfaces[i].DWDM.RXPower = &rxVal
 			}
-			if txOK {
-				interfaces[i].DWDM.TXPower100G = &txVal
+			if txOK && (interfaces[i].DWDM.TXPower == nil || *interfaces[i].DWDM.TXPower == -6553.5) {
+				interfaces[i].DWDM.TXPower = &txVal
 			}
 		}
 

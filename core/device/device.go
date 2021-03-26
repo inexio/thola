@@ -169,8 +169,6 @@ type RadioInterface struct {
 type DWDMInterface struct {
 	RXPower        *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
 	TXPower        *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	RXPower100G    *float64         `yaml:"rx_power_100_g,omitempty" json:"rx_power_100_g,omitempty" xml:"rx_power_100_g,omitempty" mapstructure:"rx_power_100_g"`
-	TXPower100G    *float64         `yaml:"tx_power_100_g,omitempty" json:"tx_power_100_g,omitempty" xml:"tx_power_100_g,omitempty" mapstructure:"tx_power_100_g"`
 	CorrectedFEC   []Rate           `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
 	UncorrectedFEC []Rate           `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
 	Channels       []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
