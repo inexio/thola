@@ -6,6 +6,7 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"strconv"
+	"strings"
 )
 
 type timosCommunicator struct {
@@ -24,13 +25,12 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 		return nil, errors.New("no device connection available")
 	}
 
-	descriptions, _ := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5")
-	inbounds, _ := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4")
-	outbounds, _ := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6")
-	if len(inbounds) != len(descriptions) || len(outbounds) != len(descriptions) {
-		return nil, errors.New("snmp tree lengths do not match")
+	ports := ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5"
+	descriptions, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ports)
+	if err != nil {
+		return nil, errors.Wrap(err, "error during snmp walk")
 	}
-	for i, response := range descriptions {
+	for _, response := range descriptions {
 		valueString, err := response.GetValueString()
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
@@ -38,19 +38,28 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 		if valueString == "" {
 			continue
 		}
-		in, err := inbounds[i].GetValueString()
+		index := strings.TrimPrefix(response.GetOID(), ports)
+		in, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4"+index)
+		if err != nil {
+			return nil, errors.Wrap(err, "error during snmp get")
+		}
+		inStr, err := in[0].GetValueString()
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
 		}
-		trafficIn, err := strconv.ParseUint(in, 0, 64)
+		trafficIn, err := strconv.ParseUint(inStr, 0, 64)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse snmp response")
 		}
-		out, err := outbounds[i].GetValueString()
+		out, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6"+index)
+		if err != nil {
+			return nil, errors.Wrap(err, "error during snmp get")
+		}
+		outStr, err := out[0].GetValueString()
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
 		}
-		trafficOut, err := strconv.ParseUint(out, 0, 64)
+		trafficOut, err := strconv.ParseUint(outStr, 0, 64)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse snmp response")
 		}
