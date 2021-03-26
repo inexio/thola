@@ -9,7 +9,6 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/go-cmp v0.5.4
 	github.com/gosnmp/gosnmp v1.30.0
-	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/inexio/go-monitoringplugin v1.0.6
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/labstack/echo/v4 v4.2.1

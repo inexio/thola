@@ -309,7 +309,7 @@ func advaGet100GInterfaces(ctx context.Context, interfaces []device.Interface) (
 	ports := ".1.3.6.1.4.1.2544.1.11.7.2.7.1.6"
 	portValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ports)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to walk ports")
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk 100g ports")
 	}
 
 	var subtrees []string
