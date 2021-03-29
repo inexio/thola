@@ -128,8 +128,8 @@ func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interfa
 		slotNumber := strings.Split(*interf.IfName, "/")[2]
 		moduleName := strings.Split(*interf.IfDescr, "/")[3]
 
-		// change ifType of ports of slots > 1 to "opticalChannel" if ifType equals "other", but not OPM8 interfaces
-		if !(slotNumber == "0" || slotNumber == "1") && interf.IfType != nil && *interf.IfType == "other" && moduleName != "PM_OPM8" {
+		// change ifType of ports of slots > 0 to "opticalChannel" if ifType equals "other", but not OPM8 interfaces
+		if slotNumber != "0" && interf.IfType != nil && *interf.IfType == "other" && moduleName != "PM_OPM8" {
 			opticalChannel := "opticalChannel"
 			interf.IfType = &opticalChannel
 		}
