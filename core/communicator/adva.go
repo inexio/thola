@@ -25,25 +25,21 @@ func (c *advaCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfac
 		return nil, err
 	}
 
-	if interfaces, err = advaGetDWDMInterfaces(ctx, interfaces); err != nil {
+	if err = advaGetDWDMInterfaces(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
-	if interfaces, err = advaGetChannels(ctx, interfaces); err != nil {
+	if err = advaGetChannels(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
-	if interfaces, err = advaGet100GInterfaces(ctx, interfaces); err != nil {
-		return nil, err
-	}
-
-	return interfaces, nil
+	return normalizeAdvaInterfaces(interfaces), nil
 }
 
-func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
+func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) error {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return nil, errors.New("no device connection available")
+		return errors.New("no device connection available")
 	}
 
 	specialInterfacesRaw, err := getValuesBySNMPWalk(ctx, deviceClassOIDs{
@@ -78,7 +74,7 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 	})
 
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read rx/tx power of ports")
+		return errors.Wrap(err, "failed to read rx/tx power of ports")
 	}
 
 	for i, networkInterface := range interfaces {
@@ -86,7 +82,7 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			err := addSpecialInterfacesValuesToInterface("dwdm", &interfaces[i], specialValues)
 			if err != nil {
 				log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-				return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
+				return errors.Wrap(err, "can't parse oid values into Interface struct")
 			}
 		}
 	}
@@ -122,12 +118,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to get corrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to get corrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				val, err := strconv.ParseFloat(valString, 64)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to parse corrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to parse corrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				if interfaces[i].DWDM == nil {
@@ -145,12 +141,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to get uncorrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to get uncorrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				val, err := strconv.ParseFloat(valString, 64)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to parse uncorrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to parse uncorrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				if interfaces[i].DWDM == nil {
@@ -168,12 +164,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to get corrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to get corrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				val, err := strconv.ParseFloat(valString, 64)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to parse corrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to parse corrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				if interfaces[i].DWDM == nil {
@@ -191,12 +187,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 			if err == nil && len(res) == 1 {
 				valString, err := res[0].GetValueString()
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to get uncorrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to get uncorrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				val, err := strconv.ParseFloat(valString, 64)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to parse uncorrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
+					return errors.Wrap(err, "failed to parse uncorrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
 				if interfaces[i].DWDM == nil {
@@ -211,13 +207,13 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) (
 		}
 	}
 
-	return interfaces, nil
+	return nil
 }
 
-func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
+func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return nil, errors.New("no device connection available")
+		return errors.New("no device connection available")
 	}
 
 	facilityPhysInstValueInputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2"
@@ -235,11 +231,11 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 2 && s[len(s)-2] != "0" {
 			val, err := res.GetValueString()
 			if err != nil {
-				return nil, errors.Wrap(err, "failed to get rx value of channel "+subtree)
+				return errors.Wrap(err, "failed to get rx value of channel "+subtree)
 			}
 			a, err := decimal.NewFromString(val)
 			if err != nil {
-				return nil, errors.Wrap(err, "failed to parse rx value of channel "+subtree)
+				return errors.Wrap(err, "failed to parse rx value of channel "+subtree)
 			}
 			b := decimal.NewFromFloat(0.1)
 			valFin, _ := a.Mul(b).Float64()
@@ -255,20 +251,20 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 	for _, subtree := range subtrees {
 		res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"+subtree)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get facilityPhysInstValueOutputPower for subtree "+subtree)
+			return errors.Wrap(err, "failed to get facilityPhysInstValueOutputPower for subtree "+subtree)
 		}
 
 		if len(res) != 1 {
-			return nil, errors.New("failed to get tx value of subtree " + subtree)
+			return errors.New("failed to get tx value of subtree " + subtree)
 		}
 
 		val, err := res[0].GetValueString()
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get tx value of subtree "+subtree)
+			return errors.Wrap(err, "failed to get tx value of subtree "+subtree)
 		}
 		valueDecimal, err := decimal.NewFromString(val)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse tx value of subtree "+subtree)
+			return errors.Wrap(err, "failed to parse tx value of subtree "+subtree)
 		}
 		multiplier := decimal.NewFromFloat(0.1)
 		valFin, _ := valueDecimal.Mul(multiplier).Float64()
@@ -278,11 +274,11 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 
 		p := strings.Split(strings.ReplaceAll(strings.Trim(subtree, "."), "33152", "N"), ".")
 		if len(p) < 3 {
-			return nil, errors.New("invalid channel identifier")
+			return errors.New("invalid channel identifier")
 		}
 		regex, err := regexp.Compile("-" + p[0] + "-" + p[1] + "-" + p[2])
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to build regex")
+			return errors.Wrap(err, "failed to build regex")
 		}
 
 		for j, interf := range interfaces {
@@ -297,94 +293,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) ([]devi
 		}
 	}
 
-	return interfaces, nil
-}
-
-func advaGet100GInterfaces(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if !ok || con.SNMP == nil {
-		return nil, errors.New("no device connection available")
-	}
-
-	ports := ".1.3.6.1.4.1.2544.1.11.7.2.7.1.6"
-	portValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ports)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk 100g ports")
-	}
-
-	var subtrees []string
-	otlInterfaces := make(map[string]device.Interface)
-	subType := "OTL"
-
-	for _, res := range portValues {
-		portName, err := res.GetValueString()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get snmp response")
-		}
-
-		if strings.HasPrefix(portName, "OTL-") {
-			subtree := strings.TrimPrefix(res.GetOID(), ports)
-
-			rxValue, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.7.7.2.3.1.2"+subtree)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to get rx value of port "+portName)
-			}
-
-			if len(rxValue) != 1 {
-				return nil, errors.Wrap(err, "failed to get rx value of port "+portName)
-			}
-
-			rxValueString, err := rxValue[0].GetValueString()
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to get snmp response")
-			}
-
-			valueDecimal, err := decimal.NewFromString(rxValueString)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to parse rx value of subtree "+subtree)
-			}
-			multiplier := decimal.NewFromFloat(0.1)
-			valFin, _ := valueDecimal.Mul(multiplier).Float64()
-
-			subtrees = append(subtrees, subtree)
-			otlInterfaces[subtree] = device.Interface{
-				IfDescr: &portName,
-				SubType: &subType,
-				DWDM: &device.DWDMInterface{
-					RXPower: &valFin,
-				},
-			}
-		}
-	}
-
-	for _, subtree := range subtrees {
-		res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.7.7.2.3.1.1"+subtree)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get tx value for subtree "+subtree)
-		}
-
-		if len(res) != 1 {
-			return nil, errors.New("failed to get tx value of subtree " + subtree)
-		}
-
-		val, err := res[0].GetValueString()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get tx value of subtree "+subtree)
-		}
-		a, err := decimal.NewFromString(val)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse tx value of subtree "+subtree)
-		}
-		b := decimal.NewFromFloat(0.1)
-		valFin, _ := a.Mul(b).Float64()
-
-		interf := otlInterfaces[subtree]
-		interf.DWDM.TXPower = &valFin
-
-		interfaces = append(interfaces, interf)
-	}
-
-	return interfaces, nil
+	return nil
 }
 
 func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, error) {
@@ -426,4 +335,16 @@ func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, er
 	}
 
 	return descrToValues, nil
+}
+
+func normalizeAdvaInterfaces(interfaces []device.Interface) []device.Interface {
+	var res []device.Interface
+
+	for _, interf := range interfaces {
+		if !(interf.IfDescr != nil && (strings.HasPrefix(*interf.IfDescr, "TIFI-") || strings.HasPrefix(*interf.IfDescr, "TIFO-"))) {
+			res = append(res, interf)
+		}
+	}
+
+	return res
 }
