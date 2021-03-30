@@ -13,16 +13,15 @@ import (
 )
 
 type interfaceCheckOutput struct {
-	IfIndex       string `json:"ifIndex"`
-	IfDescr       string `json:"ifDescr"`
-	IfType        string `json:"ifType"`
-	IfName        string `json:"ifName"`
-	IfAlias       string `json:"ifAlias"`
-	IfPhysAddress string `json:"ifPhysAddress"`
-	IfAdminStatus string `json:"ifAdminStatus"`
-	IfOperStatus  string `json:"ifOperStatus"`
-
-	SubType string `json:"subType"`
+	IfIndex       *string `json:"ifIndex"`
+	IfDescr       *string `json:"ifDescr"`
+	IfType        *string `json:"ifType"`
+	IfName        *string `json:"ifName"`
+	IfAlias       *string `json:"ifAlias"`
+	IfPhysAddress *string `json:"ifPhysAddress"`
+	IfAdminStatus *string `json:"ifAdminStatus"`
+	IfOperStatus  *string `json:"ifOperStatus"`
+	SubType       *string `json:"subType"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -34,37 +33,33 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
+	err = addCheckInterfacePerformanceData(readInterfacesResponse.Interfaces, r.mon)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
 	if r.PrintInterfaces {
 		var interfaces []interfaceCheckOutput
 		for _, interf := range readInterfacesResponse.Interfaces {
-			x := interfaceCheckOutput{}
+			var index *string
 			if interf.IfIndex != nil {
-				x.IfIndex = fmt.Sprint(*interf.IfIndex)
+				i := fmt.Sprint(*interf.IfIndex)
+				index = &i
 			}
-			if interf.IfDescr != nil {
-				x.IfDescr = *interf.IfDescr
+
+			x := interfaceCheckOutput{
+				IfIndex:       index,
+				IfDescr:       interf.IfDescr,
+				IfName:        interf.IfName,
+				IfType:        interf.IfType,
+				IfAlias:       interf.IfAlias,
+				IfPhysAddress: interf.IfPhysAddress,
+				IfAdminStatus: (*string)(interf.IfAdminStatus),
+				IfOperStatus:  (*string)(interf.IfOperStatus),
+				SubType:       interf.SubType,
 			}
-			if interf.IfName != nil {
-				x.IfName = *interf.IfName
-			}
-			if interf.IfType != nil {
-				x.IfType = *interf.IfType
-			}
-			if interf.IfAlias != nil {
-				x.IfAlias = *interf.IfAlias
-			}
-			if interf.IfPhysAddress != nil {
-				x.IfPhysAddress = *interf.IfPhysAddress
-			}
-			if interf.IfAdminStatus != nil {
-				x.IfAdminStatus = string(*interf.IfAdminStatus)
-			}
-			if interf.IfOperStatus != nil {
-				x.IfOperStatus = string(*interf.IfOperStatus)
-			}
-			if interf.SubType != nil {
-				x.SubType = *interf.SubType
-			}
+
 			interfaces = append(interfaces, x)
 		}
 		output, err := parser.Parse(interfaces, "json")
@@ -73,11 +68,6 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 		r.mon.UpdateStatus(monitoringplugin.OK, string(output))
-	}
-
-	err = addCheckInterfacePerformanceData(readInterfacesResponse.Interfaces, r.mon)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
-		r.mon.PrintPerformanceData(false)
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil
@@ -482,20 +472,6 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 
-			if i.DWDM.RXPower100G != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power_100_g", *i.DWDM.RXPower100G).SetLabel(*i.IfDescr))
-				if err != nil {
-					return err
-				}
-			}
-
-			if i.DWDM.TXPower100G != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power_100_g", *i.DWDM.TXPower100G).SetLabel(*i.IfDescr))
-				if err != nil {
-					return err
-				}
-			}
-
 			for _, rate := range i.DWDM.CorrectedFEC {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_rate_corrected_fec_"+rate.Time, rate.Value).SetLabel(*i.IfDescr))
 				if err != nil {
@@ -591,6 +567,30 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 					if err != nil {
 						return err
 					}
+				}
+			}
+		}
+
+		//SAP
+		if i.SAP != nil {
+			if i.SAP.Inbound != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+			if i.SAP.Outbound != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
 				}
 			}
 		}

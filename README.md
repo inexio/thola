@@ -15,7 +15,7 @@ It features a check mode which complies with the [monitoring plugins development
 
 ## Installation
 
-You can download the latest compiled version for your platform under the "Releases" tab or build it yourself:
+You can download the latest compiled version for your platform under the "Releases" tab or build it yourself (requires go 1.16):
 
     git clone https://github.com/inexio/thola.git
     cd thola

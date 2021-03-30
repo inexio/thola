@@ -1,0 +1,9 @@
+name: timos
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - ".1.3.6.1.4.1.6527"
+  logical_operator: OR

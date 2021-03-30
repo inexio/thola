@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"encoding/json"
-	"github.com/huandu/go-sqlbuilder"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
@@ -11,7 +10,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
 	"time"
 )
 
@@ -33,8 +31,8 @@ var mysqlSchemaArr = []string{
 		ip varchar(255) NOT NULL,
 		datatype varchar(255) NOT NULL,
 		data text NOT NULL,
-		time datetime DEFAULT current_timestamp,
-		UNIQUE KEY 'unique_entries' (ip, datatype)
+		time datetime DEFAULT current_timestamp NOT NULL,
+		CONSTRAINT unique_entries UNIQUE (ip, datatype)
 		);`,
 	`ALTER TABLE cache MODIFY id int(11) NOT NULL AUTO_INCREMENT;`,
 }
@@ -95,16 +93,7 @@ func (d *sqlDatabase) insertReplaceQuery(ctx context.Context, data interface{}, 
 		return errors.Wrap(err, "failed to marshall data")
 	}
 
-	sb := sqlbuilder.NewInsertBuilder()
-	sb.ReplaceInto("cache") // works for insert and replace
-	sb.Cols("ip", "datatype", "data")
-	sb.Values(ip, dataType, string(JSONData))
-	sql, args := sb.Build()
-	query, err := sqlbuilder.MySQL.Interpolate(sql, args)
-	if err != nil {
-		return errors.Wrap(err, "failed to build query")
-	}
-	_, err = d.db.ExecContext(ctx, query)
+	_, err = d.db.ExecContext(ctx, d.db.Rebind("REPLACE INTO cache (ip, datatype, data) VALUES (?, ?, ?);"), ip, dataType, string(JSONData))
 	if err != nil {
 		return errors.Wrap(err, "failed to exec sql query")
 	}
@@ -127,20 +116,14 @@ func (d *sqlDatabase) getEntry(ctx context.Context, dest interface{}, ip, dataTy
 		return errors.Wrap(err, "failed to parse timestamp")
 	}
 	if time.Since(t) > cacheExpiration {
-		_, err = d.db.Exec(d.db.Rebind("DELETE FROM cache WHERE ip=? AND datatype=?;"), ip, "IdentifyResponse")
+		_, err = d.db.ExecContext(ctx, d.db.Rebind("DELETE FROM cache WHERE ip=? AND datatype=?;"), ip, "IdentifyResponse")
 		if err != nil {
 			return errors.Wrap(err, "failed to delete expired cache element")
 		}
 		return tholaerr.NewNotFoundError("found only expired cache entry")
 	}
 
-	dataString := `"` + res.Data + `"`
-	dataString, err = strconv.Unquote(dataString)
-	if err != nil {
-		return errors.Wrap(err, "failed to unquote connection data")
-	}
-
-	err = json.Unmarshal([]byte(dataString), dest)
+	err = json.Unmarshal([]byte(res.Data), dest)
 	if err != nil {
 		return errors.Wrap(err, "failed to unmarshall entry data")
 	}
