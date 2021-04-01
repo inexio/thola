@@ -186,10 +186,6 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 	return nil
 }
 
-func (r *BaseRequest) getTimeout() *int {
-	return r.Timeout
-}
-
 func (r *BaseRequest) handlePreProcessError(err error) (Response, error) {
 	return nil, err
 }
