@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -216,15 +215,13 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 		return errors.New("no device connection available")
 	}
 
+	channels := make(map[string]device.OpticalChannel)
+
 	facilityPhysInstValueInputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2"
 	facilityPhysInstValueInputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueInputPower)
 	if err != nil {
 		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk facilityPhysInstValueInputPower")
 	}
-
-	var subtrees []string
-	channels := make(map[string]device.OpticalChannel)
-	subtype := "channelMonitoring"
 
 	for _, res := range facilityPhysInstValueInputPowerValues {
 		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueInputPower)
@@ -240,7 +237,6 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 			b := decimal.NewFromFloat(0.1)
 			valFin, _ := a.Mul(b).Float64()
 
-			subtrees = append(subtrees, subtree)
 			channels[subtree] = device.OpticalChannel{
 				Channel: s[len(s)-2],
 				RXPower: &valFin,
@@ -248,41 +244,41 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 		}
 	}
 
-	for _, subtree := range subtrees {
-		res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"+subtree)
-		if err != nil {
-			return errors.Wrap(err, "failed to get facilityPhysInstValueOutputPower for subtree "+subtree)
-		}
+	facilityPhysInstValueOutputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"
+	facilityPhysInstValueOutputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueOutputPower)
 
-		if len(res) != 1 {
-			return errors.New("failed to get tx value of subtree " + subtree)
-		}
+	for _, res := range facilityPhysInstValueOutputPowerValues {
+		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueOutputPower)
+		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 2 && s[len(s)-2] != "0" {
+			val, err := res.GetValueString()
+			if err != nil {
+				return errors.Wrap(err, "failed to get tx value of channel "+subtree)
+			}
+			a, err := decimal.NewFromString(val)
+			if err != nil {
+				return errors.Wrap(err, "failed to parse tx value of channel "+subtree)
+			}
+			b := decimal.NewFromFloat(0.1)
+			valFin, _ := a.Mul(b).Float64()
 
-		val, err := res[0].GetValueString()
-		if err != nil {
-			return errors.Wrap(err, "failed to get tx value of subtree "+subtree)
+			if channel, ok := channels[subtree]; !ok {
+				channels[subtree] = device.OpticalChannel{
+					Channel: s[len(s)-2],
+					TXPower: &valFin,
+				}
+			} else {
+				channel.TXPower = &valFin
+				channels[subtree] = channel
+			}
 		}
-		valueDecimal, err := decimal.NewFromString(val)
-		if err != nil {
-			return errors.Wrap(err, "failed to parse tx value of subtree "+subtree)
-		}
-		multiplier := decimal.NewFromFloat(0.1)
-		valFin, _ := valueDecimal.Mul(multiplier).Float64()
+	}
 
-		channel := channels[subtree]
-		channel.TXPower = &valFin
+	subtype := "channelMonitoring"
 
-		p := strings.Split(strings.ReplaceAll(strings.Trim(subtree, "."), "33152", "N"), ".")
-		if len(p) < 3 {
-			return errors.New("invalid channel identifier")
-		}
-		regex, err := regexp.Compile("-" + p[0] + "-" + p[1] + "-" + p[2])
-		if err != nil {
-			return errors.Wrap(err, "failed to build regex")
-		}
-
+	for subtree, channel := range channels {
+		s := strings.Split(strings.Trim(subtree, "."), ".")
 		for j, interf := range interfaces {
-			if interf.IfDescr != nil && regex.MatchString(*interf.IfDescr) {
+			if interf.IfDescr != nil && strings.Contains(*interf.IfDescr, "-"+s[0]+"-"+s[1]+"-N") {
 				if interf.DWDM == nil {
 					interfaces[j].DWDM = &device.DWDMInterface{}
 				}

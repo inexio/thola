@@ -19,6 +19,10 @@ type snmpGroupPropertyReader struct {
 	oids deviceClassOIDs
 }
 
+type httpGroupPropertyReader struct {
+	oids deviceClassOIDs
+}
+
 func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) ([]map[string]value.Value, error) {
 	networkInterfaces := make(map[int]map[string]value.Value)
 
