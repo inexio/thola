@@ -246,6 +246,9 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 
 	facilityPhysInstValueOutputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"
 	facilityPhysInstValueOutputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueOutputPower)
+	if err != nil {
+		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk facilityPhysInstValueOutputPower")
+	}
 
 	for _, res := range facilityPhysInstValueOutputPowerValues {
 		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueOutputPower)
