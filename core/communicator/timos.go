@@ -78,11 +78,25 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 			return nil, errors.Wrap(err, "failed to retrieve outbound counter")
 		}
 
+		//retrieve admin status
+		admin, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6."+suffix[1]+"."+physIndex+"."+subID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to retrieve admin status")
+		}
+
+		//retrieve oper status
+		oper, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7."+suffix[1]+"."+physIndex+"."+subID)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to retrieve oper status")
+		}
+
 		// build logical interface
 		interfaces = append(interfaces, device.Interface{
-			IfIndex: &subIndex,
-			IfDescr: &description,
-			SAP:     &device.SAPInterface{Inbound: &inbound, Outbound: &outbound},
+			IfIndex:       &subIndex,
+			IfDescr:       &description,
+			IfAdminStatus: &admin,
+			IfOperStatus:  &oper,
+			SAP:           &device.SAPInterface{Inbound: &inbound, Outbound: &outbound},
 		})
 	}
 
@@ -116,6 +130,7 @@ func getPhysPortDescriptions(ctx context.Context) (map[string]string, error) {
 	return indexDescriptions, nil
 }
 
+// getCounterFromSnmpGet returns the snmpget value at the given oid as uint64 counter.
 func getCounterFromSnmpGet(ctx context.Context, oid string) (uint64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
@@ -137,6 +152,33 @@ func getCounterFromSnmpGet(ctx context.Context, oid string) (uint64, error) {
 	return resCounter, nil
 }
 
+// getStatusFromSnmpGet returns the snmpget value at the given oid as device.Status.
+func getStatusFromSnmpGet(ctx context.Context, oid string) (device.Status, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return "", errors.New("no device connection available")
+	}
+
+	res, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+	if err != nil || len(res) != 1 {
+		return "", errors.Wrap(err, "snmpget failed")
+	}
+	resString, err := res[0].GetValueString()
+	if err != nil {
+		return "", errors.Wrap(err, "couldn't parse snmp response")
+	}
+	resInt, err := strconv.Atoi(resString)
+	if err != nil {
+		return "", errors.Wrap(err, "couldn't parse snmp response")
+	}
+	resStatus, err := getStatus(resInt)
+	if err != nil {
+		return "", errors.Wrap(err, "couldn't get status from snmp response")
+	}
+	return resStatus, nil
+}
+
+// normalizeTimosInterfaces applies the description mapping to the given interfaces.
 func normalizeTimosInterfaces(interfaces []device.Interface, descriptions map[string]string) []device.Interface {
 	for _, interf := range interfaces {
 		descr, ok := descriptions[strconv.FormatUint(*interf.IfIndex, 10)]
@@ -148,4 +190,26 @@ func normalizeTimosInterfaces(interfaces []device.Interface, descriptions map[st
 	}
 
 	return interfaces
+}
+
+// getStatus returns the Status that is encoded by the code integer.
+func getStatus(code int) (device.Status, error) {
+	switch code {
+	case 1:
+		return device.StatusUp, nil
+	case 2:
+		return device.StatusDown, nil
+	case 3:
+		return device.StatusTesting, nil
+	case 4:
+		return device.StatusUnknown, nil
+	case 5:
+		return device.StatusDormant, nil
+	case 6:
+		return device.StatusNotPresent, nil
+	case 7:
+		return device.StatusLowerLayerDown, nil
+	default:
+		return "", errors.New("invalid status code")
+	}
 }
