@@ -15,12 +15,14 @@ It features a check mode which complies with the [monitoring plugins development
 
 ## Installation
 
-You can download the latest compiled version for your platform under the "Releases" tab or build it yourself (requires go 1.16):
+You can download the latest compiled version for your platform under the "Releases" tab or build it yourself:
 
     git clone https://github.com/inexio/thola.git
     cd thola
     go build
     
+**Note: This requires Go 1.16 or newer**
+
 If you also want to build the client binary, which can be used for sending requests to a running Thola API, use the following build command:
    
     go build --tags client -o thola-client
