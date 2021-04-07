@@ -171,7 +171,7 @@ func getStatusFromSnmpGet(ctx context.Context, oid string) (device.Status, error
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't parse snmp response")
 	}
-	resStatus, err := getStatus(resInt)
+	resStatus, err := device.GetStatus(resInt)
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't get status from snmp response")
 	}
@@ -190,26 +190,4 @@ func normalizeTimosInterfaces(interfaces []device.Interface, descriptions map[st
 	}
 
 	return interfaces
-}
-
-// getStatus returns the Status that is encoded by the code integer.
-func getStatus(code int) (device.Status, error) {
-	switch code {
-	case 1:
-		return device.StatusUp, nil
-	case 2:
-		return device.StatusDown, nil
-	case 3:
-		return device.StatusTesting, nil
-	case 4:
-		return device.StatusUnknown, nil
-	case 5:
-		return device.StatusDormant, nil
-	case 6:
-		return device.StatusNotPresent, nil
-	case 7:
-		return device.StatusLowerLayerDown, nil
-	default:
-		return "", errors.New("invalid status code")
-	}
 }

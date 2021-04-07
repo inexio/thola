@@ -398,6 +398,28 @@ func DevicePropertiesFromContext(ctx context.Context) (Device, bool) {
 	return properties, ok
 }
 
+// GetStatus returns the Status that is encoded by the code integer.
+func GetStatus(code int) (Status, error) {
+	switch code {
+	case 1:
+		return StatusUp, nil
+	case 2:
+		return StatusDown, nil
+	case 3:
+		return StatusTesting, nil
+	case 4:
+		return StatusUnknown, nil
+	case 5:
+		return StatusDormant, nil
+	case 6:
+		return StatusNotPresent, nil
+	case 7:
+		return StatusLowerLayerDown, nil
+	default:
+		return "", errors.New("invalid status code")
+	}
+}
+
 // ToStatusCode returns the status as a code.
 func (s Status) ToStatusCode() (int, error) {
 	switch s {
