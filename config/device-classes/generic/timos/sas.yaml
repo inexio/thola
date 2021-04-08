@@ -1,0 +1,9 @@
+name: sas
+
+match:
+  conditions:
+    - match_mode: startsWith
+      type: SysObjectID
+      values:
+        - ".1.3.6.1.4.1.6527.6.2"
+  logical_operator: OR

@@ -23,6 +23,8 @@ func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommun
 		return &ekinopsCommunicator{baseCommunicator{rel}}, nil
 	case "adva_fsp3kr7":
 		return &advaCommunicator{baseCommunicator{rel}}, nil
+	case "timos/sas":
+		return &timosSASCommunicator{baseCommunicator{rel}}, nil
 	case "timos":
 		return &timosCommunicator{baseCommunicator{rel}}, nil
 	}

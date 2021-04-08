@@ -13,7 +13,7 @@ type timosCommunicator struct {
 	baseCommunicator
 }
 
-// GetInterfaces returns the interfaces of timetra devices.
+// GetInterfaces returns the interfaces of Nokia devices.
 func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
 	interfaces, err := c.sub.GetInterfaces(ctx)
 	if err != nil {
@@ -66,25 +66,13 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 			return nil, errors.Wrap(err, "couldn't get index from strings")
 		}
 
-		// retrieve inbound
-		inbound, err := getCounterFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4."+suffix[1]+"."+physIndex+"."+subID)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to retrieve inbound counter")
-		}
-
-		//retrieve outbound
-		outbound, err := getCounterFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6."+suffix[1]+"."+physIndex+"."+subID)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to retrieve outbound counter")
-		}
-
-		//retrieve admin status
+		// retrieve admin status
 		admin, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6."+suffix[1]+"."+physIndex+"."+subID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve admin status")
 		}
 
-		//retrieve oper status
+		// retrieve oper status
 		oper, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7."+suffix[1]+"."+physIndex+"."+subID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve oper status")
@@ -96,7 +84,6 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 			IfDescr:       &description,
 			IfAdminStatus: &admin,
 			IfOperStatus:  &oper,
-			SAP:           &device.SAPInterface{Inbound: &inbound, Outbound: &outbound},
 		})
 	}
 
