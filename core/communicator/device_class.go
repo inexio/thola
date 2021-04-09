@@ -474,7 +474,7 @@ func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *de
 		return nil, errors.Wrap(err, "failed to unmarshal config file")
 	}
 
-	devClass, err := deviceClassYaml.convert()
+	devClass, err := deviceClassYaml.convert(parentDeviceClass)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
 	}
@@ -585,7 +585,7 @@ func (o *deviceClass) hasAvailableComponent(component deviceClassComponent) bool
 	return false
 }
 
-func (y *yamlDeviceClass) convert() (deviceClass, error) {
+func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 	err := y.validate()
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "invalid yaml device class")
@@ -611,7 +611,11 @@ func (y *yamlDeviceClass) convert() (deviceClass, error) {
 		devClass.identify = identify
 	}
 
-	components, err := y.Components.convert()
+	var parentComponents deviceClassComponents
+	if parent != nil {
+		parentComponents = parent.components
+	}
+	components, err := y.Components.convert(parentComponents)
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
@@ -655,11 +659,11 @@ func (y *yamlDeviceClassIdentify) convert() (deviceClassIdentify, error) {
 	return identify, nil
 }
 
-func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
+func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponents) (deviceClassComponents, error) {
 	var components deviceClassComponents
 
 	if y.Interfaces != nil {
-		interf, err := y.Interfaces.convert()
+		interf, err := y.Interfaces.convert(parentComponents.interfaces)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml interface properties")
 		}
@@ -691,7 +695,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.SBC != nil {
-		sbc, err := y.SBC.convert()
+		sbc, err := y.SBC.convert(parentComponents.sbc)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml sbc properties")
 		}
@@ -707,7 +711,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.Disk != nil {
-		disk, err := y.Disk.convert()
+		disk, err := y.Disk.convert(parentComponents.disk)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml disk properties")
 		}
@@ -715,7 +719,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.HardwareHealth != nil {
-		hardwareHealth, err := y.HardwareHealth.convert()
+		hardwareHealth, err := y.HardwareHealth.convert(parentComponents.hardwareHealth)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml hardware health properties")
 		}
@@ -725,12 +729,16 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	return components, nil
 }
 
-func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, error) {
+func (y *yamlComponentsInterfaces) convert(parentsComponentsInterfaces *deviceClassComponentsInterfaces) (deviceClassComponentsInterfaces, error) {
 	var interfaces deviceClassComponentsInterfaces
 	var err error
 
 	if y.IfTable != nil {
-		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable)
+		var reader groupPropertyReader
+		if parentsComponentsInterfaces != nil {
+			reader = parentsComponentsInterfaces.IfTable
+		}
+		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable, reader)
 		if err != nil {
 			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
 		}
@@ -1037,12 +1045,16 @@ func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer,
 	return properties, nil
 }
 
-func (y *yamlComponentsDiskProperties) convert() (deviceClassComponentsDisk, error) {
+func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponentsDisk) (deviceClassComponentsDisk, error) {
 	var properties deviceClassComponentsDisk
 	var err error
 
 	if y.Storages != nil {
-		properties.storages, err = interface2GroupPropertyReader(y.Storages)
+		var reader groupPropertyReader
+		if parentDisk != nil {
+			reader = parentDisk.storages
+		}
+		properties.storages, err = interface2GroupPropertyReader(y.Storages, reader)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
@@ -1050,18 +1062,26 @@ func (y *yamlComponentsDiskProperties) convert() (deviceClassComponentsDisk, err
 	return properties, nil
 }
 
-func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error) {
+func (y *yamlComponentsSBCProperties) convert(parentComponentsSBC *deviceClassComponentsSBC) (deviceClassComponentsSBC, error) {
 	var properties deviceClassComponentsSBC
 	var err error
 
 	if y.Agents != nil {
-		properties.agents, err = interface2GroupPropertyReader(y.Agents)
+		var reader groupPropertyReader
+		if parentComponentsSBC != nil {
+			reader = parentComponentsSBC.agents
+		}
+		properties.agents, err = interface2GroupPropertyReader(y.Agents, reader)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert agents property to group property reader")
 		}
 	}
 	if y.Realms != nil {
-		properties.realms, err = interface2GroupPropertyReader(y.Realms)
+		var reader groupPropertyReader
+		if parentComponentsSBC != nil {
+			reader = parentComponentsSBC.realms
+		}
+		properties.realms, err = interface2GroupPropertyReader(y.Realms, reader)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert realms property to group property reader")
 		}
@@ -1112,18 +1132,26 @@ func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error
 	return properties, nil
 }
 
-func (y *yamlComponentsHardwareHealthProperties) convert() (deviceClassComponentsHardwareHealth, error) {
+func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *deviceClassComponentsHardwareHealth) (deviceClassComponentsHardwareHealth, error) {
 	var properties deviceClassComponentsHardwareHealth
 	var err error
 
 	if y.Fans != nil {
-		properties.fans, err = interface2GroupPropertyReader(y.Fans)
+		var reader groupPropertyReader
+		if parentHardwareHealth != nil {
+			reader = parentHardwareHealth.fans
+		}
+		properties.fans, err = interface2GroupPropertyReader(y.Fans, reader)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
 		}
 	}
 	if y.PowerSupply != nil {
-		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply)
+		var reader groupPropertyReader
+		if parentHardwareHealth != nil {
+			reader = parentHardwareHealth.powerSupply
+		}
+		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply, reader)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
 		}
@@ -1720,7 +1748,7 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 	return propertyOperators, nil
 }
 
-func interface2GroupPropertyReader(i interface{}) (groupPropertyReader, error) {
+func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader groupPropertyReader) (groupPropertyReader, error) {
 	m, ok := i.(map[interface{}]interface{})
 	if !ok {
 		return nil, errors.New("failed to convert group properties to map[interface{}]interface{}")
@@ -1746,15 +1774,33 @@ func interface2GroupPropertyReader(i interface{}) (groupPropertyReader, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
 		}
-		deviceClassOIDs, err := oids.convert()
+		devClassOIDs, err := oids.convert()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert yaml OIDs to device class OIDs")
 		}
-		err = deviceClassOIDs.validate()
+		err = devClassOIDs.validate()
 		if err != nil {
 			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
 		}
-		return &snmpGroupPropertyReader{deviceClassOIDs}, nil
+
+		//overwrite parents
+		if parentGroupPropertyReader != nil {
+			parentSNMPGroupPropertyReader, ok := parentGroupPropertyReader.(*snmpGroupPropertyReader)
+			if !ok {
+				panic("aah")
+			}
+
+			devClassOIDsNew := make(deviceClassOIDs)
+			for k, v := range parentSNMPGroupPropertyReader.oids {
+				devClassOIDsNew[k] = v
+			}
+			for k, v := range devClassOIDs {
+				devClassOIDsNew[k] = v
+			}
+			devClassOIDs = devClassOIDsNew
+		}
+
+		return &snmpGroupPropertyReader{devClassOIDs}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}
