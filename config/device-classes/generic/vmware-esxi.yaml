@@ -38,12 +38,6 @@ components:
     load:
       - detection: snmpget
         oid: ".1.3.6.1.2.1.25.3.3.1.2.1"
-        operators:
-          - type: modify
-            modify_method: multiply
-            value:
-              detection: constant
-              value: 100
   memory:
     usage:
       - detection: snmpget
@@ -60,8 +54,27 @@ components:
                   value:
                     detection: constant
                     value: 100
+  disk:
+    storages:
+      detection: snmpwalk
+      values:
+        type:
+          oid: ".1.3.6.1.2.1.25.2.3.1.2"
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: hrStorageType.yaml
+        description:
+          oid: ".1.3.6.1.2.1.25.2.3.1.3"
+        available:
+          oid: ".1.3.6.1.2.1.25.2.3.1.5"
+        used:
+          oid: ".1.3.6.1.2.1.25.2.3.1.6"
   server:
     procs:
       - detection: snmpget
         oid: ".1.3.6.1.2.1.25.1.6.0"
+    users:
+      - detection: snmpget
+        oid: "1.3.6.1.2.1.25.1.5.0"
 
