@@ -591,6 +591,9 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		return deviceClass{}, errors.Wrap(err, "invalid yaml device class")
 	}
 	var devClass deviceClass
+	if parent != nil {
+		devClass = *parent
+	}
 	devClass.name = y.Name
 	if y.Name == "generic" {
 		devClass.match = &alwaysTrueCondition{}
@@ -611,21 +614,15 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		devClass.identify = identify
 	}
 
-	var parentComponents deviceClassComponents
-	if parent != nil {
-		parentComponents = parent.components
-	}
-	components, err := y.Components.convert(parentComponents)
+	devClass.components, err = y.Components.convert(devClass.components)
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
-	devClass.components = components
 
-	cfg, err := y.Config.convert()
+	devClass.config, err = y.Config.convert()
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
-	devClass.config = cfg
 
 	return devClass, nil
 }
@@ -661,13 +658,13 @@ func (y *yamlDeviceClassIdentify) convert() (deviceClassIdentify, error) {
 
 func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponents) (deviceClassComponents, error) {
 	var components deviceClassComponents
+	var err error
 
 	if y.Interfaces != nil {
-		interf, err := y.Interfaces.convert(parentComponents.interfaces)
+		components.interfaces, err = y.Interfaces.convert(parentComponents.interfaces)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml interface properties")
 		}
-		components.interfaces = &interf
 	}
 
 	if y.UPS != nil {
@@ -729,40 +726,45 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	return components, nil
 }
 
-func (y *yamlComponentsInterfaces) convert(parentsComponentsInterfaces *deviceClassComponentsInterfaces) (deviceClassComponentsInterfaces, error) {
-	var interfaces deviceClassComponentsInterfaces
+func (y *yamlComponentsInterfaces) convert(parentsComponentsInterfaces *deviceClassComponentsInterfaces) (*deviceClassComponentsInterfaces, error) {
+	var interfaceComponent deviceClassComponentsInterfaces
 	var err error
 
+	if parentsComponentsInterfaces != nil {
+		interfaceComponent = *parentsComponentsInterfaces
+	}
+
 	if y.IfTable != nil {
-		var reader groupPropertyReader
-		if parentsComponentsInterfaces != nil {
-			reader = parentsComponentsInterfaces.IfTable
-		}
-		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable, reader)
+		interfaceComponent.IfTable, err = interface2GroupPropertyReader(y.IfTable, interfaceComponent.IfTable)
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
+			return &deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
 		}
 	}
 
 	if y.Types != nil {
-		types, err := y.Types.convert()
+		interfaceComponent.Types, err = y.Types.convert(interfaceComponent.Types)
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces types")
+			return &deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces types")
 		}
-		interfaces.Types = types
 	}
 
-	interfaces.Count = y.Count
+	if y.Count != "" {
+		interfaceComponent.Count = y.Count
+	}
 
-	return interfaces, nil
+	return &interfaceComponent, nil
 }
 
-func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, error) {
+func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceTypes) (deviceClassInterfaceTypes, error) {
 	err := y.validate()
 	if err != nil {
-		return deviceClassInterfaceTypes{}, err
+		return nil, err
 	}
 	interfaceTypes := make(map[string]deviceClassInterfaceTypeDef)
+
+	for t, interfaceType := range parentTypes {
+		interfaceTypes[t] = interfaceType
+	}
 
 	for t, interfaceType := range *y {
 		if interfaceType.Detection == "" {
@@ -811,7 +813,7 @@ func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
 		if property.Operators != nil {
 			operators, err := interfaceSlice2propertyOperators(property.Operators, propertyDefault)
 			if err != nil {
-				return deviceClassOIDs{}, errors.Wrap(err, "failed to read yaml oids operators")
+				return nil, errors.Wrap(err, "failed to read yaml oids operators")
 			}
 			interfaceOIDs[k] = deviceClassOID{
 				SNMPGetConfiguration: network.SNMPGetConfiguration{
