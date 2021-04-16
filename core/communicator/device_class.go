@@ -607,7 +607,7 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		}
 		devClass.match = cond
 		devClass.tryToMatchLast = conditionContainsUniqueRequest(cond)
-		identify, err := y.Identify.convert()
+		identify, err := y.Identify.convert(devClass.identify)
 		if err != nil {
 			return deviceClass{}, errors.Wrap(err, "failed to convert identify")
 		}
@@ -619,7 +619,7 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
 
-	devClass.config, err = y.Config.convert()
+	devClass.config, err = y.Config.convert(devClass.config)
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
@@ -641,13 +641,13 @@ func (y *yamlDeviceClass) validate() error {
 	return nil
 }
 
-func (y *yamlDeviceClassIdentify) convert() (deviceClassIdentify, error) {
+func (y *yamlDeviceClassIdentify) convert(parentIdentify deviceClassIdentify) (deviceClassIdentify, error) {
 	err := y.validate()
 	if err != nil {
 		return deviceClassIdentify{}, errors.Wrap(err, "identify is invalid")
 	}
 	var identify deviceClassIdentify
-	properties, err := y.Properties.convert()
+	properties, err := y.Properties.convert(parentIdentify.properties)
 	if err != nil {
 		return deviceClassIdentify{}, errors.Wrap(err, "failed to read yaml identify properties")
 	}
@@ -668,7 +668,7 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	}
 
 	if y.UPS != nil {
-		ups, err := y.UPS.convert()
+		ups, err := y.UPS.convert(parentComponents.ups)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml UPS properties")
 		}
@@ -676,7 +676,7 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	}
 
 	if y.CPU != nil {
-		cpu, err := y.CPU.convert()
+		cpu, err := y.CPU.convert(parentComponents.cpu)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml CPU properties")
 		}
@@ -684,7 +684,7 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	}
 
 	if y.Memory != nil {
-		memory, err := y.Memory.convert()
+		memory, err := y.Memory.convert(parentComponents.memory)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml memory properties")
 		}
@@ -700,7 +700,7 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	}
 
 	if y.Server != nil {
-		server, err := y.Server.convert()
+		server, err := y.Server.convert(parentComponents.server)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml server properties")
 		}
@@ -871,36 +871,36 @@ func (y *yamlDeviceClassIdentify) validate() error {
 	return nil
 }
 
-func (y *yamlDeviceClassIdentifyProperties) convert() (deviceClassIdentifyProperties, error) {
-	var properties deviceClassIdentifyProperties
+func (y *yamlDeviceClassIdentifyProperties) convert(parentProperties deviceClassIdentifyProperties) (deviceClassIdentifyProperties, error) {
+	properties := parentProperties
 	var err error
 
 	if y.Vendor != nil {
-		properties.vendor, err = convertYamlProperty(y.Vendor, propertyVendor)
+		properties.vendor, err = convertYamlProperty(y.Vendor, propertyVendor, properties.vendor)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert vendor property to property reader")
 		}
 	}
 	if y.Model != nil {
-		properties.model, err = convertYamlProperty(y.Model, propertyModel)
+		properties.model, err = convertYamlProperty(y.Model, propertyModel, properties.model)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model property to property reader")
 		}
 	}
 	if y.ModelSeries != nil {
-		properties.modelSeries, err = convertYamlProperty(y.ModelSeries, propertyModelSeries)
+		properties.modelSeries, err = convertYamlProperty(y.ModelSeries, propertyModelSeries, properties.modelSeries)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model series property to property reader")
 		}
 	}
 	if y.SerialNumber != nil {
-		properties.serialNumber, err = convertYamlProperty(y.SerialNumber, propertyDefault)
+		properties.serialNumber, err = convertYamlProperty(y.SerialNumber, propertyDefault, properties.serialNumber)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert serial number property to property reader")
 		}
 	}
 	if y.OSVersion != nil {
-		properties.osVersion, err = convertYamlProperty(y.OSVersion, propertyDefault)
+		properties.osVersion, err = convertYamlProperty(y.OSVersion, propertyDefault, properties.osVersion)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert osVersion property to property reader")
 		}
@@ -908,88 +908,100 @@ func (y *yamlDeviceClassIdentifyProperties) convert() (deviceClassIdentifyProper
 	return properties, nil
 }
 
-func (y *yamlDeviceClassConfig) convert() (deviceClassConfig, error) {
+func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceClassConfig, error) {
 	var cfg deviceClassConfig
-	cfg.snmp = y.SNMP
-	cfg.components = make(map[deviceClassComponent]bool)
+
+	if y.SNMP.MaxRepetitions != 0 {
+		cfg.snmp.MaxRepetitions = y.SNMP.MaxRepetitions
+	}
+
+	components := make(map[deviceClassComponent]bool)
+	for k, v := range parentConfig.components {
+		components[k] = v
+	}
 
 	for k, v := range y.Components {
 		component, err := createComponent(k)
 		if err != nil {
 			return deviceClassConfig{}, err
 		}
-		cfg.components[component] = v
+		components[component] = v
 	}
+
+	cfg.components = components
 
 	return cfg, nil
 }
 
-func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error) {
+func (y *yamlComponentsUPSProperties) convert(parentComponent *deviceClassComponentsUPS) (deviceClassComponentsUPS, error) {
 	var properties deviceClassComponentsUPS
 	var err error
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
 
 	if y.AlarmLowVoltageDisconnect != nil {
-		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault)
+		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault, properties.alarmLowVoltageDisconnect)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm low voltage disconnect property to property reader")
 		}
 	}
 	if y.BatteryAmperage != nil {
-		properties.batteryAmperage, err = convertYamlProperty(y.BatteryAmperage, propertyDefault)
+		properties.batteryAmperage, err = convertYamlProperty(y.BatteryAmperage, propertyDefault, properties.batteryAmperage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery amperage property to property reader")
 		}
 	}
 	if y.BatteryCapacity != nil {
-		properties.batteryCapacity, err = convertYamlProperty(y.BatteryCapacity, propertyDefault)
+		properties.batteryCapacity, err = convertYamlProperty(y.BatteryCapacity, propertyDefault, properties.batteryCapacity)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery capacity property to property reader")
 		}
 	}
 	if y.BatteryCurrent != nil {
-		properties.batteryCurrent, err = convertYamlProperty(y.BatteryCurrent, propertyDefault)
+		properties.batteryCurrent, err = convertYamlProperty(y.BatteryCurrent, propertyDefault, properties.batteryCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery current property to property reader")
 		}
 	}
 	if y.BatteryRemainingTime != nil {
-		properties.batteryRemainingTime, err = convertYamlProperty(y.BatteryRemainingTime, propertyDefault)
+		properties.batteryRemainingTime, err = convertYamlProperty(y.BatteryRemainingTime, propertyDefault, properties.batteryRemainingTime)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery remaining time property to property reader")
 		}
 	}
 	if y.BatteryTemperature != nil {
-		properties.batteryTemperature, err = convertYamlProperty(y.BatteryTemperature, propertyDefault)
+		properties.batteryTemperature, err = convertYamlProperty(y.BatteryTemperature, propertyDefault, properties.batteryTemperature)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery temperature property to property reader")
 		}
 	}
 	if y.BatteryVoltage != nil {
-		properties.batteryVoltage, err = convertYamlProperty(y.BatteryVoltage, propertyDefault)
+		properties.batteryVoltage, err = convertYamlProperty(y.BatteryVoltage, propertyDefault, properties.batteryVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery voltage property to property reader")
 		}
 	}
 	if y.CurrentLoad != nil {
-		properties.currentLoad, err = convertYamlProperty(y.CurrentLoad, propertyDefault)
+		properties.currentLoad, err = convertYamlProperty(y.CurrentLoad, propertyDefault, properties.currentLoad)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert current load property to property reader")
 		}
 	}
 	if y.MainsVoltageApplied != nil {
-		properties.mainsVoltageApplied, err = convertYamlProperty(y.MainsVoltageApplied, propertyDefault)
+		properties.mainsVoltageApplied, err = convertYamlProperty(y.MainsVoltageApplied, propertyDefault, properties.mainsVoltageApplied)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert mains voltage applied property to property reader")
 		}
 	}
 	if y.RectifierCurrent != nil {
-		properties.rectifierCurrent, err = convertYamlProperty(y.RectifierCurrent, propertyDefault)
+		properties.rectifierCurrent, err = convertYamlProperty(y.RectifierCurrent, propertyDefault, properties.rectifierCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert rectifier current property to property reader")
 		}
 	}
 	if y.SystemVoltage != nil {
-		properties.systemVoltage, err = convertYamlProperty(y.SystemVoltage, propertyDefault)
+		properties.systemVoltage, err = convertYamlProperty(y.SystemVoltage, propertyDefault, properties.systemVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert system voltage property to property reader")
 		}
@@ -997,18 +1009,22 @@ func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error
 	return properties, nil
 }
 
-func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error) {
+func (y *yamlComponentsCPUProperties) convert(parentComponent *deviceClassComponentsCPU) (deviceClassComponentsCPU, error) {
 	var properties deviceClassComponentsCPU
 	var err error
 
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Load != nil {
-		properties.load, err = convertYamlProperty(y.Load, propertyDefault)
+		properties.load, err = convertYamlProperty(y.Load, propertyDefault, properties.load)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
 		}
 	}
 	if y.Temperature != nil {
-		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault)
+		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault, properties.temperature)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
 		}
@@ -1016,11 +1032,16 @@ func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error
 	return properties, nil
 }
 
-func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory, error) {
+func (y *yamlComponentsMemoryProperties) convert(parentComponent *deviceClassComponentsMemory) (deviceClassComponentsMemory, error) {
 	var properties deviceClassComponentsMemory
 	var err error
+
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Usage != nil {
-		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
+		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault, properties.usage)
 		if err != nil {
 			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
 		}
@@ -1028,18 +1049,22 @@ func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory,
 	return properties, nil
 }
 
-func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer, error) {
+func (y *yamlComponentsServerProperties) convert(parentComponent *deviceClassComponentsServer) (deviceClassComponentsServer, error) {
 	var properties deviceClassComponentsServer
 	var err error
 
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Procs != nil {
-		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault)
+		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault, properties.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert procs property to property reader")
 		}
 	}
 	if y.Users != nil {
-		properties.users, err = convertYamlProperty(y.Users, propertyDefault)
+		properties.users, err = convertYamlProperty(y.Users, propertyDefault, properties.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
 		}
@@ -1051,12 +1076,12 @@ func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponents
 	var properties deviceClassComponentsDisk
 	var err error
 
+	if parentDisk != nil {
+		properties = *parentDisk
+	}
+
 	if y.Storages != nil {
-		var reader groupPropertyReader
-		if parentDisk != nil {
-			reader = parentDisk.storages
-		}
-		properties.storages, err = interface2GroupPropertyReader(y.Storages, reader)
+		properties.storages, err = interface2GroupPropertyReader(y.Storages, properties.storages)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
@@ -1068,65 +1093,61 @@ func (y *yamlComponentsSBCProperties) convert(parentComponentsSBC *deviceClassCo
 	var properties deviceClassComponentsSBC
 	var err error
 
+	if parentComponentsSBC != nil {
+		properties = *parentComponentsSBC
+	}
+
 	if y.Agents != nil {
-		var reader groupPropertyReader
-		if parentComponentsSBC != nil {
-			reader = parentComponentsSBC.agents
-		}
-		properties.agents, err = interface2GroupPropertyReader(y.Agents, reader)
+		properties.agents, err = interface2GroupPropertyReader(y.Agents, properties.agents)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert agents property to group property reader")
 		}
 	}
 	if y.Realms != nil {
-		var reader groupPropertyReader
-		if parentComponentsSBC != nil {
-			reader = parentComponentsSBC.realms
-		}
-		properties.realms, err = interface2GroupPropertyReader(y.Realms, reader)
+		properties.realms, err = interface2GroupPropertyReader(y.Realms, properties.realms)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert realms property to group property reader")
 		}
 	}
 	if y.ActiveLocalContacts != nil {
-		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault)
+		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault, properties.activeLocalContacts)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
 		}
 	}
 	if y.GlobalCallPerSecond != nil {
-		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault)
+		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault, properties.globalCallPerSecond)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
 		}
 	}
 	if y.GlobalConcurrentSessions != nil {
-		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault)
+		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault, properties.globalConcurrentSessions)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
 		}
 	}
 	if y.LicenseCapacity != nil {
-		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault)
+		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault, properties.licenseCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
 		}
 	}
 	if y.TranscodingCapacity != nil {
-		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault)
+		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault, properties.transcodingCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
 		}
 	}
 	if y.SystemRedundancy != nil {
-		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault)
+		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault, properties.systemRedundancy)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
 
 	if y.SystemHealthScore != nil {
-		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault)
+		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault, properties.systemHealthScore)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system health score property to property reader")
 		}
@@ -1138,12 +1159,12 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 	var properties deviceClassComponentsHardwareHealth
 	var err error
 
+	if parentHardwareHealth != nil {
+		properties = *parentHardwareHealth
+	}
+
 	if y.Fans != nil {
-		var reader groupPropertyReader
-		if parentHardwareHealth != nil {
-			reader = parentHardwareHealth.fans
-		}
-		properties.fans, err = interface2GroupPropertyReader(y.Fans, reader)
+		properties.fans, err = interface2GroupPropertyReader(y.Fans, properties.fans)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
 		}
@@ -1159,7 +1180,7 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 		}
 	}
 	if y.EnvironmentMonitorState != nil {
-		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault)
+		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault, properties.environmentMonitorState)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
 		}
@@ -1309,7 +1330,7 @@ func interface2condition(i interface{}, task relatedTask) (condition, error) {
 	return nil, fmt.Errorf("invalid condition type '%s'", stringType)
 }
 
-func convertYamlProperty(i []interface{}, task relatedTask) (propertyReader, error) {
+func convertYamlProperty(i []interface{}, task relatedTask, parentProperty propertyReader) (propertyReader, error) {
 	var readerSet propertyReaderSet
 	for _, i := range i {
 		reader, err := interface2propertyReader(i, task)
@@ -1317,6 +1338,9 @@ func convertYamlProperty(i []interface{}, task relatedTask) (propertyReader, err
 			return nil, errors.Wrap(err, "failed to convert yaml identify property")
 		}
 		readerSet = append(readerSet, reader)
+	}
+	if parentProperty != nil {
+		readerSet = append(readerSet, parentProperty)
 	}
 	return &readerSet, nil
 }
