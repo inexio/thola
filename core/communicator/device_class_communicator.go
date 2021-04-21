@@ -118,20 +118,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 		}
 
 		for t, typeDef := range o.components.interfaces.Types {
-			indicesRaw, err := con.SNMP.SnmpClient.SNMPWalk(ctx, typeDef.Detection)
-			if err != nil {
-				// special interface is not present, continue
-				continue
-			}
-
-			indices := make(map[string]int)
-			for i, resp := range indicesRaw {
-				oid := resp.GetOID()
-				oidSplit := strings.Split(oid, ".")
-				indices[oidSplit[len(oidSplit)-1]] = i
-			}
-
-			specialInterfaces, err := typeDef.Values.getProperty(ctx)
+			specialInterfaces, indices, err := typeDef.getProperty(ctx)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get special interface values")
 			}
@@ -160,7 +147,7 @@ func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Inte
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	networkInterfacesRaw, err := o.components.interfaces.IfTable.getProperty(ctx)
+	networkInterfacesRaw, _, err := o.components.interfaces.IfTable.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -271,7 +258,7 @@ func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) 
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.disk.storages.getProperty(ctx)
+	res, _, err := o.components.disk.storages.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -506,7 +493,7 @@ func (o *deviceClassCommunicator) GetSBCComponentAgents(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentAgents").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.agents.getProperty(ctx)
+	res, _, err := o.components.sbc.agents.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -525,7 +512,7 @@ func (o *deviceClassCommunicator) GetSBCComponentRealms(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentRealms").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.realms.getProperty(ctx)
+	res, _, err := o.components.sbc.realms.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -734,7 +721,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentFans").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.hardwareHealth.fans.getProperty(ctx)
+	res, _, err := o.components.hardwareHealth.fans.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -753,7 +740,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentPowerSupply").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
+	res, _, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}

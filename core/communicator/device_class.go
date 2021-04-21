@@ -157,13 +157,7 @@ type deviceClassOID struct {
 }
 
 // deviceClassInterfaceTypes maps interface types to TypeDefs.
-type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
-
-// deviceClassInterfaceTypeDef represents a interface type (e.g. "radio" interface).
-type deviceClassInterfaceTypeDef struct {
-	Detection string
-	Values    groupPropertyReader
-}
+type deviceClassInterfaceTypes map[string]groupPropertyReader
 
 // deviceClassSNMP represents the snmp config part of a device class.
 type deviceClassSNMP struct {
@@ -293,12 +287,7 @@ type yamlComponentsInterfaces struct {
 	Types   yamlComponentsInterfaceTypes `yaml:"types"`
 }
 
-type yamlComponentsInterfaceTypes map[string]yamlComponentsInterfaceTypeDef
-
-type yamlComponentsInterfaceTypeDef struct {
-	Detection string      `yaml:"detection"`
-	Values    interface{} `yaml:"specific_values"`
-}
+type yamlComponentsInterfaceTypes map[string]interface{}
 
 type yamlComponentsOIDs map[string]yamlComponentsOID
 
@@ -759,7 +748,7 @@ func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceT
 	if err != nil {
 		return nil, err
 	}
-	interfaceTypes := make(map[string]deviceClassInterfaceTypeDef)
+	interfaceTypes := make(map[string]groupPropertyReader)
 
 	for t, interfaceType := range parentTypes {
 		interfaceTypes[t] = interfaceType
@@ -768,31 +757,22 @@ func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceT
 	for t, interfaceType := range *y {
 		var values groupPropertyReader
 		if parentValues, ok := interfaceTypes[t]; ok {
-			values, err = interface2GroupPropertyReader(interfaceType.Values, parentValues.Values)
+			values, err = interface2GroupPropertyReader(interfaceType, parentValues)
 		} else {
-			values, err = interface2GroupPropertyReader(interfaceType.Values, nil)
+			values, err = interface2GroupPropertyReader(interfaceType, nil)
 		}
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read yaml interfaces types values")
 		}
 
-		interfaceTypes[t] = deviceClassInterfaceTypeDef{
-			Detection: interfaceType.Detection,
-			Values:    values,
-		}
+		interfaceTypes[t] = values
 	}
 
 	return interfaceTypes, nil
 }
 
 func (y *yamlComponentsInterfaceTypes) validate() error {
-	for k, v := range *y {
-		if v.Detection == "" {
-			return fmt.Errorf("detection information missing for special interface type '%s'", k)
-		}
-		if v.Values == nil {
-			return fmt.Errorf("values is missing for interface type '%s'", k)
-		}
+	for k := range *y {
 		err := validateInterfaceType(k)
 		if err != nil {
 			return err

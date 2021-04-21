@@ -92,7 +92,7 @@ func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interfac
 	}
 	reader.oids = oids
 
-	networkInterfacesRaw, err := reader.getProperty(ctx)
+	networkInterfacesRaw, _, err := reader.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
