@@ -162,8 +162,7 @@ type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
 // deviceClassInterfaceTypeDef represents a interface type (e.g. "radio" interface).
 type deviceClassInterfaceTypeDef struct {
 	Detection string
-	Values    deviceClassOIDs
-	Type      string
+	Values    groupPropertyReader
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -297,8 +296,8 @@ type yamlComponentsInterfaces struct {
 type yamlComponentsInterfaceTypes map[string]yamlComponentsInterfaceTypeDef
 
 type yamlComponentsInterfaceTypeDef struct {
-	Detection string             `yaml:"detection"`
-	Values    yamlComponentsOIDs `yaml:"specific_values"`
+	Detection string      `yaml:"detection"`
+	Values    interface{} `yaml:"specific_values"`
 }
 
 type yamlComponentsOIDs map[string]yamlComponentsOID
@@ -657,7 +656,7 @@ func (y *yamlDeviceClassIdentify) convert(parentIdentify deviceClassIdentify) (d
 }
 
 func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponents) (deviceClassComponents, error) {
-	var components deviceClassComponents
+	components := parentComponents
 	var err error
 
 	if y.Interfaces != nil {
@@ -726,25 +725,25 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 	return components, nil
 }
 
-func (y *yamlComponentsInterfaces) convert(parentsComponentsInterfaces *deviceClassComponentsInterfaces) (*deviceClassComponentsInterfaces, error) {
+func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceClassComponentsInterfaces) (*deviceClassComponentsInterfaces, error) {
 	var interfaceComponent deviceClassComponentsInterfaces
 	var err error
 
-	if parentsComponentsInterfaces != nil {
-		interfaceComponent = *parentsComponentsInterfaces
+	if parentComponentsInterfaces != nil {
+		interfaceComponent = *parentComponentsInterfaces
 	}
 
 	if y.IfTable != nil {
 		interfaceComponent.IfTable, err = interface2GroupPropertyReader(y.IfTable, interfaceComponent.IfTable)
 		if err != nil {
-			return &deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
+			return nil, errors.Wrap(err, "failed to convert ifTable")
 		}
 	}
 
 	if y.Types != nil {
 		interfaceComponent.Types, err = y.Types.convert(interfaceComponent.Types)
 		if err != nil {
-			return &deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces types")
+			return nil, errors.Wrap(err, "failed to read yaml interfaces types")
 		}
 	}
 
@@ -767,21 +766,19 @@ func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceT
 	}
 
 	for t, interfaceType := range *y {
-		if interfaceType.Detection == "" {
-			return deviceClassInterfaceTypes{}, errors.New("detection information missing for special interface type")
-		}
-		if interfaceType.Values != nil {
-			values, err := interfaceType.Values.convert()
-			if err != nil {
-				return deviceClassInterfaceTypes{}, errors.Wrap(err, "failed to read yaml interfaces types values")
-			}
-			interfaceTypes[t] = deviceClassInterfaceTypeDef{
-				Detection: interfaceType.Detection,
-				Values:    values,
-				Type:      t,
-			}
+		var values groupPropertyReader
+		if parentValues, ok := interfaceTypes[t]; ok {
+			values, err = interface2GroupPropertyReader(interfaceType.Values, parentValues.Values)
 		} else {
-			return deviceClassInterfaceTypes{}, fmt.Errorf("values is missing for interface type '%s'", t)
+			values, err = interface2GroupPropertyReader(interfaceType.Values, nil)
+		}
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to read yaml interfaces types values")
+		}
+
+		interfaceTypes[t] = deviceClassInterfaceTypeDef{
+			Detection: interfaceType.Detection,
+			Values:    values,
 		}
 	}
 
@@ -789,8 +786,14 @@ func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceT
 }
 
 func (y *yamlComponentsInterfaceTypes) validate() error {
-	for t := range *y {
-		err := validateInterfaceType(t)
+	for k, v := range *y {
+		if v.Detection == "" {
+			return fmt.Errorf("detection information missing for special interface type '%s'", k)
+		}
+		if v.Values == nil {
+			return fmt.Errorf("values is missing for interface type '%s'", k)
+		}
+		err := validateInterfaceType(k)
 		if err != nil {
 			return err
 		}
@@ -1170,11 +1173,7 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 		}
 	}
 	if y.PowerSupply != nil {
-		var reader groupPropertyReader
-		if parentHardwareHealth != nil {
-			reader = parentHardwareHealth.powerSupply
-		}
-		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply, reader)
+		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply, properties.powerSupply)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
 		}
@@ -1809,11 +1808,11 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
 		}
 
-		//overwrite parents
+		//overwrite parent
 		if parentGroupPropertyReader != nil {
 			parentSNMPGroupPropertyReader, ok := parentGroupPropertyReader.(*snmpGroupPropertyReader)
 			if !ok {
-				panic("aah")
+				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
 			}
 
 			devClassOIDsNew := make(deviceClassOIDs)

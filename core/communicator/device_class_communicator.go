@@ -110,18 +110,42 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 		return nil, errors.Wrap(err, "failed to get ifTable")
 	}
 
-	for t, typeDef := range o.components.interfaces.Types {
-		specialInterfacesRaw, err := getValuesBySNMPWalk(ctx, typeDef.Values)
-		if err != nil {
-			return nil, err
+	if len(o.components.interfaces.Types) > 0 {
+		con, ok := network.DeviceConnectionFromContext(ctx)
+		if !ok || con.SNMP == nil {
+			log.Ctx(ctx).Trace().Msg("snmp client is empty")
+			return nil, errors.New("snmp client is empty")
 		}
 
-		for i, networkInterface := range networkInterfaces {
-			if specialValues, ok := specialInterfacesRaw[fmt.Sprint(*networkInterface.IfIndex)]; ok {
-				err := addSpecialInterfacesValuesToInterface(t, &networkInterfaces[i], specialValues)
-				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-					return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
+		for t, typeDef := range o.components.interfaces.Types {
+			indicesRaw, err := con.SNMP.SnmpClient.SNMPWalk(ctx, typeDef.Detection)
+			if err != nil {
+				// special interface is not present, continue
+				continue
+			}
+
+			indices := make(map[string]int)
+			for i, resp := range indicesRaw {
+				oid := resp.GetOID()
+				oidSplit := strings.Split(oid, ".")
+				indices[oidSplit[len(oidSplit)-1]] = i
+			}
+
+			specialInterfaces, err := typeDef.Values.getProperty(ctx)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get special interface values")
+			}
+
+			for i, interf := range networkInterfaces {
+				if interf.IfIndex == nil {
+					return nil, errors.New("special interface doesn't have an ifIndex")
+				}
+				if index, ok := indices[fmt.Sprint(*interf.IfIndex)]; ok {
+					err := addSpecialInterfacesValuesToInterface(t, &networkInterfaces[i], specialInterfaces[index])
+					if err != nil {
+						log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
+						return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
+					}
 				}
 			}
 		}
@@ -757,52 +781,7 @@ func convertRawInterfaces(ctx context.Context, interfacesRaw []map[string]value.
 	return networkInterfaces, nil
 }
 
-func getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
-	networkInterfaces := make(map[string]map[string]interface{})
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if !ok || con.SNMP == nil {
-		log.Ctx(ctx).Trace().Str("property", "interface").Msg("snmp client is empty")
-		return nil, errors.New("snmp client is empty")
-	}
-
-	for name, oid := range oids {
-		snmpResponse, err := con.SNMP.SnmpClient.SNMPWalk(ctx, string(oid.OID))
-		if err != nil {
-			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msgf("oid %s (%s) not found on device", oid.OID, name)
-				continue
-			}
-			log.Ctx(ctx).Trace().Err(err).Msg("failed to get oid value of interface")
-			return nil, errors.Wrap(err, "failed to get oid value")
-		}
-
-		for _, response := range snmpResponse {
-			res, err := response.GetValueBySNMPGetConfiguration(oid.SNMPGetConfiguration)
-			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("couldn't get value from response response")
-				return nil, errors.Wrap(err, "couldn't get value from response response")
-			}
-			if res != "" {
-				resNormalized, err := oid.operators.apply(ctx, value.New(res))
-				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Msg("response couldn't be normalized")
-					return nil, errors.Wrap(err, "response couldn't be normalized")
-				}
-				oid := strings.Split(response.GetOID(), ".")
-				ifIndex := oid[len(oid)-1]
-				if _, ok := networkInterfaces[ifIndex]; !ok {
-					networkInterfaces[ifIndex] = make(map[string]interface{})
-				}
-				networkInterfaces[ifIndex][name] = resNormalized
-			}
-		}
-	}
-
-	return networkInterfaces, nil
-}
-
-func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues map[string]interface{}) error {
+func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues map[string]value.Value) error {
 	switch interfaceType {
 	case "ether_like":
 		var specialValuesStruct device.EthernetLikeInterface
