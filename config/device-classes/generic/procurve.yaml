@@ -44,4 +44,16 @@ components:
   memory:
     usage:
       - detection: snmpget
-        oid: .1.3.6.1.4.1.11.2.14.11.5.1.1.2.1.1.1.6.1
+        oid: .1.3.6.1.4.1.11.2.14.11.5.1.1.2.1.1.1.7.1
+        operators:
+          - type: modify
+            modify_method: divide
+            value:
+              detection: snmpget
+              oid: 1.3.6.1.4.1.11.2.14.11.5.1.1.2.1.1.1.5.1
+              operators:
+                - type: modify
+                  modify_method: divide
+                  value:
+                    detection: constant
+                    value: 100
