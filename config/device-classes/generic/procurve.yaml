@@ -19,11 +19,12 @@ identify:
       - detection: constant
         value: "HP ProCurve"
     model:
-      - detection: SysObjectID
+      - detection: SysDescription
         operators:
           - type: modify
-            modify_method: map
-            mappings: sysObjectID.yaml
+            modify_method: regexSubmatch
+            regex: '^HP ([^,]+),'
+            format: "$1"
     serial_number:
       - detection: snmpget
         oid: .1.3.6.1.2.1.47.1.1.1.1.11.1001
@@ -44,4 +45,3 @@ components:
     usage:
       - detection: snmpget
         oid: .1.3.6.1.4.1.11.2.14.11.5.1.1.2.1.1.1.6.1
-
