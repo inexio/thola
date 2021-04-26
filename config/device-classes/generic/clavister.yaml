@@ -23,7 +23,7 @@ identify:
         operators:
           - type: modify
             modify_method: regexSubmatch
-            regex: '^([\D]+)'
+            regex: '^Clavister ([\D]+)'
             format: "$1"
     os_version:
       - detection: SysDescription
@@ -42,4 +42,3 @@ components:
     usage:
       - detection: snmpget
         oid: .1.3.6.1.4.1.5089.1.2.1.12.0
-
