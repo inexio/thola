@@ -85,6 +85,9 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 	if cacheData.SNMP == nil {
 		cacheData.SNMP = &network.SNMPConnectionData{}
 	}
+	if cacheData.SNMP.V3Data == nil {
+		cacheData.SNMP.V3Data = &network.SNMPv3ConnectionData{}
+	}
 	if cacheData.HTTP == nil {
 		cacheData.HTTP = &network.HTTPConnectionData{}
 	}
@@ -97,6 +100,7 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 			DiscoverParallelRequests: configData.SNMP.DiscoverParallelRequests,
 			DiscoverTimeout:          configData.SNMP.DiscoverTimeout,
 			DiscoverRetries:          configData.SNMP.DiscoverRetries,
+			V3Data:                   cacheData.SNMP.V3Data,
 		},
 		HTTP: &network.HTTPConnectionData{
 			HTTPPorts:    utility.SliceUniqueInt(append(cacheData.HTTP.HTTPPorts, configData.HTTP.HTTPPorts...)),
@@ -173,6 +177,14 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 	if r.DeviceData.ConnectionData.SNMP.DiscoverRetries == nil {
 		r.DeviceData.ConnectionData.SNMP.DiscoverRetries = mergedData.SNMP.DiscoverRetries
 	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data = mergedData.SNMP.V3Data
+	} else if r.DeviceData.ConnectionData.SNMP.V3Data.Level == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data = mergedData.SNMP.V3Data
+	}
+
+	// TODO Check correct v3 data here
 
 	if *r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests <= 0 || *r.DeviceData.ConnectionData.SNMP.DiscoverTimeout <= 0 {
 		return errors.New("invalid snmp connection preferences")
