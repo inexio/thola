@@ -185,7 +185,7 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 
 	return &SNMPClient{
 		client:    client,
-		useCache:  true,
+		useCache:  false,
 		getCache:  newRequestCache(),
 		walkCache: newRequestCache(),
 	}, nil
