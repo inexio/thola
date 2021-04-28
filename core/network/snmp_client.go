@@ -19,9 +19,10 @@ import (
 
 // SNMPClient is used to communicate via snmp.
 type SNMPClient struct {
-	client   *gosnmp.GoSNMP
-	useCache bool
-	cache    requestCache
+	client    *gosnmp.GoSNMP
+	useCache  bool
+	getCache  requestCache
+	walkCache requestCache
 }
 
 type snmpClientCreation struct {
@@ -182,7 +183,12 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 	client.Retries = 3
 	client.ExponentialTimeout = true
 
-	return &SNMPClient{client: client, useCache: true, cache: newRequestCache()}, nil
+	return &SNMPClient{
+		client:    client,
+		useCache:  true,
+		getCache:  newRequestCache(),
+		walkCache: newRequestCache(),
+	}, nil
 }
 
 func getGoSNMPVersion(version string) (gosnmp.SnmpVersion, error) {
@@ -205,13 +211,13 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 
 	if s.useCache {
 		for a, o := range oid {
-			x, err := s.cache.get(o)
+			x, err := s.getCache.get(o)
 			if err != nil {
 				reqOIDs = append(reqOIDs, o)
 			} else {
 				res, ok := x.res.(SNMPResponse)
 				if !ok {
-					return nil, errors.New("cached snmp result is not a string")
+					return nil, errors.New("cached snmp result is not a snmp response")
 				}
 				m[a] = res
 			}
@@ -248,10 +254,10 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 			if snmpResponse.WasSuccessful() {
 				successful = true
 				if s.useCache {
-					s.cache.add(snmpResponse.oid, snmpResponse, nil)
+					s.getCache.add(snmpResponse.oid, snmpResponse, nil)
 				}
 			} else if s.useCache {
-				s.cache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+				s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
 			}
 
 			snmpResponses = append(snmpResponses, snmpResponse)
@@ -267,6 +273,17 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 
 // SNMPWalk sends a snmpwalk request to the specified oid.
 func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
+	if s.useCache {
+		x, err := s.walkCache.get(oid)
+		if err == nil {
+			res, ok := x.res.([]SNMPResponse)
+			if !ok {
+				return nil, errors.New("cached snmp result is not a snmp response")
+			}
+			return res, nil
+		}
+	}
+
 	s.client.Context = ctx
 
 	var response []gosnmp.SnmpPDU
@@ -281,30 +298,43 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 		response, err = s.client.WalkAll(oid)
 	}
 	if err != nil {
-		return nil, errors.Wrap(err, "snmpwalk failed")
+		err = errors.Wrap(err, "snmpwalk failed")
+		if s.useCache {
+			s.walkCache.add(oid, nil, err)
+		}
+		return nil, err
 	}
 
 	if response == nil {
-		return nil, tholaerr.NewNotFoundError("No Such Object available on this agent at this OID")
+		err = tholaerr.NewNotFoundError("No Such Object available on this agent at this OID")
+		if s.useCache {
+			s.walkCache.add(oid, nil, err)
+		}
+		return nil, err
 	}
 
 	var res []SNMPResponse
 	for _, currentResponse := range response {
-		snmpResponse := SNMPResponse{}
-		snmpResponse.oid = currentResponse.Name
-		snmpResponse.value = currentResponse.Value
-		snmpResponse.snmpType = currentResponse.Type
-
+		snmpResponse := SNMPResponse{
+			oid:      currentResponse.Name,
+			value:    currentResponse.Value,
+			snmpType: currentResponse.Type,
+		}
 		res = append(res, snmpResponse)
 
 		if s.useCache {
 			if snmpResponse.WasSuccessful() {
-				s.cache.add(snmpResponse.oid, snmpResponse, nil)
+				s.getCache.add(snmpResponse.oid, snmpResponse, nil)
 			} else {
-				s.cache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+				s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
 			}
 		}
 	}
+
+	if s.useCache {
+		s.walkCache.add(oid, res, nil)
+	}
+
 	return res, nil
 }
 
@@ -315,7 +345,7 @@ func (s *SNMPClient) UseCache(b bool) {
 
 // GetSuccessfulCachedRequests returns all successful cached requests.
 func (s *SNMPClient) GetSuccessfulCachedRequests() map[string]cachedRequestResult {
-	return s.cache.getSuccessfulRequests()
+	return s.getCache.getSuccessfulRequests()
 }
 
 // Disconnect closes an snmp connection.

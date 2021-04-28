@@ -31,11 +31,27 @@ builds:
     env:
       - CGO_ENABLED=0
 
+nfpms:
+  - id: "thola"
+    homepage: https://thola.io
+    maintainer: team@thola.io
+    description: Network Monitoring and Provisioning Tool.
+    license: BSD-2-clause
+    formats:
+      - deb
+    contents:
+      - src: scripts/thola.service
+        dst: /lib/systemd/system/thola.service
+    scripts:
+      preinstall: "scripts/pre-install.sh"
+      postinstall: "scripts/post-install.sh"
+      postremove: "scripts/post-uninstall.sh"
+
 archives:
   - builds:
       - thola
       - thola-client
-      
+
     replacements:
       amd64: 64-bit
       darwin: macOS

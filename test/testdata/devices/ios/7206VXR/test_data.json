@@ -889,6 +889,8 @@
 			"messages": null
 		},
 		"checkMemoryUsage": null,
+		"checkDisk": null,
+		"checkServer": null,
 		"checkSBC": null
 	}
 }

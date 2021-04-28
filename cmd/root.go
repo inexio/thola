@@ -145,7 +145,7 @@ func initConfig() {
 	} else {
 		viper.AddConfigPath(os.ExpandEnv("$HOME/.thola"))
 		viper.AddConfigPath("./config")
-		viper.AddConfigPath("/var/opt/thola")
+		viper.AddConfigPath("/var/lib/thola")
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
 	}
