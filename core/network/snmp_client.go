@@ -222,6 +222,8 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 				m[a] = res
 			}
 		}
+	} else {
+		reqOIDs = oid
 	}
 
 	var response *gosnmp.SnmpPacket
