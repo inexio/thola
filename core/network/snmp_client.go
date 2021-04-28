@@ -558,8 +558,8 @@ func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint32) {
 // GetV3Level returns the security level of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
 func (s *SNMPClient) GetV3Level() *string {
-	var level string
-	level = "authPriv"
+	level := "authPriv"
+	// TODO
 	/*switch s.client.MsgFlags {
 	case gosnmp.NoAuthNoPriv:
 		level = "noAuthNoPriv"
