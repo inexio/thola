@@ -88,7 +88,7 @@ func (r *RequestDeviceConnection) GetIdealConnectionData() ConnectionData {
 			Communities: []string{r.SNMP.SnmpClient.GetCommunity()},
 			Versions:    []string{r.SNMP.SnmpClient.GetVersion()},
 			Ports:       []int{r.SNMP.SnmpClient.GetPort()},
-			V3Data: &SNMPv3ConnectionData{
+			V3Data: SNMPv3ConnectionData{
 				Level:        r.SNMP.SnmpClient.GetV3Level(),
 				ContextName:  r.SNMP.SnmpClient.GetV3ContextName(),
 				User:         r.SNMP.SnmpClient.GetV3User(),

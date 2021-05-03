@@ -43,7 +43,7 @@ type SNMPConnectionData struct {
 	// example: 0
 	DiscoverRetries *int `json:"discoverRetries" xml:"discoverRetries" yaml:"discoverRetries"`
 	// The data required for an SNMP v3 connection.
-	V3Data *SNMPv3ConnectionData `json:"v3_data" xml:"v3_data" yaml:"v3_data"`
+	V3Data SNMPv3ConnectionData `json:"v3_data" xml:"v3_data" yaml:"v3_data"`
 }
 
 // SNMPv3ConnectionData

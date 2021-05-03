@@ -85,9 +85,6 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 	if cacheData.SNMP == nil {
 		cacheData.SNMP = &network.SNMPConnectionData{}
 	}
-	if cacheData.SNMP.V3Data == nil {
-		cacheData.SNMP.V3Data = &network.SNMPv3ConnectionData{}
-	}
 	if cacheData.HTTP == nil {
 		cacheData.HTTP = &network.HTTPConnectionData{}
 	}
@@ -136,6 +133,88 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 		}
 	}
 
+	if r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests == nil {
+		r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests = mergedData.SNMP.DiscoverParallelRequests
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.DiscoverTimeout == nil {
+		r.DeviceData.ConnectionData.SNMP.DiscoverTimeout = mergedData.SNMP.DiscoverTimeout
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.DiscoverRetries == nil {
+		r.DeviceData.ConnectionData.SNMP.DiscoverRetries = mergedData.SNMP.DiscoverRetries
+	}
+
+	if *r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests <= 0 || *r.DeviceData.ConnectionData.SNMP.DiscoverTimeout <= 0 {
+		return errors.New("invalid snmp connection discover preferences")
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.Level == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.Level = mergedData.SNMP.V3Data.Level
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.ContextName == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.ContextName = mergedData.SNMP.V3Data.ContextName
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.User == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.User = mergedData.SNMP.V3Data.User
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.AuthKey == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.AuthKey = mergedData.SNMP.V3Data.AuthKey
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.AuthProtocol == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.AuthProtocol = mergedData.SNMP.V3Data.AuthProtocol
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.PrivKey == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.PrivKey = mergedData.SNMP.V3Data.PrivKey
+	}
+
+	if r.DeviceData.ConnectionData.SNMP.V3Data.PrivProtocol == nil {
+		r.DeviceData.ConnectionData.SNMP.V3Data.PrivProtocol = mergedData.SNMP.V3Data.PrivProtocol
+	}
+
+	if utility.StringSliceContains(r.DeviceData.ConnectionData.SNMP.Versions, "3") {
+		if r.DeviceData.ConnectionData.SNMP.V3Data.ContextName == nil {
+			return errors.New("no SNMP v3 context name provided")
+		}
+		if r.DeviceData.ConnectionData.SNMP.V3Data.Level == nil {
+			return errors.New("no SNMP v3 level provided")
+		}
+		if r.DeviceData.ConnectionData.SNMP.V3Data.User == nil {
+			return errors.New("no SNMP v3 username provided")
+		}
+
+		switch *r.DeviceData.ConnectionData.SNMP.V3Data.Level {
+		case "authPriv":
+			if r.DeviceData.ConnectionData.SNMP.V3Data.PrivProtocol == nil {
+				return errors.New("no SNMP v3 priv protocol provided")
+			} else if network.ValidateSNMPv3PrivProtocol(*r.DeviceData.ConnectionData.SNMP.V3Data.PrivProtocol) != nil {
+				return errors.New("invalid SNMP v3 priv protocol provided")
+			}
+			if r.DeviceData.ConnectionData.SNMP.V3Data.PrivKey == nil {
+				return errors.New("no SNMP v3 priv key provided")
+			}
+			fallthrough
+		case "authNoPriv":
+			if r.DeviceData.ConnectionData.SNMP.V3Data.AuthProtocol == nil {
+				return errors.New("no SNMP v3 auth protocol provided")
+			} else if network.ValidateSNMPv3AuthProtocol(*r.DeviceData.ConnectionData.SNMP.V3Data.AuthProtocol) != nil {
+				return errors.New("invalid SNMP v3 auth protocol provided")
+			}
+			if r.DeviceData.ConnectionData.SNMP.V3Data.AuthKey == nil {
+				return errors.New("no SNMP v3 auth key provided")
+			}
+		case "noAuthNoPriv":
+		//Nothing else needed
+		default:
+			return errors.New("invalid SNMP v3 level, only 'noAuthNoPriv', 'authNoPriv' and 'authPriv' are possible")
+		}
+	}
+
 	if r.DeviceData.ConnectionData.HTTP == nil {
 		r.DeviceData.ConnectionData.HTTP = mergedData.HTTP
 	}
@@ -164,30 +243,6 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 
 	if r.DeviceData.ConnectionData.HTTP.AuthPassword == nil {
 		r.DeviceData.ConnectionData.HTTP.AuthPassword = mergedData.HTTP.AuthPassword
-	}
-
-	if r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests == nil {
-		r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests = mergedData.SNMP.DiscoverParallelRequests
-	}
-
-	if r.DeviceData.ConnectionData.SNMP.DiscoverTimeout == nil {
-		r.DeviceData.ConnectionData.SNMP.DiscoverTimeout = mergedData.SNMP.DiscoverTimeout
-	}
-
-	if r.DeviceData.ConnectionData.SNMP.DiscoverRetries == nil {
-		r.DeviceData.ConnectionData.SNMP.DiscoverRetries = mergedData.SNMP.DiscoverRetries
-	}
-
-	if r.DeviceData.ConnectionData.SNMP.V3Data == nil {
-		r.DeviceData.ConnectionData.SNMP.V3Data = mergedData.SNMP.V3Data
-	} else if r.DeviceData.ConnectionData.SNMP.V3Data.Level == nil {
-		r.DeviceData.ConnectionData.SNMP.V3Data = mergedData.SNMP.V3Data
-	}
-
-	// TODO Check correct v3 data here
-
-	if *r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests <= 0 || *r.DeviceData.ConnectionData.SNMP.DiscoverTimeout <= 0 {
-		return errors.New("invalid snmp connection preferences")
 	}
 
 	if r.Timeout == nil {
@@ -262,6 +317,10 @@ func (r *BaseRequest) setupConnection(ctx context.Context) (*network.RequestDevi
 }
 
 func (r *BaseRequest) setupSNMPConnection(ctx context.Context) (*network.RequestDeviceConnectionSNMP, error) {
+	if r.DeviceData.ConnectionData.SNMP == nil {
+		return nil, errors.New("no SNMP connection data available")
+	}
+
 	snmpClient, err := network.NewSNMPClientByConnectionData(ctx, r.DeviceData.IPAddress, r.DeviceData.ConnectionData.SNMP)
 	if err != nil {
 		return nil, errors.Wrap(err, "error during NewSNMPClientByConnectionData")
@@ -275,7 +334,7 @@ func (r *BaseRequest) setupSNMPConnection(ctx context.Context) (*network.Request
 
 func (r *BaseRequest) setupHTTPConnection() (*network.RequestDeviceConnectionHTTP, error) {
 	if r.DeviceData.ConnectionData.HTTP == nil {
-		return nil, errors.New("no http connection data available")
+		return nil, errors.New("no HTTP(S) connection data available")
 	}
 
 	var httpClient *network.HTTPClient
