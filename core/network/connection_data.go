@@ -83,7 +83,6 @@ type SNMPv3ConnectionData struct {
 }
 
 // SNMPCredentials includes all credential information of the snmp connection.
-// V3 values are nil if no snmp v3 is being used.
 type SNMPCredentials struct {
 	Version       string `yaml:"version" json:"version" xml:"version"`
 	Community     string `yaml:"community" json:"community" xml:"community"`
