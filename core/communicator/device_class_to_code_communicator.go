@@ -30,3 +30,14 @@ func getCodeCommunicator(classIdentifier string, rel *relatedNetworkDeviceCommun
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no communicator found for device class identifier '%s'", classIdentifier))
 }
+
+/*
+func addCodePropertyReader(class string, reader string)
+var codePropertyReaderMappings = make(map[string]map[string]propertyReader)
+var copeGroupPropertyReaderMappings = map[string]map[string]groupPropertyReader{
+	"ceraos/ip10": {
+		"IfTable": &ceraosIP10GetIfTableGPR{},
+	},
+}
+
+*/

@@ -143,21 +143,9 @@ type deviceClassConfig struct {
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	Count   string
-	IfTable groupPropertyReader
-	Types   deviceClassInterfaceTypes
+	Count  string
+	Values groupPropertyReader
 }
-
-// deviceClassOIDs maps labels to OIDs.
-type deviceClassOIDs map[string]deviceClassOID
-
-type deviceClassOID struct {
-	network.SNMPGetConfiguration
-	operators propertyOperators
-}
-
-// deviceClassInterfaceTypes maps interface types to TypeDefs.
-type deviceClassInterfaceTypes map[string]groupPropertyReader
 
 // deviceClassSNMP represents the snmp config part of a device class.
 type deviceClassSNMP struct {
@@ -282,14 +270,9 @@ type yamlComponentsHardwareHealthProperties struct {
 //
 
 type yamlComponentsInterfaces struct {
-	Count   string                       `yaml:"count"`
-	IfTable interface{}                  `yaml:"ifTable"`
-	Types   yamlComponentsInterfaceTypes `yaml:"types"`
+	Count      string      `yaml:"count"`
+	Properties interface{} `yaml:"properties"`
 }
-
-type yamlComponentsInterfaceTypes map[string]interface{}
-
-type yamlComponentsOIDs map[string]yamlComponentsOID
 
 type yamlComponentsOID struct {
 	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
@@ -722,17 +705,10 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 		interfaceComponent = *parentComponentsInterfaces
 	}
 
-	if y.IfTable != nil {
-		interfaceComponent.IfTable, err = interface2GroupPropertyReader(y.IfTable, interfaceComponent.IfTable)
+	if y.Properties != nil {
+		interfaceComponent.Values, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.Values)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert ifTable")
-		}
-	}
-
-	if y.Types != nil {
-		interfaceComponent.Types, err = y.Types.convert(interfaceComponent.Types)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to read yaml interfaces types")
+			return nil, errors.Wrap(err, "failed to convert interface properties")
 		}
 	}
 
@@ -743,89 +719,34 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	return &interfaceComponent, nil
 }
 
-func (y *yamlComponentsInterfaceTypes) convert(parentTypes deviceClassInterfaceTypes) (deviceClassInterfaceTypes, error) {
-	err := y.validate()
-	if err != nil {
-		return nil, err
-	}
-	interfaceTypes := make(map[string]groupPropertyReader)
-
-	for t, interfaceType := range parentTypes {
-		interfaceTypes[t] = interfaceType
-	}
-
-	for t, interfaceType := range *y {
-		var values groupPropertyReader
-		if parentValues, ok := interfaceTypes[t]; ok {
-			values, err = interface2GroupPropertyReader(interfaceType, parentValues)
-		} else {
-			values, err = interface2GroupPropertyReader(interfaceType, nil)
-		}
+func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
+	if y.Operators != nil {
+		operators, err := interfaceSlice2propertyOperators(y.Operators, propertyDefault)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to read yaml interfaces types values")
+			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
 		}
-
-		interfaceTypes[t] = values
+		return deviceClassOID{
+			SNMPGetConfiguration: network.SNMPGetConfiguration{
+				OID:          y.OID,
+				UseRawResult: y.UseRawResult,
+			},
+			operators: operators,
+		}, nil
 	}
 
-	return interfaceTypes, nil
+	return deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID:          y.OID,
+			UseRawResult: y.UseRawResult,
+		},
+		operators: nil,
+	}, nil
 }
 
-func (y *yamlComponentsInterfaceTypes) validate() error {
-	for k := range *y {
-		err := validateInterfaceType(k)
-		if err != nil {
-			return err
-		}
+func (d *deviceClassOID) validate() error {
+	if err := d.OID.Validate(); err != nil {
+		return errors.Wrap(err, "oid is invalid")
 	}
-	return nil
-}
-
-func validateInterfaceType(t string) error {
-	switch t {
-	case "ether_like", "radio", "dwdm", "optical_transponder", "optical_amplifier", "optical_opm":
-		return nil
-	}
-	return fmt.Errorf("unknown interface type '%s'", t)
-}
-
-func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
-	interfaceOIDs := make(map[string]deviceClassOID)
-
-	for k, property := range *y {
-		if property.Operators != nil {
-			operators, err := interfaceSlice2propertyOperators(property.Operators, propertyDefault)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to read yaml oids operators")
-			}
-			interfaceOIDs[k] = deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID:          (*y)[k].OID,
-					UseRawResult: (*y)[k].UseRawResult,
-				},
-				operators: operators,
-			}
-		} else {
-			interfaceOIDs[k] = deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID:          (*y)[k].OID,
-					UseRawResult: (*y)[k].UseRawResult,
-				},
-				operators: nil,
-			}
-		}
-	}
-
-	return interfaceOIDs, nil
-}
-
-func (d *deviceClassOIDs) validate() error {
-	for label, oid := range *d {
-		if err := oid.OID.Validate(); err != nil {
-			return errors.Wrapf(err, "oid for %s is invalid", label)
-		}
-	}
-
 	return nil
 }
 
@@ -1767,25 +1688,17 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 	}
 	switch stringDetection {
 	case "snmpwalk":
-		var oids yamlComponentsOIDs
 		if _, ok := m["values"]; !ok {
 			return nil, errors.New("values are missing")
 		}
-		values, ok := m["values"].(map[interface{}]interface{})
+		oidReader, err := interface2oidReader(m["values"])
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse oid reader")
+		}
+
+		devClassOIDs, ok := oidReader.(*deviceClassOIDs)
 		if !ok {
-			return nil, errors.New("values needs to be a map")
-		}
-		err := mapstructure.Decode(values, &oids)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
-		}
-		devClassOIDs, err := oids.convert()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert yaml OIDs to device class OIDs")
-		}
-		err = devClassOIDs.validate()
-		if err != nil {
-			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
+			return nil, errors.New("oid reader is no list of oids")
 		}
 
 		//overwrite parent
@@ -1795,20 +1708,63 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
 			}
 
-			devClassOIDsNew := make(deviceClassOIDs)
-			for k, v := range parentSNMPGroupPropertyReader.oids {
-				devClassOIDsNew[k] = v
-			}
-			for k, v := range devClassOIDs {
-				devClassOIDsNew[k] = v
-			}
-			devClassOIDs = devClassOIDsNew
+			devClassOIDsMerged := parentSNMPGroupPropertyReader.oids.merge(*devClassOIDs)
+			devClassOIDs = &devClassOIDsMerged
 		}
 
-		return &snmpGroupPropertyReader{devClassOIDs}, nil
+		return &snmpGroupPropertyReader{*devClassOIDs}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}
+}
+
+func interface2oidReader(i interface{}) (oidReader, error) {
+	values, ok := i.(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.New("values needs to be a map")
+	}
+
+	result := make(deviceClassOIDs)
+
+	for val, data := range values {
+		dataMap, ok := data.(map[interface{}]interface{})
+		if !ok {
+			return nil, errors.New("value data needs to be a map")
+		}
+
+		valString, ok := val.(string)
+		if !ok {
+			return nil, errors.New("key of snmp property reader must be a string")
+		}
+
+		if v, ok := dataMap["values"]; ok {
+			if len(dataMap) != 1 {
+				return nil, errors.New("value with subvalues has to many keys")
+			}
+			reader, err := interface2oidReader(v)
+			if err != nil {
+				return nil, err
+			}
+			result[valString] = reader
+			continue
+		}
+
+		var oid yamlComponentsOID
+		err := mapstructure.Decode(data, &oid)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
+		}
+		devClassOID, err := oid.convert()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert yaml OID to device class OID")
+		}
+		err = devClassOID.validate()
+		if err != nil {
+			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
+		}
+		result[valString] = &devClassOID
+	}
+	return &result, nil
 }
 
 func (m *matchMode) validate() error {

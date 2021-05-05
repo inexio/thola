@@ -73,11 +73,11 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 // GetInterfaces returns the interfaces of ekinops devices.
 // For ekinops devices, only a few interface values are required.
 func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-	if genericDeviceClass.components.interfaces.IfTable == nil {
+	if genericDeviceClass.components.interfaces.Values == nil {
 		return nil, errors.New("ifTable information is empty")
 	}
 
-	reader := *genericDeviceClass.components.interfaces.IfTable.(*snmpGroupPropertyReader)
+	reader := *genericDeviceClass.components.interfaces.Values.(*snmpGroupPropertyReader)
 	oids := make(deviceClassOIDs)
 
 	regex, err := regexp.Compile("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)")

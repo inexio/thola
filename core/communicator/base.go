@@ -40,10 +40,6 @@ func (c *baseCommunicator) GetInterfaces(_ context.Context) ([]device.Interface,
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *baseCommunicator) GetIfTable(_ context.Context) ([]device.Interface, error) {
-	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
-}
-
 func (c *baseCommunicator) GetCountInterfaces(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

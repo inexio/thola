@@ -59,10 +59,6 @@ type availableCommunicatorFunctions interface {
 	// GetOSVersion returns the os version of a device.
 	GetOSVersion(ctx context.Context) (string, error)
 
-	// GetIfTable returns the ifTable of a device.
-	// This only contains the standard ifTable values.
-	GetIfTable(ctx context.Context) ([]device.Interface, error)
-
 	// GetInterfaces returns the interfaces of a device.
 	// This includes special interface values.
 	GetInterfaces(ctx context.Context) ([]device.Interface, error)
@@ -406,20 +402,6 @@ func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device
 	}
 	if c.isHead() {
 		res = normalizeInterfaces(res.([]device.Interface))
-	}
-	return res.([]device.Interface), err
-}
-
-func (c *networkDeviceCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-	if c.isHead() && !c.deviceClassCommunicator.hasAvailableComponent(interfacesComponent) {
-		return []device.Interface{}, tholaerr.NewComponentNotFoundError("no interfaces component available for this device")
-	}
-	fClass := newCommunicatorAdapter(c.deviceClassCommunicator).getIfTable
-	fCom := utility.IfThenElse(c.codeCommunicator != nil, adapterFunc(newCommunicatorAdapter(c.codeCommunicator).getIfTable), emptyAdapterFunc).(adapterFunc)
-	fSub := utility.IfThenElse(c.sub != nil, adapterFunc(newCommunicatorAdapter(c.sub).getIfTable), emptyAdapterFunc).(adapterFunc)
-	res, err := c.executeWithRecursion(fClass, fCom, fSub, ctx)
-	if err != nil {
-		return []device.Interface{}, err
 	}
 	return res.([]device.Interface), err
 }

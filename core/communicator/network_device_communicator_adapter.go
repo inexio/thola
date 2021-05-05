@@ -16,7 +16,6 @@ type communicatorAdapter interface {
 	getModelSeries(...interface{}) (interface{}, error)
 	getSerialNumber(...interface{}) (interface{}, error)
 	getOSVersion(...interface{}) (interface{}, error)
-	getIfTable(...interface{}) (interface{}, error)
 	getInterfaces(...interface{}) (interface{}, error)
 	getCountInterfaces(...interface{}) (interface{}, error)
 	communicatorAdapterCPU
@@ -102,10 +101,6 @@ func (a *adapter) getSerialNumber(i ...interface{}) (interface{}, error) {
 
 func (a *adapter) getOSVersion(i ...interface{}) (interface{}, error) {
 	return a.com.GetOSVersion(i[0].(context.Context))
-}
-
-func (a *adapter) getIfTable(i ...interface{}) (interface{}, error) {
-	return a.com.GetIfTable(i[0].(context.Context))
 }
 
 func (a *adapter) getInterfaces(i ...interface{}) (interface{}, error) {
