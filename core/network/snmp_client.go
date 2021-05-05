@@ -37,6 +37,7 @@ type snmpClientCreationData struct {
 	port        int
 	timeout     int
 	retries     int
+	v3Data      SNMPv3ConnectionData
 }
 
 // NewSNMPClientByConnectionData tries to create a new snmp client by SNMPConnectionData and returns it.
@@ -68,17 +69,32 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 	amount := len(data.Ports) * len(data.Versions) * len(data.Communities)
 	in := make(chan snmpClientCreationData, amount)
 	out := make(chan snmpClientCreation, amount)
+	amount = 0
 
 	for _, port := range data.Ports {
 		for _, version := range data.Versions {
-			for _, community := range data.Communities {
+			// v3 has no community set
+			if version == "3" {
 				in <- snmpClientCreationData{
 					ipAddress:   ipAddress,
 					snmpVersion: version,
-					community:   community,
 					port:        port,
 					timeout:     *data.DiscoverTimeout,
 					retries:     *data.DiscoverRetries,
+					v3Data:      data.V3Data,
+				}
+				amount++
+			} else {
+				for _, community := range data.Communities {
+					in <- snmpClientCreationData{
+						ipAddress:   ipAddress,
+						snmpVersion: version,
+						community:   community,
+						port:        port,
+						timeout:     *data.DiscoverTimeout,
+						retries:     *data.DiscoverRetries,
+					}
+					amount++
 				}
 			}
 		}
@@ -105,6 +121,9 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 				}
 			}
 			continue
+		}
+		if res.version == "3" {
+			return res.client, nil
 		}
 		if res.version == "2c" {
 			if !v3Available {
@@ -140,7 +159,13 @@ func createNewSNMPClientConcurrent(ctx context.Context, in chan snmpClientCreati
 		default:
 			select {
 			case data := <-in:
-				client, err := NewSNMPClient(ctx, data.ipAddress, data.snmpVersion, data.community, data.port, data.timeout, data.retries)
+				var client *SNMPClient
+				var err error
+				if data.snmpVersion == "3" {
+					client, err = NewSNMPv3Client(ctx, data.ipAddress, data.port, data.timeout, data.retries, data.v3Data)
+				} else {
+					client, err = NewSNMPClient(ctx, data.ipAddress, data.snmpVersion, data.community, data.port, data.timeout, data.retries)
+				}
 				out <- snmpClientCreation{client, data.snmpVersion, err}
 			default:
 				return
@@ -168,7 +193,68 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 		Retries:   retries,
 	}
 
-	err = client.ConnectIPv4()
+	return newSNMPClientTestConnection(client)
+}
+
+// NewSNMPv3Client creates a new SNMP v3 Client.
+func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retries int, v3Data SNMPv3ConnectionData) (*SNMPClient, error) {
+	client := &gosnmp.GoSNMP{
+		Context:       ctx,
+		Target:        ipAddress,
+		Port:          uint16(port),
+		Transport:     "udp",
+		Version:       gosnmp.Version3,
+		Timeout:       time.Duration(timeout) * time.Second,
+		MaxOids:       60,
+		Retries:       retries,
+		ContextName:   *v3Data.ContextName,
+		SecurityModel: gosnmp.UserSecurityModel,
+	}
+
+	switch *v3Data.Level {
+	case "noAuthNoPriv":
+		client.MsgFlags = gosnmp.NoAuthNoPriv
+		client.SecurityParameters = &gosnmp.UsmSecurityParameters{
+			UserName: *v3Data.User,
+		}
+	case "authNoPriv":
+		authProtocol, err := getGoSNMPV3AuthProtocol(*v3Data.AuthProtocol)
+		if err != nil {
+			return nil, err
+		}
+
+		client.MsgFlags = gosnmp.AuthNoPriv
+		client.SecurityParameters = &gosnmp.UsmSecurityParameters{
+			UserName:                 *v3Data.User,
+			AuthenticationProtocol:   authProtocol,
+			AuthenticationPassphrase: *v3Data.AuthKey,
+		}
+	case "authPriv":
+		authProtocol, err := getGoSNMPV3AuthProtocol(*v3Data.AuthProtocol)
+		if err != nil {
+			return nil, err
+		}
+
+		privProtocol, err := getGoSNMPV3PrivProtocol(*v3Data.PrivProtocol)
+		if err != nil {
+			return nil, err
+		}
+
+		client.MsgFlags = gosnmp.AuthPriv
+		client.SecurityParameters = &gosnmp.UsmSecurityParameters{
+			UserName:                 *v3Data.User,
+			AuthenticationProtocol:   authProtocol,
+			AuthenticationPassphrase: *v3Data.AuthKey,
+			PrivacyProtocol:          privProtocol,
+			PrivacyPassphrase:        *v3Data.PrivKey,
+		}
+	}
+
+	return newSNMPClientTestConnection(client)
+}
+
+func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
+	err := client.ConnectIPv4()
 	if err != nil {
 		return nil, errors.Wrap(err, "connect ip v4 failed")
 	}
@@ -195,8 +281,62 @@ func getGoSNMPVersion(version string) (gosnmp.SnmpVersion, error) {
 		return gosnmp.Version1, nil
 	case "2c":
 		return gosnmp.Version2c, nil
+	case "3":
+		return gosnmp.Version3, nil
 	default:
-		return 0, fmt.Errorf("invalid snmp version '%s', only '1' and '2c' are supported right now", version)
+		return 0, fmt.Errorf("invalid snmp version '%s', only '1', '2c' and '3' are possible", version)
+	}
+}
+
+func ValidateSNMPv3AuthProtocol(protocol string) error {
+	_, err := getGoSNMPV3AuthProtocol(protocol)
+	return err
+}
+
+func getGoSNMPV3AuthProtocol(protocol string) (gosnmp.SnmpV3AuthProtocol, error) {
+	switch protocol {
+	case "noAuth":
+		return gosnmp.NoAuth, nil
+	case "md5", "MD5":
+		return gosnmp.MD5, nil
+	case "sha", "SHA":
+		return gosnmp.SHA, nil
+	case "sha224", "SHA224":
+		return gosnmp.SHA224, nil
+	case "sha256", "SHA256":
+		return gosnmp.SHA256, nil
+	case "sha384", "SHA384":
+		return gosnmp.SHA384, nil
+	case "sha512", "SHA512":
+		return gosnmp.SHA512, nil
+	default:
+		return 0, fmt.Errorf("invalid authentication protocol '%s'", protocol)
+	}
+}
+
+func ValidateSNMPv3PrivProtocol(protocol string) error {
+	_, err := getGoSNMPV3PrivProtocol(protocol)
+	return err
+}
+
+func getGoSNMPV3PrivProtocol(protocol string) (gosnmp.SnmpV3PrivProtocol, error) {
+	switch protocol {
+	case "noAuth":
+		return gosnmp.NoPriv, nil
+	case "des", "DES":
+		return gosnmp.DES, nil
+	case "aes", "AES":
+		return gosnmp.AES, nil
+	case "aes192", "AES192":
+		return gosnmp.AES192, nil
+	case "aes256", "AES256":
+		return gosnmp.AES256, nil
+	case "aes192c", "AES192C":
+		return gosnmp.AES192C, nil
+	case "aes256c", "AES256C":
+		return gosnmp.AES256C, nil
+	default:
+		return 0, fmt.Errorf("invalid privacy protocol '%s'", protocol)
 	}
 }
 
@@ -220,6 +360,8 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 				m[a] = res
 			}
 		}
+	} else {
+		reqOIDs = oid
 	}
 
 	var response *gosnmp.SnmpPacket
@@ -368,6 +510,130 @@ func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint32) {
 	s.client.MaxRepetitions = maxRepetitions
 }
 
+// GetV3Level returns the security level of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3Level() *string {
+	var level string
+	switch s.client.MsgFlags {
+	case gosnmp.NoAuthNoPriv | gosnmp.Reportable:
+		level = "noAuthNoPriv"
+	case gosnmp.AuthNoPriv | gosnmp.Reportable:
+		level = "authNoPriv"
+	case gosnmp.AuthPriv | gosnmp.Reportable:
+		level = "authPriv"
+	default:
+		return nil
+	}
+	return &level
+}
+
+// GetV3ContextName returns the context name of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3ContextName() *string {
+	if s.client.ContextName == "" {
+		return nil
+	}
+	contextName := s.client.ContextName
+	return &contextName
+}
+
+// GetV3User returns the user of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3User() *string {
+	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
+	if !ok {
+		return nil
+	}
+	if r.UserName == "" {
+		return nil
+	}
+	return &r.UserName
+}
+
+// GetV3AuthKey returns the auth key of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3AuthKey() *string {
+	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
+	if !ok {
+		return nil
+	}
+	if r.AuthenticationPassphrase == "" {
+		return nil
+	}
+	return &r.AuthenticationPassphrase
+}
+
+// GetV3AuthProto returns the auth protocol of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3AuthProto() *string {
+	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
+	if !ok {
+		return nil
+	}
+	var proto string
+	switch r.AuthenticationProtocol {
+	case gosnmp.NoAuth:
+		proto = "NoAuth"
+	case gosnmp.MD5:
+		proto = "MD5"
+	case gosnmp.SHA:
+		proto = "SHA"
+	case gosnmp.SHA224:
+		proto = "SHA224"
+	case gosnmp.SHA256:
+		proto = "SHA256"
+	case gosnmp.SHA384:
+		proto = "SHA384"
+	case gosnmp.SHA512:
+		proto = "SHA512"
+	default:
+		return nil
+	}
+	return &proto
+}
+
+// GetV3PrivKey returns the priv key of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3PrivKey() *string {
+	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
+	if !ok {
+		return nil
+	}
+	if r.PrivacyPassphrase == "" {
+		return nil
+	}
+	return &r.PrivacyPassphrase
+}
+
+// GetV3PrivProto returns the priv protocol of the snmp v3 connection.
+// Return value is nil if no snmp v3 is being used.
+func (s *SNMPClient) GetV3PrivProto() *string {
+	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
+	if !ok {
+		return nil
+	}
+	var proto string
+	switch r.PrivacyProtocol {
+	case gosnmp.NoPriv:
+		proto = "NoPriv"
+	case gosnmp.DES:
+		proto = "DES"
+	case gosnmp.AES:
+		proto = "AES"
+	case gosnmp.AES192:
+		proto = "AES192"
+	case gosnmp.AES256:
+		proto = "AES256"
+	case gosnmp.AES192C:
+		proto = "AES192C"
+	case gosnmp.AES256C:
+		proto = "AES256C"
+	default:
+		return nil
+	}
+	return &proto
+}
+
 // SNMPResponse is the response returned for a single snmp request.
 type SNMPResponse struct {
 	oid      string
@@ -463,17 +729,16 @@ func (s *SNMPResponse) GetValueStringRaw() (string, error) {
 	return s.getValueString(false)
 }
 
-// GetOID returns the oid of the response
+// GetOID returns the oid of the response.
 func (s *SNMPResponse) GetOID() string {
 	return s.oid
 }
 
-// GetOID returns the snmp type of the response
+// GetSNMPType returns the snmp type of the response.
 func (s *SNMPResponse) GetSNMPType() gosnmp.Asn1BER {
 	return s.snmpType
 }
 
-//SNMPGetConfiguration
 type SNMPGetConfiguration struct {
 	OID          OID  `yaml:"oid" mapstructure:"oid"`
 	UseRawResult bool `yaml:"use_raw_result" mapstructure:"use_raw_result"`
