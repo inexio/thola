@@ -124,9 +124,7 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 			continue
 		}
 		if res.version == "3" {
-			if successfulClient == nil || successfulClient.client.Version < gosnmp.Version3 {
-				successfulClient = res.client
-			}
+			return res.client, nil
 		}
 		if res.version == "2c" {
 			if !v3Available {
