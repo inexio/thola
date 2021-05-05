@@ -1454,20 +1454,10 @@
           "format": "double",
           "x-go-name": "RXPower"
         },
-        "rx_power_100_g": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "RXPower100G"
-        },
         "tx_power": {
           "type": "number",
           "format": "double",
           "x-go-name": "TXPower"
-        },
-        "tx_power_100_g": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "TXPower100G"
         },
         "uncorrected_fec": {
           "type": "array",
@@ -1964,6 +1954,9 @@
         },
         "radio": {
           "$ref": "#/definitions/RadioInterface"
+        },
+        "sap": {
+          "$ref": "#/definitions/SAPInterface"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
@@ -2596,6 +2589,24 @@
       },
       "x-go-package": "github.com/inexio/go-monitoringplugin"
     },
+    "SAPInterface": {
+      "description": "SAPInterface represents a service access point interface.",
+      "type": "object",
+      "title": "SAPInterface",
+      "properties": {
+        "inbound": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Inbound"
+        },
+        "outbound": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Outbound"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
     "SBCComponent": {
       "description": "SBCComponent represents a SBC component.",
       "type": "object",
@@ -2754,7 +2765,9 @@
             "type": "string"
           },
           "x-go-name": "Communities",
-          "example": "public"
+          "example": [
+            "public"
+          ]
         },
         "discoverParallelRequests": {
           "description": "The amount of parallel connection requests used while trying to get a valid SNMP connection.",
@@ -2785,7 +2798,9 @@
             "format": "int64"
           },
           "x-go-name": "Ports",
-          "example": "161"
+          "example": [
+            161
+          ]
         },
         "versions": {
           "description": "The snmp version(s) of the device.",
@@ -2794,7 +2809,9 @@
             "type": "string"
           },
           "x-go-name": "Versions",
-          "example": "2c"
+          "example": [
+            "2c"
+          ]
         }
       },
       "x-go-package": "github.com/inexio/thola/core/network"
