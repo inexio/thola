@@ -19,10 +19,9 @@ import (
 
 // SNMPClient is used to communicate via snmp.
 type SNMPClient struct {
-	client    *gosnmp.GoSNMP
-	useCache  bool
-	getCache  requestCache
-	walkCache requestCache
+	client   *gosnmp.GoSNMP
+	useCache bool
+	getCache requestCache
 }
 
 type snmpClientCreation struct {
@@ -270,10 +269,9 @@ func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
 	client.ExponentialTimeout = true
 
 	return &SNMPClient{
-		client:    client,
-		useCache:  true,
-		getCache:  newRequestCache(),
-		walkCache: newRequestCache(),
+		client:   client,
+		useCache: true,
+		getCache: newRequestCache(),
 	}, nil
 }
 
@@ -415,17 +413,6 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 
 // SNMPWalk sends a snmpwalk request to the specified oid.
 func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
-	if s.useCache {
-		x, err := s.walkCache.get(oid)
-		if err == nil {
-			res, ok := x.res.([]SNMPResponse)
-			if !ok {
-				return nil, errors.New("cached snmp result is not a snmp response")
-			}
-			return res, nil
-		}
-	}
-
 	s.client.Context = ctx
 
 	var response []gosnmp.SnmpPDU
@@ -441,17 +428,11 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	}
 	if err != nil {
 		err = errors.Wrap(err, "snmpwalk failed")
-		if s.useCache {
-			s.walkCache.add(oid, nil, err)
-		}
 		return nil, err
 	}
 
 	if response == nil {
 		err = tholaerr.NewNotFoundError("No Such Object available on this agent at this OID")
-		if s.useCache {
-			s.walkCache.add(oid, nil, err)
-		}
 		return nil, err
 	}
 
@@ -471,10 +452,6 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 				s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
 			}
 		}
-	}
-
-	if s.useCache {
-		s.walkCache.add(oid, res, nil)
 	}
 
 	return res, nil
