@@ -59,11 +59,11 @@ type SNMPCredentials struct {
 type HTTPConnectionData struct {
 	// The http port(s) of the device.
 	//
-	// example: 80
+	// example: [80]
 	HTTPPorts []int `json:"http_ports" xml:"http_ports" yaml:"http_ports"`
 	// The https port(s) of the device.
 	//
-	// example: 443
+	// example: [443]
 	HTTPSPorts []int `json:"https_ports" xml:"https_ports" yaml:"https_ports"`
 	// The username for authorization on the device.
 	//

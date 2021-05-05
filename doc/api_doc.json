@@ -1647,7 +1647,9 @@
             "format": "int64"
           },
           "x-go-name": "HTTPPorts",
-          "example": "80"
+          "example": [
+            80
+          ]
         },
         "https_ports": {
           "description": "The https port(s) of the device.",
@@ -1657,7 +1659,9 @@
             "format": "int64"
           },
           "x-go-name": "HTTPSPorts",
-          "example": "443"
+          "example": [
+            443
+          ]
         }
       },
       "x-go-package": "github.com/inexio/thola/core/network"
