@@ -147,3 +147,10 @@ components:
               oid: 1.3.6.1.2.1.10.7.11.1.2
             etherStatsCRCAlignErrors:
               oid: 1.3.6.1.2.1.16.1.1.1.8
+              indices_mapping:
+                oid: 1.3.6.1.2.1.16.1.1.1.2
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '\.([0-9]+)$'
+                    format: "$1"

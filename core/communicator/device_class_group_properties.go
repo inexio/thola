@@ -136,7 +136,8 @@ func (d *deviceClassOIDs) merge(overwrite deviceClassOIDs) deviceClassOIDs {
 
 type deviceClassOID struct {
 	network.SNMPGetConfiguration
-	operators propertyOperators
+	operators      propertyOperators
+	indicesMapping *deviceClassOID
 }
 
 func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, error) {
@@ -178,6 +179,34 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 			}
 			result[index] = resNormalized
 		}
+	}
+
+	//change indices if necessary
+	if d.indicesMapping != nil {
+		indices, err := d.indicesMapping.readOID(ctx)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to read indices")
+		}
+		mappedResult := make(map[int]interface{})
+
+		for k, v := range result {
+			var idx int
+			if _, ok := indices[k]; ok {
+				idx, err = indices[k].(value.Value).Int()
+				if err != nil {
+					return nil, errors.Wrap(err, "failed to convert Value to int")
+				}
+			} else {
+				idx = k
+			}
+
+			if _, ok := mappedResult[idx]; ok {
+				return nil, fmt.Errorf("index mappings resulted in duplicated index '%d'", idx)
+			}
+
+			mappedResult[idx] = v
+		}
+		result = mappedResult
 	}
 	return result, nil
 }

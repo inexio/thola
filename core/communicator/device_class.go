@@ -276,7 +276,8 @@ type yamlComponentsInterfaces struct {
 
 type yamlComponentsOID struct {
 	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
-	Operators                    []interface{} `yaml:"operators"`
+	Operators                    []interface{}      `yaml:"operators"`
+	IndicesMapping               *yamlComponentsOID `yaml:"indices_mapping" mapstructure:"indices_mapping"`
 }
 
 var genericDeviceClass struct {
@@ -720,6 +721,15 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 }
 
 func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
+	var idxMappings *deviceClassOID
+	if y.IndicesMapping != nil {
+		mappings, err := y.IndicesMapping.convert()
+		if err != nil {
+			return deviceClassOID{}, errors.New("failed to convert indices mappings")
+		}
+		idxMappings = &mappings
+	}
+
 	if y.Operators != nil {
 		operators, err := interfaceSlice2propertyOperators(y.Operators, propertyDefault)
 		if err != nil {
@@ -730,7 +740,8 @@ func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
 				OID:          y.OID,
 				UseRawResult: y.UseRawResult,
 			},
-			operators: operators,
+			operators:      operators,
+			indicesMapping: idxMappings,
 		}, nil
 	}
 
@@ -739,7 +750,8 @@ func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
 			OID:          y.OID,
 			UseRawResult: y.UseRawResult,
 		},
-		operators: nil,
+		operators:      nil,
+		indicesMapping: idxMappings,
 	}, nil
 }
 
