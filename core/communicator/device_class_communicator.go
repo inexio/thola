@@ -103,12 +103,19 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.I
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	networkInterfacesRaw, _, err := o.components.interfaces.Values.getProperty(ctx)
+	interfacesRaw, err := o.components.interfaces.Values.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertRawInterfaces(ctx, networkInterfacesRaw)
+	var interfaces []device.Interface
+
+	err = interfacesRaw.Decode(&interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode raw interfaces into interface structs")
+	}
+
+	return interfaces, nil
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
@@ -214,7 +221,7 @@ func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) 
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.disk.storages.getProperty(ctx)
+	res, err := o.components.disk.storages.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -449,7 +456,7 @@ func (o *deviceClassCommunicator) GetSBCComponentAgents(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentAgents").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.sbc.agents.getProperty(ctx)
+	res, err := o.components.sbc.agents.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -468,7 +475,7 @@ func (o *deviceClassCommunicator) GetSBCComponentRealms(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentRealms").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.sbc.realms.getProperty(ctx)
+	res, err := o.components.sbc.realms.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -677,7 +684,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentFans").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.hardwareHealth.fans.getProperty(ctx)
+	res, err := o.components.hardwareHealth.fans.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -696,7 +703,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentPowerSupply").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
+	res, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -706,20 +713,4 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 		return nil, errors.Wrap(err, "failed to decode property into power supply struct")
 	}
 	return powerSupply, nil
-}
-
-func convertRawInterfaces(ctx context.Context, interfacesRaw groupProperties) ([]device.Interface, error) {
-	var networkInterfaces []device.Interface
-
-	for _, oidValue := range interfacesRaw {
-		var networkInterface device.Interface
-		err := mapstructure.WeakDecode(oidValue, &networkInterface)
-		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
-		}
-		networkInterfaces = append(networkInterfaces, networkInterface)
-	}
-
-	return networkInterfaces, nil
 }

@@ -15,33 +15,29 @@ import (
 
 type propertyGroup map[string]interface{}
 
-func (g propertyGroup) Decode(destination interface{}) error {
-	return mapstructure.WeakDecode(g, destination)
-}
+type propertyGroups []propertyGroup
 
-type groupProperties []propertyGroup
-
-func (g groupProperties) Decode(destination interface{}) error {
+func (g *propertyGroups) Decode(destination interface{}) error {
 	return mapstructure.WeakDecode(g, destination)
 }
 
 type groupPropertyReader interface {
-	getProperty(ctx context.Context) (groupProperties, map[string]int, error)
+	getProperty(ctx context.Context) (propertyGroups, error)
 }
 
 type snmpGroupPropertyReader struct {
 	oids deviceClassOIDs
 }
 
-func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (groupProperties, map[string]int, error) {
+func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGroups, error) {
 	groups, err := s.oids.readOID(ctx)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to read oids")
+		return nil, errors.Wrap(err, "failed to read oids")
 	}
 
-	var res groupProperties
-	indices := make(map[string]int)
+	var res propertyGroups
 
+	// this sorts the groups after their ifIndex
 	//TODO efficiency
 	size := len(groups)
 	for i := 0; i < size; i++ {
@@ -58,50 +54,40 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (groupPropert
 		}
 		x, ok := groups[smallestIndex].(map[string]interface{})
 		if !ok {
-			return nil, nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
+			return nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
 		}
 
 		res = append(res, x)
-		indices[fmt.Sprint(smallestIndex)] = i
 		delete(groups, smallestIndex)
 	}
 
-	return res, indices, nil
+	return res, nil
 }
 
 type oidReader interface {
 	readOID(context.Context) (map[int]interface{}, error)
 }
 
-// deviceClassOIDs maps labels to OIDs.
+// deviceClassOIDs is a recursive data structure which maps labels to either a single OID (deviceClassOID) or another deviceClassOIDs
 type deviceClassOIDs map[string]oidReader
 
 func (d *deviceClassOIDs) readOID(ctx context.Context) (map[int]interface{}, error) {
 	result := make(map[int]map[string]interface{})
-	for name, oidReader := range *d {
-		res, err := oidReader.readOID(ctx)
+	for label, reader := range *d {
+		res, err := reader.readOID(ctx)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msgf("value %s", name)
+				log.Ctx(ctx).Trace().Err(err).Msgf("value %s", label)
 				continue
 			}
-			return nil, errors.Wrapf(err, "failed to get value '%s'", name)
+			return nil, errors.Wrapf(err, "failed to get value '%s'", label)
 		}
 		for ifIndex, v := range res {
+			// ifIndex was not known before, so create a new group
 			if _, ok := result[ifIndex]; !ok {
 				result[ifIndex] = make(map[string]interface{})
 			}
-			if m, ok := v.(map[string]interface{}); ok {
-				newMap := make(map[string]interface{})
-				for k, val := range m {
-					newMap[k] = val
-				}
-				result[ifIndex][name] = newMap
-			} else if val, ok := v.(value.Value); ok {
-				result[ifIndex][name] = val
-			} else {
-				return nil, fmt.Errorf("oidReader returned unexpected data type: %T", v)
-			}
+			result[ifIndex][label] = v
 		}
 	}
 
@@ -134,6 +120,7 @@ func (d *deviceClassOIDs) merge(overwrite deviceClassOIDs) deviceClassOIDs {
 	return devClassOIDsNew
 }
 
+// deviceClassOID represents a single OID which can be read
 type deviceClassOID struct {
 	network.SNMPGetConfiguration
 	operators propertyOperators
