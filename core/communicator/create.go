@@ -5,14 +5,12 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 )
 
 // CreateNetworkDeviceCommunicator creates a communicator.
 func CreateNetworkDeviceCommunicator(ctx context.Context, deviceClassIdentifier string) (NetworkDeviceCommunicator, error) {
 	deviceClass, err := getDeviceClass(deviceClassIdentifier)
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to get device class")
 		return nil, errors.Wrap(err, "error during GetDeviceClasses")
 	}
 	return createCommunicatorByDeviceClass(ctx, deviceClass)
@@ -22,7 +20,6 @@ func CreateNetworkDeviceCommunicator(ctx context.Context, deviceClassIdentifier 
 func IdentifyNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommunicator, error) {
 	deviceClass, err := identifyDeviceClass(ctx)
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to identify device class")
 		return nil, errors.Wrap(err, "error during IdentifyDeviceClass")
 	}
 	com, err := createCommunicatorByDeviceClass(ctx, deviceClass)
@@ -36,7 +33,6 @@ func IdentifyNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommun
 func MatchDeviceClass(ctx context.Context, identifier string) (bool, error) {
 	deviceClass, err := getDeviceClass(identifier)
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to get device class")
 		return false, errors.Wrap(err, "error during GetDeviceClasses")
 	}
 	return deviceClass.matchDevice(ctx)

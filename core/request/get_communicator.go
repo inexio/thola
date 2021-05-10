@@ -16,7 +16,6 @@ import (
 func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator.NetworkDeviceCommunicator, error) {
 	db, err := database.GetDB(ctx)
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to get DB")
 		return nil, errors.Wrap(err, "failed to get DB")
 	}
 
@@ -24,7 +23,6 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 	deviceProperties, err := db.GetDeviceProperties(ctx, baseRequest.DeviceData.IPAddress)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to get device properties from cache")
 			return nil, errors.Wrap(err, "failed to get device properties from cache")
 		}
 		log.Ctx(ctx).Trace().Msg("no device properties found in cache")
@@ -33,7 +31,6 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 		log.Ctx(ctx).Trace().Msg("found device properties in cache, starting to validate")
 		res, err := communicator.MatchDeviceClass(ctx, deviceProperties.Class)
 		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to match device class")
 			return nil, errors.Wrap(err, "failed to match device class")
 		}
 		if invalidCache = !res; invalidCache {
@@ -46,7 +43,6 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 		identifyRequest := IdentifyRequest{BaseRequest: baseRequest}
 		res, err := identifyRequest.process(ctx)
 		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to run identify")
 			return nil, errors.Wrap(err, "failed to run identify")
 		}
 		deviceProperties = res.(*IdentifyResponse).Device

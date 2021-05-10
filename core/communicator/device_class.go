@@ -289,7 +289,6 @@ var genericDeviceClass struct {
 func identifyDeviceClass(ctx context.Context) (*deviceClass, error) {
 	deviceClasses, err := getDeviceClasses()
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to load device classes")
 		return nil, errors.Wrap(err, "error during getDeviceClasses")
 	}
 
@@ -325,7 +324,6 @@ func identifyDeviceClassRecursive(ctx context.Context, devClass map[string]*devi
 		log.Ctx(ctx).Trace().Msgf("starting device class match (%s)", devClass.getName())
 		match, err := devClass.matchDevice(ctx)
 		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("error during device class match")
 			return nil, errors.Wrap(err, "error while trying to match device class: "+devClass.getName())
 		}
 
@@ -755,8 +753,8 @@ func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
 	}, nil
 }
 
-func (d *deviceClassOID) validate() error {
-	if err := d.OID.Validate(); err != nil {
+func (y *yamlComponentsOID) validate() error {
+	if err := y.OID.Validate(); err != nil {
 		return errors.Wrap(err, "oid is invalid")
 	}
 	return nil
@@ -1703,12 +1701,12 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 		if _, ok := m["values"]; !ok {
 			return nil, errors.New("values are missing")
 		}
-		oidReader, err := interface2oidReader(m["values"])
+		reader, err := interface2oidReader(m["values"])
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse oid reader")
 		}
 
-		devClassOIDs, ok := oidReader.(*deviceClassOIDs)
+		devClassOIDs, ok := reader.(*deviceClassOIDs)
 		if !ok {
 			return nil, errors.New("oid reader is no list of oids")
 		}
@@ -1766,13 +1764,13 @@ func interface2oidReader(i interface{}) (oidReader, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
 		}
+		err = oid.validate()
+		if err != nil {
+			return nil, errors.Wrapf(err, "oid reader for %s is invalid", valString)
+		}
 		devClassOID, err := oid.convert()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert yaml OID to device class OID")
-		}
-		err = devClassOID.validate()
-		if err != nil {
-			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
 		}
 		result[valString] = &devClassOID
 	}
