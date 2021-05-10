@@ -70,7 +70,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 	return normalizeEkinopsInterfaces(interfaces)
 }
 
-// GetInterfaces returns the interfaces of ekinops devices.
+// GetIfTable returns the ifTable of ekinops devices.
 // For ekinops devices, only a few interface values are required.
 func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
 	if genericDeviceClass.components.interfaces.Values == nil {
@@ -92,12 +92,19 @@ func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interfac
 	}
 	reader.oids = oids
 
-	networkInterfacesRaw, _, err := reader.getProperty(ctx)
+	interfacesRaw, err := reader.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertRawInterfaces(ctx, networkInterfacesRaw)
+	var interfaces []device.Interface
+
+	err = interfacesRaw.Decode(&interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode raw interfaces into interface structs")
+	}
+
+	return interfaces, nil
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {

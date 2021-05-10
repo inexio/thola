@@ -60,7 +60,6 @@ type availableCommunicatorFunctions interface {
 	GetOSVersion(ctx context.Context) (string, error)
 
 	// GetInterfaces returns the interfaces of a device.
-	// This includes special interface values.
 	GetInterfaces(ctx context.Context) ([]device.Interface, error)
 
 	// GetCountInterfaces returns the count of interfaces of a device.
