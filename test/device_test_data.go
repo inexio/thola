@@ -28,6 +28,8 @@ type DeviceTestDataExpectations struct {
 	CheckUPS              *request.CheckResponse               `json:"checkUPS" mapstructure:"checkUPS"`
 	CheckCPULoad          *request.CheckResponse               `json:"checkCPULoad" mapstructure:"checkCPULoad"`
 	CheckMemoryUsage      *request.CheckResponse               `json:"checkMemoryUsage" mapstructure:"checkMemoryUsage"`
+	CheckDisk             *request.CheckResponse               `json:"checkDisk" mapstructure:"checkDisk"`
+	CheckServer           *request.CheckResponse               `json:"checkServer" mapstructure:"checkServer"`
 	CheckSBC              *request.CheckResponse               `json:"checkSBC" mapstructure:"checkSBC"`
 }
 
@@ -57,6 +59,14 @@ func (d *DeviceTestData) GetAvailableRequestTypes() []string {
 
 	if d.Expectations.CheckMemoryUsage != nil {
 		res = append(res, "check memory-usage")
+	}
+
+	if d.Expectations.CheckDisk != nil {
+		res = append(res, "check disk")
+	}
+
+	if d.Expectations.CheckServer != nil {
+		res = append(res, "check server")
 	}
 
 	if d.Expectations.CheckSBC != nil {
@@ -119,6 +129,12 @@ func ProcessRequest(r request.Request, port int) (request.Response, error) {
 		response = &request.CheckResponse{}
 	case *request.CheckMemoryUsageRequest:
 		requestEndpoint = "check/memory-usage"
+		response = &request.CheckResponse{}
+	case *request.CheckDiskRequest:
+		requestEndpoint = "check/disk"
+		response = &request.CheckResponse{}
+	case *request.CheckServerRequest:
+		requestEndpoint = "check/server"
 		response = &request.CheckResponse{}
 	case *request.CheckSBCRequest:
 		requestEndpoint = "check/sbc"

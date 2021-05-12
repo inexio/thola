@@ -152,5 +152,5 @@ components:
                 operators:
                   - type: modify
                     modify_method: regexSubmatch
-                    regex: '\.([0-9]+)$'
+                    regex: '\.?([0-9]+)$'
                     format: "$1"

@@ -69,3 +69,13 @@ identify:
     os_version:
       - detection: snmpget
         oid: "1.3.6.1.4.1.637.61.1.9.28.1.0"
+
+components:
+  interfaces:
+    properties:
+      detection: snmpwalk
+      values:
+        ethernet_like:
+          values:
+            etherStatsCRCAlignErrors:
+              oid: 1.3.6.1.2.1.16.1.1.1.8
