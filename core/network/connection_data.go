@@ -42,13 +42,53 @@ type SNMPConnectionData struct {
 	//
 	// example: 0
 	DiscoverRetries *int `json:"discoverRetries" xml:"discoverRetries" yaml:"discoverRetries"`
+	// The data required for an SNMP v3 connection.
+	V3Data SNMPv3ConnectionData `json:"v3_data" xml:"v3_data" yaml:"v3_data"`
+}
+
+// SNMPv3ConnectionData
+//
+// SNMPv3ConnectionData includes all snmp v3 specific connection data.
+//
+// swagger:model
+type SNMPv3ConnectionData struct {
+	// The security level of the SNMP connection.
+	//
+	// example: authPriv
+	Level *string `json:"level" xml:"level" yaml:"level"`
+	// The context name of the SNMP connection.
+	//
+	// example: bridge1
+	ContextName *string `json:"context_name" xml:"context_name" yaml:"context_name"`
+	// The user of the SNMP connection.
+	//
+	// example: user
+	User *string `json:"user" xml:"user" yaml:"user"`
+	// The authentication protocol passphrase of the SNMP connection.
+	//
+	// example: passphrase
+	AuthKey *string `json:"auth_key" xml:"auth_key" yaml:"auth_key"`
+	// The authentication protocol of the SNMP connection.
+	//
+	// example: MD5
+	AuthProtocol *string `json:"auth_protocol" xml:"auth_protocol" yaml:"auth_protocol"`
+	// The privacy protocol passphrase of the SNMP connection.
+	//
+	// example: passphrase
+	PrivKey *string `json:"priv_key" xml:"priv_key" yaml:"priv_key"`
+	// The privacy protocol of the SNMP connection.
+	//
+	// example: DES
+	PrivProtocol *string `json:"priv_protocol" xml:"priv_protocol" yaml:"priv_protocol"`
 }
 
 // SNMPCredentials includes all credential information of the snmp connection.
 type SNMPCredentials struct {
-	Version   string `yaml:"version" json:"version" xml:"version"`
-	Community string `yaml:"community" json:"community" xml:"community"`
-	Port      int    `yaml:"port" json:"port" xml:"port"`
+	Version       string `yaml:"version" json:"version" xml:"version"`
+	Community     string `yaml:"community" json:"community" xml:"community"`
+	Port          int    `yaml:"port" json:"port" xml:"port"`
+	V3Level       string `yaml:"v3Level" json:"v3Level" xml:"v3Level"`
+	V3ContextName string `yaml:"v3ContextName" json:"v3ContextName" xml:"v3ContextName"`
 }
 
 // HTTPConnectionData

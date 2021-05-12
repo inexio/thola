@@ -6,8 +6,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/inexio/thola/core/tholaerr"
+	"github.com/inexio/thola/core/utility"
 	"github.com/pkg/errors"
 	"reflect"
+	"strings"
 )
 
 type jsonParser interface {
@@ -72,10 +74,8 @@ func ToHumanReadable(i interface{}) ([]byte, error) {
 	if p, ok := i.(humanReadableParser); ok {
 		return p.ToHumanReadable()
 	}
-	if i == nil {
-		return []byte("null"), nil
-	}
-	return bytes.TrimSpace([]byte(toHumanReadable(reflect.ValueOf(i), 0))), nil
+	res := strings.TrimSpace(toHumanReadable(reflect.ValueOf(i), 0))
+	return []byte(utility.IfThenElseString(res == "", "No result", res)), nil
 }
 
 // ToCheckPluginOutput parses the object to a check plugin format.
