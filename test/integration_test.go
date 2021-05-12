@@ -265,8 +265,16 @@ func (t *testDeviceInfoSNMPSim) generateRequest(requestType string) (request.Req
 		r := request.CheckSBCRequest{}
 		r.DeviceData = t.requestDeviceData
 		return &r, nil
+	case "check server":
+		r := request.CheckServerRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
+	case "check disk":
+		r := request.CheckDiskRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
 	default:
-		return nil, errors.New("unknown requestType")
+		return nil, errors.New("unknown requestType: " + requestType)
 	}
 }
 
@@ -308,8 +316,16 @@ func (e *DeviceTestDataExpectations) compareExpectations(response request.Respon
 		if !cmp.Equal(e.CheckSBC, response, metricsTransformer(), metricsRawOutputFilter()) {
 			return errors.New("difference:\n" + cmp.Diff(e.CheckSBC, response, metricsTransformer(), metricsRawOutputFilter()))
 		}
+	case "check server":
+		if !cmp.Equal(e.CheckServer, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckServer, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
+	case "check disk":
+		if !cmp.Equal(e.CheckDisk, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckDisk, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
 	default:
-		return errors.New("unknown request type")
+		return errors.New("unknown request type: " + requestType)
 	}
 
 	return nil

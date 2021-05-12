@@ -20,15 +20,15 @@ type ConnectionData struct {
 type SNMPConnectionData struct {
 	// The snmp community string(s) for the device.
 	//
-	// example: public
+	// example: ["public"]
 	Communities []string `json:"communities" xml:"communities" yaml:"communities"`
 	// The snmp version(s) of the device.
 	//
-	// example: 2c
+	// example: ["2c"]
 	Versions []string `json:"versions" xml:"versions" yaml:"versions"`
 	// The snmp port(s) of the device.
 	//
-	// example: 161
+	// example: [161]
 	Ports []int `json:"ports" xml:"ports" yaml:"ports"`
 	// The amount of parallel connection requests used while trying to get a valid SNMP connection.
 	//
@@ -99,11 +99,11 @@ type SNMPCredentials struct {
 type HTTPConnectionData struct {
 	// The http port(s) of the device.
 	//
-	// example: 80
+	// example: [80]
 	HTTPPorts []int `json:"http_ports" xml:"http_ports" yaml:"http_ports"`
 	// The https port(s) of the device.
 	//
-	// example: 443
+	// example: [443]
 	HTTPSPorts []int `json:"https_ports" xml:"https_ports" yaml:"https_ports"`
 	// The username for authorization on the device.
 	//
