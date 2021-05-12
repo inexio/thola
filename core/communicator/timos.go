@@ -15,7 +15,7 @@ type timosCommunicator struct {
 
 // GetInterfaces returns the interfaces of Nokia devices.
 func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.sub.GetInterfaces(ctx)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}

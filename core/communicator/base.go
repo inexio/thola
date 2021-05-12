@@ -7,13 +7,7 @@ import (
 )
 
 type baseCommunicator struct {
-	*relatedNetworkDeviceCommunicators
-}
-
-type relatedNetworkDeviceCommunicators struct {
-	head NetworkDeviceCommunicator
-	//nolint
-	sub NetworkDeviceCommunicator
+	parent NetworkDeviceCommunicator
 }
 
 func (c *baseCommunicator) GetVendor(_ context.Context) (string, error) {

@@ -18,7 +18,7 @@ type advaCommunicator struct {
 
 // GetInterfaces returns the interfaces of adva devices.
 func (c *advaCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.sub.GetInterfaces(ctx)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}

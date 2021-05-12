@@ -50,6 +50,8 @@ type deviceClass struct {
 	parentDeviceClass *deviceClass
 	subDeviceClasses  map[string]*deviceClass
 	tryToMatchLast    bool
+
+	codeCommunicator availableCommunicatorFunctions
 }
 
 // deviceClassIdentify represents the identify part of a device class.
@@ -448,8 +450,6 @@ func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *de
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
 	}
-	// set parent device class
-	devClass.parentDeviceClass = parentDeviceClass
 
 	// check for sub device classes
 	subDirPath := filepath.Join(directory, devClass.name)
@@ -594,6 +594,15 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
 
+	// set parent device class
+	devClass.parentDeviceClass = parent
+
+	//check code communicator
+	codeCommunicator, err := getCodeCommunicator(&devClass)
+	if err != nil && !tholaerr.IsNotFoundError(err) {
+		return deviceClass{}, errors.Wrap(err, "failed to get code communicator")
+	}
+	devClass.codeCommunicator = codeCommunicator
 	return devClass, nil
 }
 
@@ -1838,4 +1847,17 @@ func (d *deviceClassComponent) toString() (string, error) {
 	default:
 		return "", errors.New("unknown component")
 	}
+}
+
+func (d *deviceClass) getNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommunicator, error) {
+	maxRepetitions, err := d.getSNMPMaxRepetitions()
+	if err != nil {
+		return nil, errors.Wrap(err, "device class does not have maxrepetitions")
+	}
+
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if ok && con.SNMP != nil {
+		con.SNMP.SnmpClient.SetMaxRepetitions(maxRepetitions)
+	}
+	return &(deviceClassCommunicator{d}), nil
 }

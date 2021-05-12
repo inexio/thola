@@ -15,7 +15,7 @@ type timosSASCommunicator struct {
 
 // GetInterfaces returns the interfaces of a Nokia SAS-T device.
 func (c *timosSASCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.sub.GetInterfaces(ctx)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
