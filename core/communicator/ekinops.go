@@ -17,14 +17,16 @@ type ekinopsCommunicator struct {
 
 // GetInterfaces returns the interfaces of ekinops devices.
 func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.GetIfTable(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
+	}
+
+	con.SNMP.SnmpClient.UseCache(false)
+
+	interfaces, err := c.GetIfTable(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	//get used slots
