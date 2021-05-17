@@ -46,7 +46,6 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 		identifyRequest := IdentifyRequest{BaseRequest: baseRequest}
 		res, err := identifyRequest.process(ctx)
 		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to run identify")
 			return nil, errors.Wrap(err, "failed to run identify")
 		}
 		deviceProperties = res.(*IdentifyResponse).Device
