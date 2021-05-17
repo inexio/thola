@@ -21,7 +21,11 @@ type CheckIdentifyRequest struct {
 	SerialNumberDiffWarning bool `yaml:"serial_number_diff_warning" json:"serial_number_diff_warning" xml:"serial_number_diff_warning"`
 }
 
+// CheckIdentifyResponse
+//
 // CheckIdentifyResponse is a response struct for the check identify request.
+//
+// swagger:model
 type CheckIdentifyResponse struct {
 	CheckResponse
 	IdentifyResult     *device.Device                       `yaml:"identify_result" json:"identify_result" xml:"identify_result"`
