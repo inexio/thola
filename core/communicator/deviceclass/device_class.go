@@ -1,20 +1,22 @@
-// Package communicator contains the logic for interacting with device classes.
+// Package deviceclass contains the logic for interacting with device classes.
 // It contains methods that read out the .yaml files representing device classes.
 // On top of that, code communicators that extend .yaml files can be added here.
-package communicator
+package deviceclass
 
 import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/config"
+	"github.com/inexio/thola/core/communicator/codecommunicator"
+	"github.com/inexio/thola/core/communicator/communicator"
+	"github.com/inexio/thola/core/communicator/component"
+	"github.com/inexio/thola/core/communicator/hierarchy"
 	"github.com/inexio/thola/core/mapping"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/inexio/thola/core/utility"
 	"github.com/inexio/thola/core/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"io/ioutil"
@@ -22,36 +24,16 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
-)
-
-// deviceClassComponent represents a component with an byte.
-type deviceClassComponent byte
-
-// All component enums.
-const (
-	interfacesComponent deviceClassComponent = iota + 1
-	upsComponent
-	cpuComponent
-	memoryComponent
-	sbcComponent
-	serverComponent
-	diskComponent
-	hardwareHealthComponent
 )
 
 // deviceClass represents a device class.
 type deviceClass struct {
-	name              string
-	match             condition
-	config            deviceClassConfig
-	identify          deviceClassIdentify
-	components        deviceClassComponents
-	parentDeviceClass *deviceClass
-	subDeviceClasses  map[string]*deviceClass
-	tryToMatchLast    bool
-
-	codeCommunicator availableCommunicatorFunctions
+	name           string
+	match          condition
+	config         deviceClassConfig
+	identify       deviceClassIdentify
+	components     deviceClassComponents
+	tryToMatchLast bool
 }
 
 // deviceClassIdentify represents the identify part of a device class.
@@ -140,7 +122,7 @@ type deviceClassComponentsHardwareHealth struct {
 // deviceClassConfig represents the config part of a device class.
 type deviceClassConfig struct {
 	snmp       deviceClassSNMP
-	components map[deviceClassComponent]bool
+	components map[component.Component]bool
 }
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
@@ -282,173 +264,53 @@ type yamlComponentsOID struct {
 	IndicesMapping               *yamlComponentsOID `yaml:"indices_mapping" mapstructure:"indices_mapping"`
 }
 
-var genericDeviceClass struct {
-	sync.Once
-	*deviceClass
-}
-
-// identifyDeviceClass identify the device class based on the data in the context.
-func identifyDeviceClass(ctx context.Context) (*deviceClass, error) {
-	deviceClasses, err := getDeviceClasses()
-	if err != nil {
-		return nil, errors.Wrap(err, "error during getDeviceClasses")
-	}
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if ok && con.SNMP != nil {
-		con.SNMP.SnmpClient.SetMaxRepetitions(1)
-	}
-
-	deviceClass, err := identifyDeviceClassRecursive(ctx, deviceClasses, true)
-	if err != nil {
-		if tholaerr.IsNotFoundError(err) {
-			return genericDeviceClass.deviceClass, nil
-		}
-		return nil, errors.Wrap(err, "error occurred while identifying device class")
-	}
-	return deviceClass, err
-}
-
-func identifyDeviceClassRecursive(ctx context.Context, devClass map[string]*deviceClass, considerPriority bool) (*deviceClass, error) {
-	var tryToMatchLastDeviceClasses map[string]*deviceClass
-
-	for n, devClass := range devClass {
-		if considerPriority && devClass.tryToMatchLast {
-			if tryToMatchLastDeviceClasses == nil {
-				tryToMatchLastDeviceClasses = make(map[string]*deviceClass)
-			}
-			tryToMatchLastDeviceClasses[n] = devClass
-			continue
-		}
-
-		logger := log.Ctx(ctx).With().Str("device_class", devClass.getName()).Logger()
-		ctx = logger.WithContext(ctx)
-		log.Ctx(ctx).Trace().Msgf("starting device class match (%s)", devClass.getName())
-		match, err := devClass.matchDevice(ctx)
-		if err != nil {
-			return nil, errors.Wrap(err, "error while trying to match device class: "+devClass.getName())
-		}
-
-		if match {
-			log.Ctx(ctx).Trace().Msg("device class matched")
-			if devClass.subDeviceClasses != nil {
-				subDeviceClass, err := identifyDeviceClassRecursive(ctx, devClass.subDeviceClasses, true)
-				if err != nil {
-					if tholaerr.IsNotFoundError(err) {
-						return devClass, nil
-					}
-					return nil, errors.Wrapf(err, "error occurred while trying to identify sub device class for device class '%s'", devClass.getName())
-				}
-				return subDeviceClass, nil
-			}
-			return devClass, nil
-		}
-		log.Ctx(ctx).Trace().Msg("device class did not match")
-	}
-	if tryToMatchLastDeviceClasses != nil {
-		deviceClass, err := identifyDeviceClassRecursive(ctx, tryToMatchLastDeviceClasses, false)
-		if err != nil {
-			if !tholaerr.IsNotFoundError(err) {
-				return nil, err
-			}
-		} else {
-			return deviceClass, nil
-		}
-	}
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if !ok {
-		return nil, errors.New("no connection data found in context")
-	}
-
-	// return generic device class
-	if (con.SNMP == nil || len(con.SNMP.SnmpClient.GetSuccessfulCachedRequests()) == 0) && (con.HTTP == nil || len(con.HTTP.HTTPClient.GetSuccessfulCachedRequests()) == 0) {
-		return nil, errors.New("no network requests to device succeeded")
-	}
-	return nil, tholaerr.NewNotFoundError("no device class matched")
-}
-
-// getDeviceClasses returns a list of all device classes. device classes is a singleton that is created
-// when the function is called for the first time.
-func getDeviceClasses() (map[string]*deviceClass, error) {
-	var err error
-	genericDeviceClass.Do(func() {
-		err = readDeviceClasses()
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read device classes")
-	}
-	return genericDeviceClass.subDeviceClasses, nil
-}
-
-// getDeviceClass returns a single device class.
-func getDeviceClass(identifier string) (*deviceClass, error) {
-	devClasses, err := getDeviceClasses()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get device classes")
-	}
-	configIdentifiers := strings.Split(identifier, "/")
-	var deviceClass *deviceClass
-	var ok bool
-	if configIdentifiers[0] == "generic" {
-		deviceClass = genericDeviceClass.deviceClass
-	} else {
-		deviceClass, ok = devClasses[configIdentifiers[0]]
-		if !ok {
-			return nil, errors.New("device class does not exist")
-		}
-	}
-	for i, identifier := range configIdentifiers {
-		if i == 0 {
-			continue
-		}
-		deviceClass, ok = deviceClass.subDeviceClasses[identifier]
-		if !ok {
-			return nil, errors.New("device class does not exist")
-		}
-	}
-	return deviceClass, nil
-}
-
-func readDeviceClasses() error {
-	//read in generic device class
+func GetHierarchy() (hierarchy.Hierarchy, error) {
 	genericDeviceClassDir := "device-classes"
 	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
 	if err != nil {
-		return errors.Wrap(err, "failed to open generic device class file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to open generic device class file")
 	}
-	genericDeviceClass.deviceClass, err = yamlFileToDeviceClass(genericDeviceClassFile, genericDeviceClassDir, nil)
+	hier, err := yamlFile2Hierarchy(genericDeviceClassFile, genericDeviceClassDir, nil, nil)
 	if err != nil {
-		return errors.Wrap(err, "failed to read in generic device class")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read in generic device class")
 	}
-
-	return nil
+	return hier, nil
 }
 
-func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *deviceClass) (*deviceClass, error) {
+func yamlFile2Hierarchy(file fs.File, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (hierarchy.Hierarchy, error) {
 	//get file info
 	fileInfo, err := file.Stat()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get stat for file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to get stat for file")
 	}
 
 	if !strings.HasSuffix(fileInfo.Name(), ".yaml") {
-		return nil, errors.New("only yaml files are allowed for this function")
+		return hierarchy.Hierarchy{}, errors.New("only yaml files are allowed for this function")
 	}
 
 	contents, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read file")
 	}
 	var deviceClassYaml yamlDeviceClass
 	err = yaml.Unmarshal(contents, &deviceClassYaml)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal config file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to unmarshal config file")
 	}
 
 	devClass, err := deviceClassYaml.convert(parentDeviceClass)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
+		return hierarchy.Hierarchy{}, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
+	}
+
+	networkDeviceCommunicator, err := createNetworkDeviceCommunicator(&devClass, parentCommunicator)
+	if err != nil {
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to create network device communicator")
+	}
+
+	hier := hierarchy.Hierarchy{
+		NetworkDeviceCommunicator: networkDeviceCommunicator,
+		TryToMatchLast:            devClass.tryToMatchLast,
 	}
 
 	// check for sub device classes
@@ -456,21 +318,30 @@ func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *de
 	subDir, err := config.FileSystem.ReadDir(subDirPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			return nil, errors.Wrap(err, "an unexpected error occurred while trying to open sub device class directory")
+			return hierarchy.Hierarchy{}, errors.Wrap(err, "an unexpected error occurred while trying to open sub device class directory")
 		}
-		return &devClass, nil
+	} else {
+		subHierarchies, err := readDeviceClassDirectory(subDir, subDirPath, &devClass, networkDeviceCommunicator)
+		if err != nil {
+			return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read sub device classes")
+		}
+		hier.Children = subHierarchies
 	}
-	subDeviceClasses, err := readDeviceClassDirectory(subDir, subDirPath, &devClass)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read sub device classes")
-	}
-	devClass.subDeviceClasses = subDeviceClasses
 
-	return &devClass, nil
+	return hier, nil
 }
 
-func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass) (map[string]*deviceClass, error) {
-	deviceClasses := make(map[string]*deviceClass)
+func createNetworkDeviceCommunicator(devClass *deviceClass, parentCommunicator communicator.Communicator) (communicator.Communicator, error) {
+	devClassCommunicator := &(deviceClassCommunicator{devClass})
+	codeCommunicator, err := codecommunicator.GetCodeCommunicator(devClassCommunicator, parentCommunicator)
+	if err != nil && !tholaerr.IsNotFoundError(err) {
+		return nil, errors.Wrap(err, "failed to get code communicator")
+	}
+	return communicator.CreateNetworkDeviceCommunicator(&(deviceClassCommunicator{devClass}), codeCommunicator), nil
+}
+
+func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (map[string]hierarchy.Hierarchy, error) {
+	deviceClasses := make(map[string]hierarchy.Hierarchy)
 	for _, dirEntry := range dir {
 		// directories will be ignored here, sub device classes dirs will be called when
 		// their parent device class is processed
@@ -491,68 +362,37 @@ func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceC
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to open file "+fullPathToFile)
 		}
-		deviceClass, err := yamlFileToDeviceClass(file, directory, parentDeviceClass)
+		hier, err := yamlFile2Hierarchy(file, directory, parentDeviceClass, parentCommunicator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "an error occurred while trying to read in yaml config file %s", fileInfo.Name())
 		}
-		deviceClasses[deviceClass.name] = deviceClass
+		deviceClasses[hier.NetworkDeviceCommunicator.GetIdentifier()] = hier
 	}
 
 	return deviceClasses, nil
 }
 
 // getName returns the name of the device class.
-func (o *deviceClass) getName() string {
-	if o.parentDeviceClass != nil {
-		pName := o.parentDeviceClass.getName()
-		return utility.IfThenElseString(pName == "generic", o.name, fmt.Sprintf("%s/%s", pName, o.name))
-	}
-	return o.name
-}
-
-// getParentDeviceClass returns the parent device class.
-func (o *deviceClass) getParentDeviceClass() (*deviceClass, error) {
-	if o.parentDeviceClass == nil {
-		return nil, tholaerr.NewNotFoundError("no parent device class available")
-	}
-	return o.parentDeviceClass, nil
+func (d *deviceClass) getName() string {
+	return d.name
 }
 
 // match checks if data in context matches the device class.
-func (o *deviceClass) matchDevice(ctx context.Context) (bool, error) {
-	return o.match.check(ctx)
+func (d *deviceClass) matchDevice(ctx context.Context) (bool, error) {
+	return d.match.check(ctx)
 }
 
 // getSNMPMaxRepetitions returns the maximum snmp repetitions.
-func (o *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
-	if o.config.snmp.MaxRepetitions != 0 {
-		return o.config.snmp.MaxRepetitions, nil
-	}
-	if o.parentDeviceClass != nil {
-		return o.parentDeviceClass.getSNMPMaxRepetitions()
+func (d *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
+	if d.config.snmp.MaxRepetitions != 0 {
+		return d.config.snmp.MaxRepetitions, nil
 	}
 	return 0, tholaerr.NewNotFoundError("max_repetitions not found")
 }
 
 // getAvailableComponents returns the available components.
-func (o *deviceClass) getAvailableComponents() map[deviceClassComponent]bool {
-	haha := make(map[deviceClassComponent]bool)
-	if o.parentDeviceClass != nil {
-		haha = o.parentDeviceClass.getAvailableComponents()
-	}
-	for k, v := range o.config.components {
-		haha[k] = v
-	}
-	return haha
-}
-
-// hasAvailableComponent checks whether the specified component is available.
-func (o *deviceClass) hasAvailableComponent(component deviceClassComponent) bool {
-	haha := o.getAvailableComponents()
-	if v, ok := haha[component]; ok && v {
-		return true
-	}
-	return false
+func (d *deviceClass) getAvailableComponents() map[component.Component]bool {
+	return d.config.components
 }
 
 func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
@@ -563,8 +403,13 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 	var devClass deviceClass
 	if parent != nil {
 		devClass = *parent
+		if devClass.name != "generic" {
+			devClass.name += "/"
+		} else {
+			devClass.name = ""
+		}
 	}
-	devClass.name = y.Name
+	devClass.name += y.Name
 	if y.Name == "generic" {
 		devClass.match = &alwaysTrueCondition{}
 		devClass.identify = deviceClassIdentify{
@@ -594,15 +439,6 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
 
-	// set parent device class
-	devClass.parentDeviceClass = parent
-
-	//check code communicator
-	codeCommunicator, err := getCodeCommunicator(&devClass)
-	if err != nil && !tholaerr.IsNotFoundError(err) {
-		return deviceClass{}, errors.Wrap(err, "failed to get code communicator")
-	}
-	devClass.codeCommunicator = codeCommunicator
 	return devClass, nil
 }
 
@@ -836,19 +672,21 @@ func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceC
 
 	if y.SNMP.MaxRepetitions != 0 {
 		cfg.snmp.MaxRepetitions = y.SNMP.MaxRepetitions
+	} else {
+		cfg.snmp.MaxRepetitions = parentConfig.snmp.MaxRepetitions
 	}
 
-	components := make(map[deviceClassComponent]bool)
+	components := make(map[component.Component]bool)
 	for k, v := range parentConfig.components {
 		components[k] = v
 	}
 
 	for k, v := range y.Components {
-		component, err := createComponent(k)
+		comp, err := component.CreateComponent(k)
 		if err != nil {
 			return deviceClassConfig{}, err
 		}
-		components[component] = v
+		components[comp] = v
 	}
 
 	cfg.components = components
@@ -1800,56 +1638,7 @@ func (l *logicalOperator) validate() error {
 	return nil
 }
 
-func createComponent(component string) (deviceClassComponent, error) {
-	switch component {
-	case "interfaces":
-		return interfacesComponent, nil
-	case "ups":
-		return upsComponent, nil
-	case "cpu":
-		return cpuComponent, nil
-	case "memory":
-		return memoryComponent, nil
-	case "sbc":
-		return sbcComponent, nil
-	case "server":
-		return serverComponent, nil
-	case "disk":
-		return diskComponent, nil
-	case "hardware_health":
-		return hardwareHealthComponent, nil
-	default:
-		return 0, fmt.Errorf("invalid component type: %s", component)
-	}
-}
-
-func (d *deviceClassComponent) toString() (string, error) {
-	if d == nil {
-		return "", errors.New("component is empty")
-	}
-	switch *d {
-	case interfacesComponent:
-		return "interfaces", nil
-	case upsComponent:
-		return "ups", nil
-	case cpuComponent:
-		return "cpu", nil
-	case memoryComponent:
-		return "memory", nil
-	case sbcComponent:
-		return "sbc", nil
-	case serverComponent:
-		return "server", nil
-	case diskComponent:
-		return "disk", nil
-	case hardwareHealthComponent:
-		return "hardware_health", nil
-	default:
-		return "", errors.New("unknown component")
-	}
-}
-
-func (d *deviceClass) getNetworkDeviceCommunicator(ctx context.Context) (NetworkDeviceCommunicator, error) {
+func (d *deviceClass) getNetworkDeviceCommunicator(ctx context.Context) (communicator.Communicator, error) {
 	maxRepetitions, err := d.getSNMPMaxRepetitions()
 	if err != nil {
 		return nil, errors.Wrap(err, "device class does not have maxrepetitions")

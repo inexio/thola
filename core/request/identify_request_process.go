@@ -4,7 +4,7 @@ package request
 
 import (
 	"context"
-	"github.com/inexio/thola/core/communicator"
+	"github.com/inexio/thola/core/communicator/create"
 	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
@@ -43,13 +43,13 @@ func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {
 }
 
 func (r *IdentifyRequest) identify(ctx context.Context) (*IdentifyResponse, error) {
-	com, err := communicator.IdentifyNetworkDeviceCommunicator(ctx)
+	com, err := create.IdentifyNetworkDeviceCommunicator(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var response IdentifyResponse
-	response.Class = com.GetDeviceClass()
+	response.Class = com.GetIdentifier()
 
 	response.Properties, err = com.GetIdentifyProperties(ctx)
 	if err != nil {

@@ -2,17 +2,24 @@ package communicator
 
 import (
 	"context"
+	"github.com/inexio/thola/core/communicator/component"
 	"github.com/inexio/thola/core/device"
 )
 
-// NetworkDeviceCommunicator represents a communicator for a device.
-type NetworkDeviceCommunicator interface {
+// Communicator represents a communicator for a device.
+type Communicator interface {
 
-	// GetDeviceClass returns the device class of a network device.
-	GetDeviceClass() string
+	// GetIdentifier returns the identifier of the class of a network device.
+	GetIdentifier() string
 
 	// GetAvailableComponents returns the components available for a network device.
 	GetAvailableComponents() []string
+
+	// HasComponent checks whether the specified component is available.
+	HasComponent(component component.Component) bool
+
+	// Match checks if the device matches the device class
+	Match(ctx context.Context) (bool, error)
 
 	// GetIdentifyProperties returns the identify properties of a device like vendor, model...
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
@@ -35,10 +42,10 @@ type NetworkDeviceCommunicator interface {
 	// GetHardwareHealthComponent returns the hardware health component of a device if available.
 	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
 
-	availableCommunicatorFunctions
+	AvailableCommunicatorFunctions
 }
 
-type availableCommunicatorFunctions interface {
+type AvailableCommunicatorFunctions interface {
 
 	// GetVendor returns the vendor of a device.
 	GetVendor(ctx context.Context) (string, error)

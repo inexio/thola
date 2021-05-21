@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 type ceraosIP10Communicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetInterfaces returns the interfaces of ceraos/ip10 devices.

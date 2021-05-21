@@ -493,12 +493,11 @@ func (s *SNMPResponse) GetOID() string {
 	return s.oid
 }
 
-// GetOID returns the snmp type of the response
+// GetSNMPType returns the snmp type of the response
 func (s *SNMPResponse) GetSNMPType() gosnmp.Asn1BER {
 	return s.snmpType
 }
 
-//SNMPGetConfiguration
 type SNMPGetConfiguration struct {
 	OID          OID  `yaml:"oid" mapstructure:"oid"`
 	UseRawResult bool `yaml:"use_raw_result" mapstructure:"use_raw_result"`

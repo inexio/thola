@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 )
 
 type advaCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetInterfaces returns the interfaces of adva devices.

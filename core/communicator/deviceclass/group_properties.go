@@ -1,4 +1,4 @@
-package communicator
+package deviceclass
 
 import (
 	"context"

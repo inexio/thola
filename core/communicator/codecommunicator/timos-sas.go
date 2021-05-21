@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 )
 
 type timosSASCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetInterfaces returns the interfaces of a Nokia SAS-T device.
