@@ -1558,8 +1558,17 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 			return nil, errors.New("oid reader is no list of oids")
 		}
 
+		inheritValuesFromParent := true
+		if b, ok := m["inherit_values"]; ok {
+			bb, ok := b.(bool)
+			if !ok {
+				return nil, errors.New("inherit_values needs to be a boolean")
+			}
+			inheritValuesFromParent = bb
+		}
+
 		//overwrite parent
-		if parentGroupPropertyReader != nil {
+		if inheritValuesFromParent && parentGroupPropertyReader != nil {
 			parentSNMPGroupPropertyReader, ok := parentGroupPropertyReader.(*snmpGroupPropertyReader)
 			if !ok {
 				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
