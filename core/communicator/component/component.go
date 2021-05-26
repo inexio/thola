@@ -20,6 +20,7 @@ const (
 	HardwareHealth
 )
 
+// CreateComponent creates a component.
 func CreateComponent(component string) (Component, error) {
 	switch component {
 	case "interfaces":
@@ -43,6 +44,7 @@ func CreateComponent(component string) (Component, error) {
 	}
 }
 
+// ToString returns the component as a string.
 func (d *Component) ToString() (string, error) {
 	if d == nil {
 		return "", errors.New("component is empty")

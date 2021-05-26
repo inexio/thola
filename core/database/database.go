@@ -27,6 +27,7 @@ var db struct {
 
 var cacheExpiration time.Duration
 
+// Database represents a database.
 type Database interface {
 	SetDeviceProperties(ctx context.Context, ip string, data device.Device) error
 	GetDeviceProperties(ctx context.Context, ip string) (device.Device, error)
@@ -124,6 +125,7 @@ func initDB(ctx context.Context) error {
 	return nil
 }
 
+// GetDB returns the current DB.
 func GetDB(ctx context.Context) (Database, error) {
 	var err error
 	db.Do(func() {

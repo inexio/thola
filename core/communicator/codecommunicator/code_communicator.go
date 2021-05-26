@@ -15,7 +15,7 @@ type codeCommunicator struct {
 }
 
 // GetCodeCommunicator returns the code communicator for the given device class
-func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDeviceCommunicator communicator.Communicator) (communicator.AvailableCommunicatorFunctions, error) {
+func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDeviceCommunicator communicator.Communicator) (communicator.Functions, error) {
 	if deviceClass == nil {
 		return nil, errors.New("device class is nil")
 	}

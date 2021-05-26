@@ -1,9 +1,7 @@
 package request
 
 import (
-	"errors"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/inexio/thola/core/value"
 )
 
 // CheckRequest
@@ -46,59 +44,4 @@ func (c *CheckResponse) ToCheckPluginOutput() ([]byte, error) {
 // GetExitCode returns the exit code of the response.
 func (c *CheckResponse) GetExitCode() int {
 	return c.ResponseInfo.StatusCode
-}
-
-type CheckThresholds struct {
-	WarningMin  *float64 `json:"warningMin" xml:"warningMin"`
-	WarningMax  *float64 `json:"warningMax" xml:"warningMax"`
-	CriticalMin *float64 `json:"criticalMin" xml:"criticalMin"`
-	CriticalMax *float64 `json:"criticalMax" xml:"criticalMax"`
-}
-
-func (c *CheckThresholds) validate() error {
-	if c.WarningMin != nil && c.WarningMax != nil && *c.WarningMin >= *c.WarningMax {
-		return errors.New("warning min and max are invalid")
-	}
-
-	if c.CriticalMin != nil && c.CriticalMax != nil && *c.CriticalMin >= *c.CriticalMax {
-		return errors.New("critical min and max are invalid")
-	}
-
-	if c.CriticalMin != nil && c.WarningMin != nil && *c.CriticalMin >= *c.WarningMin {
-		return errors.New("critical and warning min are invalid")
-	}
-
-	if c.WarningMax != nil && c.CriticalMax != nil && *c.WarningMax >= *c.CriticalMax {
-		return errors.New("critical and warning max are invalid")
-	}
-
-	return nil
-}
-
-func (c *CheckThresholds) isEmpty() bool {
-	return c.WarningMin == nil && c.WarningMax == nil && c.CriticalMin == nil && c.CriticalMax == nil
-}
-
-func (c *CheckThresholds) checkValue(v value.Value) int {
-	if c.CriticalMin != nil {
-		if res, err := value.New(*c.CriticalMin).Cmp(v); err != nil || res != -1 {
-			return monitoringplugin.CRITICAL
-		}
-	}
-	if c.CriticalMax != nil {
-		if res, err := value.New(*c.CriticalMax).Cmp(v); err != nil || res != 1 {
-			return monitoringplugin.CRITICAL
-		}
-	}
-	if c.WarningMin != nil {
-		if res, err := value.New(*c.WarningMin).Cmp(v); err != nil || res != -1 {
-			return monitoringplugin.WARNING
-		}
-	}
-	if c.WarningMax != nil {
-		if res, err := value.New(*c.WarningMax).Cmp(v); err != nil || res != 1 {
-			return monitoringplugin.WARNING
-		}
-	}
-	return monitoringplugin.OK
 }

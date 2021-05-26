@@ -1,6 +1,5 @@
 // Package deviceclass contains the logic for interacting with device classes.
 // It contains methods that read out the .yaml files representing device classes.
-// On top of that, code communicators that extend .yaml files can be added here.
 package deviceclass
 
 import (
@@ -264,6 +263,7 @@ type yamlComponentsOID struct {
 	IndicesMapping               *yamlComponentsOID `yaml:"indices_mapping" mapstructure:"indices_mapping"`
 }
 
+// GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
 func GetHierarchy() (hierarchy.Hierarchy, error) {
 	genericDeviceClassDir := "device-classes"
 	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))

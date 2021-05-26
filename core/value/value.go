@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// Value represents a value of any type.
 type Value interface {
 	String() string
 	Float64() (float64, error)

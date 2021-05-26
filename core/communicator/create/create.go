@@ -47,13 +47,14 @@ func GetNetworkDeviceCommunicator(ctx context.Context, identifier string) (commu
 
 	if configIdentifiers[0] == "generic" {
 		return genericHierarchy.NetworkDeviceCommunicator, nil
-	} else {
-		currentIdentifier = configIdentifiers[0]
-		hier, ok = genericHierarchy.Children[currentIdentifier]
-		if !ok {
-			return nil, errors.New("hierarchy does not exist")
-		}
 	}
+
+	currentIdentifier = configIdentifiers[0]
+	hier, ok = genericHierarchy.Children[currentIdentifier]
+	if !ok {
+		return nil, errors.New("hierarchy does not exist")
+	}
+
 	for i, ident := range configIdentifiers {
 		if i == 0 {
 			continue

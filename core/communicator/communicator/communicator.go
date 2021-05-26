@@ -42,10 +42,11 @@ type Communicator interface {
 	// GetHardwareHealthComponent returns the hardware health component of a device if available.
 	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
 
-	AvailableCommunicatorFunctions
+	Functions
 }
 
-type AvailableCommunicatorFunctions interface {
+// Functions represents all overrideable functions which can be used to communicate with a device.
+type Functions interface {
 
 	// GetVendor returns the vendor of a device.
 	GetVendor(ctx context.Context) (string, error)

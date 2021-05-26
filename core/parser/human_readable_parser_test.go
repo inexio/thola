@@ -31,7 +31,7 @@ func TestToHumanReadablePointer1(t *testing.T) {
 }
 
 func TestToHumanReadablePointer2(t *testing.T) {
-	var str []string = nil
+	var str []string
 	output, err := ToHumanReadable(&str)
 	assert.Nil(t, err)
 	assert.Equal(t, "", string(output))

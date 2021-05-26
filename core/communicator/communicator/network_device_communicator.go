@@ -9,7 +9,7 @@ import (
 )
 
 // CreateNetworkDeviceCommunicator creates a network device communicator which combines a device class communicator and code communicator
-func CreateNetworkDeviceCommunicator(deviceClassCommunicator Communicator, codeCommunicator AvailableCommunicatorFunctions) Communicator {
+func CreateNetworkDeviceCommunicator(deviceClassCommunicator Communicator, codeCommunicator Functions) Communicator {
 	return &networkDeviceCommunicator{
 		deviceClassCommunicator: deviceClassCommunicator,
 		codeCommunicator:        codeCommunicator,
@@ -18,7 +18,7 @@ func CreateNetworkDeviceCommunicator(deviceClassCommunicator Communicator, codeC
 
 type networkDeviceCommunicator struct {
 	deviceClassCommunicator Communicator
-	codeCommunicator        AvailableCommunicatorFunctions
+	codeCommunicator        Functions
 }
 
 func (c *networkDeviceCommunicator) GetIdentifier() string {

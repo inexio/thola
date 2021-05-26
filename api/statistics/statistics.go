@@ -81,11 +81,11 @@ func GetStatistics() (Statistics, error) {
 
 	if s.TotalCount == 0 {
 		return s, nil
-	} else {
-		avgNs := int64(stats.totalResponseTime) / int64(s.TotalCount)
-		avgSec := float64(avgNs) / float64(time.Second)
-		s.AverageResponseTime = math.Floor(avgSec*1000) / 1000
 	}
+
+	avgNs := int64(stats.totalResponseTime) / int64(s.TotalCount)
+	avgSec := float64(avgNs) / float64(time.Second)
+	s.AverageResponseTime = math.Floor(avgSec*1000) / 1000
 
 	return s, nil
 }
