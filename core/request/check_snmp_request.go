@@ -20,7 +20,11 @@ func (r *CheckSNMPRequest) setupConnection(_ context.Context) (*network.RequestD
 	return &network.RequestDeviceConnection{}, nil
 }
 
+// CheckSNMPResponse
+//
 // CheckSNMPResponse is a response struct for the check snmp request.
+//
+// swagger:model
 type CheckSNMPResponse struct {
 	CheckResponse
 	SuccessfulSnmpCredentials *network.SNMPCredentials `yaml:"successful_snmp_credentials" json:"successful_snmp_credentials" xml:"successful_snmp_credentials"`
