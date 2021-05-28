@@ -34,7 +34,7 @@ func TestToHumanReadablePointer2(t *testing.T) {
 	var str []string
 	output, err := ToHumanReadable(&str)
 	assert.Nil(t, err)
-	assert.Equal(t, "", string(output))
+	assert.Equal(t, "No result", string(output))
 }
 
 func TestToHumanReadableArray(t *testing.T) {
