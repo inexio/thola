@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"github.com/dgraph-io/badger/v2"
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql" //needed for sql driver
+	"github.com/gomodule/redigo/redis"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/jmoiron/sqlx"
@@ -101,20 +101,31 @@ func initDB(ctx context.Context) error {
 		db.Database = &sqlDB
 	} else if drivername == "redis" {
 		redisDB := redisDatabase{
-			db: redis.NewClient(&redis.Options{
-				Addr:     viper.GetString("db.redis.addr"),
-				Password: viper.GetString("db.redis.password"),
-				DB:       viper.GetInt("db.redis.db"),
-			}),
+			pool: redis.Pool{
+				Dial: func() (redis.Conn, error) {
+					return redis.Dial("tcp", viper.GetString("db.redis.addr"),
+						redis.DialPassword(viper.GetString("db.redis.password")),
+						redis.DialDatabase(viper.GetInt("db.redis.db")))
+				},
+			},
 		}
 		err := redisDB.CheckConnection(ctx)
 		if err != nil {
 			return errors.Wrap(err, "failed to ping redis db")
 		}
 		if viper.GetBool("db.rebuild") {
-			_, err := redisDB.db.FlushAll(ctx).Result()
+			conn, err := redisDB.pool.GetContext(ctx)
 			if err != nil {
-				return errors.Wrap(err, "failed to rebuild redis db")
+				return errors.Wrap(err, "failed to get connection to redis database")
+			}
+			defer conn.Close()
+
+			res, err := redis.String(conn.Do("FLUSHALL"))
+			if err != nil {
+				return errors.Wrap(err, "failed to execute command on redis database")
+			}
+			if res != "OK" {
+				return errors.New("redis 'FLUSHALL' command failed: " + res)
 			}
 		}
 		db.Database = &redisDB

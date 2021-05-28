@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-redis/redis/v8"
+	"github.com/gomodule/redigo/redis"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/parser"
@@ -13,15 +13,21 @@ import (
 )
 
 type redisDatabase struct {
-	db *redis.Client
+	pool redis.Pool
 }
 
 func (d *redisDatabase) SetDeviceProperties(ctx context.Context, ip string, data device.Device) error {
+	conn, err := d.pool.GetContext(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to get connection to redis database")
+	}
+	defer conn.Close()
+
 	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall response")
 	}
-	_, err = d.db.Set(ctx, "DeviceInfo-"+ip, JSONData, cacheExpiration).Result()
+	_, err = conn.Do("SETEX", "DeviceInfo-"+ip, cacheExpiration.Seconds(), JSONData)
 	if err != nil && !db.ignoreFailure {
 		return errors.Wrap(err, "failed to store device data")
 	}
@@ -29,7 +35,13 @@ func (d *redisDatabase) SetDeviceProperties(ctx context.Context, ip string, data
 }
 
 func (d *redisDatabase) GetDeviceProperties(ctx context.Context, ip string) (device.Device, error) {
-	value, err := d.db.Get(ctx, "DeviceInfo-"+ip).Result()
+	conn, err := d.pool.GetContext(ctx)
+	if err != nil {
+		return device.Device{}, errors.Wrap(err, "failed to get connection to redis database")
+	}
+	defer conn.Close()
+
+	value, err := redis.String(conn.Do("GET", "DeviceInfo-"+ip))
 	if err != nil {
 		return device.Device{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
@@ -42,11 +54,17 @@ func (d *redisDatabase) GetDeviceProperties(ctx context.Context, ip string) (dev
 }
 
 func (d *redisDatabase) SetConnectionData(ctx context.Context, ip string, data network.ConnectionData) error {
+	conn, err := d.pool.GetContext(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to get connection to redis database")
+	}
+	defer conn.Close()
+
 	JSONData, err := parser.ToJSON(data)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshall connectionData")
 	}
-	_, err = d.db.Set(ctx, "ConnectionData-"+ip, JSONData, cacheExpiration).Result()
+	_, err = conn.Do("SETEX", "ConnectionData-"+ip, cacheExpiration.Seconds(), JSONData)
 	if err != nil && !db.ignoreFailure {
 		return errors.Wrap(err, "failed to store connection data")
 	}
@@ -54,7 +72,13 @@ func (d *redisDatabase) SetConnectionData(ctx context.Context, ip string, data n
 }
 
 func (d *redisDatabase) GetConnectionData(ctx context.Context, ip string) (network.ConnectionData, error) {
-	value, err := d.db.Get(ctx, "ConnectionData-"+ip).Result()
+	conn, err := d.pool.GetContext(ctx)
+	if err != nil {
+		return network.ConnectionData{}, errors.Wrap(err, "failed to get connection to redis database")
+	}
+	defer conn.Close()
+
+	value, err := redis.String(conn.Do("GET", "ConnectionData-"+ip))
 	if err != nil {
 		return network.ConnectionData{}, tholaerr.NewNotFoundError("cannot find cache entry")
 	}
@@ -67,11 +91,26 @@ func (d *redisDatabase) GetConnectionData(ctx context.Context, ip string) (netwo
 }
 
 func (d *redisDatabase) CheckConnection(ctx context.Context) error {
-	_, err := d.db.Ping(ctx).Result()
+	conn, err := d.pool.GetContext(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to get connection to redis database")
+	}
+	defer conn.Close()
+
+	if conn.Err() != nil {
+		return errors.Wrap(err, "connection establishment to redis database failed")
+	}
+	res, err := redis.String(conn.Do("PING"))
+	if err != nil {
+		return errors.Wrap(err, "sending command to redis database failed")
+	}
+	if res != "PONG" {
+		return errors.New("redis database didn't respond with 'PONG' to 'PING' command")
+	}
 	return err
 }
 
 func (d *redisDatabase) CloseConnection(ctx context.Context) error {
 	log.Ctx(ctx).Trace().Msg("closing connection to redis database")
-	return d.db.Close()
+	return d.pool.Close()
 }
