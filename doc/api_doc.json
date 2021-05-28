@@ -37,7 +37,7 @@
           "check"
         ],
         "summary": "Check the cpu load of a device.",
-        "operationId": "checkCpuLoad",
+        "operationId": "checkCPULoad",
         "parameters": [
           {
             "description": "Request to process.",
@@ -179,7 +179,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckResponse"
+              "$ref": "#/definitions/CheckIdentifyResponse"
             }
           },
           "400": {
@@ -389,7 +389,7 @@
           "200": {
             "description": "Returns the response.",
             "schema": {
-              "$ref": "#/definitions/CheckResponse"
+              "$ref": "#/definitions/CheckSNMPResponse"
             }
           },
           "400": {
@@ -1153,6 +1153,47 @@
       },
       "x-go-package": "github.com/inexio/thola/core/request"
     },
+    "CheckIdentifyResponse": {
+      "description": "CheckIdentifyResponse is a response struct for the check identify request.",
+      "type": "object",
+      "title": "CheckIdentifyResponse",
+      "properties": {
+        "failed_expectations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/IdentifyExpectationResult"
+          },
+          "x-go-name": "FailedExpectations"
+        },
+        "identify_result": {
+          "$ref": "#/definitions/Device"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OutputMessage"
+          },
+          "x-go-name": "Messages"
+        },
+        "performance_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PerformanceDataPoint"
+          },
+          "x-go-name": "PerformanceData"
+        },
+        "raw_output": {
+          "type": "string",
+          "x-go-name": "RawOutput"
+        },
+        "status_code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "StatusCode"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
     "CheckInterfaceMetricsRequest": {
       "description": "CheckInterfaceRequest is a the request struct for the check interface metrics request.",
       "type": "object",
@@ -1324,6 +1365,40 @@
       },
       "x-go-package": "github.com/inexio/thola/core/request"
     },
+    "CheckSNMPResponse": {
+      "description": "CheckSNMPResponse is a response struct for the check snmp request.",
+      "type": "object",
+      "title": "CheckSNMPResponse",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OutputMessage"
+          },
+          "x-go-name": "Messages"
+        },
+        "performance_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PerformanceDataPoint"
+          },
+          "x-go-name": "PerformanceData"
+        },
+        "raw_output": {
+          "type": "string",
+          "x-go-name": "RawOutput"
+        },
+        "status_code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "StatusCode"
+        },
+        "successful_snmp_credentials": {
+          "$ref": "#/definitions/SNMPCredentials"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
+    },
     "CheckServerRequest": {
       "description": "CheckServerRequest is a the request struct for the check server request.",
       "type": "object",
@@ -1454,20 +1529,10 @@
           "format": "double",
           "x-go-name": "RXPower"
         },
-        "rx_power_100_g": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "RXPower100G"
-        },
         "tx_power": {
           "type": "number",
           "format": "double",
           "x-go-name": "TXPower"
-        },
-        "tx_power_100_g": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "TXPower100G"
         },
         "uncorrected_fec": {
           "type": "array",
@@ -1657,7 +1722,9 @@
             "format": "int64"
           },
           "x-go-name": "HTTPPorts",
-          "example": "80"
+          "example": [
+            80
+          ]
         },
         "https_ports": {
           "description": "The https port(s) of the device.",
@@ -1667,7 +1734,9 @@
             "format": "int64"
           },
           "x-go-name": "HTTPSPorts",
-          "example": "443"
+          "example": [
+            443
+          ]
         }
       },
       "x-go-package": "github.com/inexio/thola/core/network"
@@ -1732,6 +1801,21 @@
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
+    },
+    "IdentifyExpectationResult": {
+      "type": "object",
+      "title": "IdentifyExpectationResult is a response struct for the check identify request.",
+      "properties": {
+        "expected": {
+          "type": "string",
+          "x-go-name": "Expected"
+        },
+        "got": {
+          "type": "string",
+          "x-go-name": "Got"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/request"
     },
     "IdentifyRequest": {
       "description": "IdentifyRequest is a the request struct for the identify request.",
@@ -1964,6 +2048,9 @@
         },
         "radio": {
           "$ref": "#/definitions/RadioInterface"
+        },
+        "sap": {
+          "$ref": "#/definitions/SAPInterface"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/device"
@@ -2596,6 +2683,24 @@
       },
       "x-go-package": "github.com/inexio/go-monitoringplugin"
     },
+    "SAPInterface": {
+      "description": "SAPInterface represents a service access point interface.",
+      "type": "object",
+      "title": "SAPInterface",
+      "properties": {
+        "inbound": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Inbound"
+        },
+        "outbound": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Outbound"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/device"
+    },
     "SBCComponent": {
       "description": "SBCComponent represents a SBC component.",
       "type": "object",
@@ -2754,7 +2859,9 @@
             "type": "string"
           },
           "x-go-name": "Communities",
-          "example": "public"
+          "example": [
+            "public"
+          ]
         },
         "discoverParallelRequests": {
           "description": "The amount of parallel connection requests used while trying to get a valid SNMP connection.",
@@ -2785,7 +2892,12 @@
             "format": "int64"
           },
           "x-go-name": "Ports",
-          "example": "161"
+          "example": [
+            161
+          ]
+        },
+        "v3_data": {
+          "$ref": "#/definitions/SNMPv3ConnectionData"
         },
         "versions": {
           "description": "The snmp version(s) of the device.",
@@ -2794,7 +2906,87 @@
             "type": "string"
           },
           "x-go-name": "Versions",
-          "example": "2c"
+          "example": [
+            "2c"
+          ]
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/network"
+    },
+    "SNMPCredentials": {
+      "type": "object",
+      "title": "SNMPCredentials includes all credential information of the snmp connection.",
+      "properties": {
+        "community": {
+          "type": "string",
+          "x-go-name": "Community"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Port"
+        },
+        "v3ContextName": {
+          "type": "string",
+          "x-go-name": "V3ContextName"
+        },
+        "v3Level": {
+          "type": "string",
+          "x-go-name": "V3Level"
+        },
+        "version": {
+          "type": "string",
+          "x-go-name": "Version"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/core/network"
+    },
+    "SNMPv3ConnectionData": {
+      "description": "SNMPv3ConnectionData includes all snmp v3 specific connection data.",
+      "type": "object",
+      "title": "SNMPv3ConnectionData",
+      "properties": {
+        "auth_key": {
+          "description": "The authentication protocol passphrase of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "AuthKey",
+          "example": "passphrase"
+        },
+        "auth_protocol": {
+          "description": "The authentication protocol of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "AuthProtocol",
+          "example": "MD5"
+        },
+        "context_name": {
+          "description": "The context name of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "ContextName",
+          "example": "bridge1"
+        },
+        "level": {
+          "description": "The security level of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "Level",
+          "example": "authPriv"
+        },
+        "priv_key": {
+          "description": "The privacy protocol passphrase of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "PrivKey",
+          "example": "passphrase"
+        },
+        "priv_protocol": {
+          "description": "The privacy protocol of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "PrivProtocol",
+          "example": "DES"
+        },
+        "user": {
+          "description": "The user of the SNMP connection.",
+          "type": "string",
+          "x-go-name": "User",
+          "example": "user"
         }
       },
       "x-go-package": "github.com/inexio/thola/core/network"

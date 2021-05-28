@@ -38,6 +38,13 @@ func buildDeviceFlagSet() *flag.FlagSet {
 	fs.Int("snmp-discover-par-requests", defaultSNMPDiscoverParRequests, "The amount of parallel connection requests used while trying to get a valid SNMP connection")
 	fs.Int("snmp-discover-timeout", defaultSNMPDiscoverTimeout, "The timeout in seconds used while trying to get a valid SNMP connection")
 	fs.Int("snmp-discover-retries", defaultSNMPDiscoverRetries, "The retries used while trying to get a valid SNMP connection")
+	fs.String("snmp-v3-level", "", "The level of the SNMP v3 connection ('noAuthNoPriv', 'authNoPriv' or 'authPriv')")
+	fs.String("snmp-v3-context", "", "The context name of the SNMP v3 connection")
+	fs.String("snmp-v3-user", "", "The username of the SNMP v3 connection")
+	fs.String("snmp-v3-auth-key", "", "The authentication passphrase of the SNMP v3 connection")
+	fs.String("snmp-v3-auth-proto", "", "The authentication protocol of the SNMP v3 connection (e.g. 'MD5' or 'SHA')")
+	fs.String("snmp-v3-priv-key", "", "The privacy passphrase of the SNMP v3 connection")
+	fs.String("snmp-v3-priv-proto", "", "The privacy protocol of the SNMP v3 connection (e.g. 'DES' or 'AES')")
 	fs.IntSlice("http-port", nil, "Ports for HTTP to use")
 	fs.IntSlice("https-port", nil, "Ports for HTTPS to use")
 	fs.String("http-username", "", "Username for HTTP/HTTPS authorization")
@@ -113,6 +120,69 @@ func bindDeviceFlags(cmd *cobra.Command) error {
 			log.Error().
 				AnErr("Error", err).
 				Msg("Can't bind flag snmp-port")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-level"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-level", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-level")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-context"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-context", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-context")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-user"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-user", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-user")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-auth-key"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-auth-key", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-auth-key")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-auth-proto"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-auth-proto", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-auth-proto")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-priv-key"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-priv-key", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-priv-key")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-v3-priv-proto"); x != nil {
+		err := viper.BindPFlag("device.snmp-v3-priv-proto", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-v3-priv-proto")
 			return err
 		}
 	}

@@ -286,6 +286,52 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		checkMemoryUsageResponse.RawOutput = ""
 	}
 
+	var checkDiskResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckDiskRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check disk for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check disk for device " + device + " failed")
+	} else {
+		checkDiskResponse = res.(*request.CheckResponse)
+		checkDiskResponse.RawOutput = ""
+	}
+
+	var checkServerResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckServerRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check server for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check server for device " + device + " failed")
+	} else {
+		checkServerResponse = res.(*request.CheckResponse)
+		checkServerResponse.RawOutput = ""
+	}
+
 	var checkSBCResponse *request.CheckResponse
 	res, err = test.ProcessRequest(
 		&request.CheckSBCRequest{
@@ -318,6 +364,8 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 			CheckUPS:              checkUPSResponse,
 			CheckCPULoad:          checkCPULoadResponse,
 			CheckMemoryUsage:      checkMemoryUsageResponse,
+			CheckDisk:             checkDiskResponse,
+			CheckServer:           checkServerResponse,
 			CheckSBC:              checkSBCResponse,
 		},
 		Connection: connectionData,

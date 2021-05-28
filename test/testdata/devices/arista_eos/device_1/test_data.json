@@ -1709,6 +1709,8 @@
 		"checkUPS": null,
 		"checkCPULoad": null,
 		"checkMemoryUsage": null,
+		"checkDisk": null,
+		"checkServer": null,
 		"checkSBC": null
 	}
 }

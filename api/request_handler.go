@@ -116,7 +116,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckResponse'
+	//       $ref: '#/definitions/CheckIdentifyResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -143,7 +143,7 @@ func StartAPI() {
 	//   200:
 	//     description: Returns the response.
 	//     schema:
-	//       $ref: '#/definitions/CheckResponse'
+	//       $ref: '#/definitions/CheckSNMPResponse'
 	//   400:
 	//     description: Returns an error with more details in the body.
 	//     schema:
@@ -258,7 +258,7 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/memory-usage", checkMemoryUsage)
 
-	// swagger:operation POST /check/cpu-load check checkCpuLoad
+	// swagger:operation POST /check/cpu-load check checkCPULoad
 	// ---
 	// summary: Check the cpu load of a device.
 	// consumes:
@@ -283,7 +283,7 @@ func StartAPI() {
 	//     description: Returns an error with more details in the body.
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
-	e.POST("/check/cpu-load", checkCpuLoad)
+	e.POST("/check/cpu-load", checkCPULoad)
 
 	// swagger:operation POST /check/sbc check checkSBC
 	// ---
@@ -783,7 +783,7 @@ func checkMemoryUsage(ctx echo.Context) error {
 	return returnInFormat(ctx, http.StatusOK, resp)
 }
 
-func checkCpuLoad(ctx echo.Context) error {
+func checkCPULoad(ctx echo.Context) error {
 	r := request.CheckCPULoadRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
