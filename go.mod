@@ -4,9 +4,9 @@ go 1.16
 
 require (
 	github.com/dgraph-io/badger/v2 v2.2007.2
-	github.com/go-redis/redis/v8 v8.4.4
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gomodule/redigo v1.8.4
 	github.com/google/go-cmp v0.5.4
 	github.com/gosnmp/gosnmp v1.30.0
 	github.com/inexio/go-monitoringplugin v1.0.6
