@@ -114,13 +114,13 @@ type Interface struct {
 	// It is used to internally specify a port type, without changing the actual ifType.
 	SubType *string `yaml:"-" json:"-" xml:"-"`
 
-	EthernetLike       *EthernetLikeInterface       `yaml:"ethernet_like,omitempty" json:"ethernet_like,omitempty" xml:"ethernet_like,omitempty"`
-	Radio              *RadioInterface              `yaml:"radio,omitempty" json:"radio,omitempty" xml:"radio,omitempty" `
-	DWDM               *DWDMInterface               `yaml:"dwdm,omitempty" json:"dwdm,omitempty" xml:"dwdm,omitempty"`
-	OpticalTransponder *OpticalTransponderInterface `yaml:"optical_transponder,omitempty" json:"optical_transponder,omitempty" xml:"optical_transponder,omitempty"`
-	OpticalAmplifier   *OpticalAmplifierInterface   `yaml:"optical_amplifier,omitempty" json:"optical_amplifier,omitempty" xml:"optical_amplifier,omitempty"`
-	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty"`
-	SAP                *SAPInterface                `yaml:"sap,omitempty" json:"sap,omitempty" xml:"sap,omitempty"`
+	EthernetLike       *EthernetLikeInterface       `yaml:"ethernet_like,omitempty" json:"ethernet_like,omitempty" xml:"ethernet_like,omitempty" mapstructure:"ethernet_like,omitempty"`
+	Radio              *RadioInterface              `yaml:"radio,omitempty" json:"radio,omitempty" xml:"radio,omitempty" mapstructure:"radio,omitempty"`
+	DWDM               *DWDMInterface               `yaml:"dwdm,omitempty" json:"dwdm,omitempty" xml:"dwdm,omitempty" mapstructure:"dwdm,omitempty"`
+	OpticalTransponder *OpticalTransponderInterface `yaml:"optical_transponder,omitempty" json:"optical_transponder,omitempty" xml:"optical_transponder,omitempty" mapstructure:"optical_transponder,omitempty"`
+	OpticalAmplifier   *OpticalAmplifierInterface   `yaml:"optical_amplifier,omitempty" json:"optical_amplifier,omitempty" xml:"optical_amplifier,omitempty" mapstructure:"optical_amplifier,omitempty"`
+	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty" mapstructure:"optical_opm,omitempty"`
+	SAP                *SAPInterface                `yaml:"sap,omitempty" json:"sap,omitempty" xml:"sap,omitempty" mapstructure:"sap,omitempty"`
 }
 
 //

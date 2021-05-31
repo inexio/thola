@@ -9,7 +9,7 @@ config:
 components:
   interfaces:
     count: 1.3.6.1.2.1.2.1.0
-    ifTable:
+    properties:
       detection: snmpwalk
       values:
         ifIndex:
@@ -117,35 +117,40 @@ components:
           oid: 1.3.6.1.2.1.31.1.1.1.15
         ifAlias:
           oid: 1.3.6.1.2.1.31.1.1.1.18
-    types:
-      ether_like:
-        detection: 1.3.6.1.2.1.10.7.2.1.1
-        specific_values:
-          dot3StatsAlignmentErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.2
-          dot3StatsFCSErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.3
-          dot3StatsSingleCollisionFrames:
-            oid: 1.3.6.1.2.1.10.7.2.1.4
-          dot3StatsMultipleCollisionFrames:
-            oid: 1.3.6.1.2.1.10.7.2.1.5
-          dot3StatsSQETestErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.6
-          dot3StatsDeferredTransmissions:
-            oid: 1.3.6.1.2.1.10.7.2.1.7
-          dot3StatsLateCollisions:
-            oid: 1.3.6.1.2.1.10.7.2.1.8
-          dot3StatsExcessiveCollisions:
-            oid: 1.3.6.1.2.1.10.7.2.1.9
-          dot3StatsInternalMacTransmitErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.10
-          dot3StatsCarrierSenseErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.11
-          dot3StatsFrameTooLongs:
-            oid: 1.3.6.1.2.1.10.7.2.1.13
-          dot3StatsInternalMacReceiveErrors:
-            oid: 1.3.6.1.2.1.10.7.2.1.16
-          dot3HCStatsFCSErrors:
-            oid: 1.3.6.1.2.1.10.7.11.1.2
-          etherStatsCRCAlignErrors:
-            oid: 1.3.6.1.2.1.16.1.1.1.8
+        ethernet_like:
+          values:
+            dot3StatsAlignmentErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.2
+            dot3StatsFCSErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.3
+            dot3StatsSingleCollisionFrames:
+              oid: 1.3.6.1.2.1.10.7.2.1.4
+            dot3StatsMultipleCollisionFrames:
+              oid: 1.3.6.1.2.1.10.7.2.1.5
+            dot3StatsSQETestErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.6
+            dot3StatsDeferredTransmissions:
+              oid: 1.3.6.1.2.1.10.7.2.1.7
+            dot3StatsLateCollisions:
+              oid: 1.3.6.1.2.1.10.7.2.1.8
+            dot3StatsExcessiveCollisions:
+              oid: 1.3.6.1.2.1.10.7.2.1.9
+            dot3StatsInternalMacTransmitErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.10
+            dot3StatsCarrierSenseErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.11
+            dot3StatsFrameTooLongs:
+              oid: 1.3.6.1.2.1.10.7.2.1.13
+            dot3StatsInternalMacReceiveErrors:
+              oid: 1.3.6.1.2.1.10.7.2.1.16
+            dot3HCStatsFCSErrors:
+              oid: 1.3.6.1.2.1.10.7.11.1.2
+            etherStatsCRCAlignErrors:
+              oid: 1.3.6.1.2.1.16.1.1.1.8
+              indices_mapping:
+                oid: 1.3.6.1.2.1.16.1.1.1.2
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '\.?([0-9]+)$'
+                    format: "$1"

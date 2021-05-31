@@ -116,9 +116,8 @@ func (d *badgerDatabase) GetConnectionData(_ context.Context, ip string) (networ
 func (d *badgerDatabase) CheckConnection(_ context.Context) error {
 	if d.db.IsClosed() {
 		return errors.New("badger db is closed")
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func (d *badgerDatabase) CloseConnection(ctx context.Context) error {

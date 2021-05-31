@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -7,12 +7,11 @@ import (
 	"github.com/inexio/thola/core/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"regexp"
 	"strings"
 )
 
 type ekinopsCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetInterfaces returns the interfaces of ekinops devices.
@@ -24,7 +23,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 
 	con.SNMP.SnmpClient.UseCache(false)
 
-	interfaces, err := c.GetIfTable(ctx)
+	interfaces, err := c.deviceClass.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -70,36 +69,6 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 	}
 
 	return normalizeEkinopsInterfaces(interfaces)
-}
-
-// GetInterfaces returns the interfaces of ekinops devices.
-// For ekinops devices, only a few interface values are required.
-func (c *ekinopsCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-	if genericDeviceClass.components.interfaces.IfTable == nil {
-		return nil, errors.New("ifTable information is empty")
-	}
-
-	reader := *genericDeviceClass.components.interfaces.IfTable.(*snmpGroupPropertyReader)
-	oids := make(deviceClassOIDs)
-
-	regex, err := regexp.Compile("(ifIndex|ifDescr|ifType|ifName|ifAdminStatus|ifOperStatus|ifPhysAddress)")
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to build regex")
-	}
-
-	for oid, value := range reader.oids {
-		if regex.MatchString(oid) {
-			oids[oid] = value
-		}
-	}
-	reader.oids = oids
-
-	networkInterfacesRaw, err := reader.getProperty(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return convertRawInterfaces(ctx, networkInterfacesRaw)
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {

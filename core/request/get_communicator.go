@@ -4,7 +4,8 @@ package request
 
 import (
 	"context"
-	"github.com/inexio/thola/core/communicator"
+	"github.com/inexio/thola/core/communicator/communicator"
+	"github.com/inexio/thola/core/communicator/create"
 	"github.com/inexio/thola/core/database"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/tholaerr"
@@ -13,10 +14,9 @@ import (
 )
 
 // GetCommunicator returns a NetworkDeviceCommunicator for the given device.
-func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator.NetworkDeviceCommunicator, error) {
+func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator.Communicator, error) {
 	db, err := database.GetDB(ctx)
 	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to get DB")
 		return nil, errors.Wrap(err, "failed to get DB")
 	}
 
@@ -24,16 +24,14 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 	deviceProperties, err := db.GetDeviceProperties(ctx, baseRequest.DeviceData.IPAddress)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to get device properties from cache")
 			return nil, errors.Wrap(err, "failed to get device properties from cache")
 		}
 		log.Ctx(ctx).Trace().Msg("no device properties found in cache")
 		invalidCache = true
 	} else {
 		log.Ctx(ctx).Trace().Msg("found device properties in cache, starting to validate")
-		res, err := communicator.MatchDeviceClass(ctx, deviceProperties.Class)
+		res, err := create.MatchDeviceClass(ctx, deviceProperties.Class)
 		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("failed to match device class")
 			return nil, errors.Wrap(err, "failed to match device class")
 		}
 		if invalidCache = !res; invalidCache {
@@ -52,7 +50,7 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 	}
 	ctx = device.NewContextWithDeviceProperties(ctx, deviceProperties)
 
-	com, err := communicator.CreateNetworkDeviceCommunicator(ctx, deviceProperties.Class)
+	com, err := create.GetNetworkDeviceCommunicator(ctx, deviceProperties.Class)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get communicator for os '%s'", deviceProperties.Class)
 	}

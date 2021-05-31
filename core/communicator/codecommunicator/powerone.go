@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 )
 
 type poweroneACCCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 type poweronePCCCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetUPSComponentMainsVoltageApplied returns the ups state of powerone/acc devices.

@@ -27,4 +27,5 @@
 // swagger:meta
 package doc
 
+// Version specifies the current version.
 const Version = "v0.2.4"

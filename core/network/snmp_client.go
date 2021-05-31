@@ -762,6 +762,7 @@ func (s *SNMPResponse) GetSNMPType() gosnmp.Asn1BER {
 	return s.snmpType
 }
 
+// SNMPGetConfiguration represents the configuration needed to get a value.
 type SNMPGetConfiguration struct {
 	OID          OID  `yaml:"oid" mapstructure:"oid"`
 	UseRawResult bool `yaml:"use_raw_result" mapstructure:"use_raw_result"`

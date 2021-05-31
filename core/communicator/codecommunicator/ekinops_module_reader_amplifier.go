@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"

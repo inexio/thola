@@ -1,21 +1,482 @@
-package communicator
+package deviceclass
 
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/core/communicator/component"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/inexio/thola/core/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"math"
 	"strings"
 )
 
 type deviceClassCommunicator struct {
-	baseCommunicator
 	*deviceClass
+}
+
+func (o *deviceClassCommunicator) GetIdentifier() string {
+	return o.getName()
+}
+
+func (o *deviceClassCommunicator) GetAvailableComponents() []string {
+	var res []string
+	components := o.getAvailableComponents()
+	for k, v := range components {
+		if v {
+			comp, err := k.ToString()
+			if err != nil {
+				continue
+			}
+			res = append(res, comp)
+		}
+	}
+	return res
+}
+
+func (o *deviceClassCommunicator) HasComponent(component component.Component) bool {
+	haha := o.getAvailableComponents()
+	if v, ok := haha[component]; ok && v {
+		return true
+	}
+	return false
+}
+
+func (o *deviceClassCommunicator) Match(ctx context.Context) (bool, error) {
+	return o.matchDevice(ctx)
+}
+
+func (o *deviceClassCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
+	dev := device.Device{
+		Class:      o.GetIdentifier(),
+		Properties: device.Properties{},
+	}
+
+	vendor, err := o.GetVendor(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.Properties{}, errors.Wrap(err, "error occurred during get vendor")
+		}
+	} else {
+		dev.Properties.Vendor = &vendor
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
+	}
+
+	model, err := o.GetModel(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.Properties{}, errors.Wrap(err, "error occurred during get model")
+		}
+	} else {
+		dev.Properties.Model = &model
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
+	}
+
+	modelSeries, err := o.GetModelSeries(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.Properties{}, errors.Wrap(err, "error occurred during get model series")
+		}
+	} else {
+		dev.Properties.ModelSeries = &modelSeries
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
+	}
+
+	serialNumber, err := o.GetSerialNumber(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.Properties{}, errors.Wrap(err, "error occurred during get serial number")
+		}
+	} else {
+		dev.Properties.SerialNumber = &serialNumber
+		ctx = device.NewContextWithDeviceProperties(ctx, dev)
+	}
+
+	osVersion, err := o.GetOSVersion(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.Properties{}, errors.Wrap(err, "error occurred during get os version")
+		}
+	} else {
+		dev.Properties.OSVersion = &osVersion
+	}
+
+	return dev.Properties, nil
+}
+
+func (o *deviceClassCommunicator) GetCPUComponent(ctx context.Context) (device.CPUComponent, error) {
+	if !o.HasComponent(component.CPU) {
+		return device.CPUComponent{}, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+	}
+
+	var cpu device.CPUComponent
+	empty := true
+
+	cpuLoad, err := o.GetCPUComponentCPULoad(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu load")
+		}
+	} else {
+		cpu.Load = cpuLoad
+		empty = false
+	}
+
+	cpuTemp, err := o.GetCPUComponentCPUTemperature(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu temperature")
+		}
+	} else {
+		cpu.Temperature = cpuTemp
+		empty = false
+	}
+
+	if empty {
+		return device.CPUComponent{}, tholaerr.NewNotFoundError("no cpu data available")
+	}
+	return cpu, nil
+}
+
+func (o *deviceClassCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
+	if !o.HasComponent(component.Disk) {
+		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
+	}
+
+	var disk device.DiskComponent
+
+	empty := true
+
+	storages, err := o.GetDiskComponentStorages(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.DiskComponent{}, errors.Wrap(err, "error occurred during get disk component storages")
+		}
+	} else {
+		disk.Storages = storages
+		empty = false
+	}
+
+	if empty {
+		return device.DiskComponent{}, tholaerr.NewNotFoundError("no disk data available")
+	}
+
+	return disk, nil
+}
+
+func (o *deviceClassCommunicator) GetUPSComponent(ctx context.Context) (device.UPSComponent, error) {
+	if !o.HasComponent(component.UPS) {
+		return device.UPSComponent{}, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
+	var ups device.UPSComponent
+	empty := true
+
+	alarmLowVoltage, err := o.GetUPSComponentAlarmLowVoltageDisconnect(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get alarm")
+		}
+	} else {
+		ups.AlarmLowVoltageDisconnect = &alarmLowVoltage
+		empty = false
+	}
+
+	batteryAmperage, err := o.GetUPSComponentBatteryAmperage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery amperage")
+		}
+	} else {
+		ups.BatteryAmperage = &batteryAmperage
+		empty = false
+	}
+
+	batteryCapacity, err := o.GetUPSComponentBatteryCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery capacity")
+		}
+	} else {
+		ups.BatteryCapacity = &batteryCapacity
+		empty = false
+	}
+
+	batteryCurrent, err := o.GetUPSComponentBatteryCurrent(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery capacity")
+		}
+	} else {
+		ups.BatteryCurrent = &batteryCurrent
+		empty = false
+	}
+
+	batteryRemainingTime, err := o.GetUPSComponentBatteryRemainingTime(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery capacity")
+		}
+	} else {
+		ups.BatteryRemainingTime = &batteryRemainingTime
+		empty = false
+	}
+
+	batteryTemperature, err := o.GetUPSComponentBatteryTemperature(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery temperature")
+		}
+	} else {
+		ups.BatteryTemperature = &batteryTemperature
+		empty = false
+	}
+
+	batteryVoltage, err := o.GetUPSComponentBatteryVoltage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get battery voltage")
+		}
+	} else {
+		ups.BatteryVoltage = &batteryVoltage
+		empty = false
+	}
+
+	currentLoad, err := o.GetUPSComponentCurrentLoad(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get current load")
+		}
+	} else {
+		ups.CurrentLoad = &currentLoad
+		empty = false
+	}
+
+	mainsVoltageApplied, err := o.GetUPSComponentMainsVoltageApplied(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get mains voltage applied")
+		}
+	} else {
+		ups.MainsVoltageApplied = &mainsVoltageApplied
+		empty = false
+	}
+
+	rectifierCurrent, err := o.GetUPSComponentRectifierCurrent(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get mains voltage applied")
+		}
+	} else {
+		ups.RectifierCurrent = &rectifierCurrent
+		empty = false
+	}
+
+	systemVoltage, err := o.GetUPSComponentSystemVoltage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.UPSComponent{}, errors.Wrap(err, "error occurred during get mains voltage applied")
+		}
+	} else {
+		ups.SystemVoltage = &systemVoltage
+		empty = false
+	}
+
+	if empty {
+		return device.UPSComponent{}, tholaerr.NewNotFoundError("no ups data available")
+	}
+	return ups, nil
+}
+
+func (o *deviceClassCommunicator) GetServerComponent(ctx context.Context) (device.ServerComponent, error) {
+	if !o.HasComponent(component.Server) {
+		return device.ServerComponent{}, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+
+	var server device.ServerComponent
+
+	empty := true
+
+	procs, err := o.GetServerComponentProcs(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component procs")
+		}
+	} else {
+		server.Procs = &procs
+		empty = false
+	}
+
+	users, err := o.GetServerComponentUsers(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.ServerComponent{}, errors.Wrap(err, "error occurred during get server component users")
+		}
+	} else {
+		server.Users = &users
+		empty = false
+	}
+
+	if empty {
+		return device.ServerComponent{}, tholaerr.NewNotFoundError("no server data available")
+	}
+
+	return server, nil
+}
+
+func (o *deviceClassCommunicator) GetSBCComponent(ctx context.Context) (device.SBCComponent, error) {
+	if !o.HasComponent(component.SBC) {
+		return device.SBCComponent{}, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
+	var sbc device.SBCComponent
+
+	empty := true
+
+	agents, err := o.GetSBCComponentAgents(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component agents")
+		}
+	} else {
+		sbc.Agents = agents
+		empty = false
+	}
+
+	realms, err := o.GetSBCComponentRealms(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component realms")
+		}
+	} else {
+		sbc.Realms = realms
+		empty = false
+	}
+
+	globalCPS, err := o.GetSBCComponentGlobalCallPerSecond(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+		}
+	} else {
+		sbc.GlobalCallPerSecond = &globalCPS
+		empty = false
+	}
+
+	globalConcurrentSessions, err := o.GetSBCComponentGlobalConcurrentSessions(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get sbc global concurrent sessions")
+		}
+	} else {
+		sbc.GlobalConcurrentSessions = &globalConcurrentSessions
+		empty = false
+	}
+
+	activeLocalContacts, err := o.GetSBCComponentActiveLocalContacts(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get active local contacts")
+		}
+	} else {
+		sbc.ActiveLocalContacts = &activeLocalContacts
+		empty = false
+	}
+
+	transcodingCapacity, err := o.GetSBCComponentTranscodingCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get transcoding capacity")
+		}
+	} else {
+		sbc.TranscodingCapacity = &transcodingCapacity
+		empty = false
+	}
+
+	licenseCapacity, err := o.GetSBCComponentLicenseCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get license capacity")
+		}
+	} else {
+		sbc.LicenseCapacity = &licenseCapacity
+		empty = false
+	}
+
+	systemRedundancy, err := o.GetSBCComponentSystemRedundancy(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system redundancy")
+		}
+	} else {
+		sbc.SystemRedundancy = &systemRedundancy
+		empty = false
+	}
+
+	systemHealthScore, err := o.GetSBCComponentSystemHealthScore(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SBCComponent{}, errors.Wrap(err, "error occurred during get system health score")
+		}
+	} else {
+		sbc.SystemHealthScore = &systemHealthScore
+		empty = false
+	}
+
+	if empty {
+		return device.SBCComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+	}
+
+	return sbc, nil
+}
+
+func (o *deviceClassCommunicator) GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error) {
+	if !o.HasComponent(component.HardwareHealth) {
+		return device.HardwareHealthComponent{}, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
+	var hardwareHealth device.HardwareHealthComponent
+
+	empty := true
+
+	state, err := o.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get environment monitor states")
+		}
+	} else {
+		hardwareHealth.EnvironmentMonitorState = &state
+		empty = false
+	}
+
+	fans, err := o.GetHardwareHealthComponentFans(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get fans")
+		}
+	} else {
+		hardwareHealth.Fans = fans
+		empty = false
+	}
+
+	powerSupply, err := o.GetHardwareHealthComponentPowerSupply(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+		}
+	} else {
+		hardwareHealth.PowerSupply = powerSupply
+		empty = false
+	}
+
+	if empty {
+		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+	}
+
+	return hardwareHealth, nil
 }
 
 func (o *deviceClassCommunicator) GetVendor(ctx context.Context) (string, error) {
@@ -99,49 +560,31 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 }
 
 func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	if o.components.interfaces == nil || (o.components.interfaces.IfTable == nil && o.components.interfaces.Types == nil) {
+	if o.components.interfaces == nil || o.components.interfaces.Values == nil {
 		log.Ctx(ctx).Trace().Str("property", "interfaces").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	networkInterfaces, err := o.head.GetIfTable(ctx)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get ifTable")
-		return nil, errors.Wrap(err, "failed to get ifTable")
-	}
-
-	for t, typeDef := range o.components.interfaces.Types {
-		specialInterfacesRaw, err := getValuesBySNMPWalk(ctx, typeDef.Values)
-		if err != nil {
-			return nil, err
-		}
-
-		for i, networkInterface := range networkInterfaces {
-			if specialValues, ok := specialInterfacesRaw[fmt.Sprint(*networkInterface.IfIndex)]; ok {
-				err := addSpecialInterfacesValuesToInterface(t, &networkInterfaces[i], specialValues)
-				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-					return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
-				}
-			}
-		}
-	}
-
-	return networkInterfaces, nil
-}
-
-func (o *deviceClassCommunicator) GetIfTable(ctx context.Context) ([]device.Interface, error) {
-	if o.components.interfaces == nil || o.components.interfaces.IfTable == nil {
-		log.Ctx(ctx).Trace().Str("property", "ifTable").Str("device_class", o.name).Msg("no interface information available")
-		return nil, tholaerr.NewNotImplementedError("not implemented")
-	}
-
-	networkInterfacesRaw, err := o.components.interfaces.IfTable.getProperty(ctx)
+	interfacesRaw, err := o.components.interfaces.Values.getProperty(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertRawInterfaces(ctx, networkInterfacesRaw)
+	var interfaces []device.Interface
+
+	err = interfacesRaw.Decode(&interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode raw interfaces into interface structs")
+	}
+
+	for i, interf := range interfaces {
+		if interf.IfSpeed != nil && interf.IfHighSpeed != nil && *interf.IfSpeed == math.MaxUint32 {
+			ifSpeed := *interf.IfHighSpeed * 1000000
+			interfaces[i].IfSpeed = &ifSpeed
+		}
+	}
+
+	return interfaces, nil
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
@@ -174,7 +617,7 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 		return 0, errors.Wrap(err, "response is empty")
 	}
 
-	interfaces, err := o.head.GetInterfaces(ctx)
+	interfaces, err := o.GetInterfaces(ctx)
 	if err != nil {
 		log.Ctx(ctx).Trace().Err(err).Msg("failed to read out interfaces")
 		return 0, errors.Wrap(err, "failed to read out interfaces")
@@ -739,113 +1182,4 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 		return nil, errors.Wrap(err, "failed to decode property into power supply struct")
 	}
 	return powerSupply, nil
-}
-
-func convertRawInterfaces(ctx context.Context, interfacesRaw []map[string]value.Value) ([]device.Interface, error) {
-	var networkInterfaces []device.Interface
-
-	for _, oidValue := range interfacesRaw {
-		var networkInterface device.Interface
-		err := mapstructure.WeakDecode(oidValue, &networkInterface)
-		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-			return nil, errors.Wrap(err, "can't parse oid values into Interface struct")
-		}
-		networkInterfaces = append(networkInterfaces, networkInterface)
-	}
-
-	return networkInterfaces, nil
-}
-
-func getValuesBySNMPWalk(ctx context.Context, oids deviceClassOIDs) (map[string]map[string]interface{}, error) {
-	networkInterfaces := make(map[string]map[string]interface{})
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if !ok || con.SNMP == nil {
-		log.Ctx(ctx).Trace().Str("property", "interface").Msg("snmp client is empty")
-		return nil, errors.New("snmp client is empty")
-	}
-
-	for name, oid := range oids {
-		snmpResponse, err := con.SNMP.SnmpClient.SNMPWalk(ctx, string(oid.OID))
-		if err != nil {
-			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msgf("oid %s (%s) not found on device", oid.OID, name)
-				continue
-			}
-			log.Ctx(ctx).Trace().Err(err).Msg("failed to get oid value of interface")
-			return nil, errors.Wrap(err, "failed to get oid value")
-		}
-
-		for _, response := range snmpResponse {
-			res, err := response.GetValueBySNMPGetConfiguration(oid.SNMPGetConfiguration)
-			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("couldn't get value from response response")
-				return nil, errors.Wrap(err, "couldn't get value from response response")
-			}
-			if res != "" {
-				resNormalized, err := oid.operators.apply(ctx, value.New(res))
-				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Msg("response couldn't be normalized")
-					return nil, errors.Wrap(err, "response couldn't be normalized")
-				}
-				oid := strings.Split(response.GetOID(), ".")
-				ifIndex := oid[len(oid)-1]
-				if _, ok := networkInterfaces[ifIndex]; !ok {
-					networkInterfaces[ifIndex] = make(map[string]interface{})
-				}
-				networkInterfaces[ifIndex][name] = resNormalized
-			}
-		}
-	}
-
-	return networkInterfaces, nil
-}
-
-func addSpecialInterfacesValuesToInterface(interfaceType string, interf *device.Interface, specialValues map[string]interface{}) error {
-	switch interfaceType {
-	case "ether_like":
-		var specialValuesStruct device.EthernetLikeInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.EthernetLike = &specialValuesStruct
-	case "radio":
-		var specialValuesStruct device.RadioInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.Radio = &specialValuesStruct
-	case "dwdm":
-		var specialValuesStruct device.DWDMInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.DWDM = &specialValuesStruct
-	case "optical_transponder":
-		var specialValuesStruct device.OpticalTransponderInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalTransponder = &specialValuesStruct
-	case "optical_amplifier":
-		var specialValuesStruct device.OpticalAmplifierInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalAmplifier = &specialValuesStruct
-	case "optical_opm":
-		var specialValuesStruct device.OpticalOPMInterface
-		err := mapstructure.WeakDecode(specialValues, &specialValuesStruct)
-		if err != nil {
-			return errors.Wrap(err, "failed to decode special values")
-		}
-		interf.OpticalOPM = &specialValuesStruct
-	}
-	return nil
 }

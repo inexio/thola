@@ -64,8 +64,7 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 	default:
 		if !value.IsValid() {
 			return ""
-		} else {
-			return fmt.Sprint(value.Interface())
 		}
+		return fmt.Sprint(value.Interface())
 	}
 }

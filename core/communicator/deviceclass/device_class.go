@@ -1,20 +1,21 @@
-// Package communicator contains the logic for interacting with device classes.
+// Package deviceclass contains the logic for interacting with device classes.
 // It contains methods that read out the .yaml files representing device classes.
-// On top of that, code communicators that extend .yaml files can be added here.
-package communicator
+package deviceclass
 
 import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/config"
+	"github.com/inexio/thola/core/communicator/codecommunicator"
+	"github.com/inexio/thola/core/communicator/communicator"
+	"github.com/inexio/thola/core/communicator/component"
+	"github.com/inexio/thola/core/communicator/hierarchy"
 	"github.com/inexio/thola/core/mapping"
 	"github.com/inexio/thola/core/network"
 	"github.com/inexio/thola/core/tholaerr"
-	"github.com/inexio/thola/core/utility"
 	"github.com/inexio/thola/core/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"io/ioutil"
@@ -22,34 +23,16 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
-)
-
-// deviceClassComponent represents a component with an byte.
-type deviceClassComponent byte
-
-// All component enums.
-const (
-	interfacesComponent deviceClassComponent = iota + 1
-	upsComponent
-	cpuComponent
-	memoryComponent
-	sbcComponent
-	serverComponent
-	diskComponent
-	hardwareHealthComponent
 )
 
 // deviceClass represents a device class.
 type deviceClass struct {
-	name              string
-	match             condition
-	config            deviceClassConfig
-	identify          deviceClassIdentify
-	components        deviceClassComponents
-	parentDeviceClass *deviceClass
-	subDeviceClasses  map[string]*deviceClass
-	tryToMatchLast    bool
+	name           string
+	match          condition
+	config         deviceClassConfig
+	identify       deviceClassIdentify
+	components     deviceClassComponents
+	tryToMatchLast bool
 }
 
 // deviceClassIdentify represents the identify part of a device class.
@@ -138,32 +121,13 @@ type deviceClassComponentsHardwareHealth struct {
 // deviceClassConfig represents the config part of a device class.
 type deviceClassConfig struct {
 	snmp       deviceClassSNMP
-	components map[deviceClassComponent]bool
+	components map[component.Component]bool
 }
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	Count   string
-	IfTable groupPropertyReader
-	Types   deviceClassInterfaceTypes
-}
-
-// deviceClassOIDs maps labels to OIDs.
-type deviceClassOIDs map[string]deviceClassOID
-
-type deviceClassOID struct {
-	network.SNMPGetConfiguration
-	operators propertyOperators
-}
-
-// deviceClassInterfaceTypes maps interface types to TypeDefs.
-type deviceClassInterfaceTypes map[string]deviceClassInterfaceTypeDef
-
-// deviceClassInterfaceTypeDef represents a interface type (e.g. "radio" interface).
-type deviceClassInterfaceTypeDef struct {
-	Detection string
-	Values    deviceClassOIDs
-	Type      string
+	Count  string
+	Values groupPropertyReader
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -289,218 +253,95 @@ type yamlComponentsHardwareHealthProperties struct {
 //
 
 type yamlComponentsInterfaces struct {
-	Count   string                       `yaml:"count"`
-	IfTable interface{}                  `yaml:"ifTable"`
-	Types   yamlComponentsInterfaceTypes `yaml:"types"`
+	Count      string      `yaml:"count"`
+	Properties interface{} `yaml:"properties"`
 }
-
-type yamlComponentsInterfaceTypes map[string]yamlComponentsInterfaceTypeDef
-
-type yamlComponentsInterfaceTypeDef struct {
-	Detection string             `yaml:"detection"`
-	Values    yamlComponentsOIDs `yaml:"specific_values"`
-}
-
-type yamlComponentsOIDs map[string]yamlComponentsOID
 
 type yamlComponentsOID struct {
 	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
-	Operators                    []interface{} `yaml:"operators"`
+	Operators                    []interface{}      `yaml:"operators"`
+	IndicesMapping               *yamlComponentsOID `yaml:"indices_mapping" mapstructure:"indices_mapping"`
 }
 
-var genericDeviceClass struct {
-	sync.Once
-	*deviceClass
-}
-
-// identifyDeviceClass identify the device class based on the data in the context.
-func identifyDeviceClass(ctx context.Context) (*deviceClass, error) {
-	deviceClasses, err := getDeviceClasses()
-	if err != nil {
-		log.Ctx(ctx).Error().Err(err).Msg("failed to load device classes")
-		return nil, errors.Wrap(err, "error during getDeviceClasses")
-	}
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if ok && con.SNMP != nil {
-		con.SNMP.SnmpClient.SetMaxRepetitions(1)
-	}
-
-	deviceClass, err := identifyDeviceClassRecursive(ctx, deviceClasses, true)
-	if err != nil {
-		if tholaerr.IsNotFoundError(err) {
-			return genericDeviceClass.deviceClass, nil
-		}
-		return nil, errors.Wrap(err, "error occurred while identifying device class")
-	}
-	return deviceClass, err
-}
-
-func identifyDeviceClassRecursive(ctx context.Context, devClass map[string]*deviceClass, considerPriority bool) (*deviceClass, error) {
-	var tryToMatchLastDeviceClasses map[string]*deviceClass
-
-	for n, devClass := range devClass {
-		if considerPriority && devClass.tryToMatchLast {
-			if tryToMatchLastDeviceClasses == nil {
-				tryToMatchLastDeviceClasses = make(map[string]*deviceClass)
-			}
-			tryToMatchLastDeviceClasses[n] = devClass
-			continue
-		}
-
-		logger := log.Ctx(ctx).With().Str("device_class", devClass.getName()).Logger()
-		ctx = logger.WithContext(ctx)
-		log.Ctx(ctx).Trace().Msgf("starting device class match (%s)", devClass.getName())
-		match, err := devClass.matchDevice(ctx)
-		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Msg("error during device class match")
-			return nil, errors.Wrap(err, "error while trying to match device class: "+devClass.getName())
-		}
-
-		if match {
-			log.Ctx(ctx).Trace().Msg("device class matched")
-			if devClass.subDeviceClasses != nil {
-				subDeviceClass, err := identifyDeviceClassRecursive(ctx, devClass.subDeviceClasses, true)
-				if err != nil {
-					if tholaerr.IsNotFoundError(err) {
-						return devClass, nil
-					}
-					return nil, errors.Wrapf(err, "error occurred while trying to identify sub device class for device class '%s'", devClass.getName())
-				}
-				return subDeviceClass, nil
-			}
-			return devClass, nil
-		}
-		log.Ctx(ctx).Trace().Msg("device class did not match")
-	}
-	if tryToMatchLastDeviceClasses != nil {
-		deviceClass, err := identifyDeviceClassRecursive(ctx, tryToMatchLastDeviceClasses, false)
-		if err != nil {
-			if !tholaerr.IsNotFoundError(err) {
-				return nil, err
-			}
-		} else {
-			return deviceClass, nil
-		}
-	}
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if !ok {
-		return nil, errors.New("no connection data found in context")
-	}
-
-	// return generic device class
-	if (con.SNMP == nil || len(con.SNMP.SnmpClient.GetSuccessfulCachedRequests()) == 0) && (con.HTTP == nil || len(con.HTTP.HTTPClient.GetSuccessfulCachedRequests()) == 0) {
-		return nil, errors.New("no network requests to device succeeded")
-	}
-	return nil, tholaerr.NewNotFoundError("no device class matched")
-}
-
-// getDeviceClasses returns a list of all device classes. device classes is a singleton that is created
-// when the function is called for the first time.
-func getDeviceClasses() (map[string]*deviceClass, error) {
-	var err error
-	genericDeviceClass.Do(func() {
-		err = readDeviceClasses()
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read device classes")
-	}
-	return genericDeviceClass.subDeviceClasses, nil
-}
-
-// getDeviceClass returns a single device class.
-func getDeviceClass(identifier string) (*deviceClass, error) {
-	devClasses, err := getDeviceClasses()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get device classes")
-	}
-	configIdentifiers := strings.Split(identifier, "/")
-	var deviceClass *deviceClass
-	var ok bool
-	if configIdentifiers[0] == "generic" {
-		deviceClass = genericDeviceClass.deviceClass
-	} else {
-		deviceClass, ok = devClasses[configIdentifiers[0]]
-		if !ok {
-			return nil, errors.New("device class does not exist")
-		}
-	}
-	for i, identifier := range configIdentifiers {
-		if i == 0 {
-			continue
-		}
-		deviceClass, ok = deviceClass.subDeviceClasses[identifier]
-		if !ok {
-			return nil, errors.New("device class does not exist")
-		}
-	}
-	return deviceClass, nil
-}
-
-func readDeviceClasses() error {
-	//read in generic device class
+// GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
+func GetHierarchy() (hierarchy.Hierarchy, error) {
 	genericDeviceClassDir := "device-classes"
 	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
 	if err != nil {
-		return errors.Wrap(err, "failed to open generic device class file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to open generic device class file")
 	}
-	genericDeviceClass.deviceClass, err = yamlFileToDeviceClass(genericDeviceClassFile, genericDeviceClassDir, nil)
+	hier, err := yamlFile2Hierarchy(genericDeviceClassFile, genericDeviceClassDir, nil, nil)
 	if err != nil {
-		return errors.Wrap(err, "failed to read in generic device class")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read in generic device class")
 	}
-
-	return nil
+	return hier, nil
 }
 
-func yamlFileToDeviceClass(file fs.File, directory string, parentDeviceClass *deviceClass) (*deviceClass, error) {
+func yamlFile2Hierarchy(file fs.File, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (hierarchy.Hierarchy, error) {
 	//get file info
 	fileInfo, err := file.Stat()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get stat for file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to get stat for file")
 	}
 
 	if !strings.HasSuffix(fileInfo.Name(), ".yaml") {
-		return nil, errors.New("only yaml files are allowed for this function")
+		return hierarchy.Hierarchy{}, errors.New("only yaml files are allowed for this function")
 	}
 
 	contents, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read file")
 	}
 	var deviceClassYaml yamlDeviceClass
 	err = yaml.Unmarshal(contents, &deviceClassYaml)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal config file")
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to unmarshal config file")
 	}
 
-	devClass, err := deviceClassYaml.convert()
+	devClass, err := deviceClassYaml.convert(parentDeviceClass)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
+		return hierarchy.Hierarchy{}, errors.Wrapf(err, "failed to convert yamlData to deviceClass for device class '%s'", deviceClassYaml.Name)
 	}
-	// set parent device class
-	devClass.parentDeviceClass = parentDeviceClass
+
+	networkDeviceCommunicator, err := createNetworkDeviceCommunicator(&devClass, parentCommunicator)
+	if err != nil {
+		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to create network device communicator")
+	}
+
+	hier := hierarchy.Hierarchy{
+		NetworkDeviceCommunicator: networkDeviceCommunicator,
+		TryToMatchLast:            devClass.tryToMatchLast,
+	}
 
 	// check for sub device classes
 	subDirPath := filepath.Join(directory, devClass.name)
 	subDir, err := config.FileSystem.ReadDir(subDirPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			return nil, errors.Wrap(err, "an unexpected error occurred while trying to open sub device class directory")
+			return hierarchy.Hierarchy{}, errors.Wrap(err, "an unexpected error occurred while trying to open sub device class directory")
 		}
-		return &devClass, nil
+	} else {
+		subHierarchies, err := readDeviceClassDirectory(subDir, subDirPath, &devClass, networkDeviceCommunicator)
+		if err != nil {
+			return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to read sub device classes")
+		}
+		hier.Children = subHierarchies
 	}
-	subDeviceClasses, err := readDeviceClassDirectory(subDir, subDirPath, &devClass)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read sub device classes")
-	}
-	devClass.subDeviceClasses = subDeviceClasses
 
-	return &devClass, nil
+	return hier, nil
 }
 
-func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass) (map[string]*deviceClass, error) {
-	deviceClasses := make(map[string]*deviceClass)
+func createNetworkDeviceCommunicator(devClass *deviceClass, parentCommunicator communicator.Communicator) (communicator.Communicator, error) {
+	devClassCommunicator := &(deviceClassCommunicator{devClass})
+	codeCommunicator, err := codecommunicator.GetCodeCommunicator(devClassCommunicator, parentCommunicator)
+	if err != nil && !tholaerr.IsNotFoundError(err) {
+		return nil, errors.Wrap(err, "failed to get code communicator")
+	}
+	return communicator.CreateNetworkDeviceCommunicator(&(deviceClassCommunicator{devClass}), codeCommunicator), nil
+}
+
+func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (map[string]hierarchy.Hierarchy, error) {
+	deviceClasses := make(map[string]hierarchy.Hierarchy)
 	for _, dirEntry := range dir {
 		// directories will be ignored here, sub device classes dirs will be called when
 		// their parent device class is processed
@@ -521,77 +362,54 @@ func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceC
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to open file "+fullPathToFile)
 		}
-		deviceClass, err := yamlFileToDeviceClass(file, directory, parentDeviceClass)
+		hier, err := yamlFile2Hierarchy(file, directory, parentDeviceClass, parentCommunicator)
 		if err != nil {
 			return nil, errors.Wrapf(err, "an error occurred while trying to read in yaml config file %s", fileInfo.Name())
 		}
-		deviceClasses[deviceClass.name] = deviceClass
+		deviceClasses[hier.NetworkDeviceCommunicator.GetIdentifier()] = hier
 	}
 
 	return deviceClasses, nil
 }
 
 // getName returns the name of the device class.
-func (o *deviceClass) getName() string {
-	if o.parentDeviceClass != nil {
-		pName := o.parentDeviceClass.getName()
-		return utility.IfThenElseString(pName == "generic", o.name, fmt.Sprintf("%s/%s", pName, o.name))
-	}
-	return o.name
-}
-
-// getParentDeviceClass returns the parent device class.
-func (o *deviceClass) getParentDeviceClass() (*deviceClass, error) {
-	if o.parentDeviceClass == nil {
-		return nil, tholaerr.NewNotFoundError("no parent device class available")
-	}
-	return o.parentDeviceClass, nil
+func (d *deviceClass) getName() string {
+	return d.name
 }
 
 // match checks if data in context matches the device class.
-func (o *deviceClass) matchDevice(ctx context.Context) (bool, error) {
-	return o.match.check(ctx)
+func (d *deviceClass) matchDevice(ctx context.Context) (bool, error) {
+	return d.match.check(ctx)
 }
 
 // getSNMPMaxRepetitions returns the maximum snmp repetitions.
-func (o *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
-	if o.config.snmp.MaxRepetitions != 0 {
-		return o.config.snmp.MaxRepetitions, nil
-	}
-	if o.parentDeviceClass != nil {
-		return o.parentDeviceClass.getSNMPMaxRepetitions()
+func (d *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
+	if d.config.snmp.MaxRepetitions != 0 {
+		return d.config.snmp.MaxRepetitions, nil
 	}
 	return 0, tholaerr.NewNotFoundError("max_repetitions not found")
 }
 
 // getAvailableComponents returns the available components.
-func (o *deviceClass) getAvailableComponents() map[deviceClassComponent]bool {
-	haha := make(map[deviceClassComponent]bool)
-	if o.parentDeviceClass != nil {
-		haha = o.parentDeviceClass.getAvailableComponents()
-	}
-	for k, v := range o.config.components {
-		haha[k] = v
-	}
-	return haha
+func (d *deviceClass) getAvailableComponents() map[component.Component]bool {
+	return d.config.components
 }
 
-// hasAvailableComponent checks whether the specified component is available.
-func (o *deviceClass) hasAvailableComponent(component deviceClassComponent) bool {
-	haha := o.getAvailableComponents()
-	if v, ok := haha[component]; ok && v {
-		return true
-	}
-	return false
-}
-
-func (y *yamlDeviceClass) convert() (deviceClass, error) {
+func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 	err := y.validate()
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "invalid yaml device class")
 	}
 	var devClass deviceClass
-	devClass.name = y.Name
+	if parent != nil {
+		devClass = *parent
+		if devClass.name != "generic" {
+			devClass.name += "/"
+		} else {
+			devClass.name = ""
+		}
+	}
+	devClass.name += y.Name
 	if y.Name == "generic" {
 		devClass.match = &alwaysTrueCondition{}
 		devClass.identify = deviceClassIdentify{
@@ -604,24 +422,22 @@ func (y *yamlDeviceClass) convert() (deviceClass, error) {
 		}
 		devClass.match = cond
 		devClass.tryToMatchLast = conditionContainsUniqueRequest(cond)
-		identify, err := y.Identify.convert()
+		identify, err := y.Identify.convert(devClass.identify)
 		if err != nil {
 			return deviceClass{}, errors.Wrap(err, "failed to convert identify")
 		}
 		devClass.identify = identify
 	}
 
-	components, err := y.Components.convert()
+	devClass.components, err = y.Components.convert(devClass.components)
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
-	devClass.components = components
 
-	cfg, err := y.Config.convert()
+	devClass.config, err = y.Config.convert(devClass.config)
 	if err != nil {
 		return deviceClass{}, errors.Wrap(err, "failed to convert components")
 	}
-	devClass.config = cfg
 
 	return devClass, nil
 }
@@ -640,13 +456,13 @@ func (y *yamlDeviceClass) validate() error {
 	return nil
 }
 
-func (y *yamlDeviceClassIdentify) convert() (deviceClassIdentify, error) {
+func (y *yamlDeviceClassIdentify) convert(parentIdentify deviceClassIdentify) (deviceClassIdentify, error) {
 	err := y.validate()
 	if err != nil {
 		return deviceClassIdentify{}, errors.Wrap(err, "identify is invalid")
 	}
 	var identify deviceClassIdentify
-	properties, err := y.Properties.convert()
+	properties, err := y.Properties.convert(parentIdentify.properties)
 	if err != nil {
 		return deviceClassIdentify{}, errors.Wrap(err, "failed to read yaml identify properties")
 	}
@@ -655,19 +471,19 @@ func (y *yamlDeviceClassIdentify) convert() (deviceClassIdentify, error) {
 	return identify, nil
 }
 
-func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
-	var components deviceClassComponents
+func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponents) (deviceClassComponents, error) {
+	components := parentComponents
+	var err error
 
 	if y.Interfaces != nil {
-		interf, err := y.Interfaces.convert()
+		components.interfaces, err = y.Interfaces.convert(parentComponents.interfaces)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml interface properties")
 		}
-		components.interfaces = &interf
 	}
 
 	if y.UPS != nil {
-		ups, err := y.UPS.convert()
+		ups, err := y.UPS.convert(parentComponents.ups)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml UPS properties")
 		}
@@ -675,7 +491,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.CPU != nil {
-		cpu, err := y.CPU.convert()
+		cpu, err := y.CPU.convert(parentComponents.cpu)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml CPU properties")
 		}
@@ -683,7 +499,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.Memory != nil {
-		memory, err := y.Memory.convert()
+		memory, err := y.Memory.convert(parentComponents.memory)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml memory properties")
 		}
@@ -691,7 +507,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.SBC != nil {
-		sbc, err := y.SBC.convert()
+		sbc, err := y.SBC.convert(parentComponents.sbc)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml sbc properties")
 		}
@@ -699,7 +515,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.Server != nil {
-		server, err := y.Server.convert()
+		server, err := y.Server.convert(parentComponents.server)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml server properties")
 		}
@@ -707,7 +523,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.Disk != nil {
-		disk, err := y.Disk.convert()
+		disk, err := y.Disk.convert(parentComponents.disk)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml disk properties")
 		}
@@ -715,7 +531,7 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	}
 
 	if y.HardwareHealth != nil {
-		hardwareHealth, err := y.HardwareHealth.convert()
+		hardwareHealth, err := y.HardwareHealth.convert(parentComponents.hardwareHealth)
 		if err != nil {
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml hardware health properties")
 		}
@@ -725,114 +541,67 @@ func (y *yamlDeviceClassComponents) convert() (deviceClassComponents, error) {
 	return components, nil
 }
 
-func (y *yamlComponentsInterfaces) convert() (deviceClassComponentsInterfaces, error) {
-	var interfaces deviceClassComponentsInterfaces
+func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceClassComponentsInterfaces) (*deviceClassComponentsInterfaces, error) {
+	var interfaceComponent deviceClassComponentsInterfaces
 	var err error
 
-	if y.IfTable != nil {
-		interfaces.IfTable, err = interface2GroupPropertyReader(y.IfTable)
+	if parentComponentsInterfaces != nil {
+		interfaceComponent = *parentComponentsInterfaces
+	}
+
+	if y.Properties != nil {
+		interfaceComponent.Values, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.Values)
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to convert ifTable")
+			return nil, errors.Wrap(err, "failed to convert interface properties")
 		}
 	}
 
-	if y.Types != nil {
-		types, err := y.Types.convert()
+	if y.Count != "" {
+		interfaceComponent.Count = y.Count
+	}
+
+	return &interfaceComponent, nil
+}
+
+func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
+	var idxMappings *deviceClassOID
+	if y.IndicesMapping != nil {
+		mappings, err := y.IndicesMapping.convert()
 		if err != nil {
-			return deviceClassComponentsInterfaces{}, errors.Wrap(err, "failed to read yaml interfaces types")
+			return deviceClassOID{}, errors.New("failed to convert indices mappings")
 		}
-		interfaces.Types = types
+		idxMappings = &mappings
 	}
 
-	interfaces.Count = y.Count
-
-	return interfaces, nil
-}
-
-func (y *yamlComponentsInterfaceTypes) convert() (deviceClassInterfaceTypes, error) {
-	err := y.validate()
-	if err != nil {
-		return deviceClassInterfaceTypes{}, err
-	}
-	interfaceTypes := make(map[string]deviceClassInterfaceTypeDef)
-
-	for t, interfaceType := range *y {
-		if interfaceType.Detection == "" {
-			return deviceClassInterfaceTypes{}, errors.New("detection information missing for special interface type")
-		}
-		if interfaceType.Values != nil {
-			values, err := interfaceType.Values.convert()
-			if err != nil {
-				return deviceClassInterfaceTypes{}, errors.Wrap(err, "failed to read yaml interfaces types values")
-			}
-			interfaceTypes[t] = deviceClassInterfaceTypeDef{
-				Detection: interfaceType.Detection,
-				Values:    values,
-				Type:      t,
-			}
-		} else {
-			return deviceClassInterfaceTypes{}, fmt.Errorf("values is missing for interface type '%s'", t)
-		}
-	}
-
-	return interfaceTypes, nil
-}
-
-func (y *yamlComponentsInterfaceTypes) validate() error {
-	for t := range *y {
-		err := validateInterfaceType(t)
+	if y.Operators != nil {
+		operators, err := interfaceSlice2propertyOperators(y.Operators, propertyDefault)
 		if err != nil {
-			return err
+			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
 		}
+		return deviceClassOID{
+			SNMPGetConfiguration: network.SNMPGetConfiguration{
+				OID:          y.OID,
+				UseRawResult: y.UseRawResult,
+			},
+			operators:      operators,
+			indicesMapping: idxMappings,
+		}, nil
 	}
-	return nil
+
+	return deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID:          y.OID,
+			UseRawResult: y.UseRawResult,
+		},
+		operators:      nil,
+		indicesMapping: idxMappings,
+	}, nil
 }
 
-func validateInterfaceType(t string) error {
-	switch t {
-	case "ether_like", "radio", "dwdm", "optical_transponder", "optical_amplifier", "optical_opm":
-		return nil
+func (y *yamlComponentsOID) validate() error {
+	if err := y.OID.Validate(); err != nil {
+		return errors.Wrap(err, "oid is invalid")
 	}
-	return fmt.Errorf("unknown interface type '%s'", t)
-}
-
-func (y *yamlComponentsOIDs) convert() (deviceClassOIDs, error) {
-	interfaceOIDs := make(map[string]deviceClassOID)
-
-	for k, property := range *y {
-		if property.Operators != nil {
-			operators, err := interfaceSlice2propertyOperators(property.Operators, propertyDefault)
-			if err != nil {
-				return deviceClassOIDs{}, errors.Wrap(err, "failed to read yaml oids operators")
-			}
-			interfaceOIDs[k] = deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID:          (*y)[k].OID,
-					UseRawResult: (*y)[k].UseRawResult,
-				},
-				operators: operators,
-			}
-		} else {
-			interfaceOIDs[k] = deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID:          (*y)[k].OID,
-					UseRawResult: (*y)[k].UseRawResult,
-				},
-				operators: nil,
-			}
-		}
-	}
-
-	return interfaceOIDs, nil
-}
-
-func (d *deviceClassOIDs) validate() error {
-	for label, oid := range *d {
-		if err := oid.OID.Validate(); err != nil {
-			return errors.Wrapf(err, "oid for %s is invalid", label)
-		}
-	}
-
 	return nil
 }
 
@@ -861,36 +630,36 @@ func (y *yamlDeviceClassIdentify) validate() error {
 	return nil
 }
 
-func (y *yamlDeviceClassIdentifyProperties) convert() (deviceClassIdentifyProperties, error) {
-	var properties deviceClassIdentifyProperties
+func (y *yamlDeviceClassIdentifyProperties) convert(parentProperties deviceClassIdentifyProperties) (deviceClassIdentifyProperties, error) {
+	properties := parentProperties
 	var err error
 
 	if y.Vendor != nil {
-		properties.vendor, err = convertYamlProperty(y.Vendor, propertyVendor)
+		properties.vendor, err = convertYamlProperty(y.Vendor, propertyVendor, properties.vendor)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert vendor property to property reader")
 		}
 	}
 	if y.Model != nil {
-		properties.model, err = convertYamlProperty(y.Model, propertyModel)
+		properties.model, err = convertYamlProperty(y.Model, propertyModel, properties.model)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model property to property reader")
 		}
 	}
 	if y.ModelSeries != nil {
-		properties.modelSeries, err = convertYamlProperty(y.ModelSeries, propertyModelSeries)
+		properties.modelSeries, err = convertYamlProperty(y.ModelSeries, propertyModelSeries, properties.modelSeries)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model series property to property reader")
 		}
 	}
 	if y.SerialNumber != nil {
-		properties.serialNumber, err = convertYamlProperty(y.SerialNumber, propertyDefault)
+		properties.serialNumber, err = convertYamlProperty(y.SerialNumber, propertyDefault, properties.serialNumber)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert serial number property to property reader")
 		}
 	}
 	if y.OSVersion != nil {
-		properties.osVersion, err = convertYamlProperty(y.OSVersion, propertyDefault)
+		properties.osVersion, err = convertYamlProperty(y.OSVersion, propertyDefault, properties.osVersion)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert osVersion property to property reader")
 		}
@@ -898,88 +667,102 @@ func (y *yamlDeviceClassIdentifyProperties) convert() (deviceClassIdentifyProper
 	return properties, nil
 }
 
-func (y *yamlDeviceClassConfig) convert() (deviceClassConfig, error) {
+func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceClassConfig, error) {
 	var cfg deviceClassConfig
-	cfg.snmp = y.SNMP
-	cfg.components = make(map[deviceClassComponent]bool)
+
+	if y.SNMP.MaxRepetitions != 0 {
+		cfg.snmp.MaxRepetitions = y.SNMP.MaxRepetitions
+	} else {
+		cfg.snmp.MaxRepetitions = parentConfig.snmp.MaxRepetitions
+	}
+
+	components := make(map[component.Component]bool)
+	for k, v := range parentConfig.components {
+		components[k] = v
+	}
 
 	for k, v := range y.Components {
-		component, err := createComponent(k)
+		comp, err := component.CreateComponent(k)
 		if err != nil {
 			return deviceClassConfig{}, err
 		}
-		cfg.components[component] = v
+		components[comp] = v
 	}
+
+	cfg.components = components
 
 	return cfg, nil
 }
 
-func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error) {
+func (y *yamlComponentsUPSProperties) convert(parentComponent *deviceClassComponentsUPS) (deviceClassComponentsUPS, error) {
 	var properties deviceClassComponentsUPS
 	var err error
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
 
 	if y.AlarmLowVoltageDisconnect != nil {
-		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault)
+		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault, properties.alarmLowVoltageDisconnect)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm low voltage disconnect property to property reader")
 		}
 	}
 	if y.BatteryAmperage != nil {
-		properties.batteryAmperage, err = convertYamlProperty(y.BatteryAmperage, propertyDefault)
+		properties.batteryAmperage, err = convertYamlProperty(y.BatteryAmperage, propertyDefault, properties.batteryAmperage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery amperage property to property reader")
 		}
 	}
 	if y.BatteryCapacity != nil {
-		properties.batteryCapacity, err = convertYamlProperty(y.BatteryCapacity, propertyDefault)
+		properties.batteryCapacity, err = convertYamlProperty(y.BatteryCapacity, propertyDefault, properties.batteryCapacity)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery capacity property to property reader")
 		}
 	}
 	if y.BatteryCurrent != nil {
-		properties.batteryCurrent, err = convertYamlProperty(y.BatteryCurrent, propertyDefault)
+		properties.batteryCurrent, err = convertYamlProperty(y.BatteryCurrent, propertyDefault, properties.batteryCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery current property to property reader")
 		}
 	}
 	if y.BatteryRemainingTime != nil {
-		properties.batteryRemainingTime, err = convertYamlProperty(y.BatteryRemainingTime, propertyDefault)
+		properties.batteryRemainingTime, err = convertYamlProperty(y.BatteryRemainingTime, propertyDefault, properties.batteryRemainingTime)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery remaining time property to property reader")
 		}
 	}
 	if y.BatteryTemperature != nil {
-		properties.batteryTemperature, err = convertYamlProperty(y.BatteryTemperature, propertyDefault)
+		properties.batteryTemperature, err = convertYamlProperty(y.BatteryTemperature, propertyDefault, properties.batteryTemperature)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery temperature property to property reader")
 		}
 	}
 	if y.BatteryVoltage != nil {
-		properties.batteryVoltage, err = convertYamlProperty(y.BatteryVoltage, propertyDefault)
+		properties.batteryVoltage, err = convertYamlProperty(y.BatteryVoltage, propertyDefault, properties.batteryVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery voltage property to property reader")
 		}
 	}
 	if y.CurrentLoad != nil {
-		properties.currentLoad, err = convertYamlProperty(y.CurrentLoad, propertyDefault)
+		properties.currentLoad, err = convertYamlProperty(y.CurrentLoad, propertyDefault, properties.currentLoad)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert current load property to property reader")
 		}
 	}
 	if y.MainsVoltageApplied != nil {
-		properties.mainsVoltageApplied, err = convertYamlProperty(y.MainsVoltageApplied, propertyDefault)
+		properties.mainsVoltageApplied, err = convertYamlProperty(y.MainsVoltageApplied, propertyDefault, properties.mainsVoltageApplied)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert mains voltage applied property to property reader")
 		}
 	}
 	if y.RectifierCurrent != nil {
-		properties.rectifierCurrent, err = convertYamlProperty(y.RectifierCurrent, propertyDefault)
+		properties.rectifierCurrent, err = convertYamlProperty(y.RectifierCurrent, propertyDefault, properties.rectifierCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert rectifier current property to property reader")
 		}
 	}
 	if y.SystemVoltage != nil {
-		properties.systemVoltage, err = convertYamlProperty(y.SystemVoltage, propertyDefault)
+		properties.systemVoltage, err = convertYamlProperty(y.SystemVoltage, propertyDefault, properties.systemVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert system voltage property to property reader")
 		}
@@ -987,18 +770,22 @@ func (y *yamlComponentsUPSProperties) convert() (deviceClassComponentsUPS, error
 	return properties, nil
 }
 
-func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error) {
+func (y *yamlComponentsCPUProperties) convert(parentComponent *deviceClassComponentsCPU) (deviceClassComponentsCPU, error) {
 	var properties deviceClassComponentsCPU
 	var err error
 
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Load != nil {
-		properties.load, err = convertYamlProperty(y.Load, propertyDefault)
+		properties.load, err = convertYamlProperty(y.Load, propertyDefault, properties.load)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
 		}
 	}
 	if y.Temperature != nil {
-		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault)
+		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault, properties.temperature)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
 		}
@@ -1006,11 +793,16 @@ func (y *yamlComponentsCPUProperties) convert() (deviceClassComponentsCPU, error
 	return properties, nil
 }
 
-func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory, error) {
+func (y *yamlComponentsMemoryProperties) convert(parentComponent *deviceClassComponentsMemory) (deviceClassComponentsMemory, error) {
 	var properties deviceClassComponentsMemory
 	var err error
+
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Usage != nil {
-		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault)
+		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault, properties.usage)
 		if err != nil {
 			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
 		}
@@ -1018,18 +810,22 @@ func (y *yamlComponentsMemoryProperties) convert() (deviceClassComponentsMemory,
 	return properties, nil
 }
 
-func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer, error) {
+func (y *yamlComponentsServerProperties) convert(parentComponent *deviceClassComponentsServer) (deviceClassComponentsServer, error) {
 	var properties deviceClassComponentsServer
 	var err error
 
+	if parentComponent != nil {
+		properties = *parentComponent
+	}
+
 	if y.Procs != nil {
-		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault)
+		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault, properties.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert procs property to property reader")
 		}
 	}
 	if y.Users != nil {
-		properties.users, err = convertYamlProperty(y.Users, propertyDefault)
+		properties.users, err = convertYamlProperty(y.Users, propertyDefault, properties.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
 		}
@@ -1037,12 +833,16 @@ func (y *yamlComponentsServerProperties) convert() (deviceClassComponentsServer,
 	return properties, nil
 }
 
-func (y *yamlComponentsDiskProperties) convert() (deviceClassComponentsDisk, error) {
+func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponentsDisk) (deviceClassComponentsDisk, error) {
 	var properties deviceClassComponentsDisk
 	var err error
 
+	if parentDisk != nil {
+		properties = *parentDisk
+	}
+
 	if y.Storages != nil {
-		properties.storages, err = interface2GroupPropertyReader(y.Storages)
+		properties.storages, err = interface2GroupPropertyReader(y.Storages, properties.storages)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
@@ -1050,61 +850,65 @@ func (y *yamlComponentsDiskProperties) convert() (deviceClassComponentsDisk, err
 	return properties, nil
 }
 
-func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error) {
+func (y *yamlComponentsSBCProperties) convert(parentComponentsSBC *deviceClassComponentsSBC) (deviceClassComponentsSBC, error) {
 	var properties deviceClassComponentsSBC
 	var err error
 
+	if parentComponentsSBC != nil {
+		properties = *parentComponentsSBC
+	}
+
 	if y.Agents != nil {
-		properties.agents, err = interface2GroupPropertyReader(y.Agents)
+		properties.agents, err = interface2GroupPropertyReader(y.Agents, properties.agents)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert agents property to group property reader")
 		}
 	}
 	if y.Realms != nil {
-		properties.realms, err = interface2GroupPropertyReader(y.Realms)
+		properties.realms, err = interface2GroupPropertyReader(y.Realms, properties.realms)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert realms property to group property reader")
 		}
 	}
 	if y.ActiveLocalContacts != nil {
-		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault)
+		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault, properties.activeLocalContacts)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
 		}
 	}
 	if y.GlobalCallPerSecond != nil {
-		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault)
+		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault, properties.globalCallPerSecond)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
 		}
 	}
 	if y.GlobalConcurrentSessions != nil {
-		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault)
+		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault, properties.globalConcurrentSessions)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
 		}
 	}
 	if y.LicenseCapacity != nil {
-		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault)
+		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault, properties.licenseCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
 		}
 	}
 	if y.TranscodingCapacity != nil {
-		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault)
+		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault, properties.transcodingCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
 		}
 	}
 	if y.SystemRedundancy != nil {
-		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault)
+		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault, properties.systemRedundancy)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
 
 	if y.SystemHealthScore != nil {
-		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault)
+		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault, properties.systemHealthScore)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system health score property to property reader")
 		}
@@ -1112,24 +916,28 @@ func (y *yamlComponentsSBCProperties) convert() (deviceClassComponentsSBC, error
 	return properties, nil
 }
 
-func (y *yamlComponentsHardwareHealthProperties) convert() (deviceClassComponentsHardwareHealth, error) {
+func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *deviceClassComponentsHardwareHealth) (deviceClassComponentsHardwareHealth, error) {
 	var properties deviceClassComponentsHardwareHealth
 	var err error
 
+	if parentHardwareHealth != nil {
+		properties = *parentHardwareHealth
+	}
+
 	if y.Fans != nil {
-		properties.fans, err = interface2GroupPropertyReader(y.Fans)
+		properties.fans, err = interface2GroupPropertyReader(y.Fans, properties.fans)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
 		}
 	}
 	if y.PowerSupply != nil {
-		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply)
+		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply, properties.powerSupply)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
 		}
 	}
 	if y.EnvironmentMonitorState != nil {
-		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault)
+		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault, properties.environmentMonitorState)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
 		}
@@ -1279,7 +1087,7 @@ func interface2condition(i interface{}, task relatedTask) (condition, error) {
 	return nil, fmt.Errorf("invalid condition type '%s'", stringType)
 }
 
-func convertYamlProperty(i []interface{}, task relatedTask) (propertyReader, error) {
+func convertYamlProperty(i []interface{}, task relatedTask, parentProperty propertyReader) (propertyReader, error) {
 	var readerSet propertyReaderSet
 	for _, i := range i {
 		reader, err := interface2propertyReader(i, task)
@@ -1287,6 +1095,9 @@ func convertYamlProperty(i []interface{}, task relatedTask) (propertyReader, err
 			return nil, errors.Wrap(err, "failed to convert yaml identify property")
 		}
 		readerSet = append(readerSet, reader)
+	}
+	if parentProperty != nil {
+		readerSet = append(readerSet, parentProperty)
 	}
 	return &readerSet, nil
 }
@@ -1720,7 +1531,7 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 	return propertyOperators, nil
 }
 
-func interface2GroupPropertyReader(i interface{}) (groupPropertyReader, error) {
+func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader groupPropertyReader) (groupPropertyReader, error) {
 	m, ok := i.(map[interface{}]interface{})
 	if !ok {
 		return nil, errors.New("failed to convert group properties to map[interface{}]interface{}")
@@ -1734,30 +1545,92 @@ func interface2GroupPropertyReader(i interface{}) (groupPropertyReader, error) {
 	}
 	switch stringDetection {
 	case "snmpwalk":
-		var oids yamlComponentsOIDs
 		if _, ok := m["values"]; !ok {
 			return nil, errors.New("values are missing")
 		}
-		values, ok := m["values"].(map[interface{}]interface{})
+		reader, err := interface2oidReader(m["values"])
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse oid reader")
+		}
+
+		devClassOIDs, ok := reader.(*deviceClassOIDs)
 		if !ok {
-			return nil, errors.New("values needs to be a map")
+			return nil, errors.New("oid reader is no list of oids")
 		}
-		err := mapstructure.Decode(values, &oids)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
+
+		inheritValuesFromParent := true
+		if b, ok := m["inherit_values"]; ok {
+			bb, ok := b.(bool)
+			if !ok {
+				return nil, errors.New("inherit_values needs to be a boolean")
+			}
+			inheritValuesFromParent = bb
 		}
-		deviceClassOIDs, err := oids.convert()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert yaml OIDs to device class OIDs")
+
+		//overwrite parent
+		if inheritValuesFromParent && parentGroupPropertyReader != nil {
+			parentSNMPGroupPropertyReader, ok := parentGroupPropertyReader.(*snmpGroupPropertyReader)
+			if !ok {
+				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
+			}
+
+			devClassOIDsMerged := parentSNMPGroupPropertyReader.oids.merge(*devClassOIDs)
+			devClassOIDs = &devClassOIDsMerged
 		}
-		err = deviceClassOIDs.validate()
-		if err != nil {
-			return nil, errors.Wrap(err, "snmpwalk group property reader is invalid")
-		}
-		return &snmpGroupPropertyReader{deviceClassOIDs}, nil
+
+		return &snmpGroupPropertyReader{*devClassOIDs}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}
+}
+
+func interface2oidReader(i interface{}) (oidReader, error) {
+	values, ok := i.(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.New("values needs to be a map")
+	}
+
+	result := make(deviceClassOIDs)
+
+	for val, data := range values {
+		dataMap, ok := data.(map[interface{}]interface{})
+		if !ok {
+			return nil, errors.New("value data needs to be a map")
+		}
+
+		valString, ok := val.(string)
+		if !ok {
+			return nil, errors.New("key of snmp property reader must be a string")
+		}
+
+		if v, ok := dataMap["values"]; ok {
+			if len(dataMap) != 1 {
+				return nil, errors.New("value with subvalues has to many keys")
+			}
+			reader, err := interface2oidReader(v)
+			if err != nil {
+				return nil, err
+			}
+			result[valString] = reader
+			continue
+		}
+
+		var oid yamlComponentsOID
+		err := mapstructure.Decode(data, &oid)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
+		}
+		err = oid.validate()
+		if err != nil {
+			return nil, errors.Wrapf(err, "oid reader for %s is invalid", valString)
+		}
+		devClassOID, err := oid.convert()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert yaml OID to device class OID")
+		}
+		result[valString] = &devClassOID
+	}
+	return &result, nil
 }
 
 func (m *matchMode) validate() error {
@@ -1772,53 +1645,4 @@ func (l *logicalOperator) validate() error {
 		return errors.New(string("unknown logical operator \"" + *l + "\""))
 	}
 	return nil
-}
-
-func createComponent(component string) (deviceClassComponent, error) {
-	switch component {
-	case "interfaces":
-		return interfacesComponent, nil
-	case "ups":
-		return upsComponent, nil
-	case "cpu":
-		return cpuComponent, nil
-	case "memory":
-		return memoryComponent, nil
-	case "sbc":
-		return sbcComponent, nil
-	case "server":
-		return serverComponent, nil
-	case "disk":
-		return diskComponent, nil
-	case "hardware_health":
-		return hardwareHealthComponent, nil
-	default:
-		return 0, fmt.Errorf("invalid component type: %s", component)
-	}
-}
-
-func (d *deviceClassComponent) toString() (string, error) {
-	if d == nil {
-		return "", errors.New("component is empty")
-	}
-	switch *d {
-	case interfacesComponent:
-		return "interfaces", nil
-	case upsComponent:
-		return "ups", nil
-	case cpuComponent:
-		return "cpu", nil
-	case memoryComponent:
-		return "memory", nil
-	case sbcComponent:
-		return "sbc", nil
-	case serverComponent:
-		return "server", nil
-	case diskComponent:
-		return "disk", nil
-	case hardwareHealthComponent:
-		return "hardware_health", nil
-	default:
-		return "", errors.New("unknown component")
-	}
 }

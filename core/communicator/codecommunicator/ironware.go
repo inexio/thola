@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 )
 
 type ironwareCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetCPUComponentCPULoad returns the cpu load of ironware devices.

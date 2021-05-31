@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 type iosCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetCPUComponentCPULoad returns the cpu load of ios devices.

@@ -1,11 +1,10 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/core/device"
 	"github.com/inexio/thola/core/network"
-	"github.com/inexio/thola/core/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
@@ -14,12 +13,12 @@ import (
 )
 
 type advaCommunicator struct {
-	baseCommunicator
+	codeCommunicator
 }
 
 // GetInterfaces returns the interfaces of adva devices.
 func (c *advaCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.sub.GetInterfaces(ctx)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -41,49 +40,44 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 		return errors.New("no device connection available")
 	}
 
-	specialInterfacesRaw, err := getValuesBySNMPWalk(ctx, deviceClassOIDs{
-		"rx_power": deviceClassOID{
-			SNMPGetConfiguration: network.SNMPGetConfiguration{
-				OID: "1.3.6.1.4.1.2544.1.11.2.4.3.5.1.3",
-			},
-			operators: propertyOperators{
-				&modifyOperatorAdapter{
-					&multiplyNumberModifier{
-						value: &constantPropertyReader{
-							Value: value.New("0.1"),
-						},
-					},
-				},
-			},
-		},
-		"tx_power": deviceClassOID{
-			SNMPGetConfiguration: network.SNMPGetConfiguration{
-				OID: "1.3.6.1.4.1.2544.1.11.2.4.3.5.1.4",
-			},
-			operators: propertyOperators{
-				&modifyOperatorAdapter{
-					&multiplyNumberModifier{
-						value: &constantPropertyReader{
-							Value: value.New("0.1"),
-						},
-					},
-				},
-			},
-		},
-	})
-
+	rxPowerRaw, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2544.1.11.2.4.3.5.1.3")
 	if err != nil {
-		return errors.Wrap(err, "failed to read rx/tx power of ports")
+		return errors.Wrap(err, "failed to walk rx power")
 	}
 
-	for i, networkInterface := range interfaces {
-		if specialValues, ok := specialInterfacesRaw[fmt.Sprint(*networkInterface.IfIndex)]; ok {
-			err := addSpecialInterfacesValuesToInterface("dwdm", &interfaces[i], specialValues)
-			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("can't parse oid values into Interface struct")
-				return errors.Wrap(err, "can't parse oid values into Interface struct")
-			}
+	rxPower := make(map[string]float64)
+
+	for _, resp := range rxPowerRaw {
+		res, err := resp.GetValueString()
+		if err != nil {
+			return errors.Wrap(err, "failed to convert rx power to string")
 		}
+		rxValue, err := decimal.NewFromString(res)
+		if err != nil {
+			return errors.Wrap(err, "failed to convert rx power to decimal")
+		}
+		oid := strings.Split(resp.GetOID(), ".")
+		rxPower[oid[len(oid)-1]], _ = rxValue.Mul(decimal.NewFromFloat(0.1)).Float64()
+	}
+
+	txPowerRaw, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2544.1.11.2.4.3.5.1.4")
+	if err != nil {
+		return errors.Wrap(err, "failed to walk tx power")
+	}
+
+	txPower := make(map[string]float64)
+
+	for _, resp := range txPowerRaw {
+		res, err := resp.GetValueString()
+		if err != nil {
+			return errors.Wrap(err, "failed to convert tx power to string")
+		}
+		txValue, err := decimal.NewFromString(res)
+		if err != nil {
+			return errors.Wrap(err, "failed to convert tx power to decimal")
+		}
+		oid := strings.Split(resp.GetOID(), ".")
+		txPower[oid[len(oid)-1]], _ = txValue.Mul(decimal.NewFromFloat(0.1)).Float64()
 	}
 
 	rx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.21")
@@ -112,6 +106,22 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 		}
 
 		if interf.IfIndex != nil {
+			// rx power
+			if value, ok := rxPower[fmt.Sprint(*interf.IfIndex)]; ok {
+				if interfaces[i].DWDM == nil {
+					interfaces[i].DWDM = &device.DWDMInterface{}
+				}
+				interfaces[i].DWDM.RXPower = &value
+			}
+
+			// tx power
+			if value, ok := txPower[fmt.Sprint(*interf.IfIndex)]; ok {
+				if interfaces[i].DWDM == nil {
+					interfaces[i].DWDM = &device.DWDMInterface{}
+				}
+				interfaces[i].DWDM.TXPower = &value
+			}
+
 			// corrected fec 15m
 			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2."+fmt.Sprint(*interf.IfIndex)+".1")
 			if err == nil && len(res) == 1 {

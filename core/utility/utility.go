@@ -24,6 +24,7 @@ func IfThenElseString(condition bool, t string, e string) string {
 	return e
 }
 
+// SliceUniqueString removes duplicates from a string slice.
 func SliceUniqueString(a []string) []string {
 	l := len(a)
 	seen := make(map[string]struct{}, l)
@@ -42,6 +43,7 @@ func SliceUniqueString(a []string) []string {
 	return a[0:k]
 }
 
+// SliceUniqueInt removes duplicates from an int slice.
 func SliceUniqueInt(a []int) []int {
 	l := len(a)
 	seen := make(map[int]struct{}, l)

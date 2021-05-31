@@ -1,4 +1,4 @@
-package communicator
+package codecommunicator
 
 import (
 	"context"
@@ -230,9 +230,8 @@ func ekinopsPowerTransform10Log10XDivideBy10000(f float64) float64 {
 func ekionopsPowerTransformShiftDivideBy100(f float64) float64 {
 	if f < 32768 {
 		return f / 100
-	} else {
-		return (f - 65536) / 100
 	}
+	return (f - 65536) / 100
 }
 
 func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
@@ -242,9 +241,8 @@ func ekinopsPowerTransformMinus32768MultiplyByPoint005(f float64) float64 {
 func ekinopsPowerTransformOPM8(f float64) float64 {
 	if f < 32768 {
 		return f / 256
-	} else {
-		return f/256 - 256
 	}
+	return f/256 - 256
 }
 
 func ekinopsPowerTransformCheckInfinity(f float64) float64 {
