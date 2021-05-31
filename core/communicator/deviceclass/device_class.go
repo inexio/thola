@@ -1646,16 +1646,3 @@ func (l *logicalOperator) validate() error {
 	}
 	return nil
 }
-
-func (d *deviceClass) getNetworkDeviceCommunicator(ctx context.Context) (communicator.Communicator, error) {
-	maxRepetitions, err := d.getSNMPMaxRepetitions()
-	if err != nil {
-		return nil, errors.Wrap(err, "device class does not have maxrepetitions")
-	}
-
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if ok && con.SNMP != nil {
-		con.SNMP.SnmpClient.SetMaxRepetitions(maxRepetitions)
-	}
-	return &(deviceClassCommunicator{d}), nil
-}
