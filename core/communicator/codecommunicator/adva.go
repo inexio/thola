@@ -91,20 +91,6 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 	}
 
 	for i, interf := range interfaces {
-		if interf.IfDescr != nil {
-			rxVal, rxOK := rx100Values[*interf.IfDescr]
-			txVal, txOK := tx100Values[*interf.IfDescr]
-			if (rxOK || txOK) && interf.DWDM == nil {
-				interfaces[i].DWDM = &device.DWDMInterface{}
-			}
-			if rxOK && (interfaces[i].DWDM.RXPower == nil || *interfaces[i].DWDM.RXPower == -6553.5) {
-				interfaces[i].DWDM.RXPower = &rxVal
-			}
-			if txOK && (interfaces[i].DWDM.TXPower == nil || *interfaces[i].DWDM.TXPower == -6553.5) {
-				interfaces[i].DWDM.TXPower = &txVal
-			}
-		}
-
 		if interf.IfIndex != nil {
 			// rx power
 			if value, ok := rxPower[fmt.Sprint(*interf.IfIndex)]; ok {
@@ -212,6 +198,21 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 					Time:  "1d",
 					Value: val,
 				})
+			}
+		}
+
+		// overwrite rx/tx power for 100g interfaces
+		if interf.IfDescr != nil {
+			rxVal, rxOK := rx100Values[*interf.IfDescr]
+			txVal, txOK := tx100Values[*interf.IfDescr]
+			if (rxOK || txOK) && interf.DWDM == nil {
+				interfaces[i].DWDM = &device.DWDMInterface{}
+			}
+			if rxOK && (interfaces[i].DWDM.RXPower == nil || *interfaces[i].DWDM.RXPower == -6553.5) {
+				interfaces[i].DWDM.RXPower = &rxVal
+			}
+			if txOK && (interfaces[i].DWDM.TXPower == nil || *interfaces[i].DWDM.TXPower == -6553.5) {
+				interfaces[i].DWDM.TXPower = &txVal
 			}
 		}
 	}
