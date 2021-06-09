@@ -110,6 +110,10 @@ type Interface struct {
 	IfHighSpeed          *uint64 `yaml:"ifHighSpeed" json:"ifHighSpeed" xml:"ifHighSpeed"`
 	IfAlias              *string `yaml:"ifAlias" json:"ifAlias" xml:"ifAlias"`
 
+	// MaxSpeedIn and MaxSpeedOut are set if an interface has different values for max speed in / out
+	MaxSpeedIn  *uint64 `yaml:"max_speed_in" json:"max_speed_in" xml:"max_speed_in" mapstructure:"max_speed_in"`
+	MaxSpeedOut *uint64 `yaml:"max_speed_out" json:"max_speed_out" xml:"max_speed_out" mapstructure:"max_speed_out"`
+
 	// SubType is not set per default and cannot be read out through a device class.
 	// It is used to internally specify a port type, without changing the actual ifType.
 	SubType *string `yaml:"-" json:"-" xml:"-"`

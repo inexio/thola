@@ -312,13 +312,26 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 		}
 
 		//interface_maxspeed_in
-		//interface_maxspeed_out
-		if i.IfSpeed != nil {
+		if i.MaxSpeedIn != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.MaxSpeedIn).SetUnit("B").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		} else if i.IfSpeed != nil {
 			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.IfSpeed).SetUnit("B").SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
-			err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.IfSpeed).SetUnit("B").SetLabel(*i.IfDescr))
+		}
+
+		//interface_maxspeed_out
+		if i.MaxSpeedOut != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.MaxSpeedOut).SetUnit("B").SetLabel(*i.IfDescr))
+			if err != nil {
+				return err
+			}
+		} else if i.IfSpeed != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.IfSpeed).SetUnit("B").SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
