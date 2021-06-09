@@ -5,9 +5,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/core/parser"
-	"github.com/inexio/thola/core/request"
 	"github.com/inexio/thola/doc"
+	"github.com/inexio/thola/internal/parser"
+	"github.com/inexio/thola/internal/request"
 	"github.com/pkg/errors"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
