@@ -20,16 +20,16 @@ import (
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
-	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
-	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
-	rootCMD.PersistentFlags().String("target-api", "", "The URL of the target API")
+	rootCMD.PersistentFlags().StringP("loglevel", "l", "error", "The loglevel")
+	rootCMD.PersistentFlags().StringP("format", "f", "pretty", "Output format ('json', 'xml' or 'pretty')")
+	rootCMD.PersistentFlags().StringP("target-api", "t", "", "The URL of the target API")
 	rootCMD.PersistentFlags().String("target-api-username", "", "The username for authorization on the target API")
 	rootCMD.PersistentFlags().String("target-api-password", "", "The password for authorization on the target API")
 	rootCMD.PersistentFlags().String("target-api-format", "json", "The format of the target API ('json' or 'xml')")
 
 	rootCMD.PersistentFlags().Bool("insecure-ssl-cert", false, "Allow insecure SSL certificate of the target API")
 
-	rootCMD.Flags().Bool("version", false, "Prints the version of Thola")
+	rootCMD.Flags().BoolP("version", "v", false, "Prints the version of Thola")
 
 	err := rootCMD.MarkPersistentFlagRequired("target-api")
 	if err != nil {
