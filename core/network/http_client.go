@@ -42,11 +42,16 @@ func NewHTTPClient(URI string) (*HTTPClient, error) {
 		return nil, errors.Wrap(err, "invalid target URI")
 	}
 
-	if u.Hostname() == "" {
+	uri := u.Hostname()
+	if uri == "" {
 		return nil, errors.New("invalid target URI")
 	}
 
-	httpClient := HTTPClient{host: u.Hostname(), client: resty.New(), useAuth: false, useHTTPS: true, useCache: true, cache: newRequestCache(), format: "application/json"}
+	if path := u.Path; path != "" {
+		uri += path
+	}
+
+	httpClient := HTTPClient{host: uri, client: resty.New(), useAuth: false, useHTTPS: true, useCache: true, cache: newRequestCache(), format: "application/json"}
 
 	if u.Scheme == "http" {
 		httpClient.useHTTPS = false
