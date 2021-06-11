@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/inexio/thola/core/network"
-	"github.com/inexio/thola/core/parser"
-	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/internal/network"
+	"github.com/inexio/thola/internal/parser"
+	"github.com/inexio/thola/internal/request"
 	"github.com/inexio/thola/test"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"

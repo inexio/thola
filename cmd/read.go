@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/inexio/thola/core/request"
+	"github.com/inexio/thola/internal/request"
 	"github.com/spf13/cobra"
 )
 

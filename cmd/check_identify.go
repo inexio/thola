@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/inexio/thola/core/device"
-	"github.com/inexio/thola/core/request"
-	"github.com/inexio/thola/core/utility"
+	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/request"
+	"github.com/inexio/thola/internal/utility"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"

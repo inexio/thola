@@ -5,10 +5,10 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/core/database"
-	"github.com/inexio/thola/core/parser"
-	"github.com/inexio/thola/core/request"
 	"github.com/inexio/thola/doc"
+	"github.com/inexio/thola/internal/database"
+	"github.com/inexio/thola/internal/parser"
+	"github.com/inexio/thola/internal/request"
 	"github.com/pkg/errors"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
@@ -26,9 +26,9 @@ func init() {
 
 	cobra.OnInitialize(initConfig)
 
-	rootCMD.PersistentFlags().StringVar(&cfgFile, "config", "", "The location of the config file")
-	rootCMD.PersistentFlags().String("loglevel", "error", "The loglevel")
-	rootCMD.PersistentFlags().String("format", "pretty", "Output format ('json', 'xml' or 'pretty')")
+	rootCMD.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "The location of the config file")
+	rootCMD.PersistentFlags().StringP("loglevel", "l", "error", "The loglevel")
+	rootCMD.PersistentFlags().StringP("format", "f", "pretty", "Output format ('json', 'xml' or 'pretty')")
 	rootCMD.PersistentFlags().String("db-drivername", "built-in", "Database type for caching ('built-in', 'mysql' or 'redis' supported)")
 	rootCMD.PersistentFlags().String("db-duration", "60m", "Duration in which the cache stays valid")
 	rootCMD.PersistentFlags().String("sql-datasourcename", "", "Data sourcename if using a sql driver")
@@ -40,7 +40,7 @@ func init() {
 	rootCMD.PersistentFlags().Bool("db-rebuild", false, "Rebuild the cache DB")
 	rootCMD.PersistentFlags().Bool("no-cache", false, "Don't use a database cache")
 	rootCMD.PersistentFlags().Bool("ignore-db-failure", false, "Ignore the cache if the database fails")
-	rootCMD.Flags().Bool("version", false, "Prints the version of Thola")
+	rootCMD.Flags().BoolP("version", "v", false, "Prints the version of Thola")
 
 	err := viper.BindPFlag("config", rootCMD.PersistentFlags().Lookup("config"))
 	if err != nil {
