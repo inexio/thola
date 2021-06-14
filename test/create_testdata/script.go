@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
@@ -22,11 +23,13 @@ import (
 var (
 	port       int
 	snmpRecDir string
+	ignore     = flag.String("ignore", "", "ignore snmprecs whose filepath matches this regex")
 )
 
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	flag.Parse()
 
 	if portString := os.Getenv("THOLA_TEST_APIPORT"); portString != "" {
 		p, err := strconv.Atoi(portString)
@@ -37,11 +40,18 @@ func init() {
 	} else {
 		port = 8237
 	}
+
 	if dir := os.Getenv("THOLA_TEST_SNMPRECDIR"); dir != "" {
 		snmpRecDir = dir
 	} else {
 		_, currFilename, _, _ := runtime.Caller(0)
 		snmpRecDir = filepath.Join(filepath.Dir(filepath.Dir(currFilename)), "testdata/devices")
+	}
+
+	if ignore != nil && *ignore == "" {
+		if ignoreEnv := os.Getenv("THOLA_TEST_IGNORE"); ignoreEnv != "" {
+			ignore = &ignoreEnv
+		}
 	}
 }
 
@@ -65,6 +75,11 @@ func main() {
 	testDevices, err := buildTestDevicesRecursive("")
 	if err != nil {
 		log.Error().Err(err).Msg("error while building test devices")
+		return
+	}
+
+	if len(testDevices) == 0 {
+		log.Error().Err(err).Msg("no test devices found")
 		return
 	}
 
@@ -117,7 +132,15 @@ func buildTestDevicesRecursive(relativePath string) ([]string, error) {
 	}
 
 	for _, rec := range recordings {
-		testDevices = append(testDevices, filepath.Join(relativePath, rec))
+		community := filepath.Join(relativePath, rec)
+
+		if ignore != nil && *ignore != "" {
+			if ok, err := regexp.MatchString(*ignore, community); err == nil && !ok {
+				testDevices = append(testDevices, community)
+			}
+		} else {
+			testDevices = append(testDevices, community)
+		}
 	}
 
 	return testDevices, nil
