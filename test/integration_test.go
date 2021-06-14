@@ -360,7 +360,7 @@ func createTestDevices() (chan testDevice, error) {
 		return nil, errors.New("only directories can be passed to this function")
 	}
 
-	testDevices, err := buildRecursiveTestDevices(recDir, "")
+	testDevices, err := buildTestDevicesRecursive(recDir, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "error during create recursive test devices")
 	}
@@ -377,13 +377,15 @@ func createTestDevices() (chan testDevice, error) {
 	return deviceChannel, nil
 }
 
-func buildRecursiveTestDevices(dir, relativePath string) ([]testDevice, error) {
-	fileDir, err := ioutil.ReadDir(dir)
+func buildTestDevicesRecursive(dataPath, relativePath string) ([]testDevice, error) {
+	fileDir, err := ioutil.ReadDir(filepath.Join(dataPath, relativePath))
 	if err != nil {
 		return nil, errors.Wrap(err, "error during read dir")
 	}
-	var subDirs []os.FileInfo
-	files := make(map[string]string)
+
+	var recordings []string
+	testdata := make(map[string]string)
+	var subDirs []string
 
 	regex, err := regexp.Compile(`^\..*`)
 	if err != nil {
@@ -393,45 +395,40 @@ func buildRecursiveTestDevices(dir, relativePath string) ([]testDevice, error) {
 	for _, f := range fileDir {
 		if !regex.MatchString(f.Name()) {
 			if f.IsDir() {
-				subDirs = append(subDirs, f)
-			} else {
-				files[f.Name()] = f.Name()
+				subDirs = append(subDirs, f.Name())
+			} else if strings.HasSuffix(f.Name(), ".snmprec") {
+				recordings = append(recordings, f.Name())
+			} else if strings.HasSuffix(f.Name(), ".testdata") {
+				testdata[strings.TrimSuffix(f.Name(), ".testdata")+".snmprec"] = f.Name()
 			}
 		}
 	}
-	hasFiles := len(files) != 0
-	hasSubDirs := len(subDirs) != 0
-	if hasFiles && hasSubDirs {
-		return nil, errors.New("test devices directory is faulty! there are files and directories in one directory")
-	}
+
 	var testDevices []testDevice
-	if hasSubDirs {
-		for _, f := range subDirs {
-			devices, err := buildRecursiveTestDevices(filepath.Join(dir, f.Name()), filepath.Join(relativePath, f.Name()))
-			if err != nil {
-				return nil, err
-			}
-			testDevices = append(testDevices, devices...)
-		}
-	}
-	if hasFiles {
-		device, err := buildTestDeviceByFiles(files, dir, relativePath)
+	for _, d := range subDirs {
+		devices, err := buildTestDevicesRecursive(dataPath, filepath.Join(relativePath, d))
 		if err != nil {
 			return nil, err
 		}
-		testDevices = append(testDevices, device)
+		testDevices = append(testDevices, devices...)
 	}
+
+	for _, rec := range recordings {
+		if testDataFile, ok := testdata[rec]; ok {
+			device, err := buildTestDeviceByFile(rec, testDataFile, relativePath, dataPath)
+			if err != nil {
+				return nil, err
+			}
+			testDevices = append(testDevices, device)
+		}
+	}
+
 	return testDevices, nil
 }
 
-func buildTestDeviceByFiles(files map[string]string, dir, relativePath string) (testDevice, error) {
-	testDataFile, ok := files["test_data.json"]
-	if !ok {
-		return testDevice{}, errors.New("test_data.json is missing in " + dir)
-	}
-
+func buildTestDeviceByFile(snmpRecFile, testDataFile, relativePath, dataPath string) (testDevice, error) {
 	var testData DeviceTestData
-	contents, err := ioutil.ReadFile(filepath.Join(dir, testDataFile))
+	contents, err := ioutil.ReadFile(filepath.Join(dataPath, relativePath, testDataFile))
 	if err != nil {
 		return testDevice{}, errors.Wrap(err, "error during read file")
 	}
@@ -449,7 +446,7 @@ func buildTestDeviceByFiles(files map[string]string, dir, relativePath string) (
 
 	switch testData.Type {
 	case "snmpsim":
-		deviceInfo, err := buildTestDeviceSNMPSim(files, filepath.Join(relativePath, "public"))
+		deviceInfo, err := buildTestDeviceSNMPSim(filepath.Join(relativePath, strings.TrimSuffix(snmpRecFile, ".snmprec")))
 		if err != nil {
 			return testDevice{}, errors.Wrap(err, "failed to build snmpsim test device")
 		}
@@ -462,12 +459,7 @@ func buildTestDeviceByFiles(files map[string]string, dir, relativePath string) (
 	return testDev, nil
 }
 
-func buildTestDeviceSNMPSim(files map[string]string, snmpCommunity string) (*testDeviceInfoSNMPSim, error) {
-	_, ok := files["public.snmprec"]
-	if !ok {
-		return nil, errors.New("snmprec file is missing for test device " + snmpCommunity)
-	}
-
+func buildTestDeviceSNMPSim(snmpCommunity string) (*testDeviceInfoSNMPSim, error) {
 	ip := <-snmpSimIPs
 	snmpSimIPs <- ip
 

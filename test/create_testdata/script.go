@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -61,7 +62,7 @@ func main() {
 		return
 	}
 
-	testDevices, err := buildRecursiveTestDevices(snmpRecDir, "")
+	testDevices, err := buildTestDevicesRecursive("")
 	if err != nil {
 		log.Error().Err(err).Msg("error while building test devices")
 		return
@@ -82,13 +83,14 @@ func main() {
 	fmt.Println("Generating testdata was successful")
 }
 
-func buildRecursiveTestDevices(dir, relativePath string) ([]string, error) {
-	fileDir, err := ioutil.ReadDir(dir)
+func buildTestDevicesRecursive(relativePath string) ([]string, error) {
+	fileDir, err := ioutil.ReadDir(filepath.Join(snmpRecDir, relativePath))
 	if err != nil {
 		return nil, errors.Wrap(err, "error during read dir")
 	}
-	var subDirs []os.FileInfo
-	files := make(map[string]string)
+
+	var recordings []string
+	var subDirs []string
 
 	regex, err := regexp.Compile(`^\..*`)
 	if err != nil {
@@ -98,34 +100,26 @@ func buildRecursiveTestDevices(dir, relativePath string) ([]string, error) {
 	for _, f := range fileDir {
 		if !regex.MatchString(f.Name()) {
 			if f.IsDir() {
-				subDirs = append(subDirs, f)
-			} else {
-				files[f.Name()] = f.Name()
+				subDirs = append(subDirs, f.Name())
+			} else if strings.HasSuffix(f.Name(), ".snmprec") {
+				recordings = append(recordings, strings.TrimSuffix(f.Name(), ".snmprec"))
 			}
 		}
 	}
-	hasFiles := len(files) != 0
-	hasSubDirs := len(subDirs) != 0
-	if hasFiles && hasSubDirs {
-		return nil, errors.New("test devices directory is faulty! there are files and directories in one directory")
-	}
+
 	var testDevices []string
-	if hasSubDirs {
-		for _, f := range subDirs {
-			devices, err := buildRecursiveTestDevices(filepath.Join(dir, f.Name()), filepath.Join(relativePath, f.Name()))
-			if err != nil {
-				return nil, err
-			}
-			testDevices = append(testDevices, devices...)
+	for _, d := range subDirs {
+		devices, err := buildTestDevicesRecursive(filepath.Join(relativePath, d))
+		if err != nil {
+			return nil, err
 		}
+		testDevices = append(testDevices, devices...)
 	}
-	if hasFiles {
-		_, ok := files["public.snmprec"]
-		if !ok {
-			return nil, errors.New("snmprec file is missing for test device " + relativePath)
-		}
-		testDevices = append(testDevices, filepath.Join(relativePath, "public"))
+
+	for _, rec := range recordings {
+		testDevices = append(testDevices, filepath.Join(relativePath, rec))
 	}
+
 	return testDevices, nil
 }
 
@@ -141,7 +135,7 @@ func createTestdata(testDevices []string) error {
 			return err
 		}
 
-		err = ioutil.WriteFile(filepath.Join(snmpRecDir, filepath.Dir(device), "test_data.json"), deviceDataJson, 0644)
+		err = ioutil.WriteFile(filepath.Join(snmpRecDir, device+".testdata"), deviceDataJson, 0644)
 		if err != nil {
 			return err
 		}
