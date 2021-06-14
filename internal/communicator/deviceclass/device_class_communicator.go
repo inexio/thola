@@ -602,28 +602,22 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 	oid := o.components.interfaces.Count
 
 	snmpResponse, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+	if err != nil {
+		log.Ctx(ctx).Trace().Msg("count interfaces in device class failed")
+		return 0, err
+	}
 
-	if err == nil {
-		response, err := snmpResponse[0].GetValue()
-		if err == nil {
-			if responseInt, ok := response.(int); ok {
-				return responseInt, nil
-			}
-			err := fmt.Errorf("could not parse response to int, response has type %T", response)
-			log.Ctx(ctx).Trace().Err(err).Msgf("could not parse response to int, response has type %T", response)
-			return 0, err
-		}
+	response, err := snmpResponse[0].GetValue()
+	if err != nil {
 		log.Ctx(ctx).Trace().Err(err).Msg("response is empty")
 		return 0, errors.Wrap(err, "response is empty")
 	}
 
-	interfaces, err := o.GetInterfaces(ctx)
-	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to read out interfaces")
-		return 0, errors.Wrap(err, "failed to read out interfaces")
+	if responseInt, ok := response.(int); ok {
+		return responseInt, nil
 	}
 
-	return len(interfaces), nil
+	return 0, fmt.Errorf("could not parse response to int, response has type %T", response)
 }
 
 func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
