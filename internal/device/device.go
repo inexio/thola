@@ -125,6 +125,7 @@ type Interface struct {
 	OpticalAmplifier   *OpticalAmplifierInterface   `yaml:"optical_amplifier,omitempty" json:"optical_amplifier,omitempty" xml:"optical_amplifier,omitempty" mapstructure:"optical_amplifier,omitempty"`
 	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty" mapstructure:"optical_opm,omitempty"`
 	SAP                *SAPInterface                `yaml:"sap,omitempty" json:"sap,omitempty" xml:"sap,omitempty" mapstructure:"sap,omitempty"`
+	VLAN               *VLANInformation             `yaml:"vlan,omitempty" json:"vlan,omitempty" xml:"vlan,omitempty" mapstructure:"vlan,omitempty"`
 }
 
 //
@@ -217,6 +218,17 @@ type OpticalOPMInterface struct {
 	Channels   []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
 }
 
+// OpticalChannel
+//
+// OpticalChannel represents an optical channel.
+//
+// swagger:model
+type OpticalChannel struct {
+	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
+	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
+	TXPower *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+}
+
 // SAPInterface
 //
 // SAPInterface represents a service access point interface.
@@ -227,15 +239,23 @@ type SAPInterface struct {
 	Outbound *uint64 `yaml:"outbound,omitempty" json:"outbound,omitempty" xml:"outbound,omitempty" mapstructure:"outbound"`
 }
 
-// OpticalChannel
+// VLANInformation
 //
-// OpticalChannel represents an optical channel.
+// VLANInformation includes all information regarding the VLANs of the interface.
 //
 // swagger:model
-type OpticalChannel struct {
-	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
-	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+type VLANInformation struct {
+	VLANs []VLAN `yaml:"vlans,omitempty" json:"vlans,omitempty" xml:"vlans,omitempty" mapstructure:"vlans"`
+}
+
+// VLAN
+//
+// VLAN includes all information about a VLAN.
+//
+// swagger:model
+type VLAN struct {
+	Name   string  `yaml:"name,omitempty" json:"name,omitempty" xml:"name,omitempty" mapstructure:"name"`
+	Status *string `yaml:"status,omitempty" json:"status,omitempty" xml:"status,omitempty" mapstructure:"status"`
 }
 
 //
