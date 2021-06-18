@@ -134,7 +134,7 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get rx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 10)
+			valueFloat, err := strconv.ParseFloat(value, 64)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
@@ -151,7 +151,7 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get tx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 10)
+			valueFloat, err := strconv.ParseFloat(value, 64)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
