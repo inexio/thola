@@ -100,7 +100,7 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get tx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 10)
+			valueFloat, err := strconv.ParseFloat(value, 64)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
@@ -127,7 +127,7 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get snmp response as string (oid: %s)", channelResult.GetOID())
 		}
-		value, err := strconv.ParseFloat(valueString, 10)
+		value, err := strconv.ParseFloat(valueString, 64)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to parse snmp response to float64 (response: %s)", valueString)
 		}
