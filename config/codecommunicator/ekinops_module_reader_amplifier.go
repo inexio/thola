@@ -105,7 +105,7 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for tx power oid failed")
 	}
-	av, err := strconv.ParseFloat(avStr, 10)
+	av, err := strconv.ParseFloat(avStr, 64)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
@@ -121,7 +121,7 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for rx power oid failed")
 	}
-	av, err = strconv.ParseFloat(avStr, 10)
+	av, err = strconv.ParseFloat(avStr, 64)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
@@ -137,7 +137,7 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for gain oid failed")
 	}
-	av, err = strconv.ParseFloat(avStr, 10)
+	av, err = strconv.ParseFloat(avStr, 64)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse gain to float64")
 	}

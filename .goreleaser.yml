@@ -10,8 +10,6 @@ builds:
     main: ./main.go
     binary: thola
 
-    ldflags:
-      - -s -w
     env:
       - CGO_ENABLED=0
 
@@ -26,8 +24,6 @@ builds:
 
     flags:
       - -tags=client
-    ldflags:
-      - -s -w
     env:
       - CGO_ENABLED=0
 

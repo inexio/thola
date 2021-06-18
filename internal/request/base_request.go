@@ -178,9 +178,6 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 	}
 
 	if utility.StringSliceContains(r.DeviceData.ConnectionData.SNMP.Versions, "3") {
-		if r.DeviceData.ConnectionData.SNMP.V3Data.ContextName == nil {
-			return errors.New("no SNMP v3 context name provided")
-		}
 		if r.DeviceData.ConnectionData.SNMP.V3Data.Level == nil {
 			return errors.New("no SNMP v3 level provided")
 		}
