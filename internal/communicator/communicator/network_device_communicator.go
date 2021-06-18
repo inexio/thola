@@ -571,7 +571,17 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 		}
 	}
 
-	return c.deviceClassCommunicator.GetCountInterfaces(ctx)
+	amount, err := c.deviceClassCommunicator.GetCountInterfaces(ctx)
+	if err != nil {
+		var interfaces []device.Interface
+		interfaces, err = c.GetInterfaces(ctx)
+		if err != nil {
+			return 0, errors.Wrap(err, "count interfaces failed")
+		}
+		amount = len(interfaces)
+	}
+
+	return amount, err
 }
 
 func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
@@ -16,16 +17,19 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 var (
 	port       int
 	snmpRecDir string
+	ignore     = flag.String("ignore", "", "ignore snmprecs whose filepath matches this regex")
 )
 
 func init() {
 	log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	flag.Parse()
 
 	if portString := os.Getenv("THOLA_TEST_APIPORT"); portString != "" {
 		p, err := strconv.Atoi(portString)
@@ -36,11 +40,18 @@ func init() {
 	} else {
 		port = 8237
 	}
+
 	if dir := os.Getenv("THOLA_TEST_SNMPRECDIR"); dir != "" {
 		snmpRecDir = dir
 	} else {
 		_, currFilename, _, _ := runtime.Caller(0)
 		snmpRecDir = filepath.Join(filepath.Dir(filepath.Dir(currFilename)), "testdata/devices")
+	}
+
+	if ignore != nil && *ignore == "" {
+		if ignoreEnv := os.Getenv("THOLA_TEST_IGNORE"); ignoreEnv != "" {
+			ignore = &ignoreEnv
+		}
 	}
 }
 
@@ -61,9 +72,14 @@ func main() {
 		return
 	}
 
-	testDevices, err := buildRecursiveTestDevices(snmpRecDir, "")
+	testDevices, err := buildTestDevicesRecursive("")
 	if err != nil {
 		log.Error().Err(err).Msg("error while building test devices")
+		return
+	}
+
+	if len(testDevices) == 0 {
+		log.Error().Err(err).Msg("no test devices found")
 		return
 	}
 
@@ -82,13 +98,14 @@ func main() {
 	fmt.Println("Generating testdata was successful")
 }
 
-func buildRecursiveTestDevices(dir, relativePath string) ([]string, error) {
-	fileDir, err := ioutil.ReadDir(dir)
+func buildTestDevicesRecursive(relativePath string) ([]string, error) {
+	fileDir, err := ioutil.ReadDir(filepath.Join(snmpRecDir, relativePath))
 	if err != nil {
 		return nil, errors.Wrap(err, "error during read dir")
 	}
-	var subDirs []os.FileInfo
-	files := make(map[string]string)
+
+	var recordings []string
+	var subDirs []string
 
 	regex, err := regexp.Compile(`^\..*`)
 	if err != nil {
@@ -98,34 +115,34 @@ func buildRecursiveTestDevices(dir, relativePath string) ([]string, error) {
 	for _, f := range fileDir {
 		if !regex.MatchString(f.Name()) {
 			if f.IsDir() {
-				subDirs = append(subDirs, f)
-			} else {
-				files[f.Name()] = f.Name()
+				subDirs = append(subDirs, f.Name())
+			} else if strings.HasSuffix(f.Name(), ".snmprec") {
+				recordings = append(recordings, strings.TrimSuffix(f.Name(), ".snmprec"))
 			}
 		}
 	}
-	hasFiles := len(files) != 0
-	hasSubDirs := len(subDirs) != 0
-	if hasFiles && hasSubDirs {
-		return nil, errors.New("test devices directory is faulty! there are files and directories in one directory")
-	}
+
 	var testDevices []string
-	if hasSubDirs {
-		for _, f := range subDirs {
-			devices, err := buildRecursiveTestDevices(filepath.Join(dir, f.Name()), filepath.Join(relativePath, f.Name()))
-			if err != nil {
-				return nil, err
+	for _, d := range subDirs {
+		devices, err := buildTestDevicesRecursive(filepath.Join(relativePath, d))
+		if err != nil {
+			return nil, err
+		}
+		testDevices = append(testDevices, devices...)
+	}
+
+	for _, rec := range recordings {
+		community := filepath.Join(relativePath, rec)
+
+		if ignore != nil && *ignore != "" {
+			if ok, err := regexp.MatchString(*ignore, community); err == nil && !ok {
+				testDevices = append(testDevices, community)
 			}
-			testDevices = append(testDevices, devices...)
+		} else {
+			testDevices = append(testDevices, community)
 		}
 	}
-	if hasFiles {
-		_, ok := files["public.snmprec"]
-		if !ok {
-			return nil, errors.New("snmprec file is missing for test device " + relativePath)
-		}
-		testDevices = append(testDevices, filepath.Join(relativePath, "public"))
-	}
+
 	return testDevices, nil
 }
 
@@ -141,7 +158,7 @@ func createTestdata(testDevices []string) error {
 			return err
 		}
 
-		err = ioutil.WriteFile(filepath.Join(snmpRecDir, filepath.Dir(device), "test_data.json"), deviceDataJson, 0644)
+		err = ioutil.WriteFile(filepath.Join(snmpRecDir, device+".testdata"), deviceDataJson, 0644)
 		if err != nil {
 			return err
 		}
