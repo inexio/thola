@@ -942,20 +942,6 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "error_counter_single_collision_frames",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
@@ -1390,34 +1376,6 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "packet_counter_multicast_in",
 					"label": "GigabitEthernet7/0",
 					"value": 0,
@@ -2120,7 +2078,7 @@
 				{
 					"metric": "error_counter_internal_mac_receive_errors",
 					"label": "GigabitEthernet8/0",
-					"value": 185,
+					"value": 0,
 					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
@@ -2528,20 +2486,6 @@
 					"label": "Register-Tunnel0",
 					"value": 0,
 					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -2972,35 +2916,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "packet_counter_unicast_out",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
@@ -3183,20 +3099,6 @@
 				},
 				{
 					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
 					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",
@@ -3394,20 +3296,6 @@
 				{
 					"metric": "error_counter_multiple_collision_frames",
 					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
