@@ -339,14 +339,24 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//ethernet like interface metrics
 		if i.EthernetLike != nil {
-			if i.EthernetLike.Dot3StatsAlignmentErrors != nil {
+			if i.EthernetLike.Dot3HCStatsAlignmentErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_alignment_errors", *i.EthernetLike.Dot3HCStatsAlignmentErrors).SetUnit("c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			} else if i.EthernetLike.Dot3StatsAlignmentErrors != nil {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_alignment_errors", *i.EthernetLike.Dot3StatsAlignmentErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 
-			if i.EthernetLike.Dot3StatsFCSErrors != nil {
+			if i.EthernetLike.Dot3HCStatsFCSErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_FCSErrors", *i.EthernetLike.Dot3HCStatsFCSErrors).SetUnit("c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			} else if i.EthernetLike.Dot3StatsFCSErrors != nil {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_FCSErrors", *i.EthernetLike.Dot3StatsFCSErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
@@ -395,7 +405,12 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 
-			if i.EthernetLike.Dot3StatsInternalMacTransmitErrors != nil {
+			if i.EthernetLike.Dot3HCStatsInternalMacTransmitErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_transmit_errors", *i.EthernetLike.Dot3HCStatsInternalMacTransmitErrors).SetUnit("c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			} else if i.EthernetLike.Dot3StatsInternalMacTransmitErrors != nil {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_transmit_errors", *i.EthernetLike.Dot3StatsInternalMacTransmitErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
@@ -409,22 +424,25 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 
-			if i.EthernetLike.Dot3StatsFrameTooLongs != nil {
+			if i.EthernetLike.Dot3HCStatsFrameTooLongs != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_frame_too_longs", *i.EthernetLike.Dot3HCStatsFrameTooLongs).SetUnit("c").SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			} else if i.EthernetLike.Dot3StatsFrameTooLongs != nil {
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_frame_too_longs", *i.EthernetLike.Dot3StatsFrameTooLongs).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 
-			if i.EthernetLike.Dot3StatsInternalMacReceiveErrors != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_receive_errors", *i.EthernetLike.Dot3StatsInternalMacReceiveErrors).SetUnit("c").SetLabel(*i.IfDescr))
+			if i.EthernetLike.Dot3HCStatsInternalMacReceiveErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_receive_errors", *i.EthernetLike.Dot3HCStatsInternalMacReceiveErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
-			}
-
-			if i.EthernetLike.Dot3HCStatsFCSErrors != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_dot3HCStatsFCSErrors", *i.EthernetLike.Dot3HCStatsFCSErrors).SetUnit("c").SetLabel(*i.IfDescr))
+			} else if i.EthernetLike.Dot3StatsInternalMacReceiveErrors != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_internal_mac_receive_errors", *i.EthernetLike.Dot3StatsInternalMacReceiveErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

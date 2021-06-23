@@ -138,20 +138,24 @@ type Interface struct {
 //
 // swagger:model
 type EthernetLikeInterface struct {
-	Dot3StatsAlignmentErrors           *uint64 `yaml:"dot3StatsAlignmentErrors,omitempty" json:"dot3StatsAlignmentErrors,omitempty" xml:"dot3StatsAlignmentErrors,omitempty"`
-	Dot3StatsFCSErrors                 *uint64 `yaml:"dot3StatsFCSErrors,omitempty" json:"dot3StatsFCSErrors,omitempty" xml:"dot3StatsFCSErrors,omitempty"`
-	Dot3StatsSingleCollisionFrames     *uint64 `yaml:"dot3StatsSingleCollisionFrames,omitempty" json:"dot3StatsSingleCollisionFrames,omitempty" xml:"dot3StatsSingleCollisionFrames,omitempty"`
-	Dot3StatsMultipleCollisionFrames   *uint64 `yaml:"dot3StatsMultipleCollisionFrames,omitempty" json:"dot3StatsMultipleCollisionFrames,omitempty" xml:"dot3StatsMultipleCollisionFrames,omitempty"`
-	Dot3StatsSQETestErrors             *uint64 `yaml:"dot3StatsSQETestErrors,omitempty" json:"dot3StatsSQETestErrors,omitempty" xml:"dot3StatsSQETestErrors,omitempty"`
-	Dot3StatsDeferredTransmissions     *uint64 `yaml:"dot3StatsDeferredTransmissions,omitempty" json:"dot3StatsDeferredTransmissions,omitempty" xml:"dot3StatsDeferredTransmissions,omitempty"`
-	Dot3StatsLateCollisions            *uint64 `yaml:"dot3StatsLateCollisions,omitempty" json:"dot3StatsLateCollisions,omitempty" xml:"dot3StatsLateCollisions,omitempty"`
-	Dot3StatsExcessiveCollisions       *uint64 `yaml:"dot3StatsExcessiveCollisions,omitempty" json:"dot3StatsExcessiveCollisions,omitempty" xml:"dot3StatsExcessiveCollisions,omitempty"`
-	Dot3StatsInternalMacTransmitErrors *uint64 `yaml:"dot3StatsInternalMacTransmitErrors,omitempty" json:"dot3StatsInternalMacTransmitErrors,omitempty" xml:"dot3StatsInternalMacTransmitErrors,omitempty"`
-	Dot3StatsCarrierSenseErrors        *uint64 `yaml:"dot3StatsCarrierSenseErrors,omitempty" json:"dot3StatsCarrierSenseErrors,omitempty" xml:"dot3StatsCarrierSenseErrors,omitempty"`
-	Dot3StatsFrameTooLongs             *uint64 `yaml:"dot3StatsFrameTooLongs,omitempty" json:"dot3StatsFrameTooLongs,omitempty" xml:"dot3StatsFrameTooLongs,omitempty"`
-	Dot3StatsInternalMacReceiveErrors  *uint64 `yaml:"dot3StatsInternalMacReceiveErrors,omitempty" json:"dot3StatsInternalMacReceiveErrors,omitempty" xml:"dot3StatsInternalMacReceiveErrors,omitempty"`
-	Dot3HCStatsFCSErrors               *uint64 `yaml:"dot3HCStatsFCSErrors,omitempty" json:"dot3HCStatsFCSErrors,omitempty" xml:"dot3HCStatsFCSErrors,omitempty"`
-	EtherStatsCRCAlignErrors           *uint64 `yaml:"etherStatsCRCAlignErrors ,omitempty" json:"etherStatsCRCAlignErrors,omitempty" xml:"etherStatsCRCAlignErrors,omitempty"`
+	Dot3StatsAlignmentErrors             *uint64 `yaml:"dot3StatsAlignmentErrors,omitempty" json:"dot3StatsAlignmentErrors,omitempty" xml:"dot3StatsAlignmentErrors,omitempty"`
+	Dot3StatsFCSErrors                   *uint64 `yaml:"dot3StatsFCSErrors,omitempty" json:"dot3StatsFCSErrors,omitempty" xml:"dot3StatsFCSErrors,omitempty"`
+	Dot3StatsSingleCollisionFrames       *uint64 `yaml:"dot3StatsSingleCollisionFrames,omitempty" json:"dot3StatsSingleCollisionFrames,omitempty" xml:"dot3StatsSingleCollisionFrames,omitempty"`
+	Dot3StatsMultipleCollisionFrames     *uint64 `yaml:"dot3StatsMultipleCollisionFrames,omitempty" json:"dot3StatsMultipleCollisionFrames,omitempty" xml:"dot3StatsMultipleCollisionFrames,omitempty"`
+	Dot3StatsSQETestErrors               *uint64 `yaml:"dot3StatsSQETestErrors,omitempty" json:"dot3StatsSQETestErrors,omitempty" xml:"dot3StatsSQETestErrors,omitempty"`
+	Dot3StatsDeferredTransmissions       *uint64 `yaml:"dot3StatsDeferredTransmissions,omitempty" json:"dot3StatsDeferredTransmissions,omitempty" xml:"dot3StatsDeferredTransmissions,omitempty"`
+	Dot3StatsLateCollisions              *uint64 `yaml:"dot3StatsLateCollisions,omitempty" json:"dot3StatsLateCollisions,omitempty" xml:"dot3StatsLateCollisions,omitempty"`
+	Dot3StatsExcessiveCollisions         *uint64 `yaml:"dot3StatsExcessiveCollisions,omitempty" json:"dot3StatsExcessiveCollisions,omitempty" xml:"dot3StatsExcessiveCollisions,omitempty"`
+	Dot3StatsInternalMacTransmitErrors   *uint64 `yaml:"dot3StatsInternalMacTransmitErrors,omitempty" json:"dot3StatsInternalMacTransmitErrors,omitempty" xml:"dot3StatsInternalMacTransmitErrors,omitempty"`
+	Dot3StatsCarrierSenseErrors          *uint64 `yaml:"dot3StatsCarrierSenseErrors,omitempty" json:"dot3StatsCarrierSenseErrors,omitempty" xml:"dot3StatsCarrierSenseErrors,omitempty"`
+	Dot3StatsFrameTooLongs               *uint64 `yaml:"dot3StatsFrameTooLongs,omitempty" json:"dot3StatsFrameTooLongs,omitempty" xml:"dot3StatsFrameTooLongs,omitempty"`
+	Dot3StatsInternalMacReceiveErrors    *uint64 `yaml:"dot3StatsInternalMacReceiveErrors,omitempty" json:"dot3StatsInternalMacReceiveErrors,omitempty" xml:"dot3StatsInternalMacReceiveErrors,omitempty"`
+	Dot3HCStatsAlignmentErrors           *uint64 `yaml:"dot3HCStatsAlignmentErrors,omitempty" json:"dot3HCStatsAlignmentErrors,omitempty" xml:"dot3HCStatsAlignmentErrors,omitempty"`
+	Dot3HCStatsFCSErrors                 *uint64 `yaml:"dot3HCStatsFCSErrors,omitempty" json:"dot3HCStatsFCSErrors,omitempty" xml:"dot3HCStatsFCSErrors,omitempty"`
+	Dot3HCStatsInternalMacTransmitErrors *uint64 `yaml:"dot3HCStatsInternalMacTransmitErrors,omitempty" json:"dot3HCStatsInternalMacTransmitErrors,omitempty" xml:"dot3HCStatsInternalMacTransmitErrors,omitempty"`
+	Dot3HCStatsFrameTooLongs             *uint64 `yaml:"dot3HCStatsFrameTooLongs,omitempty" json:"dot3HCStatsFrameTooLongs,omitempty" xml:"dot3HCStatsFrameTooLongs,omitempty"`
+	Dot3HCStatsInternalMacReceiveErrors  *uint64 `yaml:"dot3HCStatsInternalMacReceiveErrors,omitempty" json:"dot3HCStatsInternalMacReceiveErrors,omitempty" xml:"dot3HCStatsInternalMacReceiveErrors,omitempty"`
+	EtherStatsCRCAlignErrors             *uint64 `yaml:"etherStatsCRCAlignErrors,omitempty" json:"etherStatsCRCAlignErrors,omitempty" xml:"etherStatsCRCAlignErrors,omitempty"`
 }
 
 // RadioInterface
