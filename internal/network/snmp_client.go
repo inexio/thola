@@ -208,8 +208,11 @@ func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retri
 		Timeout:       time.Duration(timeout) * time.Second,
 		MaxOids:       60,
 		Retries:       retries,
-		ContextName:   *v3Data.ContextName,
 		SecurityModel: gosnmp.UserSecurityModel,
+	}
+
+	if v3Data.ContextName != nil {
+		client.ContextName = *v3Data.ContextName
 	}
 
 	switch *v3Data.Level {
