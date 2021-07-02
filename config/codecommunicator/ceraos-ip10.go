@@ -42,13 +42,19 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.In
 
 	for i := range subInterfaces {
 		if regex.MatchString(*subInterfaces[i].IfDescr) {
-			subInterfaces[i].IfHCInOctets = targetInterface.IfHCInOctets
-			subInterfaces[i].IfHCOutOctets = targetInterface.IfHCOutOctets
 			subInterfaces[i].IfOperStatus = targetInterface.IfOperStatus
 			subInterfaces[i].IfInOctets = targetInterface.IfInOctets
 			subInterfaces[i].IfOutOctets = targetInterface.IfOutOctets
 			subInterfaces[i].IfInErrors = targetInterface.IfInErrors
 			subInterfaces[i].IfOutErrors = targetInterface.IfOutErrors
+			subInterfaces[i].IfHCInOctets = targetInterface.IfHCInOctets
+			subInterfaces[i].IfHCOutOctets = targetInterface.IfHCOutOctets
+
+			if subInterfaces[i].IfSpeed != nil {
+				speed := *subInterfaces[i].IfSpeed * 1000
+				subInterfaces[i].IfSpeed = &speed
+			}
+
 			break
 		}
 	}
