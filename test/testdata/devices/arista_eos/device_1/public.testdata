@@ -186,20 +186,6 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "Management1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "error_counter_excessive_collisions",
 					"label": "Ethernet1",
 					"value": 0,
@@ -326,20 +312,6 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "Ethernet1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "error_counter_alignment_errors",
 					"label": "Management1",
 					"value": 0,
@@ -439,20 +411,6 @@
 				},
 				{
 					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "Ethernet2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
 					"label": "Ethernet2",
 					"value": 0,
 					"unit": "c",
@@ -706,20 +664,6 @@
 				{
 					"metric": "error_counter_internal_mac_receive_errors",
 					"label": "Ethernet1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_dot3HCStatsFCSErrors",
-					"label": "Ethernet3",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {

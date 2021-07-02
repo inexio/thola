@@ -12,7 +12,7 @@ func init() {
 
 	checkInterfaceMetricsCMD.Flags().Bool("print-interfaces", false, "Print interfaces to plugin output")
 	checkInterfaceMetricsCMD.Flags().StringSlice("ifType-filter", []string{}, "Filter out interfaces which ifType equals the given types")
-	checkInterfaceMetricsCMD.Flags().StringSlice("ifName-filter", []string{}, "Filter out interfaces which ifType matches the given regex")
+	checkInterfaceMetricsCMD.Flags().StringSlice("ifName-filter", []string{}, "Filter out interfaces which ifName matches the given regex")
 }
 
 var checkInterfaceMetricsCMD = &cobra.Command{
