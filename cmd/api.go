@@ -78,8 +78,6 @@ func init() {
 			Msg("Can't bind flag ratelimit")
 		return
 	}
-
-	setDeviceDefaults()
 }
 
 var apiCMD = &cobra.Command{
@@ -93,6 +91,8 @@ var apiCMD = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		setDeviceDefaults()
 
 		if !(viper.GetString("api.format") == "json" || viper.GetString("format") == "xml") {
 			return errors.New("invalid api format set")
