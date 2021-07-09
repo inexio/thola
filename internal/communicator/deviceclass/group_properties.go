@@ -78,7 +78,7 @@ func (d *deviceClassOIDs) readOID(ctx context.Context) (map[int]interface{}, err
 	for label, reader := range *d {
 		res, err := reader.readOID(ctx)
 		if err != nil {
-			if tholaerr.IsNotFoundError(err) {
+			if tholaerr.IsNotFoundError(err) || tholaerr.IsComponentNotFoundError(err) {
 				log.Ctx(ctx).Trace().Err(err).Msgf("value %s", label)
 				continue
 			}
@@ -201,4 +201,10 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 		result = mappedResult
 	}
 	return result, nil
+}
+
+type emptyOIDReader struct{}
+
+func (n *emptyOIDReader) readOID(context.Context) (map[int]interface{}, error) {
+	return nil, tholaerr.NewComponentNotFoundError("oid is ignored")
 }
