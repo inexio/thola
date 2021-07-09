@@ -22,22 +22,23 @@ func (g *propertyGroups) Decode(destination interface{}) error {
 }
 
 type groupPropertyReader interface {
-	getProperty(ctx context.Context) (propertyGroups, error)
+	getProperty(ctx context.Context) (propertyGroups, []value.Value, error)
 }
 
 type snmpGroupPropertyReader struct {
 	oids deviceClassOIDs
 }
 
-func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGroups, error) {
+func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGroups, []value.Value, error) {
 	groups, err := s.oids.readOID(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to read oids")
+		return nil, nil, errors.Wrap(err, "failed to read oids")
 	}
 
 	var res propertyGroups
+	var indices []value.Value
 
-	// this sorts the groups after their ifIndex
+	// this sorts the groups after their index
 	//TODO efficiency
 	size := len(groups)
 	for i := 0; i < size; i++ {
@@ -54,14 +55,15 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGrou
 		}
 		x, ok := groups[smallestIndex].(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
+			return nil, nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
 		}
 
 		res = append(res, x)
+		indices = append(indices, value.New(smallestIndex))
 		delete(groups, smallestIndex)
 	}
 
-	return res, nil
+	return res, indices, nil
 }
 
 type oidReader interface {
