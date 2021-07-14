@@ -12,6 +12,7 @@ type Value interface {
 	String() string
 	Float64() (float64, error)
 	Int() (int, error)
+	UInt64() (uint64, error)
 	Bool() (bool, error)
 	IsEmpty() bool
 	Cmp(val Value) (int, error)
@@ -56,6 +57,11 @@ func (v *value) Float64() (float64, error) {
 // Int returns the value as an int
 func (v *value) Int() (int, error) {
 	return strconv.Atoi(string(*v))
+}
+
+// UInt64 returns the value as an uint64
+func (v *value) UInt64() (uint64, error) {
+	return strconv.ParseUint(string(*v), 10, 64)
 }
 
 // Bool returns the value as a bool

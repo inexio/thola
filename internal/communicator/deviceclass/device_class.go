@@ -1615,6 +1615,13 @@ func interface2oidReader(i interface{}) (oidReader, error) {
 			continue
 		}
 
+		if ignore, ok := dataMap["ignore"]; ok {
+			if b, ok := ignore.(bool); ok && b {
+				result[valString] = &emptyOIDReader{}
+				continue
+			}
+		}
+
 		var oid yamlComponentsOID
 		err := mapstructure.Decode(data, &oid)
 		if err != nil {

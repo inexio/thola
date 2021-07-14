@@ -2078,7 +2078,7 @@
 				{
 					"metric": "error_counter_internal_mac_receive_errors",
 					"label": "GigabitEthernet8/0",
-					"value": 0,
+					"value": 185,
 					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
