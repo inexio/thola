@@ -13,6 +13,7 @@ func init() {
 	checkInterfaceMetricsCMD.Flags().Bool("print-interfaces", false, "Print interfaces to plugin output")
 	checkInterfaceMetricsCMD.Flags().StringSlice("ifType-filter", []string{}, "Filter out interfaces which ifType equals the given types")
 	checkInterfaceMetricsCMD.Flags().StringSlice("ifName-filter", []string{}, "Filter out interfaces which ifName matches the given regex")
+	checkInterfaceMetricsCMD.Flags().StringSlice("ifDescr-filter", []string{}, "Filter out interfaces which ifDescription matches the given regex")
 }
 
 var checkInterfaceMetricsCMD = &cobra.Command{
@@ -32,11 +33,16 @@ var checkInterfaceMetricsCMD = &cobra.Command{
 		if err != nil {
 			log.Fatal().Err(err).Msg("ifName-filter needs to be a string")
 		}
+		ifDescrFilter, err := cmd.Flags().GetStringSlice("ifDescr-filter")
+		if err != nil {
+			log.Fatal().Err(err).Msg("ifDescr-filter needs to be a string")
+		}
 		r := request.CheckInterfaceMetricsRequest{
 			CheckDeviceRequest: getCheckDeviceRequest(args[0]),
 			PrintInterfaces:    printInterfaces,
 			IfTypeFilter:       ifTypeFilter,
 			IfNameFilter:       ifNameFilter,
+			IfDescrFilter:      ifDescrFilter,
 		}
 		handleRequest(&r)
 	},

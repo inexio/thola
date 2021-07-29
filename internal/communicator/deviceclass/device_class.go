@@ -382,14 +382,6 @@ func (d *deviceClass) matchDevice(ctx context.Context) (bool, error) {
 	return d.match.check(ctx)
 }
 
-// getSNMPMaxRepetitions returns the maximum snmp repetitions.
-func (d *deviceClass) getSNMPMaxRepetitions() (uint32, error) {
-	if d.config.snmp.MaxRepetitions != 0 {
-		return d.config.snmp.MaxRepetitions, nil
-	}
-	return 0, tholaerr.NewNotFoundError("max_repetitions not found")
-}
-
 // getAvailableComponents returns the available components.
 func (d *deviceClass) getAvailableComponents() map[component.Component]bool {
 	return d.config.components

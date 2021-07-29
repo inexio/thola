@@ -21,6 +21,9 @@ type Communicator interface {
 	// Match checks if the device matches the device class
 	Match(ctx context.Context) (bool, error)
 
+	// UpdateConnection updates the device connection with class specific values
+	UpdateConnection(ctx context.Context) error
+
 	// GetIdentifyProperties returns the identify properties of a device like vendor, model...
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
 
