@@ -103,6 +103,18 @@ out:
 				}
 			}
 		}
+		for _, filter := range r.IfDescrFilter {
+			if interf.IfDescr != nil {
+				matched, err := regexp.MatchString(filter, *interf.IfDescr)
+				if err != nil {
+					return nil, errors.Wrap(err, "ifDescr filter regex match failed")
+				}
+				if matched {
+					filterIndices = append(filterIndices, i)
+					continue out
+				}
+			}
+		}
 	}
 
 	readInterfacesResponse.Interfaces = filterInterfaces(readInterfacesResponse.Interfaces, filterIndices, 0)
