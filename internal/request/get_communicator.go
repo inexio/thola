@@ -54,5 +54,11 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to get communicator for os '%s'", deviceProperties.Class)
 	}
+
+	err = com.UpdateConnection(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to update connection")
+	}
+
 	return com, nil
 }

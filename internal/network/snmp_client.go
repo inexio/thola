@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/internal/tholaerr"
-	"github.com/inexio/thola/internal/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/encoding/charmap"
@@ -527,8 +526,11 @@ func (s *SNMPClient) GetVersion() string {
 }
 
 // GetMaxRepetitions returns the max repetitions.
-func (s *SNMPClient) GetMaxRepetitions() uint8 {
-	return utility.IfThenElse(s.client.MaxRepetitions == 0, gosnmp.Default.MaxRepetitions, s.client.MaxRepetitions).(uint8)
+func (s *SNMPClient) GetMaxRepetitions() uint32 {
+	if s.client.MaxRepetitions == 0 {
+		return gosnmp.Default.MaxRepetitions
+	}
+	return s.client.MaxRepetitions
 }
 
 // SetMaxRepetitions sets the maximum repetitions.
