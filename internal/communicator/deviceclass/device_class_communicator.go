@@ -49,6 +49,15 @@ func (o *deviceClassCommunicator) Match(ctx context.Context) (bool, error) {
 	return o.matchDevice(ctx)
 }
 
+func (o *deviceClassCommunicator) UpdateConnection(ctx context.Context) error {
+	if conn, ok := network.DeviceConnectionFromContext(ctx); ok {
+		if conn.SNMP != nil && conn.SNMP.SnmpClient != nil {
+			conn.SNMP.SnmpClient.SetMaxRepetitions(o.deviceClass.config.snmp.MaxRepetitions)
+		}
+	}
+	return nil
+}
+
 func (o *deviceClassCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
 	dev := device.Device{
 		Class:      o.GetIdentifier(),

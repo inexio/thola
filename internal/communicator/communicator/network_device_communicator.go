@@ -39,6 +39,10 @@ func (c *networkDeviceCommunicator) Match(ctx context.Context) (bool, error) {
 	return c.deviceClassCommunicator.Match(ctx)
 }
 
+func (c *networkDeviceCommunicator) UpdateConnection(ctx context.Context) error {
+	return c.deviceClassCommunicator.UpdateConnection(ctx)
+}
+
 func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (device.Properties, error) {
 	dev := device.Device{
 		Class:      c.GetIdentifier(),
