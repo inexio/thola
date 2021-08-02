@@ -285,12 +285,12 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//interface_maxspeed_in
 		if i.MaxSpeedIn != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.MaxSpeedIn).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.MaxSpeedIn).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
 		} else if i.IfSpeed != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.IfSpeed).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.IfSpeed).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
@@ -298,12 +298,12 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//interface_maxspeed_out
 		if i.MaxSpeedOut != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.MaxSpeedOut).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.MaxSpeedOut).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
 		} else if i.IfSpeed != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.IfSpeed).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.IfSpeed).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
@@ -420,14 +420,14 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 
 			if i.Radio.MaxbitrateOut != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *i.Radio.MaxbitrateOut).SetUnit("B").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *i.Radio.MaxbitrateOut).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
 			}
 
 			if i.Radio.MaxbitrateIn != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *i.Radio.MaxbitrateIn).SetUnit("B").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *i.Radio.MaxbitrateIn).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -556,7 +556,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				if err != nil {
 					return err
 				}
-				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.SAP.Inbound).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -566,7 +566,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				if err != nil {
 					return err
 				}
-				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				err = r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.SAP.Outbound).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

@@ -18,92 +18,8 @@
 			"status_code": 0,
 			"performance_data": [
 				{
-					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet8/0",
-					"value": 27,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "NULL0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "GigabitEthernet7/0",
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -117,161 +33,7 @@
 				},
 				{
 					"metric": "error_counter_in",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "NULL0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
 					"label": "GigabitEthernet4/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -285,7 +47,7 @@
 				},
 				{
 					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet1/0",
+					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "B",
 					"thresholds": {
@@ -298,10 +60,10 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet1/0",
+					"metric": "traffic_counter_in",
+					"label": "InLoopBack0",
 					"value": 0,
-					"unit": "c",
+					"unit": "B",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -313,7 +75,7 @@
 				},
 				{
 					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet3/0",
+					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -326,10 +88,10 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_out",
-					"label": "GigabitEthernet4/0",
-					"value": 1000000000,
-					"unit": "B",
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -354,119 +116,7 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
+					"metric": "error_counter_excessive_collisions",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
@@ -480,105 +130,7 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet2/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
 					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
@@ -592,10 +144,10 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet2/0",
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet4/0",
 					"value": 0,
-					"unit": "B",
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -607,121 +159,9 @@
 				},
 				{
 					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet3/0",
+					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "GigabitEthernet3/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet5/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet2/0",
-					"value": 1,
-					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -733,77 +173,7 @@
 				},
 				{
 					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
 					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -817,161 +187,7 @@
 				},
 				{
 					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
 					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet6/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -985,36 +201,8 @@
 				},
 				{
 					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet7/0",
+					"label": "GigabitEthernet4/0",
 					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet8/0",
-					"value": 1,
 					"unit": "",
 					"thresholds": {
 						"warningMin": null,
@@ -1026,21 +214,7 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
+					"metric": "error_counter_multiple_collision_frames",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -1054,10 +228,80 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet7/0",
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "InLoopBack0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "InLoopBack0",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet8/0",
+					"value": 1,
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -1082,52 +326,10 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet6/0",
+					"metric": "packet_counter_discard_out",
+					"label": "NULL0",
 					"value": 0,
 					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "Register-Tunnel0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "InLoopBack0",
-					"value": 0,
-					"unit": "B",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -1139,231 +341,7 @@
 				},
 				{
 					"metric": "error_counter_out",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
 					"label": "GigabitEthernet3/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "NULL0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "Register-Tunnel0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "InLoopBack0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "NULL0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet1/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet2/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -1377,49 +355,7 @@
 				},
 				{
 					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "GigabitEthernet2/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
 					"label": "GigabitEthernet4/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -1433,9 +369,9 @@
 				},
 				{
 					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet5/0",
+					"label": "GigabitEthernet6/0",
 					"value": 1000000000,
-					"unit": "B",
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -1447,7 +383,7 @@
 				},
 				{
 					"metric": "traffic_counter_in",
-					"label": "NULL0",
+					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "B",
 					"thresholds": {
@@ -1460,7 +396,21 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_deferred_transmissions",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -1474,301 +424,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet7/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet7/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "InLoopBack0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet3/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
+					"metric": "error_counter_alignment_errors",
 					"label": "GigabitEthernet8/0",
 					"value": 0,
 					"unit": "c",
@@ -1783,174 +439,6 @@
 				},
 				{
 					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "NULL0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet6/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_deferred_transmissions",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
@@ -1964,7 +452,7 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_multicast_in",
+					"metric": "error_counter_excessive_collisions",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -1978,9 +466,9 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_in",
-					"label": "GigabitEthernet8/0",
-					"value": 185,
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
 					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
@@ -1992,9 +480,107 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_out",
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet1/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "Register-Tunnel0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_excessive_collisions",
 					"label": "GigabitEthernet7/0",
-					"value": 1000000000,
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "NULL0",
+					"value": 0,
 					"unit": "B",
 					"thresholds": {
 						"warningMin": null,
@@ -2006,10 +592,150 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_out",
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_excessive_collisions",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
 					"label": "GigabitEthernet8/0",
-					"value": 1000000000,
-					"unit": "B",
+					"value": 0,
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -2020,7 +746,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_out",
+					"metric": "error_counter_carrier_sense_errors",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -2035,7 +761,7 @@
 				},
 				{
 					"metric": "interface_oper_status",
-					"label": "GigabitEthernet5/0",
+					"label": "GigabitEthernet6/0",
 					"value": 1,
 					"unit": "",
 					"thresholds": {
@@ -2048,7 +774,7 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_unicast_out",
+					"metric": "error_counter_single_collision_frames",
 					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
@@ -2062,8 +788,176 @@
 					"max": null
 				},
 				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
 					"metric": "packet_counter_broadcast_out",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet4/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
 					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "InLoopBack0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet8/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2090,8 +984,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet3/0",
+					"metric": "packet_counter_discard_in",
+					"label": "InLoopBack0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2104,9 +998,9 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet4/0",
-					"value": 1000000000,
+					"metric": "traffic_counter_in",
+					"label": "Register-Tunnel0",
+					"value": 0,
 					"unit": "B",
 					"thresholds": {
 						"warningMin": null,
@@ -2118,330 +1012,8 @@
 					"max": null
 				},
 				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet6/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
+					"metric": "packet_counter_discard_out",
 					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_FCSErrors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet8/0",
-					"value": 1315474,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "GigabitEthernet1/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2455,7 +1027,91 @@
 				},
 				{
 					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_deferred_transmissions",
 					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet7/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2482,317 +1138,9 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
-					"label": "Register-Tunnel0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_single_collision_frames",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "packet_counter_unicast_in",
 					"label": "GigabitEthernet8/0",
 					"value": 7255,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet1/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_alignment_errors",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "GigabitEthernet8/0",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "NULL0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "InLoopBack0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet4/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "GigabitEthernet5/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
 					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
@@ -2818,8 +1166,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet8/0",
+					"metric": "error_counter_internal_mac_receive_errors",
+					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2832,22 +1180,22 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
+					"metric": "interface_admin_status",
 					"label": "GigabitEthernet2/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2860,10 +1208,94 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_in",
+					"metric": "error_counter_internal_mac_receive_errors",
 					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "NULL0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "Register-Tunnel0",
+					"value": 0,
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -2888,6 +1320,76 @@
 					"max": null
 				},
 				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "NULL0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
 					"metric": "traffic_counter_out",
 					"label": "GigabitEthernet5/0",
 					"value": 0,
@@ -2902,8 +1404,36 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
+					"metric": "packet_counter_unicast_in",
 					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "B",
 					"thresholds": {
@@ -2916,10 +1446,486 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_unicast_out",
+					"metric": "packet_counter_broadcast_out",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "NULL0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_receive_errors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "InLoopBack0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet6/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet7/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet4/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet7/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet3/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet8/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "Register-Tunnel0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet5/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet8/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet1/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet3/0",
+					"value": 1,
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -2944,8 +1950,316 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_single_collision_frames",
+					"metric": "error_counter_out",
 					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet3/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet4/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet5/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_excessive_collisions",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_excessive_collisions",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "NULL0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -2972,80 +2286,10 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
-					"label": "InLoopBack0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_SQETest_errors",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_late_collisions",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet8/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet1/0",
+					"label": "Register-Tunnel0",
 					"value": 0,
-					"unit": "c",
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -3056,8 +2300,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet7/0",
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3071,35 +2315,21 @@
 				},
 				{
 					"metric": "interface_maxspeed_out",
-					"label": "GigabitEthernet1/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_carrier_sense_errors",
-					"label": "GigabitEthernet1/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
 					"label": "GigabitEthernet3/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3112,7 +2342,21 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_multiple_collision_frames",
 					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
@@ -3126,10 +2370,108 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_in",
-					"label": "InLoopBack0",
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet2/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -3154,204 +2496,22 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_unicast_out",
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_carrier_sense_errors",
 					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_receive_errors",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "GigabitEthernet2/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "NULL0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet7/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_internal_mac_transmit_errors",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "GigabitEthernet3/0",
-					"value": 1000000000,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_multiple_collision_frames",
-					"label": "GigabitEthernet3/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "GigabitEthernet5/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet8/0",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "InLoopBack0",
-					"value": 0,
-					"unit": "B",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_frame_too_longs",
-					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3378,8 +2538,652 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_internal_mac_transmit_errors",
+					"metric": "traffic_counter_out",
+					"label": "Register-Tunnel0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet2/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_receive_errors",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
 					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "GigabitEthernet8/0",
+					"value": 1315474,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "NULL0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_excessive_collisions",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet5/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet8/0",
+					"value": 185,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_FCSErrors",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "B",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_carrier_sense_errors",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_multiple_collision_frames",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_receive_errors",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet1/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet1/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet8/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet4/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
+					"label": "GigabitEthernet5/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "GigabitEthernet7/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "GigabitEthernet8/0",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "GigabitEthernet1/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_single_collision_frames",
+					"label": "GigabitEthernet3/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet5/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_frame_too_longs",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3395,7 +3199,7 @@
 					"metric": "interface_maxspeed_out",
 					"label": "GigabitEthernet6/0",
 					"value": 1000000000,
-					"unit": "B",
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -3406,8 +3210,148 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_unicast_in",
-					"label": "GigabitEthernet5/0",
+					"metric": "interface_maxspeed_out",
+					"label": "GigabitEthernet2/0",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_internal_mac_transmit_errors",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet8/0",
+					"value": 27,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "InLoopBack0",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_late_collisions",
+					"label": "GigabitEthernet2/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_alignment_errors",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "Register-Tunnel0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3421,7 +3365,63 @@
 				},
 				{
 					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet5/0",
+					"label": "GigabitEthernet6/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet7/0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "Register-Tunnel0",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_deferred_transmissions",
+					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3448,8 +3448,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_excessive_collisions",
-					"label": "GigabitEthernet4/0",
+					"metric": "error_counter_SQETest_errors",
+					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -3462,10 +3462,10 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
-					"label": "GigabitEthernet5/0",
+					"metric": "packet_counter_discard_in",
+					"label": "GigabitEthernet8/0",
 					"value": 0,
-					"unit": "B",
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -3476,10 +3476,10 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_out",
-					"label": "GigabitEthernet6/0",
-					"value": 0,
-					"unit": "c",
+					"metric": "interface_oper_status",
+					"label": "NULL0",
+					"value": 1,
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
