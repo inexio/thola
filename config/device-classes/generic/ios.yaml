@@ -11,12 +11,22 @@ match:
     - type: SysObjectID
       match_mode: startsWith
       values:
-        - .1.3.6.1.4.1.9.1.
+        - .1.3.6.1.4.1.9.
     - type: SysDescription
       match_mode: regex
       values:
         - '(?i)^CISCO\s'
   logical_operator: OR
+
+components:
+  interfaces:
+    properties:
+      detection: snmpwalk
+      values:
+        ethernet_like:
+          values:
+            etherStatsCRCAlignErrors:
+              oid: 1.3.6.1.4.1.9.2.2.1.1.12
 
 identify:
   properties:
