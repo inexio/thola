@@ -268,8 +268,8 @@ func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
 		return nil, tholaerr.NewSNMPError(err.Error())
 	}
 
-	client.Retries = 3
-	client.ExponentialTimeout = true
+	client.Retries = gosnmp.Default.Retries
+	client.Timeout = gosnmp.Default.Timeout
 
 	return &SNMPClient{
 		client:    client,
