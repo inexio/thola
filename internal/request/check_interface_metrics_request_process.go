@@ -221,7 +221,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//traffic_counter_in
 		if counter := checkHCCounter(i.IfHCInOctets, i.IfInOctets); counter != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *counter).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *counter).SetUnit("c").SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
@@ -229,7 +229,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 
 		//traffic_counter_out
 		if counter := checkHCCounter(i.IfHCOutOctets, i.IfOutOctets); counter != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *counter).SetUnit("B").SetLabel(*i.IfDescr))
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *counter).SetUnit("c").SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
@@ -552,7 +552,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 		//SAP
 		if i.SAP != nil {
 			if i.SAP.Inbound != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *i.SAP.Inbound).SetUnit("B").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_in", *i.SAP.Inbound).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -562,7 +562,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 			if i.SAP.Outbound != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *i.SAP.Outbound).SetUnit("B").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("traffic_counter_out", *i.SAP.Outbound).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
