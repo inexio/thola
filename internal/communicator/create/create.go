@@ -22,7 +22,7 @@ func initHierarchy(ctx context.Context) error {
 	var err error
 	genericHierarchy.Do(func() {
 		genericHierarchy.Hierarchy, err = deviceclass.GetHierarchy()
-		log.Ctx(ctx).Trace().Msg("device configurations initialized")
+		log.Ctx(ctx).Debug().Msg("device configurations initialized")
 	})
 	if err != nil {
 		return errors.Wrap(err, "failed to build initial hierarchy")
@@ -106,14 +106,14 @@ func identifyDeviceRecursive(ctx context.Context, children map[string]hierarchy.
 
 		logger := log.Ctx(ctx).With().Str("device_class", hier.NetworkDeviceCommunicator.GetIdentifier()).Logger()
 		ctx = logger.WithContext(ctx)
-		log.Ctx(ctx).Trace().Msgf("starting class match (%s)", hier.NetworkDeviceCommunicator.GetIdentifier())
+		log.Ctx(ctx).Debug().Msgf("starting class match (%s)", hier.NetworkDeviceCommunicator.GetIdentifier())
 		match, err := hier.NetworkDeviceCommunicator.Match(ctx)
 		if err != nil {
 			return nil, errors.Wrap(err, "error while trying to match device class: "+hier.NetworkDeviceCommunicator.GetIdentifier())
 		}
 
 		if match {
-			log.Ctx(ctx).Trace().Msg("device class matched")
+			log.Ctx(ctx).Debug().Msg("device class matched")
 			if hier.Children != nil {
 				subDeviceClass, err := identifyDeviceRecursive(ctx, hier.Children, true)
 				if err != nil {
@@ -126,7 +126,7 @@ func identifyDeviceRecursive(ctx context.Context, children map[string]hierarchy.
 			}
 			return hier.NetworkDeviceCommunicator, nil
 		}
-		log.Ctx(ctx).Trace().Msg("device class did not match")
+		log.Ctx(ctx).Debug().Msg("device class did not match")
 	}
 	if tryToMatchLastDeviceClasses != nil {
 		deviceClass, err := identifyDeviceRecursive(ctx, tryToMatchLastDeviceClasses, false)

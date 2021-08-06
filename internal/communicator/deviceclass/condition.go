@@ -30,27 +30,27 @@ type ConditionSet struct {
 }
 
 func (c *ConditionSet) check(ctx context.Context) (bool, error) {
-	log.Ctx(ctx).Trace().Msg("starting with matching condition set (OR)")
+	log.Ctx(ctx).Debug().Msg("starting with matching condition set (OR)")
 	for _, condition := range c.Conditions {
 		match, err := condition.check(ctx)
 		if err != nil {
 			return false, errors.Wrap(err, "error during match condition")
 		}
 		if match && c.LogicalOperator == "OR" {
-			log.Ctx(ctx).Trace().Msg("condition set matches (one OR condition matched)")
+			log.Ctx(ctx).Debug().Msg("condition set matches (one OR condition matched)")
 			return true, nil
 		}
 		if !match && c.LogicalOperator == "AND" {
-			log.Ctx(ctx).Trace().Msg("condition set does not match (one AND condition does not match)")
+			log.Ctx(ctx).Debug().Msg("condition set does not match (one AND condition does not match)")
 			return false, nil
 		}
 	}
 	if c.LogicalOperator == "AND" {
-		log.Ctx(ctx).Trace().Msg("condition set matches (all AND condition matched)")
+		log.Ctx(ctx).Debug().Msg("condition set matches (all AND condition matched)")
 		return true, nil
 	}
 	//c.logicalOperator == OR
-	log.Ctx(ctx).Trace().Msg("condition set does not match (no OR condition matched)")
+	log.Ctx(ctx).Debug().Msg("condition set does not match (no OR condition matched)")
 	return false, nil
 }
 
@@ -71,7 +71,7 @@ func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		log.Ctx(ctx).Trace().Bool("condition_matched", false).Msg("no snmp connection data available")
+		log.Ctx(ctx).Debug().Bool("condition_matched", false).Msg("no snmp connection data available")
 		return false, nil
 	}
 	var val string
@@ -81,7 +81,7 @@ func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
 		val, err = con.SNMP.GetSysDescription(ctx)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msg("sysDescription is not available for snmp agent")
+				log.Ctx(ctx).Debug().Err(err).Msg("sysDescription is not available for snmp agent")
 				return false, nil
 			}
 			return false, errors.Wrap(err, "failed to get SysDescription")
@@ -90,7 +90,7 @@ func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
 		val, err = con.SNMP.GetSysObjectID(ctx)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msg("sysObjectID is not available for snmp agent")
+				log.Ctx(ctx).Debug().Err(err).Msg("sysObjectID is not available for snmp agent")
 				return false, nil
 			}
 			return false, errors.Wrap(err, "failed to get SysObjectID")
@@ -100,7 +100,7 @@ func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
 		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msg("snmpget returned no result")
+				log.Ctx(ctx).Debug().Err(err).Msg("snmpget returned no result")
 				return false, nil
 			}
 			log.Ctx(ctx).Error().Err(err).Msg("error during snmpget")
@@ -162,7 +162,7 @@ func (s *HTTPCondition) check(ctx context.Context) (bool, error) {
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.HTTP == nil {
-		log.Ctx(ctx).Trace().Bool("condition_matched", false).Msg("no http connection data available")
+		log.Ctx(ctx).Debug().Bool("condition_matched", false).Msg("no http connection data available")
 		return false, nil //TODO: throw error and catch it or just return false?
 	}
 	var value string
@@ -173,13 +173,13 @@ func (s *HTTPCondition) check(ctx context.Context) (bool, error) {
 				con.HTTP.HTTPClient.SetPort(port)
 				r, err := con.HTTP.HTTPClient.Request(ctx, "GET", s.URI, "", nil, nil)
 				if err != nil {
-					log.Ctx(ctx).Trace().Err(err).Str("protocol", con.HTTP.HTTPClient.GetProtocolString()).Int("port", port).Msg("http(s) request returned error")
+					log.Ctx(ctx).Debug().Err(err).Str("protocol", con.HTTP.HTTPClient.GetProtocolString()).Int("port", port).Msg("http(s) request returned error")
 					if tholaerr.IsNetworkError(err) {
 						continue
 					}
 					return false, errors.Wrap(err, "non-network error during http(s) request!")
 				}
-				log.Ctx(ctx).Trace().Str("protocol", con.HTTP.HTTPClient.GetProtocolString()).Int("port", port).Msg("http(s) request was successful")
+				log.Ctx(ctx).Debug().Str("protocol", con.HTTP.HTTPClient.GetProtocolString()).Int("port", port).Msg("http(s) request was successful")
 				value = string(r.Body())
 
 				matched, err := matchStrings(ctx, value, s.MatchMode, s.Value...)
@@ -274,76 +274,76 @@ func matchStrings(ctx context.Context, str string, mode matchMode, matches ...st
 	case "contains":
 		for _, match := range matches {
 			if strings.Contains(str, match) {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "!contains":
 		for _, match := range matches {
 			if !strings.Contains(str, match) {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "startsWith":
 		for _, match := range matches {
 			if strings.HasPrefix(str, match) {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "!startsWith":
 		for _, match := range matches {
 			if !strings.HasPrefix(str, match) {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "regex":
 		for _, match := range matches {
 			i, err := regexp.MatchString(match, str)
 			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("error during regex match")
+				log.Ctx(ctx).Debug().Err(err).Msg("error during regex match")
 				return false, errors.Wrap(err, "error during regex match")
 			}
 			if i {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "!regex":
 		for _, match := range matches {
 			i, err := regexp.MatchString(match, str)
 			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("error during regex match")
+				log.Ctx(ctx).Debug().Err(err).Msg("error during regex match")
 				return false, errors.Wrap(err, "error during regex match")
 			}
 			if !i {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "equals":
 		for _, match := range matches {
 			if str == match {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	case "!equals":
 		for _, match := range matches {
 			if str != match {
-				log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
+				log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", true).Msg("value matched!")
 				return true, nil
 			}
-			log.Ctx(ctx).Trace().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
+			log.Ctx(ctx).Debug().Str("match_value", match).Str("received_value", str).Bool("matched", false).Msg("value did not match!")
 		}
 	default:
 		return false, errors.New("invalid match type")
