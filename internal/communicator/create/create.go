@@ -77,7 +77,7 @@ func IdentifyNetworkDeviceCommunicator(ctx context.Context) (communicator.Commun
 	}
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
-	if ok && con.SNMP != nil {
+	if ok && con.SNMP != nil && (con.RawConnectionData.SNMP.MaxRepetitions == nil || *con.RawConnectionData.SNMP.MaxRepetitions == 0) {
 		con.SNMP.SnmpClient.SetMaxRepetitions(1)
 	}
 
