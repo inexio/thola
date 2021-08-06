@@ -10,13 +10,14 @@ import (
 var deviceFlagSet = buildDeviceFlagSet()
 
 var (
-	defaultRequestTimeout          = 0
-	defaultSNMPCommunity           = []string{"public"}
-	defaultSNMPVersion             = []string{"2c", "1"}
-	defaultSNMPPort                = []int{161}
-	defaultSNMPDiscoverParRequests = 5
-	defaultSNMPDiscoverTimeout     = 2
-	defaultSNMPDiscoverRetries     = 0
+	defaultRequestTimeout                 = 0
+	defaultSNMPCommunity                  = []string{"public"}
+	defaultSNMPVersion                    = []string{"2c", "1"}
+	defaultSNMPPort                       = []int{161}
+	defaultSNMPMaxRepetitions      uint32 = 0
+	defaultSNMPDiscoverParRequests        = 5
+	defaultSNMPDiscoverTimeout            = 2
+	defaultSNMPDiscoverRetries            = 0
 )
 
 func setDeviceDefaults() {
@@ -38,6 +39,7 @@ func buildDeviceFlagSet() *flag.FlagSet {
 	fs.Int("snmp-discover-par-requests", defaultSNMPDiscoverParRequests, "The amount of parallel connection requests used while trying to get a valid SNMP connection")
 	fs.Int("snmp-discover-timeout", defaultSNMPDiscoverTimeout, "The timeout in seconds used while trying to get a valid SNMP connection")
 	fs.Int("snmp-discover-retries", defaultSNMPDiscoverRetries, "The retries used while trying to get a valid SNMP connection")
+	fs.Uint32("snmp-max-repetitions", defaultSNMPMaxRepetitions, "The max repetitions of the SNMP connection. Overrides the device class settings if set")
 	fs.String("snmp-v3-level", "", "The level of the SNMP v3 connection ('noAuthNoPriv', 'authNoPriv' or 'authPriv')")
 	fs.String("snmp-v3-context", "", "The context name of the SNMP v3 connection")
 	fs.String("snmp-v3-user", "", "The username of the SNMP v3 connection")
@@ -66,6 +68,15 @@ func bindDeviceFlags(cmd *cobra.Command) error {
 			log.Error().
 				AnErr("Error", err).
 				Msg("Can't bind flag timeout")
+			return err
+		}
+	}
+	if x := cmd.Flags().Lookup("snmp-max-repetitions"); x != nil {
+		err := viper.BindPFlag("device.snmp-max-repetitions", x)
+		if err != nil {
+			log.Error().
+				AnErr("Error", err).
+				Msg("Can't bind flag snmp-max-repetitions")
 			return err
 		}
 	}

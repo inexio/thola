@@ -51,7 +51,9 @@ func (o *deviceClassCommunicator) Match(ctx context.Context) (bool, error) {
 
 func (o *deviceClassCommunicator) UpdateConnection(ctx context.Context) error {
 	if conn, ok := network.DeviceConnectionFromContext(ctx); ok {
-		if conn.SNMP != nil && conn.SNMP.SnmpClient != nil {
+		if conn.SNMP != nil && conn.SNMP.SnmpClient != nil &&
+			(conn.RawConnectionData.SNMP.MaxRepetitions == nil || *conn.RawConnectionData.SNMP.MaxRepetitions == 0) {
+			log.Ctx(ctx).Debug().Msg("set snmp max repetitions of device class")
 			conn.SNMP.SnmpClient.SetMaxRepetitions(o.deviceClass.config.snmp.MaxRepetitions)
 		}
 	}

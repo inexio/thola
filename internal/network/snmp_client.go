@@ -123,11 +123,13 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 			continue
 		}
 		if res.version == "3" {
-			return res.client, nil
+			successfulClient = res.client
+			break
 		}
 		if res.version == "2c" {
 			if !v3Available {
-				return res.client, nil
+				successfulClient = res.client
+				break
 			}
 			if successfulClient == nil || successfulClient.client.Version < gosnmp.Version2c {
 				successfulClient = res.client
@@ -135,7 +137,8 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 		}
 		if res.version == "1" {
 			if !v3Available && !v2cAvailable {
-				return res.client, nil
+				successfulClient = res.client
+				break
 			}
 			if successfulClient == nil {
 				successfulClient = res.client
@@ -143,6 +146,10 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 		}
 	}
 	if successfulClient != nil {
+		if data.MaxRepetitions != nil {
+			log.Ctx(ctx).Debug().Msg("set snmp max repetitions of connection data")
+			successfulClient.SetMaxRepetitions(*data.MaxRepetitions)
+		}
 		return successfulClient, nil
 	}
 	if criticalError != nil {
@@ -527,9 +534,6 @@ func (s *SNMPClient) GetVersion() string {
 
 // GetMaxRepetitions returns the max repetitions.
 func (s *SNMPClient) GetMaxRepetitions() uint32 {
-	if s.client.MaxRepetitions == 0 {
-		return gosnmp.Default.MaxRepetitions
-	}
 	return s.client.MaxRepetitions
 }
 
