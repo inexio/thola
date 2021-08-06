@@ -12,7 +12,7 @@ import (
 )
 
 func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {
-	log.Ctx(ctx).Trace().Msg("starting identify")
+	log.Ctx(ctx).Debug().Msg("starting identify")
 
 	response, err := r.identify(ctx)
 	if err != nil {

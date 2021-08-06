@@ -111,6 +111,6 @@ func (d *redisDatabase) CheckConnection(ctx context.Context) error {
 }
 
 func (d *redisDatabase) CloseConnection(ctx context.Context) error {
-	log.Ctx(ctx).Trace().Msg("closing connection to redis database")
+	log.Ctx(ctx).Debug().Msg("closing connection to redis database")
 	return d.pool.Close()
 }

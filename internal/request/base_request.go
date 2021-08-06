@@ -289,9 +289,9 @@ func (r *BaseRequest) setupConnection(ctx context.Context) (*network.RequestDevi
 	if r.DeviceData.ConnectionData.SNMP != nil {
 		snmpCon, err := r.setupSNMPConnection(ctx)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("failed to setup snmp connection data")
+			log.Ctx(ctx).Debug().Err(err).Msg("failed to setup snmp connection data")
 		} else {
-			log.Ctx(ctx).Trace().Err(err).Msg("successfully setup snmp connection data")
+			log.Ctx(ctx).Debug().Err(err).Msg("successfully setup snmp connection data")
 			con.SNMP = snmpCon
 			createdData = true
 		}
@@ -300,9 +300,9 @@ func (r *BaseRequest) setupConnection(ctx context.Context) (*network.RequestDevi
 	if r.DeviceData.ConnectionData.HTTP != nil && (len(r.DeviceData.ConnectionData.HTTP.HTTPSPorts) != 0 || len(r.DeviceData.ConnectionData.HTTP.HTTPPorts) != 0) {
 		httpCon, err := r.setupHTTPConnection()
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("failed to setup http connection data")
+			log.Ctx(ctx).Debug().Err(err).Msg("failed to setup http connection data")
 		} else {
-			log.Ctx(ctx).Trace().Err(err).Msg("successfully setup http connection data")
+			log.Ctx(ctx).Debug().Err(err).Msg("successfully setup http connection data")
 			con.HTTP = httpCon
 			createdData = true
 		}

@@ -29,7 +29,7 @@ var deviceLocks struct {
 func StartAPI() {
 	ctx := log.Logger.WithContext(context.Background())
 
-	log.Ctx(ctx).Trace().Msg("starting the server")
+	log.Ctx(ctx).Debug().Msg("starting the server")
 
 	db, err := database.GetDB(ctx)
 	if err != nil {
@@ -47,7 +47,7 @@ func StartAPI() {
 		"    \\/_/   \\/_/\\/_/   \\/_____/   \\/_____/   \\/_/\\/_/\n\n")
 
 	if (viper.GetString("api.username") != "") && (viper.GetString("api.password") != "") {
-		log.Ctx(ctx).Trace().Msg("set authorization for api")
+		log.Ctx(ctx).Debug().Msg("set authorization for api")
 		e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
 			// Be careful to use constant time comparison to prevent timing attacks
 			if subtle.ConstantTimeCompare([]byte(username), []byte(viper.GetString("restapi.username"))) == 1 &&
@@ -59,7 +59,7 @@ func StartAPI() {
 	}
 
 	if viper.GetString("api.ratelimit") != "" {
-		log.Ctx(ctx).Trace().Msg("set ratelimit for api")
+		log.Ctx(ctx).Debug().Msg("set ratelimit for api")
 		e.Use(ipRateLimit())
 	}
 
@@ -689,7 +689,7 @@ func StartAPI() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	log.Ctx(ctx).Trace().Msg("received shutdown signal")
+	log.Ctx(ctx).Debug().Msg("received shutdown signal")
 
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -1012,10 +1012,10 @@ func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (requ
 		lock.Lock()
 		defer func() {
 			lock.Unlock()
-			log.Ctx(ctx).Trace().Msg("unlocked IP " + *ip)
+			log.Ctx(ctx).Debug().Msg("unlocked IP " + *ip)
 		}()
 
-		log.Ctx(ctx).Trace().Msg("locked IP " + *ip)
+		log.Ctx(ctx).Debug().Msg("locked IP " + *ip)
 	}
 
 	return request.ProcessRequest(ctx, r)

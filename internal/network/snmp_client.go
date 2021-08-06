@@ -123,11 +123,13 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 			continue
 		}
 		if res.version == "3" {
-			return res.client, nil
+			successfulClient = res.client
+			break
 		}
 		if res.version == "2c" {
 			if !v3Available {
-				return res.client, nil
+				successfulClient = res.client
+				break
 			}
 			if successfulClient == nil || successfulClient.client.Version < gosnmp.Version2c {
 				successfulClient = res.client
@@ -135,7 +137,8 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 		}
 		if res.version == "1" {
 			if !v3Available && !v2cAvailable {
-				return res.client, nil
+				successfulClient = res.client
+				break
 			}
 			if successfulClient == nil {
 				successfulClient = res.client
@@ -143,6 +146,10 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 		}
 	}
 	if successfulClient != nil {
+		if data.MaxRepetitions != nil {
+			log.Ctx(ctx).Debug().Msg("set snmp max repetitions of connection data")
+			successfulClient.SetMaxRepetitions(*data.MaxRepetitions)
+		}
 		return successfulClient, nil
 	}
 	if criticalError != nil {
@@ -268,8 +275,8 @@ func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
 		return nil, tholaerr.NewSNMPError(err.Error())
 	}
 
-	client.Retries = 3
-	client.ExponentialTimeout = true
+	client.Retries = gosnmp.Default.Retries
+	client.Timeout = gosnmp.Default.Timeout
 
 	return &SNMPClient{
 		client:    client,
@@ -361,6 +368,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 				if !ok {
 					return nil, errors.New("cached snmp result is not a snmp response")
 				}
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", o).Msg("used cached snmp get result")
 				m[a] = res
 			}
 		}
@@ -375,6 +383,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 	if len(reqOIDs) != 0 {
 		response, err = s.client.Get(reqOIDs)
 		if err != nil {
+			log.Ctx(ctx).Trace().Str("network_request", "snmpget").Strs("oid", reqOIDs).Err(err).Msg("snmpget failed")
 			return nil, errors.Wrap(err, "error during snmpget")
 		}
 	}
@@ -396,12 +405,16 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 			snmpResponse.snmpType = currentResponse.Type
 
 			if snmpResponse.WasSuccessful() {
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("snmpget was successful")
 				successful = true
 				if s.useCache {
 					s.getCache.add(snmpResponse.oid, snmpResponse, nil)
 				}
-			} else if s.useCache {
-				s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+			} else {
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("No Such Object available on this agent at this OID")
+				if s.useCache {
+					s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+				}
 			}
 
 			snmpResponses = append(snmpResponses, snmpResponse)
@@ -424,6 +437,7 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 			if !ok {
 				return nil, errors.New("cached snmp result is not a snmp response")
 			}
+			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("used cached snmp walk result")
 			return res, nil
 		}
 	}
@@ -435,13 +449,14 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	if s.client.Version != gosnmp.Version1 {
 		response, err = s.client.BulkWalkAll(oid)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("bulk walk failed")
+			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Err(err).Msg("snmp bulk walk failed")
 		}
 	}
 	if s.client.Version == gosnmp.Version1 || err != nil {
 		response, err = s.client.WalkAll(oid)
 	}
 	if err != nil {
+		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Err(err).Msg("snmp walk failed")
 		err = errors.Wrap(err, "snmpwalk failed")
 		if s.useCache {
 			s.walkCache.add(oid, nil, err)
@@ -450,6 +465,7 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	}
 
 	if response == nil {
+		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("No Such Object available on this agent at this OID")
 		err = tholaerr.NewNotFoundError("No Such Object available on this agent at this OID")
 		if s.useCache {
 			s.walkCache.add(oid, nil, err)
@@ -478,6 +494,8 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	if s.useCache {
 		s.walkCache.add(oid, res, nil)
 	}
+
+	log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("snmp walk successful")
 
 	return res, nil
 }
@@ -527,9 +545,6 @@ func (s *SNMPClient) GetVersion() string {
 
 // GetMaxRepetitions returns the max repetitions.
 func (s *SNMPClient) GetMaxRepetitions() uint32 {
-	if s.client.MaxRepetitions == 0 {
-		return gosnmp.Default.MaxRepetitions
-	}
 	return s.client.MaxRepetitions
 }
 

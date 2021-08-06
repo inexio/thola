@@ -83,7 +83,7 @@ func (d *sqlDatabase) CheckConnection(ctx context.Context) error {
 }
 
 func (d *sqlDatabase) CloseConnection(ctx context.Context) error {
-	log.Ctx(ctx).Trace().Msg("closing connection to mysql database")
+	log.Ctx(ctx).Debug().Msg("closing connection to mysql database")
 	return d.db.Close()
 }
 

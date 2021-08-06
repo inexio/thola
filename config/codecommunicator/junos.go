@@ -28,7 +28,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 	// dot1dBasePortIfIndex
 	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.2.1.17.1.4.1.2")
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get dot1dBasePortIfIndex, skipping VLANs")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get dot1dBasePortIfIndex, skipping VLANs")
 		return interfaces, nil
 	}
 
@@ -48,7 +48,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 	// jnxExVlanPortStatus
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2636.3.40.1.5.1.7.1.3")
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get jnxExVlanPortStatus, skipping VLANs")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get jnxExVlanPortStatus, skipping VLANs")
 		return interfaces, nil
 	}
 
@@ -73,7 +73,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 	// jnxExVlanName
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2636.3.40.1.5.1.5.1.2")
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get jnxExVlanName, skipping VLANs")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get jnxExVlanName, skipping VLANs")
 		return interfaces, nil
 	}
 

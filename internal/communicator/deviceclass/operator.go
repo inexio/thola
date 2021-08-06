@@ -294,11 +294,11 @@ func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) 
 	for _, c := range w.cases {
 		b, err := matchStrings(ctx, switchString, w.switchMode, c.caseString)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("error during match strings")
+			log.Ctx(ctx).Debug().Err(err).Msg("error during match strings")
 			continue
 		}
 		if !b {
-			log.Ctx(ctx).Trace().Err(err).Msg("string does not match")
+			log.Ctx(ctx).Debug().Err(err).Msg("string does not match")
 			continue
 		}
 		x, err := c.operators.apply(ctx, s)

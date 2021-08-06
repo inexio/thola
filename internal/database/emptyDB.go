@@ -31,6 +31,6 @@ func (d *emptyDatabase) CheckConnection(_ context.Context) error {
 }
 
 func (d *emptyDatabase) CloseConnection(ctx context.Context) error {
-	log.Ctx(ctx).Trace().Msg("closing connection to empty database")
+	log.Ctx(ctx).Debug().Msg("closing connection to empty database")
 	return nil
 }

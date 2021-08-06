@@ -79,7 +79,7 @@ func (d *deviceClassOIDs) readOID(ctx context.Context) (map[int]interface{}, err
 		res, err := reader.readOID(ctx)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) || tholaerr.IsComponentNotFoundError(err) {
-				log.Ctx(ctx).Trace().Err(err).Msgf("value %s", label)
+				log.Ctx(ctx).Debug().Err(err).Msgf("value %s", label)
 				continue
 			}
 			return nil, errors.Wrapf(err, "failed to get value '%s'", label)
@@ -134,24 +134,24 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		log.Ctx(ctx).Trace().Str("property", "interface").Msg("snmp client is empty")
+		log.Ctx(ctx).Debug().Str("property", "interface").Msg("snmp client is empty")
 		return nil, errors.New("snmp client is empty")
 	}
 
 	snmpResponse, err := con.SNMP.SnmpClient.SNMPWalk(ctx, string(d.OID))
 	if err != nil {
 		if tholaerr.IsNotFoundError(err) {
-			log.Ctx(ctx).Trace().Err(err).Msgf("oid %s not found on device", d.OID)
+			log.Ctx(ctx).Debug().Err(err).Msgf("oid %s not found on device", d.OID)
 			return nil, err
 		}
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get oid value of interface")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get oid value of interface")
 		return nil, errors.Wrap(err, "failed to get oid value")
 	}
 
 	for _, response := range snmpResponse {
 		res, err := response.GetValueBySNMPGetConfiguration(d.SNMPGetConfiguration)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("couldn't get value from response response")
+			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response response")
 			return nil, errors.Wrap(err, "couldn't get value from response response")
 		}
 		if res != "" {
@@ -160,13 +160,13 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 				if tholaerr.IsDidNotMatchError(err) {
 					continue
 				}
-				log.Ctx(ctx).Trace().Err(err).Msgf("response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
+				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
 				return nil, errors.Wrapf(err, "response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
 			}
 			oid := strings.Split(response.GetOID(), ".")
 			index, err := strconv.Atoi(oid[len(oid)-1])
 			if err != nil {
-				log.Ctx(ctx).Trace().Err(err).Msg("index isn't an integer")
+				log.Ctx(ctx).Debug().Err(err).Msg("index isn't an integer")
 				return nil, errors.Wrap(err, "index isn't an integer")
 			}
 			result[index] = resNormalized
