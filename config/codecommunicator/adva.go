@@ -82,12 +82,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 
 	rx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.21")
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get rx 100 values")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get rx 100 values")
 	}
 
 	tx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.22")
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to get tx 100 values")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get tx 100 values")
 	}
 
 	for i, interf := range interfaces {
@@ -231,7 +231,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 	facilityPhysInstValueInputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2"
 	facilityPhysInstValueInputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueInputPower)
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk facilityPhysInstValueInputPower")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to walk facilityPhysInstValueInputPower")
 	}
 
 	for _, res := range facilityPhysInstValueInputPowerValues {
@@ -258,7 +258,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 	facilityPhysInstValueOutputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"
 	facilityPhysInstValueOutputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueOutputPower)
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("failed to walk facilityPhysInstValueOutputPower")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to walk facilityPhysInstValueOutputPower")
 	}
 
 	for _, res := range facilityPhysInstValueOutputPowerValues {

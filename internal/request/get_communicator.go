@@ -26,18 +26,18 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 		if !tholaerr.IsNotFoundError(err) {
 			return nil, errors.Wrap(err, "failed to get device properties from cache")
 		}
-		log.Ctx(ctx).Trace().Msg("no device properties found in cache")
+		log.Ctx(ctx).Debug().Msg("no device properties found in cache")
 		invalidCache = true
 	} else {
-		log.Ctx(ctx).Trace().Msg("found device properties in cache, starting to validate")
+		log.Ctx(ctx).Debug().Msg("found device properties in cache, starting to validate")
 		res, err := create.MatchDeviceClass(ctx, deviceProperties.Class)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to match device class")
 		}
 		if invalidCache = !res; invalidCache {
-			log.Ctx(ctx).Trace().Msg("cached device class is invalid")
+			log.Ctx(ctx).Debug().Msg("cached device class is invalid")
 		} else {
-			log.Ctx(ctx).Trace().Msg("cached device class is valid")
+			log.Ctx(ctx).Debug().Msg("cached device class is valid")
 		}
 	}
 	if invalidCache {

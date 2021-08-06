@@ -13,8 +13,10 @@ import (
 
 func getBaseRequest(host string) request.BaseRequest {
 	var nullInt *int
+	var nullUInt32 *uint32
 	var nullString *string
 	timeout := viper.GetInt("request.timeout")
+	maxRepetitions := viper.GetUint32("device.snmp-max-repetitions")
 	parallelRequests := viper.GetInt("device.snmp-discover-par-requests")
 	discoverTimeout := viper.GetInt("device.snmp-discover-timeout")
 	retries := viper.GetInt("device.snmp-discover-retries")
@@ -36,6 +38,7 @@ func getBaseRequest(host string) request.BaseRequest {
 					Communities:              utility.IfThenElse(deviceFlagSet.Changed("snmp-community"), viper.GetStringSlice("device.snmp-communities"), []string{}).([]string),
 					Versions:                 utility.IfThenElse(deviceFlagSet.Changed("snmp-version"), viper.GetStringSlice("device.snmp-versions"), []string{}).([]string),
 					Ports:                    utility.IfThenElse(deviceFlagSet.Changed("snmp-port"), viper.GetIntSlice("device.snmp-ports"), []int{}).([]int),
+					MaxRepetitions:           utility.IfThenElse(deviceFlagSet.Changed("snmp-max-repetitions"), &maxRepetitions, nullUInt32).(*uint32),
 					DiscoverParallelRequests: utility.IfThenElse(deviceFlagSet.Changed("snmp-discover-par-requests"), &parallelRequests, nullInt).(*int),
 					DiscoverTimeout:          utility.IfThenElse(deviceFlagSet.Changed("snmp-discover-timeout"), &discoverTimeout, nullInt).(*int),
 					DiscoverRetries:          utility.IfThenElse(deviceFlagSet.Changed("snmp-discover-retries"), &retries, nullInt).(*int),

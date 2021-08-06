@@ -17,7 +17,7 @@ type propertyReader interface {
 type propertyReaderSet []propertyReader
 
 func (p *propertyReaderSet) getProperty(ctx context.Context) (value.Value, error) {
-	log.Ctx(ctx).Trace().Msg("starting with property reader set")
+	log.Ctx(ctx).Debug().Msg("starting with property reader set")
 	for _, reader := range *p {
 		property, err := reader.getProperty(ctx)
 		if err == nil {
@@ -37,11 +37,11 @@ func (b *basePropertyReader) getProperty(ctx context.Context) (value.Value, erro
 	if b.preCondition != nil {
 		conditionsMatched, err := b.preCondition.check(ctx)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msg("error during pre condition check")
+			log.Ctx(ctx).Debug().Err(err).Msg("error during pre condition check")
 			return value.Empty(), errors.Wrap(err, "an error occurred while checking preconditions")
 		}
 		if !conditionsMatched {
-			log.Ctx(ctx).Trace().Err(err).Msg("pre condition not fulfilled")
+			log.Ctx(ctx).Debug().Err(err).Msg("pre condition not fulfilled")
 			return value.Empty(), errors.New("pre condition failed")
 		}
 	}
@@ -51,10 +51,10 @@ func (b *basePropertyReader) getProperty(ctx context.Context) (value.Value, erro
 	}
 	v, err = b.applyOperators(ctx, v)
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Msg("error while applying operators")
+		log.Ctx(ctx).Debug().Err(err).Msg("error while applying operators")
 		return value.Empty(), errors.Wrap(err, "error while applying operators")
 	}
-	log.Ctx(ctx).Trace().Msgf("property determined (%v)", v)
+	log.Ctx(ctx).Debug().Msgf("property determined (%v)", v)
 	return v, nil
 }
 
@@ -67,7 +67,7 @@ type constantPropertyReader struct {
 }
 
 func (c *constantPropertyReader) getProperty(ctx context.Context) (value.Value, error) {
-	log.Ctx(ctx).Trace().Str("property_reader", "constant").Msg("setting constant property")
+	log.Ctx(ctx).Debug().Str("property_reader", "constant").Msg("setting constant property")
 	return c.Value, nil
 }
 
@@ -82,10 +82,10 @@ func (c *sysObjectIDPropertyReader) getProperty(ctx context.Context) (value.Valu
 
 	sysObjectID, err := con.SNMP.GetSysObjectID(ctx)
 	if err != nil {
-		log.Ctx(ctx).Trace().Str("property_reader", "SysObjectID").Msg("failed to get sys object id")
+		log.Ctx(ctx).Debug().Str("property_reader", "SysObjectID").Msg("failed to get sys object id")
 		return value.Empty(), errors.New("failed to get sys object id")
 	}
-	log.Ctx(ctx).Trace().Str("property_reader", "SysObjectID").Msg("received SysObjectID successfully")
+	log.Ctx(ctx).Debug().Str("property_reader", "SysObjectID").Msg("received SysObjectID successfully")
 
 	return value.New(sysObjectID), nil
 }
@@ -101,10 +101,10 @@ func (c *sysDescriptionPropertyReader) getProperty(ctx context.Context) (value.V
 
 	sysDescription, err := con.SNMP.GetSysDescription(ctx)
 	if err != nil {
-		log.Ctx(ctx).Trace().Str("property_reader", "SysDescription").Msg("failed to get sys description")
+		log.Ctx(ctx).Debug().Str("property_reader", "SysDescription").Msg("failed to get sys description")
 		return value.Empty(), errors.New("failed to get sys description")
 	}
-	log.Ctx(ctx).Trace().Str("property_reader", "SysDescription").Msg("received SysDescription successfully")
+	log.Ctx(ctx).Debug().Str("property_reader", "SysDescription").Msg("received SysDescription successfully")
 
 	return value.New(sysDescription), nil
 }
@@ -121,7 +121,7 @@ func (s *snmpGetPropertyReader) getProperty(ctx context.Context) (value.Value, e
 	oid := string(s.OID)
 	result, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Str("property_reader", "snmpget").Msg("snmpget on oid " + oid + " failed")
+		log.Ctx(ctx).Debug().Err(err).Str("property_reader", "snmpget").Msg("snmpget on oid " + oid + " failed")
 		return value.Empty(), errors.Wrap(err, "snmpget failed")
 	}
 
@@ -132,10 +132,10 @@ func (s *snmpGetPropertyReader) getProperty(ctx context.Context) (value.Value, e
 		val, err = result[0].GetValue()
 	}
 	if err != nil {
-		log.Ctx(ctx).Trace().Err(err).Str("property_reader", "snmpget").Msg("snmpget failed")
+		log.Ctx(ctx).Debug().Err(err).Str("property_reader", "snmpget").Msg("snmpget failed")
 		return value.Empty(), err
 	}
-	log.Ctx(ctx).Trace().Str("property_reader", "snmpget").Msg("snmpget successful")
+	log.Ctx(ctx).Debug().Str("property_reader", "snmpget").Msg("snmpget successful")
 	return value.New(val), nil
 }
 
@@ -148,7 +148,7 @@ func (v *vendorPropertyReader) getProperty(ctx context.Context) (value.Value, er
 	}
 
 	if properties.Properties.Vendor == nil {
-		log.Ctx(ctx).Trace().Str("property_reader", "vendor").Msg("vendor has not yet been determined")
+		log.Ctx(ctx).Debug().Str("property_reader", "vendor").Msg("vendor has not yet been determined")
 		return value.Empty(), tholaerr.NewPreConditionError("vendor has not yet been determined")
 	}
 	return value.New(*properties.Properties.Vendor), nil
@@ -163,7 +163,7 @@ func (m *modelPropertyReader) getProperty(ctx context.Context) (value.Value, err
 	}
 
 	if properties.Properties.Model == nil {
-		log.Ctx(ctx).Trace().Str("property_reader", "model").Msg("model has not yet been determined")
+		log.Ctx(ctx).Debug().Str("property_reader", "model").Msg("model has not yet been determined")
 		return value.Empty(), tholaerr.NewPreConditionError("model has not yet been determined")
 	}
 	return value.New(*properties.Properties.Model), nil
@@ -178,7 +178,7 @@ func (m *modelSeriesPropertyReader) getProperty(ctx context.Context) (value.Valu
 	}
 
 	if properties.Properties.ModelSeries == nil {
-		log.Ctx(ctx).Trace().Str("property_reader", "model_series").Msg("model series has not yet been determined")
+		log.Ctx(ctx).Debug().Str("property_reader", "model_series").Msg("model series has not yet been determined")
 		return value.Empty(), tholaerr.NewPreConditionError("model series has not yet been determined")
 	}
 	return value.New(*properties.Properties.ModelSeries), nil

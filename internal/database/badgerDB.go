@@ -121,6 +121,6 @@ func (d *badgerDatabase) CheckConnection(_ context.Context) error {
 }
 
 func (d *badgerDatabase) CloseConnection(ctx context.Context) error {
-	log.Ctx(ctx).Trace().Msg("closing connection to built-in database")
+	log.Ctx(ctx).Debug().Msg("closing connection to built-in database")
 	return d.db.Close()
 }

@@ -14,22 +14,26 @@ type ConnectionData struct {
 
 // SNMPConnectionData
 //
-// SNMPConnectionData includes all snmp connection data for a device.
+// SNMPConnectionData includes all SNMP connection information for a device.
 //
 // swagger:model
 type SNMPConnectionData struct {
-	// The snmp community string(s) for the device.
+	// The SNMP community string(s) for the device.
 	//
 	// example: ["public"]
 	Communities []string `json:"communities" xml:"communities" yaml:"communities"`
-	// The snmp version(s) of the device.
+	// The SNMP version(s) of the device.
 	//
 	// example: ["2c"]
 	Versions []string `json:"versions" xml:"versions" yaml:"versions"`
-	// The snmp port(s) of the device.
+	// The SNMP port(s) of the device.
 	//
 	// example: [161]
 	Ports []int `json:"ports" xml:"ports" yaml:"ports"`
+	// The Max Repetitions of the SNMP connection. Overrides the device class settings if set.
+	//
+	// example: 20
+	MaxRepetitions *uint32 `json:"maxRepetitions" xml:"maxRepetitions" yaml:"maxRepetitions"`
 	// The amount of parallel connection requests used while trying to get a valid SNMP connection.
 	//
 	// example: 5
@@ -48,7 +52,7 @@ type SNMPConnectionData struct {
 
 // SNMPv3ConnectionData
 //
-// SNMPv3ConnectionData includes all snmp v3 specific connection data.
+// SNMPv3ConnectionData includes all SNMP v3 specific connection data.
 //
 // swagger:model
 type SNMPv3ConnectionData struct {
@@ -82,7 +86,7 @@ type SNMPv3ConnectionData struct {
 	PrivProtocol *string `json:"priv_protocol" xml:"priv_protocol" yaml:"priv_protocol"`
 }
 
-// SNMPCredentials includes all credential information of the snmp connection.
+// SNMPCredentials includes all credential information of the SNMP connection.
 type SNMPCredentials struct {
 	Version       string `yaml:"version" json:"version" xml:"version"`
 	Community     string `yaml:"community" json:"community" xml:"community"`
@@ -93,15 +97,15 @@ type SNMPCredentials struct {
 
 // HTTPConnectionData
 //
-// HTTPConnectionData includes all http connection data for a device.
+// HTTPConnectionData includes all HTTP connection data for a device.
 //
 // swagger:model
 type HTTPConnectionData struct {
-	// The http port(s) of the device.
+	// The HTTP port(s) of the device.
 	//
 	// example: [80]
 	HTTPPorts []int `json:"http_ports" xml:"http_ports" yaml:"http_ports"`
-	// The https port(s) of the device.
+	// The HTTPS port(s) of the device.
 	//
 	// example: [443]
 	HTTPSPorts []int `json:"https_ports" xml:"https_ports" yaml:"https_ports"`

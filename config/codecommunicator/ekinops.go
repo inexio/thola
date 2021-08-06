@@ -55,7 +55,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 
 		moduleReader, err := ekinopsGetModuleReader(slotIdentifier, module)
 		if err != nil {
-			log.Ctx(ctx).Trace().Err(err).Msgf("no information for reading out ekinops module '%s' available", module)
+			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module)
 			continue
 		}
 		moduleReaders = append(moduleReaders, moduleReader)
