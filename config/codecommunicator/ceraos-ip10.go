@@ -46,7 +46,7 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.In
 	var oldOSVersion bool
 	osVersion, err := c.parent.GetOSVersion(ctx)
 	if err == nil {
-		matches := regexp.MustCompile("^([0-9]+)\\.").FindStringSubmatch(osVersion)
+		matches := regexp.MustCompile(`^([0-9]+)\.`).FindStringSubmatch(osVersion)
 		if len(matches) >= 2 {
 			majorVersion, err := strconv.Atoi(matches[1])
 			if err == nil && majorVersion < 7 {
