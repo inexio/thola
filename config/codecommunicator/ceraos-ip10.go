@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/internal/device"
 	"github.com/pkg/errors"
 	"regexp"
+	"strconv"
 )
 
 type ceraosIP10Communicator struct {
@@ -40,6 +41,20 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.In
 		return nil, errors.Wrap(err, "failed to build regex")
 	}
 
+	// the radio interface of Ceragon IP 10 devices returns a wrong ifSpeed for older os version (< 7)
+	// ifSpeed needs to be multiplied by 1000 if os version is < 7
+	var oldOSVersion bool
+	osVersion, err := c.parent.GetOSVersion(ctx)
+	if err == nil {
+		matches := regexp.MustCompile("^([0-9]+)\\.").FindStringSubmatch(osVersion)
+		if len(matches) >= 2 {
+			majorVersion, err := strconv.Atoi(matches[1])
+			if err == nil && majorVersion < 7 {
+				oldOSVersion = true
+			}
+		}
+	}
+
 	for i := range subInterfaces {
 		if subInterfaces[i].IfDescr != nil && regex.MatchString(*subInterfaces[i].IfDescr) {
 			subInterfaces[i].IfOperStatus = targetInterface.IfOperStatus
@@ -50,7 +65,7 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.In
 			subInterfaces[i].IfHCInOctets = targetInterface.IfHCInOctets
 			subInterfaces[i].IfHCOutOctets = targetInterface.IfHCOutOctets
 
-			if subInterfaces[i].IfSpeed != nil {
+			if oldOSVersion && subInterfaces[i].IfSpeed != nil {
 				speed := *subInterfaces[i].IfSpeed * 1000
 				subInterfaces[i].IfSpeed = &speed
 			}
