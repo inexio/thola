@@ -79,7 +79,7 @@ func (d *deviceClassOIDs) readOID(ctx context.Context) (map[int]interface{}, err
 		res, err := reader.readOID(ctx)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) || tholaerr.IsComponentNotFoundError(err) {
-				log.Ctx(ctx).Debug().Err(err).Msgf("value %s", label)
+				log.Ctx(ctx).Debug().Err(err).Msgf("failed to get value '%s'", label)
 				continue
 			}
 			return nil, errors.Wrapf(err, "failed to get value '%s'", label)
@@ -141,7 +141,6 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 	snmpResponse, err := con.SNMP.SnmpClient.SNMPWalk(ctx, string(d.OID))
 	if err != nil {
 		if tholaerr.IsNotFoundError(err) {
-			log.Ctx(ctx).Debug().Err(err).Msgf("oid %s not found on device", d.OID)
 			return nil, err
 		}
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get oid value of interface")
