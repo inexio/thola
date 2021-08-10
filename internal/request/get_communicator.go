@@ -29,6 +29,9 @@ func GetCommunicator(ctx context.Context, baseRequest BaseRequest) (communicator
 		log.Ctx(ctx).Debug().Msg("no device properties found in cache")
 		invalidCache = true
 	} else {
+		logger := log.Ctx(ctx).With().Str("device_class", deviceProperties.Class).Logger()
+		ctx := logger.WithContext(ctx)
+
 		log.Ctx(ctx).Debug().Msg("found device properties in cache, starting to validate")
 		res, err := create.MatchDeviceClass(ctx, deviceProperties.Class)
 		if err != nil {
