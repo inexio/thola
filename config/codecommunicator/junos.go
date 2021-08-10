@@ -26,6 +26,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 		interfacesWithVLANs, err = juniperAddVLANsELS(ctx, interfaces)
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msg("getting juniper VLANs for ELS devices failed, skipping VLANs")
+			interfacesWithVLANs = interfaces
 		}
 	}
 
