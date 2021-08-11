@@ -27,21 +27,35 @@ type interfaceCheckOutput struct {
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	readInterfacesResponse, err := r.getData(ctx)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while processing read interfaces request", true) {
+	readInterfacesRequest := ReadInterfacesRequest{ReadRequest{r.BaseRequest}}
+	response, err := readInterfacesRequest.process(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	readInterfacesResponse := response.(*ReadInterfacesResponse)
+
+	err = r.normalizeInterfaces(readInterfacesResponse.Interfaces)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while normalizing interfaces", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
-	err = addCheckInterfacePerformanceData(readInterfacesResponse.Interfaces, r.mon)
+	interfaces, err := r.filterInterfaces(readInterfacesResponse.Interfaces)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while filtering interfaces", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
+	err = addCheckInterfacePerformanceData(interfaces, r.mon)
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
 	if r.PrintInterfaces {
-		var interfaces []interfaceCheckOutput
-		for _, interf := range readInterfacesResponse.Interfaces {
+		var interfaceOutput []interfaceCheckOutput
+		for _, interf := range interfaces {
 			var index *string
 			if interf.IfIndex != nil {
 				i := fmt.Sprint(*interf.IfIndex)
@@ -60,9 +74,9 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 				SubType:       interf.SubType,
 			}
 
-			interfaces = append(interfaces, x)
+			interfaceOutput = append(interfaceOutput, x)
 		}
-		output, err := parser.Parse(interfaces, "json")
+		output, err := parser.Parse(interfaceOutput, "json")
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
@@ -73,18 +87,10 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }
 
-func (r *CheckInterfaceMetricsRequest) getData(ctx context.Context) (*ReadInterfacesResponse, error) {
-	readInterfacesRequest := ReadInterfacesRequest{ReadRequest{r.BaseRequest}}
-	response, err := readInterfacesRequest.process(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	readInterfacesResponse := response.(*ReadInterfacesResponse)
-
+func (r *CheckInterfaceMetricsRequest) filterInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
 	var filterIndices []int
 out:
-	for i, interf := range readInterfacesResponse.Interfaces {
+	for i, interf := range interfaces {
 		for _, filter := range r.IfTypeFilter {
 			if interf.IfType != nil && *interf.IfType == filter {
 				filterIndices = append(filterIndices, i)
@@ -117,9 +123,9 @@ out:
 		}
 	}
 
-	readInterfacesResponse.Interfaces = filterInterfaces(readInterfacesResponse.Interfaces, filterIndices, 0)
+	interfaces = filterInterfaces(interfaces, filterIndices, 0)
 
-	return readInterfacesResponse, nil
+	return interfaces, nil
 }
 
 func filterInterfaces(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
@@ -129,9 +135,24 @@ func filterInterfaces(interfaces []device.Interface, toRemove []int, alreadyRemo
 	return append(interfaces[:toRemove[0]-alreadyRemoved], filterInterfaces(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
 }
 
-func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitoringplugin.Response) error {
-	ifDescriptions := make(map[string]*device.Interface)
+func (r *CheckInterfaceMetricsRequest) normalizeInterfaces(interfaces []device.Interface) error {
+	for i, interf := range interfaces {
+		// if the ifDescr is empty, use the ifIndex as the ifDescr and therefore also as the label for the metrics
+		if interf.IfDescr == nil {
+			if interf.IfIndex == nil {
+				return errors.New("interface does not have an ifDescription and ifIndex")
+			}
+			index := fmt.Sprint(*interfaces[i].IfIndex)
+			interfaces[i].IfDescr = &index
+		}
 
+		if r.ifDescrRegex != nil {
+			normalizedIfDescr := r.ifDescrRegex.ReplaceAllString(*interfaces[i].IfDescr, *r.IfDescrRegexReplace)
+			interfaces[i].IfDescr = &normalizedIfDescr
+		}
+	}
+
+	ifDescriptions := make(map[string]*device.Interface)
 	// if the device has multiple interfaces with the same ifDescr, the ifDescr will be modified and the ifIndex will be attached
 	// otherwise, the monitoring plugin will throw an error because of duplicate labels
 	for i, origInterf := range interfaces {
@@ -153,15 +174,13 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			} else {
 				ifDescriptions[*origInterf.IfDescr] = &interfaces[i]
 			}
-		} else {
-			if interfaces[i].IfIndex == nil {
-				return errors.New("interface does not have an ifDescription and ifIndex")
-			}
-			x := fmt.Sprint(*interfaces[i].IfIndex)
-			interfaces[i].IfDescr = &x
 		}
 	}
 
+	return nil
+}
+
+func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitoringplugin.Response) error {
 	for _, i := range interfaces {
 		//error_counter_in
 		if i.IfInErrors != nil {
