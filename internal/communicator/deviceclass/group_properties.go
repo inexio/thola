@@ -9,6 +9,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -21,16 +22,26 @@ func (g *propertyGroups) Decode(destination interface{}) error {
 	return mapstructure.WeakDecode(g, destination)
 }
 
+type groupPropertyFilter struct {
+	key   string
+	regex string
+}
+
 type groupPropertyReader interface {
-	getProperty(ctx context.Context) (propertyGroups, []value.Value, error)
+	getProperty(ctx context.Context, filter ...groupPropertyFilter) (propertyGroups, []value.Value, error)
 }
 
 type snmpGroupPropertyReader struct {
 	oids deviceClassOIDs
 }
 
-func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGroups, []value.Value, error) {
-	groups, err := s.oids.readOID(ctx)
+func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...groupPropertyFilter) (propertyGroups, []value.Value, error) {
+	filteredIndices, err := s.getFilteredIndices(ctx, filter...)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed to filter oid indices")
+	}
+
+	groups, err := s.oids.readOID(ctx, filteredIndices)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to read oids")
 	}
@@ -66,17 +77,72 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context) (propertyGrou
 	return res, indices, nil
 }
 
+func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...groupPropertyFilter) ([]value.Value, error) {
+	filteredIndicesMap := make(map[value.Value]struct{})
+	var filteredIndices []value.Value
+
+	for _, f := range filter {
+		// compile filter regex
+		regex, err := regexp.Compile(f.regex)
+		if err != nil {
+			return nil, errors.Wrap(err, "filter regex ")
+		}
+
+		// find filter oid
+		attrs := strings.Split(f.key, "/")
+		oidr := oidReader(&s.oids)
+		for _, attr := range attrs {
+			// check if current oid reader contains multiple OIDs
+			oidsr, ok := oidr.(*deviceClassOIDs)
+			if !ok || oidsr == nil {
+				return nil, errors.New("filter attribute does not exist")
+			}
+
+			// check if oid reader contains OID(s) for the current attribute name
+			if oidr, ok = (*oidsr)[attr]; !ok {
+				return nil, errors.New("filter attribute does not exist")
+			}
+		}
+
+		// check if the current oid reader contains only a single oid
+		singleOIDr, ok := oidr.(*deviceClassOID)
+		if !ok || singleOIDr == nil {
+			return nil, errors.New("filter attribute does not exist")
+		}
+
+		results, err := singleOIDr.readOID(ctx, nil)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to read out filter oid ")
+		}
+
+		for index, result := range results {
+			if regex.MatchString(result.(value.Value).String()) {
+				// filter matches
+				delete(filteredIndicesMap, value.New(index))
+			} else {
+				filteredIndicesMap[value.New(index)] = struct{}{}
+			}
+		}
+	}
+
+	for index := range filteredIndicesMap {
+		filteredIndices = append(filteredIndices, index)
+	}
+
+	return filteredIndices, nil
+}
+
 type oidReader interface {
-	readOID(context.Context) (map[int]interface{}, error)
+	readOID(context.Context, []value.Value) (map[int]interface{}, error)
 }
 
 // deviceClassOIDs is a recursive data structure which maps labels to either a single OID (deviceClassOID) or another deviceClassOIDs
 type deviceClassOIDs map[string]oidReader
 
-func (d *deviceClassOIDs) readOID(ctx context.Context) (map[int]interface{}, error) {
+func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value) (map[int]interface{}, error) {
 	result := make(map[int]map[string]interface{})
 	for label, reader := range *d {
-		res, err := reader.readOID(ctx)
+		res, err := reader.readOID(ctx, indices)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) || tholaerr.IsComponentNotFoundError(err) {
 				log.Ctx(ctx).Debug().Err(err).Msgf("failed to get value '%s'", label)
@@ -129,7 +195,7 @@ type deviceClassOID struct {
 	indicesMapping *deviceClassOID
 }
 
-func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, error) {
+func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (map[int]interface{}, error) {
 	result := make(map[int]interface{})
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
@@ -138,7 +204,21 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 		return nil, errors.New("snmp client is empty")
 	}
 
-	snmpResponse, err := con.SNMP.SnmpClient.SNMPWalk(ctx, string(d.OID))
+	var snmpResponse []network.SNMPResponse
+	var err error
+	if indices != nil {
+		oid := string(d.OID)
+		if !strings.HasSuffix(oid, ".") {
+			oid += "."
+		}
+		var oids []string
+		for _, index := range indices {
+			oids = append(oids, oid+index.String())
+		}
+		snmpResponse, err = con.SNMP.SnmpClient.SNMPGet(ctx, oids...)
+	} else {
+		snmpResponse, err = con.SNMP.SnmpClient.SNMPWalk(ctx, string(d.OID))
+	}
 	if err != nil {
 		if tholaerr.IsNotFoundError(err) {
 			return nil, err
@@ -150,8 +230,8 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 	for _, response := range snmpResponse {
 		res, err := response.GetValueBySNMPGetConfiguration(d.SNMPGetConfiguration)
 		if err != nil {
-			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response response")
-			return nil, errors.Wrap(err, "couldn't get value from response response")
+			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response")
+			continue
 		}
 		if res != "" {
 			resNormalized, err := d.operators.apply(ctx, value.New(res))
@@ -174,7 +254,7 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 
 	//change indices if necessary
 	if d.indicesMapping != nil {
-		indices, err := d.indicesMapping.readOID(ctx)
+		indices, err := d.indicesMapping.readOID(ctx, nil)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read indices")
 		}
@@ -204,6 +284,6 @@ func (d *deviceClassOID) readOID(ctx context.Context) (map[int]interface{}, erro
 
 type emptyOIDReader struct{}
 
-func (n *emptyOIDReader) readOID(context.Context) (map[int]interface{}, error) {
+func (n *emptyOIDReader) readOID(context.Context, []value.Value) (map[int]interface{}, error) {
 	return nil, tholaerr.NewComponentNotFoundError("oid is ignored")
 }
