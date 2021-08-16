@@ -224,7 +224,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 
 			var newIndices []value.Value
 			for _, ifIndex := range indices {
-				if relIndex, ok := ifIndexRelIndex[ifIndex.(value.Value).String()]; ok {
+				if relIndex, ok := ifIndexRelIndex[ifIndex.String()]; ok {
 					newIndices = append(newIndices, relIndex)
 				}
 			}
