@@ -196,7 +196,7 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 		Community: community,
 		Version:   version,
 		Timeout:   time.Duration(timeout) * time.Second,
-		MaxOids:   60,
+		MaxOids:   gosnmp.MaxOids,
 		Retries:   retries,
 	}
 
@@ -212,7 +212,7 @@ func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retri
 		Transport:     "udp",
 		Version:       gosnmp.Version3,
 		Timeout:       time.Duration(timeout) * time.Second,
-		MaxOids:       60,
+		MaxOids:       gosnmp.MaxOids,
 		Retries:       retries,
 		SecurityModel: gosnmp.UserSecurityModel,
 	}
@@ -354,50 +354,50 @@ func getGoSNMPV3PrivProtocol(protocol string) (gosnmp.SnmpV3PrivProtocol, error)
 // SNMPGet sends one or more simple snmpget requests to the target host and returns the result.
 func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error) {
 	var snmpResponses []SNMPResponse
-
-	m := make(map[int]SNMPResponse)
+	var successful bool
 	var reqOIDs []string
 
 	if s.useCache {
-		for a, o := range oid {
-			x, err := s.getCache.get(o)
+		for _, o := range oid {
+			cacheEntry, err := s.getCache.get(o)
 			if err != nil {
 				reqOIDs = append(reqOIDs, o)
 			} else {
-				res, ok := x.res.(SNMPResponse)
+				res, ok := cacheEntry.res.(SNMPResponse)
 				if !ok {
-					return nil, errors.New("cached snmp result is not a snmp response")
+					return nil, errors.New("cached SNMP Get result is not a SNMP response")
 				}
-				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", o).Msg("used cached snmp get result")
-				m[a] = res
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", o).Msg("used cached SNMP Get result")
+				snmpResponses = append(snmpResponses, res)
+				if res.WasSuccessful() {
+					successful = true
+				}
 			}
 		}
 	} else {
 		reqOIDs = oid
 	}
 
-	var response *gosnmp.SnmpPacket
-	var err error
+	var batch []string
 	s.client.Context = ctx
 
-	if len(reqOIDs) != 0 {
-		response, err = s.client.Get(reqOIDs)
+	for len(reqOIDs) > 0 {
+		var batchSize int
+		if s.client.MaxOids >= len(reqOIDs) {
+			batchSize = len(reqOIDs)
+		} else {
+			batchSize = s.client.MaxOids
+		}
+		batch, reqOIDs = reqOIDs[:batchSize], reqOIDs[batchSize:]
+
+		response, err := s.client.Get(batch)
 		if err != nil {
-			log.Ctx(ctx).Trace().Str("network_request", "snmpget").Strs("oid", reqOIDs).Err(err).Msg("snmpget failed")
+			log.Ctx(ctx).Trace().Str("network_request", "snmpget").Strs("oid", batch).Err(err).Msg("SNMP Get failed")
 			return nil, errors.Wrap(err, "error during snmpget")
 		}
-	}
 
-	successful := false
-
-	var currentResponse gosnmp.SnmpPDU
-	for i := 0; i < len(oid); i++ {
-		if x, ok := m[i]; ok {
-			snmpResponses = append(snmpResponses, x)
-			if x.WasSuccessful() {
-				successful = true
-			}
-		} else {
+		var currentResponse gosnmp.SnmpPDU
+		for i := 0; i < len(batch); i++ {
 			currentResponse, response.Variables = response.Variables[0], response.Variables[1:]
 			snmpResponse := SNMPResponse{}
 			snmpResponse.oid = currentResponse.Name
@@ -405,7 +405,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 			snmpResponse.snmpType = currentResponse.Type
 
 			if snmpResponse.WasSuccessful() {
-				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("snmpget was successful")
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("SNMP Get was successful")
 				successful = true
 				if s.useCache {
 					s.getCache.add(snmpResponse.oid, snmpResponse, nil)
