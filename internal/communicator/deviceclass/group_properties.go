@@ -90,29 +90,29 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 
 		// find filter oid
 		attrs := strings.Split(f.key, "/")
-		oidr := oidReader(&s.oids)
+		reader := oidReader(&s.oids)
 		for _, attr := range attrs {
 			// check if current oid reader contains multiple OIDs
-			oidsr, ok := oidr.(*deviceClassOIDs)
-			if !ok || oidsr == nil {
+			multipleReader, ok := reader.(*deviceClassOIDs)
+			if !ok || multipleReader == nil {
 				return nil, errors.New("filter attribute does not exist")
 			}
 
 			// check if oid reader contains OID(s) for the current attribute name
-			if oidr, ok = (*oidsr)[attr]; !ok {
+			if reader, ok = (*multipleReader)[attr]; !ok {
 				return nil, errors.New("filter attribute does not exist")
 			}
 		}
 
 		// check if the current oid reader contains only a single oid
-		singleOIDr, ok := oidr.(*deviceClassOID)
-		if !ok || singleOIDr == nil {
+		singleReader, ok := reader.(*deviceClassOID)
+		if !ok || singleReader == nil {
 			return nil, errors.New("filter attribute does not exist")
 		}
 
-		results, err := singleOIDr.readOID(ctx, nil)
+		results, err := singleReader.readOID(ctx, nil)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to read out filter oid ")
+			return nil, errors.Wrap(err, "failed to read out filter oid")
 		}
 
 		for index, result := range results {
@@ -207,6 +207,31 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 	var snmpResponse []network.SNMPResponse
 	var err error
 	if indices != nil {
+		//change requested indices if necessary
+		if d.indicesMapping != nil {
+			mappingIndices, err := d.indicesMapping.readOID(ctx, nil)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to read indices")
+			}
+
+			ifIndexRelIndex := make(map[string]value.Value)
+			for relIndex, ifIndex := range mappingIndices {
+				if idx, ok := ifIndexRelIndex[ifIndex.(value.Value).String()]; ok {
+					return nil, fmt.Errorf("index mapping resulted in duplicate ifIndex mapping on '%s'", idx.String())
+				}
+				ifIndexRelIndex[ifIndex.(value.Value).String()] = value.New(relIndex)
+			}
+
+			var newIndices []value.Value
+			for _, ifIndex := range indices {
+				if relIndex, ok := ifIndexRelIndex[ifIndex.(value.Value).String()]; ok {
+					newIndices = append(newIndices, relIndex)
+				}
+			}
+
+			indices = newIndices
+		}
+
 		oid := string(d.OID)
 		if !strings.HasSuffix(oid, ".") {
 			oid += "."
@@ -254,16 +279,16 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 
 	//change indices if necessary
 	if d.indicesMapping != nil {
-		indices, err := d.indicesMapping.readOID(ctx, nil)
+		mappingIndices, err := d.indicesMapping.readOID(ctx, nil)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to read indices")
+			return nil, errors.Wrap(err, "failed to read mapping indices")
 		}
 		mappedResult := make(map[int]interface{})
 
 		for k, v := range result {
 			var idx int
-			if _, ok := indices[k]; ok {
-				idx, err = indices[k].(value.Value).Int()
+			if _, ok := mappingIndices[k]; ok {
+				idx, err = mappingIndices[k].(value.Value).Int()
 				if err != nil {
 					return nil, errors.Wrap(err, "failed to convert Value to int")
 				}
@@ -272,7 +297,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 			}
 
 			if _, ok := mappedResult[idx]; ok {
-				return nil, fmt.Errorf("index mappings resulted in duplicated index '%d'", idx)
+				return nil, fmt.Errorf("index mapping resulted in duplicate index '%d'", idx)
 			}
 
 			mappedResult[idx] = v
