@@ -1275,7 +1275,13 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 				if !ok {
 					return nil, errors.New("regex has to be a string")
 				}
-				mod, err := newRegexSubmatchModifier(regexString, formatString)
+				var returnOnMismatch bool
+				if returnOnMismatchInt, ok := m["return_on_mismatch"]; ok {
+					if returnOnMismatch, ok = returnOnMismatchInt.(bool); !ok {
+						return nil, errors.New("return_on_mismatch needs to be a boolean")
+					}
+				}
+				mod, err := newRegexSubmatchModifier(regexString, formatString, returnOnMismatch)
 				if err != nil {
 					return nil, errors.Wrap(err, "failed to create new regex submatch modifier")
 				}

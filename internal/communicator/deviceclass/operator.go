@@ -201,11 +201,12 @@ func (a *addPrefixModifier) modify(_ context.Context, v value.Value) (value.Valu
 }
 
 type regexSubmatchModifier struct {
-	regex  *regexp.Regexp
-	format string
+	regex            *regexp.Regexp
+	format           string
+	returnOnMismatch bool
 }
 
-func newRegexSubmatchModifier(regex string, format string) (*regexSubmatchModifier, error) {
+func newRegexSubmatchModifier(regex string, format string, returnOnMismatch bool) (*regexSubmatchModifier, error) {
 	var r regexSubmatchModifier
 	re, err := regexp.Compile(regex)
 	if err != nil {
@@ -213,6 +214,7 @@ func newRegexSubmatchModifier(regex string, format string) (*regexSubmatchModifi
 	}
 	r.regex = re
 	r.format = format
+	r.returnOnMismatch = returnOnMismatch
 	return &r, nil
 }
 
@@ -222,6 +224,10 @@ func (o *regexSubmatchModifier) modify(_ context.Context, v value.Value) (value.
 		return value.Empty(), errors.New("regex does not match")
 	}
 	return value.New(o.regex.ReplaceAllString(subMatches[0], o.format)), nil
+}
+
+func (o *regexSubmatchModifier) returnOnError() bool {
+	return o.returnOnMismatch
 }
 
 type regexReplaceModifier struct {
