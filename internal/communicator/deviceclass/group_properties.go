@@ -117,7 +117,9 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 			if regex.MatchString(result.(value.Value).String()) {
 				// if filter matches add to filtered indices map
 				filteredIndices[strconv.Itoa(index)] = struct{}{}
-				log.Ctx(ctx).Debug().Str("filter_key", f.Key).Msgf("filter matched on index '%d'", index)
+				log.Ctx(ctx).Debug().Str("filter_key", f.Key).Str("filter_regex", f.Regex).
+					Str("received_value", result.(value.Value).String()).
+					Msgf("filter matched on index '%d'", index)
 			}
 		}
 	}
