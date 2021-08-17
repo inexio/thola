@@ -78,14 +78,14 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...gro
 }
 
 func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...groupPropertyFilter) ([]value.Value, error) {
-	filteredIndicesMap := make(map[value.Value]struct{})
-	var filteredIndices []value.Value
+	indices := make(map[string]struct{})
+	filteredIndices := make(map[string]struct{})
 
 	for _, f := range filter {
 		// compile filter regex
 		regex, err := regexp.Compile(f.regex)
 		if err != nil {
-			return nil, errors.Wrap(err, "filter regex ")
+			return nil, errors.Wrap(err, "filter regex failed to compile")
 		}
 
 		// find filter oid
@@ -116,20 +116,25 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 		}
 
 		for index, result := range results {
+			// add to indices map
+			indices[strconv.Itoa(index)] = struct{}{}
 			if regex.MatchString(result.(value.Value).String()) {
-				// filter matches
-				delete(filteredIndicesMap, value.New(index))
-			} else {
-				filteredIndicesMap[value.New(index)] = struct{}{}
+				// if filter matches add to filtered indices map
+				filteredIndices[strconv.Itoa(index)] = struct{}{}
 			}
 		}
 	}
 
-	for index := range filteredIndicesMap {
-		filteredIndices = append(filteredIndices, index)
+	var res []value.Value
+	if len(filteredIndices) > 0 {
+		for index := range indices {
+			if _, ok := filteredIndices[index]; !ok {
+				res = append(res, value.New(index))
+			}
+		}
 	}
 
-	return filteredIndices, nil
+	return res, nil
 }
 
 type oidReader interface {
