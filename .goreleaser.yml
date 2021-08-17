@@ -31,7 +31,7 @@ nfpms:
   - id: "thola"
     homepage: https://thola.io
     maintainer: team@thola.io
-    description: Network Monitoring and Provisioning Tool.
+    description: Network Monitoring goTool.
     license: BSD-2-clause
     formats:
       - deb

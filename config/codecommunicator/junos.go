@@ -3,6 +3,7 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -14,8 +15,8 @@ type junosCommunicator struct {
 	codeCommunicator
 }
 
-func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.deviceClass.GetInterfaces(ctx)
+func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+	interfaces, err := c.deviceClass.GetInterfaces(ctx, filter...)
 	if err != nil {
 		return nil, err
 	}

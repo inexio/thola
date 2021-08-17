@@ -3,6 +3,7 @@ package deviceclass
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/value"
@@ -22,20 +23,15 @@ func (g *propertyGroups) Decode(destination interface{}) error {
 	return mapstructure.WeakDecode(g, destination)
 }
 
-type groupPropertyFilter struct {
-	key   string
-	regex string
-}
-
 type groupPropertyReader interface {
-	getProperty(ctx context.Context, filter ...groupPropertyFilter) (propertyGroups, []value.Value, error)
+	getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error)
 }
 
 type snmpGroupPropertyReader struct {
 	oids deviceClassOIDs
 }
 
-func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...groupPropertyFilter) (propertyGroups, []value.Value, error) {
+func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error) {
 	filteredIndices, err := s.getFilteredIndices(ctx, filter...)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to filter oid indices")
@@ -77,19 +73,19 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...gro
 	return res, indices, nil
 }
 
-func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...groupPropertyFilter) ([]value.Value, error) {
+func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...filter.PropertyFilter) ([]value.Value, error) {
 	indices := make(map[string]struct{})
 	filteredIndices := make(map[string]struct{})
 
 	for _, f := range filter {
 		// compile filter regex
-		regex, err := regexp.Compile(f.regex)
+		regex, err := regexp.Compile(f.Regex)
 		if err != nil {
 			return nil, errors.Wrap(err, "filter regex failed to compile")
 		}
 
 		// find filter oid
-		attrs := strings.Split(f.key, "/")
+		attrs := strings.Split(f.Key, "/")
 		reader := oidReader(&s.oids)
 		for _, attr := range attrs {
 			// check if current oid reader contains multiple OIDs
@@ -121,6 +117,7 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 			if regex.MatchString(result.(value.Value).String()) {
 				// if filter matches add to filtered indices map
 				filteredIndices[strconv.Itoa(index)] = struct{}{}
+				log.Ctx(ctx).Debug().Str("filter_key", f.Key).Msgf("filter matched on index '%d'", index)
 			}
 		}
 	}
@@ -203,15 +200,20 @@ type deviceClassOID struct {
 func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
 	result := make(map[int]interface{})
 
+	logger := log.Ctx(ctx).With().Str("oid", string(d.OID)).Logger()
+	ctx = logger.WithContext(ctx)
+
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		log.Ctx(ctx).Debug().Str("property", "interface").Msg("snmp client is empty")
+		log.Ctx(ctx).Debug().Msg("snmp client is empty")
 		return nil, errors.New("snmp client is empty")
 	}
 
 	var snmpResponse []network.SNMPResponse
 	var err error
 	if indices != nil {
+		log.Ctx(ctx).Debug().Msg("indices given, using SNMP Gets instead of Walk")
+
 		//change requested indices if necessary
 		if d.indicesMapping != nil {
 			mappingIndices, err := d.indicesMapping.readOID(ctx, nil, true)
@@ -269,8 +271,8 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 				if tholaerr.IsDidNotMatchError(err) {
 					continue
 				}
-				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
-				return nil, errors.Wrapf(err, "response couldn't be normalized (oid: %s, response: %s)", response.GetOID(), res)
+				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (response: %s)", res)
+				return nil, errors.Wrapf(err, "response couldn't be normalized (response: %s)", res)
 			}
 			oid := strings.Split(response.GetOID(), ".")
 			index, err := strconv.Atoi(oid[len(oid)-1])

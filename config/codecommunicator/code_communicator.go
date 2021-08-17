@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/internal/communicator/communicator"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
@@ -69,7 +70,7 @@ func (c *codeCommunicator) GetOSVersion(_ context.Context) (string, error) {
 	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *codeCommunicator) GetInterfaces(_ context.Context) ([]device.Interface, error) {
+func (c *codeCommunicator) GetInterfaces(_ context.Context, _ ...filter.PropertyFilter) ([]device.Interface, error) {
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 

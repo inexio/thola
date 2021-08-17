@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/internal/communicator/component"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
@@ -570,13 +571,13 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 	return strings.TrimSpace(version.String()), nil
 }
 
-func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	if o.components.interfaces == nil || o.components.interfaces.Values == nil {
 		log.Ctx(ctx).Debug().Str("property", "interfaces").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	interfacesRaw, indices, err := o.components.interfaces.Values.getProperty(ctx)
+	interfacesRaw, indices, err := o.components.interfaces.Values.getProperty(ctx, filter...)
 	if err != nil {
 		return nil, err
 	}
