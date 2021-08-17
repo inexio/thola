@@ -41,7 +41,7 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...gro
 		return nil, nil, errors.Wrap(err, "failed to filter oid indices")
 	}
 
-	groups, err := s.oids.readOID(ctx, filteredIndices)
+	groups, err := s.oids.readOID(ctx, filteredIndices, true)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to read oids")
 	}
@@ -110,7 +110,7 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 			return nil, errors.New("filter attribute does not exist")
 		}
 
-		results, err := singleReader.readOID(ctx, nil)
+		results, err := singleReader.readOID(ctx, nil, false)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read out filter oid")
 		}
@@ -138,16 +138,16 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 }
 
 type oidReader interface {
-	readOID(context.Context, []value.Value) (map[int]interface{}, error)
+	readOID(context.Context, []value.Value, bool) (map[int]interface{}, error)
 }
 
 // deviceClassOIDs is a recursive data structure which maps labels to either a single OID (deviceClassOID) or another deviceClassOIDs
 type deviceClassOIDs map[string]oidReader
 
-func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value) (map[int]interface{}, error) {
+func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
 	result := make(map[int]map[string]interface{})
 	for label, reader := range *d {
-		res, err := reader.readOID(ctx, indices)
+		res, err := reader.readOID(ctx, indices, skipEmpty)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) || tholaerr.IsComponentNotFoundError(err) {
 				log.Ctx(ctx).Debug().Err(err).Msgf("failed to get value '%s'", label)
@@ -200,7 +200,7 @@ type deviceClassOID struct {
 	indicesMapping *deviceClassOID
 }
 
-func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (map[int]interface{}, error) {
+func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
 	result := make(map[int]interface{})
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
@@ -214,7 +214,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 	if indices != nil {
 		//change requested indices if necessary
 		if d.indicesMapping != nil {
-			mappingIndices, err := d.indicesMapping.readOID(ctx, nil)
+			mappingIndices, err := d.indicesMapping.readOID(ctx, nil, true)
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to read indices")
 			}
@@ -263,7 +263,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response")
 			continue
 		}
-		if res != "" {
+		if res != "" || !skipEmpty {
 			resNormalized, err := d.operators.apply(ctx, value.New(res))
 			if err != nil {
 				if tholaerr.IsDidNotMatchError(err) {
@@ -284,7 +284,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 
 	//change indices if necessary
 	if d.indicesMapping != nil {
-		mappingIndices, err := d.indicesMapping.readOID(ctx, nil)
+		mappingIndices, err := d.indicesMapping.readOID(ctx, nil, true)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read mapping indices")
 		}
@@ -314,6 +314,6 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value) (ma
 
 type emptyOIDReader struct{}
 
-func (n *emptyOIDReader) readOID(context.Context, []value.Value) (map[int]interface{}, error) {
+func (n *emptyOIDReader) readOID(context.Context, []value.Value, bool) (map[int]interface{}, error) {
 	return nil, tholaerr.NewComponentNotFoundError("oid is ignored")
 }
