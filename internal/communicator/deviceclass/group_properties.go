@@ -264,7 +264,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 	for _, response := range snmpResponse {
 		res, err := response.GetValueBySNMPGetConfiguration(d.SNMPGetConfiguration)
 		if err != nil {
-			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response")
+			log.Ctx(ctx).Debug().Err(err).Str("oid", response.GetOID()).Msg("couldn't get value from response")
 			continue
 		}
 		if res != "" || !skipEmpty {
@@ -273,13 +273,13 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 				if tholaerr.IsDidNotMatchError(err) {
 					continue
 				}
-				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (response: %s)", res)
+				log.Ctx(ctx).Debug().Err(err).Str("oid", response.GetOID()).Msgf("response couldn't be normalized (response: %s)", res)
 				return nil, errors.Wrapf(err, "response couldn't be normalized (response: %s)", res)
 			}
 			oid := strings.Split(response.GetOID(), ".")
 			index, err := strconv.Atoi(oid[len(oid)-1])
 			if err != nil {
-				log.Ctx(ctx).Debug().Err(err).Msg("index isn't an integer")
+				log.Ctx(ctx).Debug().Err(err).Str("oid", response.GetOID()).Msg("index isn't an integer")
 				return nil, errors.Wrap(err, "index isn't an integer")
 			}
 			result[index] = resNormalized
