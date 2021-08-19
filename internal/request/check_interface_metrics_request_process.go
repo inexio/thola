@@ -28,13 +28,15 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 	r.init()
 
 	com, err := GetCommunicator(ctx, r.BaseRequest)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get communicator")
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to get communicator", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
 	interfaces, err := com.GetInterfaces(ctx, r.getFilter()...)
-	if err != nil {
-		return nil, errors.Wrap(err, "can't get interfaces")
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to read out interfaces", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
 	err = r.normalizeInterfaces(interfaces)
