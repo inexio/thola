@@ -20,16 +20,3 @@ identify:
             modify_method: regexSubmatch
             regex: 'PLANET ([^\s]+)\s'
             format: "$1"
-
-components:
-  interfaces:
-    properties:
-      detection: snmpwalk
-      values:
-        ifDescr:
-          oid: 1.3.6.1.2.1.2.2.1.2
-          operators:
-            - type: modify
-              modify_method: regexReplace
-              regex: '\s+'
-              replace: ' '
