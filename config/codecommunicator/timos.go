@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strconv"
 	"strings"
 )
@@ -38,7 +39,8 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 	sapDescriptionsOID := ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5"
 	sapDescriptions, err := con.SNMP.SnmpClient.SNMPWalk(ctx, sapDescriptionsOID)
 	if err != nil {
-		return nil, errors.Wrap(err, "snmpwalk failed")
+		log.Ctx(ctx).Debug().Err(err).Msg("sap interfaces are not available on this device")
+		return interfaces, nil
 	}
 
 	for _, response := range sapDescriptions {

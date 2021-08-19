@@ -23,18 +23,18 @@ func (c *advaCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfac
 		return nil, err
 	}
 
-	if err = advaGetDWDMInterfaces(ctx, interfaces); err != nil {
+	if err = c.getDWDMInterfaces(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
-	if err = advaGetChannels(ctx, interfaces); err != nil {
+	if err = c.getChannels(ctx, interfaces); err != nil {
 		return nil, err
 	}
 
-	return normalizeAdvaInterfaces(interfaces), nil
+	return c.normalizeInterfaces(interfaces), nil
 }
 
-func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) error {
+func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []device.Interface) error {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return errors.New("no device connection available")
@@ -80,12 +80,12 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 		txPower[oid[len(oid)-1]], _ = txValue.Mul(decimal.NewFromFloat(0.1)).Float64()
 	}
 
-	rx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.21")
+	rx100Values, err := c.getPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.21")
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get rx 100 values")
 	}
 
-	tx100Values, err := advaGetPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.22")
+	tx100Values, err := c.getPowerValues(ctx, ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.22")
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get tx 100 values")
 	}
@@ -220,7 +220,7 @@ func advaGetDWDMInterfaces(ctx context.Context, interfaces []device.Interface) e
 	return nil
 }
 
-func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
+func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.Interface) error {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return errors.New("no device connection available")
@@ -236,7 +236,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 
 	for _, res := range facilityPhysInstValueInputPowerValues {
 		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueInputPower)
-		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 2 && s[len(s)-2] != "0" {
+		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 3 && s[len(s)-2] != "0" && s[len(s)-3] == "33152" {
 			val, err := res.GetValueString()
 			if err != nil {
 				return errors.Wrap(err, "failed to get rx value of channel "+subtree)
@@ -263,7 +263,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 
 	for _, res := range facilityPhysInstValueOutputPowerValues {
 		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueOutputPower)
-		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 2 && s[len(s)-2] != "0" {
+		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 3 && s[len(s)-2] != "0" && s[len(s)-3] == "33152" {
 			val, err := res.GetValueString()
 			if err != nil {
 				return errors.Wrap(err, "failed to get tx value of channel "+subtree)
@@ -306,7 +306,7 @@ func advaGetChannels(ctx context.Context, interfaces []device.Interface) error {
 	return nil
 }
 
-func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, error) {
+func (c *advaCommunicator) getPowerValues(ctx context.Context, oid string) (map[string]float64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -347,7 +347,7 @@ func advaGetPowerValues(ctx context.Context, oid string) (map[string]float64, er
 	return descrToValues, nil
 }
 
-func normalizeAdvaInterfaces(interfaces []device.Interface) []device.Interface {
+func (c *advaCommunicator) normalizeInterfaces(interfaces []device.Interface) []device.Interface {
 	var res []device.Interface
 
 	for _, interf := range interfaces {
