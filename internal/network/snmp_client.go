@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/internal/tholaerr"
+	"github.com/inexio/thola/internal/utility"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/encoding/charmap"
@@ -196,7 +197,7 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 		Community: community,
 		Version:   version,
 		Timeout:   time.Duration(timeout) * time.Second,
-		MaxOids:   gosnmp.MaxOids,
+		MaxOids:   utility.IfThenElseInt(version == gosnmp.Version1, 1, gosnmp.MaxOids),
 		Retries:   retries,
 	}
 
