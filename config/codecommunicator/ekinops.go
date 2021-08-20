@@ -24,7 +24,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...filte
 
 	con.SNMP.SnmpClient.UseCache(false)
 
-	interfaces, err := c.deviceClass.GetInterfaces(ctx, filter...)
+	interfaces, err := c.deviceClass.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,16 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...filte
 		}
 	}
 
-	return normalizeEkinopsInterfaces(interfaces)
+	interfaces, err = c.normalizeInterfaces(interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to normalize interfaces")
+	}
+
+	if len(filter) > 0 {
+		return filterInterfaces(interfaces, filter)
+	} else {
+		return interfaces, nil
+	}
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
@@ -89,7 +98,7 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 	return m, nil
 }
 
-func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
+func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
 	var res []device.Interface
 
 	for _, interf := range interfaces {

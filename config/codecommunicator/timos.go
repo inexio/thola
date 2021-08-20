@@ -16,7 +16,7 @@ type timosCommunicator struct {
 
 // GetInterfaces returns the interfaces of Nokia devices.
 func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
-	interfaces, err := c.parent.GetInterfaces(ctx, filter...)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,11 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.
 		})
 	}
 
-	return interfaces, nil
+	if len(filter) > 0 {
+		return filterInterfaces(interfaces, filter)
+	} else {
+		return interfaces, nil
+	}
 }
 
 // getPhysPortDescriptions returns a mapping from every ifIndex to a description.

@@ -8,6 +8,7 @@ import (
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
+	"regexp"
 )
 
 type codeCommunicator struct {
@@ -192,4 +193,65 @@ func (c *codeCommunicator) GetHardwareHealthComponentPowerSupply(_ context.Conte
 
 func (c *codeCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func filterInterfaces(interfaces []device.Interface, filter []filter.PropertyFilter) ([]device.Interface, error) {
+	var ifDescrFilter, ifNameFilter, ifTypeFilter []*regexp.Regexp
+
+	for _, fil := range filter {
+		switch key := fil.Key; key {
+		case "ifDescr":
+			regex, err := regexp.Compile(fil.Regex)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to compile ifDescr regex")
+			}
+			ifDescrFilter = append(ifDescrFilter, regex)
+		case "ifName":
+			regex, err := regexp.Compile(fil.Regex)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to compile ifName regex")
+			}
+			ifNameFilter = append(ifNameFilter, regex)
+		case "ifType":
+			regex, err := regexp.Compile(fil.Regex)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to compile ifType regex")
+			}
+			ifTypeFilter = append(ifTypeFilter, regex)
+		default:
+			return nil, errors.New("unknown filter key: " + key)
+		}
+	}
+
+	var res []device.Interface
+out:
+	for _, interf := range interfaces {
+		if interf.IfDescr != nil {
+			for _, fil := range ifDescrFilter {
+				if fil.MatchString(*interf.IfDescr) {
+					continue out
+				}
+			}
+		}
+
+		if interf.IfName != nil {
+			for _, fil := range ifNameFilter {
+				if fil.MatchString(*interf.IfName) {
+					continue out
+				}
+			}
+		}
+
+		if interf.IfType != nil {
+			for _, fil := range ifTypeFilter {
+				if fil.MatchString(*interf.IfType) {
+					continue out
+				}
+			}
+		}
+
+		res = append(res, interf)
+	}
+
+	return res, nil
 }

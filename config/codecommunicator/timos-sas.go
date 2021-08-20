@@ -16,7 +16,7 @@ type timosSASCommunicator struct {
 
 // GetInterfaces returns the interfaces of a Nokia SAS-T device.
 func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
-	interfaces, err := c.parent.GetInterfaces(ctx, filter...)
+	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -70,14 +70,18 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...filt
 		}
 	}
 
-	return interfaces, nil
+	if len(filter) > 0 {
+		return filterInterfaces(interfaces, filter)
+	} else {
+		return interfaces, nil
+	}
 }
 
 // getInterfaceBySubIndex returns the index of the interface that has the given index.
 // The returned index is the index of the array, not the IfIndex.
 func getInterfaceBySubIndex(subIndex uint64, interfaces []device.Interface) (int, error) {
 	for index, iface := range interfaces {
-		if *iface.IfIndex == subIndex {
+		if iface.IfIndex != nil && *iface.IfIndex == subIndex {
 			return index, nil
 		}
 	}
