@@ -196,6 +196,10 @@ func (c *codeCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (
 }
 
 func filterInterfaces(interfaces []device.Interface, filter []filter.PropertyFilter) ([]device.Interface, error) {
+	if len(filter) == 0 {
+		return interfaces, nil
+	}
+
 	var ifDescrFilter, ifNameFilter, ifTypeFilter []*regexp.Regexp
 
 	for _, fil := range filter {

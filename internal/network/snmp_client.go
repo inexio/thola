@@ -397,9 +397,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 			return nil, errors.Wrap(err, "error during snmpget")
 		}
 
-		var currentResponse gosnmp.SnmpPDU
-		for i := 0; i < len(batch); i++ {
-			currentResponse, response.Variables = response.Variables[0], response.Variables[1:]
+		for _, currentResponse := range response.Variables {
 			snmpResponse := SNMPResponse{}
 			snmpResponse.oid = currentResponse.Name
 			snmpResponse.value = currentResponse.Value

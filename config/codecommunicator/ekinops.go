@@ -74,11 +74,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...filte
 		return nil, errors.Wrap(err, "failed to normalize interfaces")
 	}
 
-	if len(filter) > 0 {
-		return filterInterfaces(interfaces, filter)
-	} else {
-		return interfaces, nil
-	}
+	return filterInterfaces(interfaces, filter)
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {

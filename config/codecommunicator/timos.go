@@ -88,11 +88,7 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.
 		})
 	}
 
-	if len(filter) > 0 {
-		return filterInterfaces(interfaces, filter)
-	} else {
-		return interfaces, nil
-	}
+	return filterInterfaces(interfaces, filter)
 }
 
 // getPhysPortDescriptions returns a mapping from every ifIndex to a description.
