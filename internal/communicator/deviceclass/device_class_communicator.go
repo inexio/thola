@@ -52,10 +52,19 @@ func (o *deviceClassCommunicator) Match(ctx context.Context) (bool, error) {
 
 func (o *deviceClassCommunicator) UpdateConnection(ctx context.Context) error {
 	if conn, ok := network.DeviceConnectionFromContext(ctx); ok {
-		if conn.SNMP != nil && conn.SNMP.SnmpClient != nil &&
-			(conn.RawConnectionData.SNMP.MaxRepetitions == nil || *conn.RawConnectionData.SNMP.MaxRepetitions == 0) {
-			log.Ctx(ctx).Debug().Msg("set snmp max repetitions of device class")
-			conn.SNMP.SnmpClient.SetMaxRepetitions(o.deviceClass.config.snmp.MaxRepetitions)
+		if conn.SNMP != nil && conn.SNMP.SnmpClient != nil {
+			if conn.RawConnectionData.SNMP.MaxRepetitions == nil || *conn.RawConnectionData.SNMP.MaxRepetitions == 0 {
+				log.Ctx(ctx).Debug().Uint32("max_repetitions", o.deviceClass.config.snmp.MaxRepetitions).Msg("set snmp max repetitions of device class")
+				conn.SNMP.SnmpClient.SetMaxRepetitions(o.deviceClass.config.snmp.MaxRepetitions)
+			}
+
+			if conn.SNMP.SnmpClient.GetVersion() != "1" {
+				log.Ctx(ctx).Debug().Int("max_oids", o.deviceClass.config.snmp.MaxOids).Msg("set snmp max oids of device class")
+				err := conn.SNMP.SnmpClient.SetMaxOIDs(o.deviceClass.config.snmp.MaxOids)
+				if err != nil {
+					return errors.Wrap(err, "failed to set max oids")
+				}
+			}
 		}
 	}
 	return nil

@@ -13,6 +13,7 @@ import (
 	"github.com/inexio/thola/internal/mapping"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
+	"github.com/inexio/thola/internal/utility"
 	"github.com/inexio/thola/internal/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
@@ -133,6 +134,7 @@ type deviceClassComponentsInterfaces struct {
 // deviceClassSNMP represents the snmp config part of a device class.
 type deviceClassSNMP struct {
 	MaxRepetitions uint32 `yaml:"max_repetitions"`
+	MaxOids        int    `yaml:"max_oids"`
 }
 
 // logicalOperator represents a logical operator (OR or AND).
@@ -660,6 +662,10 @@ func (y *yamlDeviceClassIdentifyProperties) convert(parentProperties deviceClass
 }
 
 func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceClassConfig, error) {
+	err := y.validate()
+	if err != nil {
+		return deviceClassConfig{}, errors.Wrap(err, "config is invalid")
+	}
 	var cfg deviceClassConfig
 
 	if y.SNMP.MaxRepetitions != 0 {
@@ -667,6 +673,7 @@ func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceC
 	} else {
 		cfg.snmp.MaxRepetitions = parentConfig.snmp.MaxRepetitions
 	}
+	cfg.snmp.MaxOids = utility.IfThenElseInt(y.SNMP.MaxOids != 0, y.SNMP.MaxOids, parentConfig.snmp.MaxOids)
 
 	components := make(map[component.Component]bool)
 	for k, v := range parentConfig.components {
@@ -684,6 +691,13 @@ func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceC
 	cfg.components = components
 
 	return cfg, nil
+}
+
+func (y *yamlDeviceClassConfig) validate() error {
+	if y.SNMP.MaxOids < 0 {
+		return errors.New("invalid snmp max oids")
+	}
+	return nil
 }
 
 func (y *yamlComponentsUPSProperties) convert(parentComponent *deviceClassComponentsUPS) (deviceClassComponentsUPS, error) {

@@ -5,6 +5,7 @@ config:
     interfaces: true
   snmp:
     max_repetitions: 20
+    max_oids: 60
 
 components:
   interfaces:

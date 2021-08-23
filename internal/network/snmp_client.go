@@ -552,6 +552,18 @@ func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint32) {
 	s.client.MaxRepetitions = maxRepetitions
 }
 
+// SetMaxOIDs sets the maximum OIDs.
+func (s *SNMPClient) SetMaxOIDs(maxOIDs int) error {
+	if maxOIDs < 1 {
+		return errors.New("invalid max oids")
+	}
+	if s.client.Version == gosnmp.Version1 {
+		return errors.New("max oids cannot be changed for snmp v1")
+	}
+	s.client.MaxOids = maxOIDs
+	return nil
+}
+
 // GetV3Level returns the security level of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
 func (s *SNMPClient) GetV3Level() *string {
