@@ -97,13 +97,21 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 			DiscoverParallelRequests: configData.SNMP.DiscoverParallelRequests,
 			DiscoverTimeout:          configData.SNMP.DiscoverTimeout,
 			DiscoverRetries:          configData.SNMP.DiscoverRetries,
-			V3Data:                   cacheData.SNMP.V3Data,
+			V3Data: network.SNMPv3ConnectionData{
+				Level:        utility.IfThenElse(configData.SNMP.V3Data.Level != nil, configData.SNMP.V3Data.Level, cacheData.SNMP.V3Data.Level).(*string),
+				ContextName:  utility.IfThenElse(configData.SNMP.V3Data.ContextName != nil, configData.SNMP.V3Data.ContextName, cacheData.SNMP.V3Data.ContextName).(*string),
+				User:         utility.IfThenElse(configData.SNMP.V3Data.User != nil, configData.SNMP.V3Data.User, cacheData.SNMP.V3Data.User).(*string),
+				AuthKey:      utility.IfThenElse(configData.SNMP.V3Data.AuthKey != nil, configData.SNMP.V3Data.AuthKey, cacheData.SNMP.V3Data.AuthKey).(*string),
+				AuthProtocol: utility.IfThenElse(configData.SNMP.V3Data.AuthProtocol != nil, configData.SNMP.V3Data.AuthProtocol, cacheData.SNMP.V3Data.AuthProtocol).(*string),
+				PrivKey:      utility.IfThenElse(configData.SNMP.V3Data.PrivKey != nil, configData.SNMP.V3Data.PrivKey, cacheData.SNMP.V3Data.PrivKey).(*string),
+				PrivProtocol: utility.IfThenElse(configData.SNMP.V3Data.PrivProtocol != nil, configData.SNMP.V3Data.PrivProtocol, cacheData.SNMP.V3Data.PrivProtocol).(*string),
+			},
 		},
 		HTTP: &network.HTTPConnectionData{
 			HTTPPorts:    utility.SliceUniqueInt(append(cacheData.HTTP.HTTPPorts, configData.HTTP.HTTPPorts...)),
 			HTTPSPorts:   utility.SliceUniqueInt(append(cacheData.HTTP.HTTPSPorts, configData.HTTP.HTTPSPorts...)),
-			AuthUsername: utility.IfThenElse(cacheData.HTTP.AuthUsername == nil, configData.HTTP.AuthUsername, cacheData.HTTP.AuthUsername).(*string),
-			AuthPassword: utility.IfThenElse(cacheData.HTTP.AuthPassword == nil, configData.HTTP.AuthPassword, cacheData.HTTP.AuthPassword).(*string),
+			AuthUsername: utility.IfThenElse(configData.HTTP.AuthUsername != nil, configData.HTTP.AuthUsername, cacheData.HTTP.AuthUsername).(*string),
+			AuthPassword: utility.IfThenElse(configData.HTTP.AuthPassword != nil, configData.HTTP.AuthPassword, cacheData.HTTP.AuthPassword).(*string),
 		},
 	}
 
@@ -259,25 +267,43 @@ func (r *BaseRequest) handlePreProcessError(err error) (Response, error) {
 }
 
 func getConfigConnectionData() network.ConnectionData {
+	var nullInt *int
+	var nullString *string
 	parallelRequests := viper.GetInt("device.snmp-discover-par-requests")
 	timeout := viper.GetInt("device.snmp-discover-timeout")
 	retries := viper.GetInt("device.snmp-discover-retries")
+	v3Level := viper.GetString("device.snmp-v3-level")
+	v3ContextName := viper.GetString("device.snmp-v3-context")
+	v3User := viper.GetString("device.snmp-v3-user")
+	v3AuthKey := viper.GetString("device.snmp-v3-auth-key")
+	v3AuthProto := viper.GetString("device.snmp-v3-auth-proto")
+	v3PrivKey := viper.GetString("device.snmp-v3-priv-key")
+	v3PrivProto := viper.GetString("device.snmp-v3-priv-proto")
 	authUsername := viper.GetString("device.http-username")
 	authPassword := viper.GetString("device.http-password")
 	return network.ConnectionData{
 		SNMP: &network.SNMPConnectionData{
-			Communities:              viper.GetStringSlice("device.snmp-communities"),
-			Versions:                 viper.GetStringSlice("device.snmp-versions"),
-			Ports:                    viper.GetIntSlice("device.snmp-ports"),
-			DiscoverParallelRequests: &parallelRequests,
-			DiscoverTimeout:          &timeout,
-			DiscoverRetries:          &retries,
+			Communities:              utility.IfThenElse(viper.IsSet("device.snmp-communities"), viper.GetStringSlice("device.snmp-communities"), []string{}).([]string),
+			Versions:                 utility.IfThenElse(viper.IsSet("device.snmp-versions"), viper.GetStringSlice("device.snmp-versions"), []string{}).([]string),
+			Ports:                    utility.IfThenElse(viper.IsSet("device.snmp-ports"), viper.GetIntSlice("device.snmp-ports"), []int{}).([]int),
+			DiscoverParallelRequests: utility.IfThenElse(viper.IsSet("device.snmp-discover-par-requests"), &parallelRequests, nullInt).(*int),
+			DiscoverTimeout:          utility.IfThenElse(viper.IsSet("device.snmp-discover-timeout"), &timeout, nullInt).(*int),
+			DiscoverRetries:          utility.IfThenElse(viper.IsSet("device.snmp-discover-retries"), &retries, nullInt).(*int),
+			V3Data: network.SNMPv3ConnectionData{
+				Level:        utility.IfThenElse(viper.IsSet("device.snmp-v3-level"), &v3Level, nullString).(*string),
+				ContextName:  utility.IfThenElse(viper.IsSet("device.snmp-v3-context"), &v3ContextName, nullString).(*string),
+				User:         utility.IfThenElse(viper.IsSet("device.snmp-v3-user"), &v3User, nullString).(*string),
+				AuthKey:      utility.IfThenElse(viper.IsSet("device.snmp-v3-auth-key"), &v3AuthKey, nullString).(*string),
+				AuthProtocol: utility.IfThenElse(viper.IsSet("device.snmp-v3-auth-proto"), &v3AuthProto, nullString).(*string),
+				PrivKey:      utility.IfThenElse(viper.IsSet("device.snmp-v3-priv-key"), &v3PrivKey, nullString).(*string),
+				PrivProtocol: utility.IfThenElse(viper.IsSet("device.snmp-v3-priv-proto"), &v3PrivProto, nullString).(*string),
+			},
 		},
 		HTTP: &network.HTTPConnectionData{
-			HTTPPorts:    viper.GetIntSlice("device.http-ports"),
-			HTTPSPorts:   viper.GetIntSlice("device.https-ports"),
-			AuthUsername: &authUsername,
-			AuthPassword: &authPassword,
+			HTTPPorts:    utility.IfThenElse(viper.IsSet("device.http-ports"), viper.GetIntSlice("device.http-ports"), []int{}).([]int),
+			HTTPSPorts:   utility.IfThenElse(viper.IsSet("device.https-ports"), viper.GetIntSlice("device.https-ports"), []int{}).([]int),
+			AuthUsername: utility.IfThenElse(viper.IsSet("device.http-username"), &authUsername, nullString).(*string),
+			AuthPassword: utility.IfThenElse(viper.IsSet("device.http-password"), &authPassword, nullString).(*string),
 		},
 	}
 }
