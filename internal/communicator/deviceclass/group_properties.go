@@ -28,16 +28,26 @@ type groupPropertyReader interface {
 }
 
 type snmpGroupPropertyReader struct {
-	oids deviceClassOIDs
+	index oidReader
+	oids  deviceClassOIDs
 }
 
 func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error) {
-	filteredIndices, err := s.getFilteredIndices(ctx, filter...)
+	wantedIndices, filteredIndices, err := s.getFilteredIndices(ctx, filter...)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to filter oid indices")
 	}
 
-	groups, err := s.oids.readOID(ctx, filteredIndices, true)
+	useSNMPGetsInsteadOfWalk, ok := network.SNMPGetsInsteadOfWalkFromContext(ctx)
+	if !ok {
+		log.Ctx(ctx).Debug().Msg("SNMPGetsInsteadOfWalk not found in context, using walks")
+	}
+
+	if !useSNMPGetsInsteadOfWalk {
+		wantedIndices = nil
+	}
+
+	groups, err := s.oids.readOID(ctx, wantedIndices, true)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to read oids")
 	}
@@ -65,23 +75,38 @@ func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...fil
 			return nil, nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
 		}
 
+		delete(groups, smallestIndex)
+		if !useSNMPGetsInsteadOfWalk {
+			if _, ok := filteredIndices[strconv.Itoa(smallestIndex)]; ok {
+				continue
+			}
+		}
 		res = append(res, x)
 		indices = append(indices, value.New(smallestIndex))
-		delete(groups, smallestIndex)
 	}
 
 	return res, indices, nil
 }
 
-func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...filter.PropertyFilter) ([]value.Value, error) {
+func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...filter.PropertyFilter) ([]value.Value, map[string]struct{}, error) {
 	indices := make(map[string]struct{})
 	filteredIndices := make(map[string]struct{})
+
+	if s.index != nil {
+		res, err := s.index.readOID(ctx, nil, false)
+		if err != nil {
+			return nil, nil, errors.Wrap(err, "failed to read out index oid")
+		}
+		for idx := range res {
+			indices[strconv.Itoa(idx)] = struct{}{}
+		}
+	}
 
 	for _, f := range filter {
 		// compile filter regex
 		regex, err := regexp.Compile(f.Regex)
 		if err != nil {
-			return nil, errors.Wrap(err, "filter regex failed to compile")
+			return nil, nil, errors.Wrap(err, "filter regex failed to compile")
 		}
 
 		// find filter oid
@@ -91,24 +116,24 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 			// check if current oid reader contains multiple OIDs
 			multipleReader, ok := reader.(*deviceClassOIDs)
 			if !ok || multipleReader == nil {
-				return nil, errors.New("filter attribute does not exist")
+				return nil, nil, errors.New("filter attribute does not exist")
 			}
 
 			// check if oid reader contains OID(s) for the current attribute name
 			if reader, ok = (*multipleReader)[attr]; !ok {
-				return nil, errors.New("filter attribute does not exist")
+				return nil, nil, errors.New("filter attribute does not exist")
 			}
 		}
 
 		// check if the current oid reader contains only a single oid
 		singleReader, ok := reader.(*deviceClassOID)
 		if !ok || singleReader == nil {
-			return nil, errors.New("filter attribute does not exist")
+			return nil, nil, errors.New("filter attribute does not exist")
 		}
 
 		results, err := singleReader.readOID(ctx, nil, false)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to read out filter oid")
+			return nil, nil, errors.Wrap(err, "failed to read out filter oid")
 		}
 
 		for index, result := range results {
@@ -125,15 +150,13 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 	}
 
 	var res []value.Value
-	if len(filteredIndices) > 0 {
-		for index := range indices {
-			if _, ok := filteredIndices[index]; !ok {
-				res = append(res, value.New(index))
-			}
+	for index := range indices {
+		if _, ok := filteredIndices[index]; !ok {
+			res = append(res, value.New(index))
 		}
 	}
 
-	return res, nil
+	return res, filteredIndices, nil
 }
 
 type oidReader interface {

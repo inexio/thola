@@ -1557,6 +1557,24 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 	}
 	switch stringDetection {
 	case "snmpwalk":
+		var index oidReader
+		if idx, ok := m["index"]; ok {
+			idxString, ok := idx.(string)
+			if !ok {
+				return nil, errors.New("index needs to be string (oid)")
+			}
+			oid := network.OID(idxString)
+			if err := oid.Validate(); err != nil {
+				return nil, errors.Wrap(err, "index needs to be an oid")
+			}
+			devClassOid := deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: oid,
+				},
+			}
+			index = &devClassOid
+		}
+
 		if _, ok := m["values"]; !ok {
 			return nil, errors.New("values are missing")
 		}
@@ -1588,9 +1606,13 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 
 			devClassOIDsMerged := parentSNMPGroupPropertyReader.oids.merge(*devClassOIDs)
 			devClassOIDs = &devClassOIDsMerged
+
+			if index == nil {
+				index = parentSNMPGroupPropertyReader.index
+			}
 		}
 
-		return &snmpGroupPropertyReader{*devClassOIDs}, nil
+		return &snmpGroupPropertyReader{index, *devClassOIDs}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}

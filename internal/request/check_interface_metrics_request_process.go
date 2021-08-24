@@ -8,6 +8,7 @@ import (
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
 	"github.com/pkg/errors"
 )
@@ -26,6 +27,8 @@ type interfaceCheckOutput struct {
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
 	r.init()
+
+	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, r.SNMPGetsInsteadOfWalk)
 
 	com, err := GetCommunicator(ctx, r.BaseRequest)
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to get communicator", true) {

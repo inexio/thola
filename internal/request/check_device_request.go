@@ -2,7 +2,7 @@ package request
 
 // CheckDeviceRequest
 //
-// CheckDeviceRequest is a the request struct for the check device request.
+// CheckDeviceRequest is the request struct for the check device request.
 //
 // swagger:model
 type CheckDeviceRequest struct {
