@@ -2,10 +2,10 @@ package codecommunicator
 
 import (
 	"context"
-	"fmt"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strconv"
 	"strings"
 )
@@ -53,7 +53,8 @@ func (m *ekinopsModuleReaderTransponder) readModuleMetrics(ctx context.Context, 
 		identifier := m.slotIdentifier + "/" + m.moduleName + "/" + strings.Split(*opticalTransponderInterface.Identifier, "(")[0]
 		idx, ok := mappings[identifier]
 		if !ok {
-			return nil, fmt.Errorf("interface for identifier '%s' not found", identifier)
+			log.Ctx(ctx).Debug().Msgf("interface for identifier '%s' not found", identifier)
+			continue
 		}
 		interfaces[idx].OpticalTransponder = &OpticalTransponderInterfaces[i]
 		interfaces[idx].IfAlias = interfaces[idx].OpticalTransponder.Label
