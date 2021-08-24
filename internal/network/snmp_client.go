@@ -430,13 +430,16 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 // SNMPWalk sends a snmpwalk request to the specified oid.
 func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
 	if s.useCache {
-		x, err := s.walkCache.get(oid)
+		cacheEntry, err := s.walkCache.get(oid)
 		if err == nil {
-			res, ok := x.res.([]SNMPResponse)
+			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("used cached snmp walk result")
+			if cacheEntry.err != nil {
+				return nil, cacheEntry.err
+			}
+			res, ok := cacheEntry.res.([]SNMPResponse)
 			if !ok {
 				return nil, errors.New("cached snmp result is not a snmp response")
 			}
-			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("used cached snmp walk result")
 			return res, nil
 		}
 	}

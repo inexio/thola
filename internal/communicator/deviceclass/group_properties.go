@@ -94,11 +94,10 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 
 	if s.index != nil {
 		res, err := s.index.readOID(ctx, nil, false)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed to read out index oid")
-		}
-		for idx := range res {
-			indices[strconv.Itoa(idx)] = struct{}{}
+		if err == nil {
+			for idx := range res {
+				indices[strconv.Itoa(idx)] = struct{}{}
+			}
 		}
 	}
 
