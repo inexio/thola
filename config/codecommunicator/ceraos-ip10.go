@@ -2,6 +2,7 @@ package codecommunicator
 
 import (
 	"context"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/pkg/errors"
 	"regexp"
@@ -14,7 +15,7 @@ type ceraosIP10Communicator struct {
 
 // GetInterfaces returns the interfaces of ceraos/ip10 devices.
 // These devices need special behavior radio and ethernet interfaces.
-func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	subInterfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "an unexpected error occurred while trying to get ifTable of sub communicator")
@@ -74,5 +75,5 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context) ([]device.In
 		}
 	}
 
-	return subInterfaces, nil
+	return filterInterfaces(subInterfaces, filter)
 }

@@ -76,10 +76,7 @@ func IdentifyNetworkDeviceCommunicator(ctx context.Context) (communicator.Commun
 		return nil, err
 	}
 
-	con, ok := network.DeviceConnectionFromContext(ctx)
-	if ok && con.SNMP != nil && (con.RawConnectionData.SNMP.MaxRepetitions == nil || *con.RawConnectionData.SNMP.MaxRepetitions == 0) {
-		con.SNMP.SnmpClient.SetMaxRepetitions(1)
-	}
+	setIdentifyConnectionSettings(ctx)
 
 	comm, err := identifyDeviceRecursive(ctx, genericHierarchy.Children, true)
 	if err != nil {
@@ -157,5 +154,15 @@ func MatchDeviceClass(ctx context.Context, identifier string) (bool, error) {
 	if err != nil {
 		return false, errors.Wrap(err, "error during GetDeviceClasses")
 	}
+
+	setIdentifyConnectionSettings(ctx)
+
 	return comm.Match(ctx)
+}
+
+func setIdentifyConnectionSettings(ctx context.Context) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if ok && con.SNMP != nil && (con.RawConnectionData.SNMP.MaxRepetitions == nil || *con.RawConnectionData.SNMP.MaxRepetitions == 0) {
+		con.SNMP.SnmpClient.SetMaxRepetitions(1)
+	}
 }
