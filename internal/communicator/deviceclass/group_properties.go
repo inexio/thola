@@ -132,7 +132,8 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 
 		results, err := singleReader.readOID(ctx, nil, false)
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed to read out filter oid")
+			log.Ctx(ctx).Debug().Err(err).Str("oid", string(singleReader.OID)).Msg("failed to read out filter oid, skipping filter")
+			continue
 		}
 
 		for index, result := range results {
@@ -235,7 +236,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 
 	var snmpResponse []network.SNMPResponse
 	var err error
-	if indices != nil {
+	if len(indices) > 0 {
 		log.Ctx(ctx).Debug().Msg("indices given, using SNMP Gets instead of Walk")
 
 		//change requested indices if necessary

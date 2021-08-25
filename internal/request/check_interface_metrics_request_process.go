@@ -77,12 +77,14 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 
 			interfaceOutput = append(interfaceOutput, x)
 		}
-		output, err := parser.Parse(interfaceOutput, "json")
-		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if len(interfaceOutput) > 0 {
+			output, err := parser.Parse(interfaceOutput, "json")
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+			r.mon.UpdateStatus(monitoringplugin.OK, string(output))
 		}
-		r.mon.UpdateStatus(monitoringplugin.OK, string(output))
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil
