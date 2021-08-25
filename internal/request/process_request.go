@@ -16,7 +16,7 @@ type response struct {
 	err error
 }
 
-// ProcessRequest is called by every request thola receives
+// ProcessRequest is called by every request Thola receives
 func ProcessRequest(ctx context.Context, request Request) (Response, error) {
 	err := request.validate(ctx)
 	if err != nil {

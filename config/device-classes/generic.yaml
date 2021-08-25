@@ -5,12 +5,14 @@ config:
     interfaces: true
   snmp:
     max_repetitions: 20
+    max_oids: 60
 
 components:
   interfaces:
     count: 1.3.6.1.2.1.2.1.0
     properties:
       detection: snmpwalk
+      index: 1.3.6.1.2.1.2.2.1.1
       values:
         ifIndex:
           oid: 1.3.6.1.2.1.2.2.1.1

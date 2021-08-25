@@ -31,21 +31,6 @@ type CommonOIDs struct {
 	SysDescription *string
 }
 
-type ctxKey int
-
-const requestDeviceConnectionKey ctxKey = iota + 1
-
-// NewContextWithDeviceConnection returns a new context with the device connection
-func NewContextWithDeviceConnection(ctx context.Context, con *RequestDeviceConnection) context.Context {
-	return context.WithValue(ctx, requestDeviceConnectionKey, con)
-}
-
-// DeviceConnectionFromContext gets the device connection from the context
-func DeviceConnectionFromContext(ctx context.Context) (*RequestDeviceConnection, bool) {
-	con, ok := ctx.Value(requestDeviceConnectionKey).(*RequestDeviceConnection)
-	return con, ok
-}
-
 // GetSysDescription returns the sysDescription.
 func (r *RequestDeviceConnectionSNMP) GetSysDescription(ctx context.Context) (string, error) {
 	if r.CommonOIDs.SysDescription == nil {

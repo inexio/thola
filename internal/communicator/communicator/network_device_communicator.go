@@ -3,6 +3,7 @@ package communicator
 import (
 	"context"
 	"github.com/inexio/thola/internal/communicator/component"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
@@ -548,9 +549,9 @@ func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, e
 	return c.deviceClassCommunicator.GetOSVersion(ctx)
 }
 
-func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	if c.codeCommunicator != nil {
-		res, err := c.codeCommunicator.GetInterfaces(ctx)
+		res, err := c.codeCommunicator.GetInterfaces(ctx, filter...)
 		if err != nil {
 			if !tholaerr.IsNotImplementedError(err) {
 				return nil, errors.Wrap(err, "error in code communicator")
@@ -560,7 +561,7 @@ func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context) ([]device
 		}
 	}
 
-	return c.deviceClassCommunicator.GetInterfaces(ctx)
+	return c.deviceClassCommunicator.GetInterfaces(ctx, filter...)
 }
 
 func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
