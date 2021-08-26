@@ -30,6 +30,6 @@ jobs:
         fi
        
     - name: Run tests
-      run: cd test && go test
+      run: go test ./... -v
       env:
         THOLA_TEST_SIMPLEUI: true

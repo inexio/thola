@@ -21,7 +21,7 @@ type RequestDeviceConnectionHTTP struct {
 
 // RequestDeviceConnectionSNMP represents the snmp request device connection
 type RequestDeviceConnectionSNMP struct {
-	SnmpClient *SNMPClient
+	SnmpClient SNMPClient
 	CommonOIDs CommonOIDs
 }
 
