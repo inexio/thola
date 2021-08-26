@@ -18,4 +18,4 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          args: --disable unused --timeout 5m
+          args: --disable unused --timeout 5m --skip-files *_test.go
