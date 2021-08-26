@@ -47,7 +47,7 @@ func TestDeviceClassOID_readOID(t *testing.T) {
 	}
 }
 
-// TestDeviceClassOID_readOIDSkipEmpty tests deviceClassOID.readOid(...) without indices and skipEmpty = true
+// TestDeviceClassOID_readOID_skipEmpty tests deviceClassOID.readOid(...) without indices and skipEmpty = true
 func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
@@ -83,7 +83,7 @@ func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
 	}
 }
 
-// TestDeviceClassOID_readOIDWithIndices tests deviceClassOID.readOid(...) with indices and skipEmpty = false
+// TestDeviceClassOID_readOID_withIndices tests deviceClassOID.readOid(...) with indices and skipEmpty = false
 func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
@@ -122,7 +122,7 @@ func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
 	}
 }
 
-// TestDeviceClassOID_readOIDWithIndicesSkipEmpty tests deviceClassOID.readOid(...) with indices and skipEmpty = true
+// TestDeviceClassOID_readOID_withIndicesSkipEmpty tests deviceClassOID.readOid(...) with indices and skipEmpty = true
 func TestDeviceClassOID_readOID_withIndicesSkipEmpty(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
