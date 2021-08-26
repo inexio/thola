@@ -10,6 +10,49 @@ import (
 	"testing"
 )
 
+func TestSNMPGroupPropertyReader_getProperty(t *testing.T) {
+	var oidReader mockOidReader
+	ctx := context.Background()
+
+	oidReader.
+		On("readOID", ctx, []value.Value(nil), true).
+		Return(map[int]interface{}{
+			1: value.New("Port 1"),
+			2: value.New("Port 2"),
+			3: value.New("Port 3"),
+		}, nil)
+
+	sut := snmpGroupPropertyReader{
+		oids: deviceClassOIDs{
+			"ifDescr": &oidReader,
+		},
+	}
+
+	expectedPropertyGroups := propertyGroups{
+		propertyGroup{
+			"ifDescr": value.New("Port 1"),
+		},
+		propertyGroup{
+			"ifDescr": value.New("Port 2"),
+		},
+		propertyGroup{
+			"ifDescr": value.New("Port 3"),
+		},
+	}
+
+	expectedIndices := []value.Value{
+		value.New("1"),
+		value.New("2"),
+		value.New("3"),
+	}
+
+	res, indices, err := sut.getProperty(ctx)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expectedIndices, indices)
+	}
+}
+
 // TestDeviceClassOID_readOID tests deviceClassOID.readOid(...) without indices and skipEmpty = false
 func TestDeviceClassOID_readOID(t *testing.T) {
 	var snmpClient mocks.SNMPClient

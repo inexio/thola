@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+//go:generate go run github.com/vektra/mockery/v2 --name=oidReader --inpackage
+
 type propertyGroup map[string]interface{}
 
 type propertyGroups []propertyGroup
