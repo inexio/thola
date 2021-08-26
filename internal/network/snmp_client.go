@@ -17,6 +17,8 @@ import (
 	"unicode"
 )
 
+//go:generate go run github.com/vektra/mockery/v2 --name=SNMPClient
+
 // SNMPClient is used to communicate via snmp.
 type SNMPClient interface {
 	Disconnect() error
