@@ -7,11 +7,11 @@ import (
 	"github.com/inexio/thola/internal/network/mocks"
 	"github.com/inexio/thola/internal/value"
 	"github.com/stretchr/testify/assert"
-	"strconv"
 	"testing"
 )
 
-func TestDeviceClassOID(t *testing.T) {
+// TestDeviceClassOID_readOID tests deviceClassOID.readOid(...) without indices and skipEmpty = false
+func TestDeviceClassOID_readOID(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
@@ -25,6 +25,7 @@ func TestDeviceClassOID(t *testing.T) {
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "Port 2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "Port 3"),
+			network.NewSNMPResponse("1.4", gosnmp.OctetString, ""),
 		}, nil)
 
 	sut := deviceClassOID{
@@ -33,13 +34,127 @@ func TestDeviceClassOID(t *testing.T) {
 		},
 	}
 
-	expected := make(map[int]interface{})
-	for i := 1; i <= 3; i++ {
-		name := value.New("Port " + strconv.Itoa(i))
-		expected[i] = name
+	expected := map[int]interface{}{
+		1: value.New("Port 1"),
+		2: value.New("Port 2"),
+		3: value.New("Port 3"),
+		4: value.New(""),
+	}
+
+	res, err := sut.readOID(ctx, nil, false)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expected, res)
+	}
+}
+
+// TestDeviceClassOID_readOIDSkipEmpty tests deviceClassOID.readOid(...) without indices and skipEmpty = true
+func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
+	var snmpClient mocks.SNMPClient
+	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
+		SNMP: &network.RequestDeviceConnectionSNMP{
+			SnmpClient: &snmpClient,
+		},
+	})
+
+	snmpClient.
+		On("SNMPWalk", ctx, "1").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("1.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse("1.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse("1.3", gosnmp.OctetString, "Port 3"),
+			network.NewSNMPResponse("1.4", gosnmp.OctetString, ""),
+		}, nil)
+
+	sut := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID: "1",
+		},
+	}
+
+	expected := map[int]interface{}{
+		1: value.New("Port 1"),
+		2: value.New("Port 2"),
+		3: value.New("Port 3"),
 	}
 
 	res, err := sut.readOID(ctx, nil, true)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expected, res)
+	}
+}
+
+// TestDeviceClassOID_readOIDWithIndices tests deviceClassOID.readOid(...) with indices and skipEmpty = false
+func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
+	var snmpClient mocks.SNMPClient
+	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
+		SNMP: &network.RequestDeviceConnectionSNMP{
+			SnmpClient: &snmpClient,
+		},
+	})
+
+	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, true)
+
+	snmpClient.
+		On("SNMPGet", ctx, "1.1", "1.2", "1.3", "1.4").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse(".1.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse(".1.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse(".1.3", gosnmp.OctetString, "Port 3"),
+			network.NewSNMPResponse(".1.4", gosnmp.OctetString, ""),
+		}, nil)
+
+	sut := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID: "1",
+		},
+	}
+
+	expected := map[int]interface{}{
+		1: value.New("Port 1"),
+		2: value.New("Port 2"),
+		3: value.New("Port 3"),
+		4: value.New(""),
+	}
+
+	res, err := sut.readOID(ctx, []value.Value{value.New(1), value.New(2), value.New(3), value.New(4)}, false)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expected, res)
+	}
+}
+
+// TestDeviceClassOID_readOIDWithIndicesSkipEmpty tests deviceClassOID.readOid(...) with indices and skipEmpty = true
+func TestDeviceClassOID_readOID_withIndicesSkipEmpty(t *testing.T) {
+	var snmpClient mocks.SNMPClient
+	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
+		SNMP: &network.RequestDeviceConnectionSNMP{
+			SnmpClient: &snmpClient,
+		},
+	})
+
+	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, true)
+
+	snmpClient.
+		On("SNMPGet", ctx, "1.1", "1.2", "1.3", "1.4").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse(".1.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse(".1.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse(".1.3", gosnmp.OctetString, "Port 3"),
+			network.NewSNMPResponse(".1.4", gosnmp.OctetString, ""),
+		}, nil)
+
+	sut := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID: "1",
+		},
+	}
+
+	expected := map[int]interface{}{
+		1: value.New("Port 1"),
+		2: value.New("Port 2"),
+		3: value.New("Port 3"),
+	}
+
+	res, err := sut.readOID(ctx, []value.Value{value.New(1), value.New(2), value.New(3), value.New(4)}, true)
 	if assert.NoError(t, err) {
 		assert.Equal(t, expected, res)
 	}
