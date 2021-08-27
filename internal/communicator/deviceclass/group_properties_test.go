@@ -287,7 +287,7 @@ func TestDeviceClassOIDs_readOID(t *testing.T) {
 		"ifDescr": &ifDescrOidReader,
 	}
 
-	expectedPropertyGroups := map[int]interface{}{
+	expected := map[int]interface{}{
 		1: map[string]interface{}{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -304,7 +304,7 @@ func TestDeviceClassOIDs_readOID(t *testing.T) {
 
 	res, err := sut.readOID(ctx, []value.Value(nil), true)
 	if assert.NoError(t, err) {
-		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expected, res)
 	}
 }
 
@@ -348,7 +348,7 @@ func TestDeviceClassOIDs_readOID_multipleLevel(t *testing.T) {
 		"radio":   &radioInterfaceOidReader,
 	}
 
-	expectedPropertyGroups := map[int]interface{}{
+	expected := map[int]interface{}{
 		1: map[string]interface{}{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -373,6 +373,6 @@ func TestDeviceClassOIDs_readOID_multipleLevel(t *testing.T) {
 
 	res, err := sut.readOID(ctx, []value.Value(nil), true)
 	if assert.NoError(t, err) {
-		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expected, res)
 	}
 }

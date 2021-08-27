@@ -21,7 +21,7 @@ type propertyGroup map[string]interface{}
 
 type propertyGroups []propertyGroup
 
-func (g *propertyGroups) Decode(destination interface{}) error {
+func (g *propertyGroups) decode(destination interface{}) error {
 	return mapstructure.WeakDecode(g, destination)
 }
 
@@ -31,7 +31,7 @@ type groupPropertyReader interface {
 
 type snmpGroupPropertyReader struct {
 	index oidReader
-	oids  deviceClassOIDs
+	oids  oidReader
 }
 
 func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error) {
@@ -112,7 +112,7 @@ func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter
 
 		// find filter oid
 		attrs := strings.Split(f.Key, "/")
-		reader := oidReader(&s.oids)
+		reader := s.oids
 		for _, attr := range attrs {
 			// check if current oid reader contains multiple OIDs
 			multipleReader, ok := reader.(*deviceClassOIDs)
@@ -221,7 +221,7 @@ func (d *deviceClassOIDs) merge(overwrite deviceClassOIDs) deviceClassOIDs {
 type deviceClassOID struct {
 	network.SNMPGetConfiguration
 	operators      propertyOperators
-	indicesMapping *deviceClassOID
+	indicesMapping oidReader
 }
 
 func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
@@ -250,10 +250,15 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 
 			ifIndexRelIndex := make(map[string]value.Value)
 			for relIndex, ifIndex := range mappingIndices {
-				if idx, ok := ifIndexRelIndex[ifIndex.(value.Value).String()]; ok {
+				ifIndexValue, ok := ifIndex.(value.Value)
+				if !ok {
+					return nil, errors.New("index mapping oid didn't return a result of type 'value'")
+				}
+				ifIndexString := ifIndexValue.String()
+				if idx, ok := ifIndexRelIndex[ifIndexString]; ok {
 					return nil, fmt.Errorf("index mapping resulted in duplicate ifIndex mapping on '%s'", idx.String())
 				}
-				ifIndexRelIndex[ifIndex.(value.Value).String()] = value.New(relIndex)
+				ifIndexRelIndex[ifIndexString] = value.New(relIndex)
 			}
 
 			var newIndices []value.Value
@@ -327,7 +332,11 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			if !ok {
 				continue
 			}
-			idx, err := mappedIdx.(value.Value).Int()
+			idxValue, ok := mappedIdx.(value.Value)
+			if !ok {
+				return nil, errors.New("index mapping oid didn't return a result of type 'value'")
+			}
+			idx, err := idxValue.Int()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to convert Value to int")
 			}
