@@ -95,7 +95,7 @@ func init() {
 	snmpSimIPs <- "172.20.0.9"
 }
 
-func Test(t *testing.T) {
+func TestIntegration(t *testing.T) {
 	if !testConf.SimpleUI {
 		_, _ = colorstring.Println("[cyan][1/3][reset] Building up test environment...")
 	}
