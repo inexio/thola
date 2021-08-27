@@ -1609,7 +1609,10 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 			}
 		}
 
-		return &snmpGroupPropertyReader{index, devClassOIDs}, nil
+		return &snmpGroupPropertyReader{
+			index: index,
+			oids:  devClassOIDs,
+		}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}

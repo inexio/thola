@@ -3,10 +3,13 @@ package deviceclass
 import (
 	"context"
 	"github.com/gosnmp/gosnmp"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/network/mocks"
+	"github.com/inexio/thola/internal/utility"
 	"github.com/inexio/thola/internal/value"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -175,9 +178,7 @@ func TestDeviceClassOID_readOID_indicesMapping(t *testing.T) {
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "3"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "1"),
-		}, nil)
-
-	snmpClient.
+		}, nil).
 		On("SNMPWalk", ctx, "2").
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
@@ -226,9 +227,7 @@ func TestDeviceClassOID_readOID_indicesMappingWithIndices(t *testing.T) {
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "3"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "1"),
-		}, nil)
-
-	snmpClient.
+		}, nil).
 		On("SNMPGet", ctx, "2.3", "2.2", "2.1").
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".2.3", gosnmp.OctetString, "Port 3"),
@@ -374,5 +373,274 @@ func TestDeviceClassOIDs_readOID_multipleLevel(t *testing.T) {
 	res, err := sut.readOID(ctx, []value.Value(nil), true)
 	if assert.NoError(t, err) {
 		assert.Equal(t, expected, res)
+	}
+}
+
+func TestSNMPGroupPropertyReader_getProperty(t *testing.T) {
+	var oidReader mockOidReader
+	ctx := context.Background()
+
+	oidReader.
+		On("readOID", ctx, []value.Value(nil), true).
+		Return(map[int]interface{}{
+			1: map[string]interface{}{
+				"ifIndex": value.New(1),
+				"ifDescr": value.New("Port 1"),
+			},
+			2: map[string]interface{}{
+				"ifIndex": value.New(2),
+				"ifDescr": value.New("Port 2"),
+			},
+			3: map[string]interface{}{
+				"ifIndex": value.New(3),
+				"ifDescr": value.New("Port 3"),
+			},
+		}, nil)
+
+	sut := snmpGroupPropertyReader{
+		oids: &oidReader,
+	}
+
+	expectedPropertyGroups := propertyGroups{
+		propertyGroup{
+			"ifIndex": value.New(1),
+			"ifDescr": value.New("Port 1"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(2),
+			"ifDescr": value.New("Port 2"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(3),
+			"ifDescr": value.New("Port 3"),
+		},
+	}
+
+	expectedIndices := []value.Value{
+		value.New(1),
+		value.New(2),
+		value.New(3),
+	}
+
+	res, indices, err := sut.getProperty(ctx)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expectedIndices, indices)
+	}
+}
+
+func TestSNMPGroupPropertyReader_getProperty_filter(t *testing.T) {
+	var snmpClient mocks.SNMPClient
+	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
+		SNMP: &network.RequestDeviceConnectionSNMP{
+			SnmpClient: &snmpClient,
+		},
+	})
+
+	snmpClient.
+		On("SNMPWalk", ctx, "1").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
+			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
+			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
+		}, nil).
+		On("SNMPWalk", ctx, "2").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse("2.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
+		}, nil)
+
+	sut := snmpGroupPropertyReader{
+		oids: &deviceClassOIDs{
+			"ifIndex": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "2",
+				},
+			},
+		},
+	}
+
+	expectedPropertyGroups := propertyGroups{
+		propertyGroup{
+			"ifIndex": value.New(1),
+			"ifDescr": value.New("Port 1"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(3),
+			"ifDescr": value.New("Port 3"),
+		},
+	}
+
+	expectedIndices := []value.Value{
+		value.New(1),
+		value.New(3),
+	}
+
+	res, indices, err := sut.getProperty(ctx, filter.PropertyFilter{
+		Key:   "ifDescr",
+		Regex: "2",
+	})
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expectedIndices, indices)
+	}
+}
+
+func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalk(t *testing.T) {
+	var oidReader mockOidReader
+	var indexOIDReader mockOidReader
+	ctx := network.NewContextWithSNMPGetsInsteadOfWalk(context.Background(), true)
+
+	oidReader.
+		On("readOID", ctx, mock.MatchedBy(func(input []value.Value) bool {
+			return utility.SameValueSlice(input, []value.Value{
+				value.New(1),
+				value.New(2),
+				value.New(3),
+			})
+		}), true).
+		Return(map[int]interface{}{
+			1: map[string]interface{}{
+				"ifIndex": value.New(1),
+				"ifDescr": value.New("Port 1"),
+			},
+			2: map[string]interface{}{
+				"ifIndex": value.New(2),
+				"ifDescr": value.New("Port 2"),
+			},
+			3: map[string]interface{}{
+				"ifIndex": value.New(3),
+				"ifDescr": value.New("Port 3"),
+			},
+		}, nil)
+
+	indexOIDReader.
+		On("readOID", ctx, []value.Value(nil), false).
+		Return(map[int]interface{}{
+			1: map[string]interface{}{
+				"ifIndex": value.New(1),
+			},
+			2: map[string]interface{}{
+				"ifIndex": value.New(2),
+			},
+			3: map[string]interface{}{
+				"ifIndex": value.New(3),
+			},
+		}, nil)
+
+	sut := snmpGroupPropertyReader{
+		oids:  &oidReader,
+		index: &indexOIDReader,
+	}
+
+	expectedPropertyGroups := propertyGroups{
+		propertyGroup{
+			"ifIndex": value.New(1),
+			"ifDescr": value.New("Port 1"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(2),
+			"ifDescr": value.New("Port 2"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(3),
+			"ifDescr": value.New("Port 3"),
+		},
+	}
+
+	expectedIndices := []value.Value{
+		value.New(1),
+		value.New(2),
+		value.New(3),
+	}
+
+	res, indices, err := sut.getProperty(ctx)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expectedIndices, indices)
+	}
+}
+
+func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalkFilter(t *testing.T) {
+	var snmpClient mocks.SNMPClient
+	ctx := network.NewContextWithDeviceConnection(network.NewContextWithSNMPGetsInsteadOfWalk(context.Background(), true),
+		&network.RequestDeviceConnection{
+			SNMP: &network.RequestDeviceConnectionSNMP{
+				SnmpClient: &snmpClient,
+			},
+		})
+
+	snmpClient.
+		On("SNMPGet", ctx, "1.1", "1.3").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
+			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
+		}, nil).
+		On("SNMPGet", ctx, "1.3", "1.1").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
+			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
+		}, nil).
+		On("SNMPGet", ctx, "2.1", "2.3").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
+		}, nil).
+		On("SNMPGet", ctx, "2.3", "2.1").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
+		}, nil).
+		On("SNMPWalk", ctx, "2").
+		Return([]network.SNMPResponse{
+			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
+			network.NewSNMPResponse("2.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
+		}, nil)
+
+	sut := snmpGroupPropertyReader{
+		oids: &deviceClassOIDs{
+			"ifIndex": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "2",
+				},
+			},
+		},
+	}
+
+	expectedPropertyGroups := propertyGroups{
+		propertyGroup{
+			"ifIndex": value.New(1),
+			"ifDescr": value.New("Port 1"),
+		},
+		propertyGroup{
+			"ifIndex": value.New(3),
+			"ifDescr": value.New("Port 3"),
+		},
+	}
+
+	expectedIndices := []value.Value{
+		value.New(1),
+		value.New(3),
+	}
+
+	res, indices, err := sut.getProperty(ctx, filter.PropertyFilter{
+		Key:   "ifDescr",
+		Regex: "2",
+	})
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedPropertyGroups, res)
+		assert.Equal(t, expectedIndices, indices)
 	}
 }
