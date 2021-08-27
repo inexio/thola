@@ -323,14 +323,13 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 		mappedResult := make(map[int]interface{})
 
 		for k, v := range result {
-			var idx int
-			if _, ok := mappingIndices[k]; ok {
-				idx, err = mappingIndices[k].(value.Value).Int()
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to convert Value to int")
-				}
-			} else {
-				idx = k
+			mappedIdx, ok := mappingIndices[k]
+			if !ok {
+				continue
+			}
+			idx, err := mappedIdx.(value.Value).Int()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to convert Value to int")
 			}
 
 			if _, ok := mappedResult[idx]; ok {
