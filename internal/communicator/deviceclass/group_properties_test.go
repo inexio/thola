@@ -231,10 +231,9 @@ func TestDeviceClassOID_readOID_indicesMappingWithIndices(t *testing.T) {
 	snmpClient.
 		On("SNMPGet", ctx, "2.3", "2.2", "2.1").
 		Return([]network.SNMPResponse{
-			network.NewSNMPResponse(".2.1", gosnmp.OctetString, "Port 1"),
-			network.NewSNMPResponse(".2.2", gosnmp.OctetString, "Port 2"),
 			network.NewSNMPResponse(".2.3", gosnmp.OctetString, "Port 3"),
-			network.NewSNMPResponse(".2.4", gosnmp.OctetString, "Port 4"),
+			network.NewSNMPResponse(".2.2", gosnmp.OctetString, "Port 2"),
+			network.NewSNMPResponse(".2.1", gosnmp.OctetString, "Port 1"),
 		}, nil)
 
 	indicesMappingDeviceClassOid := deviceClassOID{
