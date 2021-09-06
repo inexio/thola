@@ -3,6 +3,7 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -15,7 +16,7 @@ type ekinopsCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of ekinops devices.
-func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -68,7 +69,12 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context) ([]device.Inter
 		}
 	}
 
-	return normalizeEkinopsInterfaces(interfaces)
+	interfaces, err = c.normalizeInterfaces(interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to normalize interfaces")
+	}
+
+	return filterInterfaces(interfaces, filter)
 }
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
@@ -88,7 +94,7 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 	return m, nil
 }
 
-func normalizeEkinopsInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
+func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
 	var res []device.Interface
 
 	for _, interf := range interfaces {

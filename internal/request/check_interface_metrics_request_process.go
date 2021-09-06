@@ -6,10 +6,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
 	"github.com/pkg/errors"
-	"regexp"
 )
 
 type interfaceCheckOutput struct {
@@ -27,22 +28,22 @@ type interfaceCheckOutput struct {
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	readInterfacesRequest := ReadInterfacesRequest{ReadRequest{r.BaseRequest}}
-	response, err := readInterfacesRequest.process(ctx)
-	if err != nil {
-		return nil, err
-	}
+	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, r.SNMPGetsInsteadOfWalk)
 
-	readInterfacesResponse := response.(*ReadInterfacesResponse)
-
-	err = r.normalizeInterfaces(readInterfacesResponse.Interfaces)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while normalizing interfaces", true) {
+	com, err := GetCommunicator(ctx, r.BaseRequest)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to get communicator", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
-	interfaces, err := r.filterInterfaces(readInterfacesResponse.Interfaces)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while filtering interfaces", true) {
+	interfaces, err := com.GetInterfaces(ctx, r.getFilter()...)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "failed to read out interfaces", true) {
+		r.mon.PrintPerformanceData(false)
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
+	err = r.normalizeInterfaces(interfaces)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while normalizing interfaces", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
@@ -76,63 +77,42 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 
 			interfaceOutput = append(interfaceOutput, x)
 		}
-		output, err := parser.Parse(interfaceOutput, "json")
-		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if len(interfaceOutput) > 0 {
+			output, err := parser.Parse(interfaceOutput, "json")
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+			r.mon.UpdateStatus(monitoringplugin.OK, string(output))
 		}
-		r.mon.UpdateStatus(monitoringplugin.OK, string(output))
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }
 
-func (r *CheckInterfaceMetricsRequest) filterInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
-	var filterIndices []int
-out:
-	for i, interf := range interfaces {
-		for _, filter := range r.IfTypeFilter {
-			if interf.IfType != nil && *interf.IfType == filter {
-				filterIndices = append(filterIndices, i)
-				continue out
-			}
-		}
-		for _, filter := range r.IfNameFilter {
-			if interf.IfName != nil {
-				matched, err := regexp.MatchString(filter, *interf.IfName)
-				if err != nil {
-					return nil, errors.Wrap(err, "ifName filter regex match failed")
-				}
-				if matched {
-					filterIndices = append(filterIndices, i)
-					continue out
-				}
-			}
-		}
-		for _, filter := range r.IfDescrFilter {
-			if interf.IfDescr != nil {
-				matched, err := regexp.MatchString(filter, *interf.IfDescr)
-				if err != nil {
-					return nil, errors.Wrap(err, "ifDescr filter regex match failed")
-				}
-				if matched {
-					filterIndices = append(filterIndices, i)
-					continue out
-				}
-			}
-		}
+func (r *CheckInterfaceMetricsRequest) getFilter() []filter.PropertyFilter {
+	var res []filter.PropertyFilter
+
+	for _, f := range r.IfTypeFilter {
+		res = append(res, filter.PropertyFilter{
+			Key:   "ifType",
+			Regex: f,
+		})
+	}
+	for _, f := range r.IfNameFilter {
+		res = append(res, filter.PropertyFilter{
+			Key:   "ifName",
+			Regex: f,
+		})
+	}
+	for _, f := range r.IfDescrFilter {
+		res = append(res, filter.PropertyFilter{
+			Key:   "ifDescr",
+			Regex: f,
+		})
 	}
 
-	interfaces = filterInterfaces(interfaces, filterIndices, 0)
-
-	return interfaces, nil
-}
-
-func filterInterfaces(interfaces []device.Interface, toRemove []int, alreadyRemoved int) []device.Interface {
-	if len(toRemove) == 0 {
-		return interfaces
-	}
-	return append(interfaces[:toRemove[0]-alreadyRemoved], filterInterfaces(interfaces[toRemove[0]+1-alreadyRemoved:], toRemove[1:], toRemove[0]+1)...)
+	return res
 }
 
 func (r *CheckInterfaceMetricsRequest) normalizeInterfaces(interfaces []device.Interface) error {

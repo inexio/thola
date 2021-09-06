@@ -97,13 +97,21 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 			DiscoverParallelRequests: configData.SNMP.DiscoverParallelRequests,
 			DiscoverTimeout:          configData.SNMP.DiscoverTimeout,
 			DiscoverRetries:          configData.SNMP.DiscoverRetries,
-			V3Data:                   cacheData.SNMP.V3Data,
+			V3Data: network.SNMPv3ConnectionData{
+				Level:        utility.IfThenElse(cacheData.SNMP.V3Data.Level != nil, cacheData.SNMP.V3Data.Level, configData.SNMP.V3Data.Level).(*string),
+				ContextName:  utility.IfThenElse(cacheData.SNMP.V3Data.ContextName != nil, cacheData.SNMP.V3Data.ContextName, configData.SNMP.V3Data.ContextName).(*string),
+				User:         utility.IfThenElse(cacheData.SNMP.V3Data.User != nil, cacheData.SNMP.V3Data.User, configData.SNMP.V3Data.User).(*string),
+				AuthKey:      utility.IfThenElse(cacheData.SNMP.V3Data.AuthKey != nil, cacheData.SNMP.V3Data.AuthKey, configData.SNMP.V3Data.AuthKey).(*string),
+				AuthProtocol: utility.IfThenElse(cacheData.SNMP.V3Data.AuthProtocol != nil, cacheData.SNMP.V3Data.AuthProtocol, configData.SNMP.V3Data.AuthProtocol).(*string),
+				PrivKey:      utility.IfThenElse(cacheData.SNMP.V3Data.PrivKey != nil, cacheData.SNMP.V3Data.PrivKey, configData.SNMP.V3Data.PrivKey).(*string),
+				PrivProtocol: utility.IfThenElse(cacheData.SNMP.V3Data.PrivProtocol != nil, cacheData.SNMP.V3Data.PrivProtocol, configData.SNMP.V3Data.PrivProtocol).(*string),
+			},
 		},
 		HTTP: &network.HTTPConnectionData{
 			HTTPPorts:    utility.SliceUniqueInt(append(cacheData.HTTP.HTTPPorts, configData.HTTP.HTTPPorts...)),
 			HTTPSPorts:   utility.SliceUniqueInt(append(cacheData.HTTP.HTTPSPorts, configData.HTTP.HTTPSPorts...)),
-			AuthUsername: utility.IfThenElse(cacheData.HTTP.AuthUsername == nil, configData.HTTP.AuthUsername, cacheData.HTTP.AuthUsername).(*string),
-			AuthPassword: utility.IfThenElse(cacheData.HTTP.AuthPassword == nil, configData.HTTP.AuthPassword, cacheData.HTTP.AuthPassword).(*string),
+			AuthUsername: utility.IfThenElse(cacheData.HTTP.AuthUsername != nil, cacheData.HTTP.AuthUsername, configData.HTTP.AuthUsername).(*string),
+			AuthPassword: utility.IfThenElse(cacheData.HTTP.AuthPassword != nil, cacheData.HTTP.AuthPassword, configData.HTTP.AuthPassword).(*string),
 		},
 	}
 
@@ -145,7 +153,8 @@ func (r *BaseRequest) validate(ctx context.Context) error {
 		r.DeviceData.ConnectionData.SNMP.DiscoverRetries = mergedData.SNMP.DiscoverRetries
 	}
 
-	if *r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests <= 0 || *r.DeviceData.ConnectionData.SNMP.DiscoverTimeout <= 0 {
+	if (r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests != nil && *r.DeviceData.ConnectionData.SNMP.DiscoverParallelRequests <= 0) ||
+		(r.DeviceData.ConnectionData.SNMP.DiscoverTimeout != nil && *r.DeviceData.ConnectionData.SNMP.DiscoverTimeout <= 0) {
 		return errors.New("invalid snmp connection discover preferences")
 	}
 
@@ -262,6 +271,13 @@ func getConfigConnectionData() network.ConnectionData {
 	parallelRequests := viper.GetInt("device.snmp-discover-par-requests")
 	timeout := viper.GetInt("device.snmp-discover-timeout")
 	retries := viper.GetInt("device.snmp-discover-retries")
+	v3Level := viper.GetString("device.snmp-v3-level")
+	v3ContextName := viper.GetString("device.snmp-v3-context")
+	v3User := viper.GetString("device.snmp-v3-user")
+	v3AuthKey := viper.GetString("device.snmp-v3-auth-key")
+	v3AuthProto := viper.GetString("device.snmp-v3-auth-proto")
+	v3PrivKey := viper.GetString("device.snmp-v3-priv-key")
+	v3PrivProto := viper.GetString("device.snmp-v3-priv-proto")
 	authUsername := viper.GetString("device.http-username")
 	authPassword := viper.GetString("device.http-password")
 	return network.ConnectionData{
@@ -272,6 +288,15 @@ func getConfigConnectionData() network.ConnectionData {
 			DiscoverParallelRequests: &parallelRequests,
 			DiscoverTimeout:          &timeout,
 			DiscoverRetries:          &retries,
+			V3Data: network.SNMPv3ConnectionData{
+				Level:        &v3Level,
+				ContextName:  &v3ContextName,
+				User:         &v3User,
+				AuthKey:      &v3AuthKey,
+				AuthProtocol: &v3AuthProto,
+				PrivKey:      &v3PrivKey,
+				PrivProtocol: &v3PrivProto,
+			},
 		},
 		HTTP: &network.HTTPConnectionData{
 			HTTPPorts:    viper.GetIntSlice("device.http-ports"),

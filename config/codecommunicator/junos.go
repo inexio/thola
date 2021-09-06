@@ -3,6 +3,7 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -14,16 +15,16 @@ type junosCommunicator struct {
 	codeCommunicator
 }
 
-func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
-	interfaces, err := c.deviceClass.GetInterfaces(ctx)
+func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+	interfaces, err := c.deviceClass.GetInterfaces(ctx, filter...)
 	if err != nil {
 		return nil, err
 	}
 
-	interfacesWithVLANs, err := juniperAddVLANsNonELS(ctx, interfaces)
+	interfacesWithVLANs, err := c.addVLANsNonELS(ctx, interfaces)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("getting juniper VLANs for non ELS devices failed, trying for ELS devices")
-		interfacesWithVLANs, err = juniperAddVLANsELS(ctx, interfaces)
+		interfacesWithVLANs, err = c.addVLANsELS(ctx, interfaces)
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msg("getting juniper VLANs for ELS devices failed, skipping VLANs")
 			interfacesWithVLANs = interfaces
@@ -33,7 +34,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 	return interfacesWithVLANs, nil
 }
 
-func juniperAddVLANsELS(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
+func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("snmp client is empty")
@@ -80,7 +81,7 @@ func juniperAddVLANsELS(ctx context.Context, interfaces []device.Interface) ([]d
 		}
 	}
 
-	portIfIndex, err := juniperGetPortIfIndexMapping(ctx)
+	portIfIndex, err := c.getPortIfIndexMapping(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +131,7 @@ out:
 	return interfaces, nil
 }
 
-func juniperAddVLANsNonELS(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
+func (c *junosCommunicator) addVLANsNonELS(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("snmp client is empty")
@@ -142,7 +143,7 @@ func juniperAddVLANsNonELS(ctx context.Context, interfaces []device.Interface) (
 		return nil, errors.Wrap(err, "failed to get jnxExVlanPortStatus")
 	}
 
-	portIfIndex, err := juniperGetPortIfIndexMapping(ctx)
+	portIfIndex, err := c.getPortIfIndexMapping(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +205,7 @@ func juniperAddVLANsNonELS(ctx context.Context, interfaces []device.Interface) (
 	return interfaces, nil
 }
 
-func juniperGetPortIfIndexMapping(ctx context.Context) (map[string]string, error) {
+func (c *junosCommunicator) getPortIfIndexMapping(ctx context.Context) (map[string]string, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("snmp client is empty")

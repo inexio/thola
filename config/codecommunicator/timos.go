@@ -2,6 +2,7 @@ package codecommunicator
 
 import (
 	"context"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -15,7 +16,7 @@ type timosCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of Nokia devices.
-func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
@@ -89,7 +90,7 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context) ([]device.Interfa
 		})
 	}
 
-	return interfaces, nil
+	return filterInterfaces(interfaces, filter)
 }
 
 // getPhysPortDescriptions returns a mapping from every ifIndex to a description.

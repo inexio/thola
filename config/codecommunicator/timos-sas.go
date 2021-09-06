@@ -2,6 +2,7 @@ package codecommunicator
 
 import (
 	"context"
+	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -14,7 +15,7 @@ type timosSASCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of a Nokia SAS-T device.
-func (c *timosSASCommunicator) GetInterfaces(ctx context.Context) ([]device.Interface, error) {
+func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
 	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err
@@ -69,14 +70,14 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context) ([]device.Inte
 		}
 	}
 
-	return interfaces, nil
+	return filterInterfaces(interfaces, filter)
 }
 
 // getInterfaceBySubIndex returns the index of the interface that has the given index.
 // The returned index is the index of the array, not the IfIndex.
 func getInterfaceBySubIndex(subIndex uint64, interfaces []device.Interface) (int, error) {
 	for index, iface := range interfaces {
-		if *iface.IfIndex == subIndex {
+		if iface.IfIndex != nil && *iface.IfIndex == subIndex {
 			return index, nil
 		}
 	}
