@@ -55,11 +55,11 @@ func ToXML(i interface{}) ([]byte, error) {
 	if p, ok := i.(xmlParser); ok {
 		return p.ToXML()
 	}
-	responseString, err := xml.Marshal(i)
+	response, err := xml.Marshal(i)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal to xml")
 	}
-	return responseString, nil
+	return response, nil
 }
 
 // ToJSON parses the object to JSON.
@@ -68,11 +68,11 @@ func ToJSON(i interface{}) ([]byte, error) {
 	if p, ok := i.(jsonParser); ok {
 		return p.ToJSON()
 	}
-	responseString, err := json.Marshal(i)
+	response, err := json.Marshal(i)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal to json")
 	}
-	return responseString, nil
+	return response, nil
 }
 
 // ToCSV parses the object to CSV.
@@ -81,12 +81,11 @@ func ToCSV(i interface{}) ([]byte, error) {
 	if p, ok := i.(csvParser); ok {
 		return p.ToCSV()
 	}
-	var buffer bytes.Buffer
-	err := gocsv.Marshal(i, &buffer)
+	response, err := gocsv.MarshalBytes(i)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal to csv")
 	}
-	return buffer.Bytes(), nil
+	return response, nil
 }
 
 //ToHumanReadable parses the object to a human readable format.

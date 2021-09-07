@@ -28,4 +28,4 @@
 package doc
 
 // Version specifies the current version.
-const Version = "v0.3.5"
+const Version = "v0.4.1"
