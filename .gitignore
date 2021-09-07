@@ -14,4 +14,5 @@ Thumbs.db
 
 # Thola specific files #
 ########################
-filesystem-vfsdata.go
+**/mocks
+mock_*

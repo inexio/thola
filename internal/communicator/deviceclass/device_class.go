@@ -558,13 +558,19 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 }
 
 func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
-	var idxMappings *deviceClassOID
+	res := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID:          y.OID,
+			UseRawResult: y.UseRawResult,
+		},
+	}
+
 	if y.IndicesMapping != nil {
 		mappings, err := y.IndicesMapping.convert()
 		if err != nil {
 			return deviceClassOID{}, errors.New("failed to convert indices mappings")
 		}
-		idxMappings = &mappings
+		res.indicesMapping = &mappings
 	}
 
 	if y.Operators != nil {
@@ -572,24 +578,10 @@ func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
 		if err != nil {
 			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
 		}
-		return deviceClassOID{
-			SNMPGetConfiguration: network.SNMPGetConfiguration{
-				OID:          y.OID,
-				UseRawResult: y.UseRawResult,
-			},
-			operators:      operators,
-			indicesMapping: idxMappings,
-		}, nil
+		res.operators = operators
 	}
 
-	return deviceClassOID{
-		SNMPGetConfiguration: network.SNMPGetConfiguration{
-			OID:          y.OID,
-			UseRawResult: y.UseRawResult,
-		},
-		operators:      nil,
-		indicesMapping: idxMappings,
-	}, nil
+	return res, nil
 }
 
 func (y *yamlComponentsOID) validate() error {
@@ -1604,7 +1596,12 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
 			}
 
-			devClassOIDsMerged := parentSNMPGroupPropertyReader.oids.merge(*devClassOIDs)
+			parentSNMPGroupPropertyReaderOIDs, ok := parentSNMPGroupPropertyReader.oids.(*deviceClassOIDs)
+			if !ok {
+				return nil, errors.New("parent SNMP group property reader oids is not of type 'deviceClassOIDs'")
+			}
+
+			devClassOIDsMerged := parentSNMPGroupPropertyReaderOIDs.merge(*devClassOIDs)
 			devClassOIDs = &devClassOIDsMerged
 
 			if index == nil {
@@ -1612,7 +1609,10 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 			}
 		}
 
-		return &snmpGroupPropertyReader{index, *devClassOIDs}, nil
+		return &snmpGroupPropertyReader{
+			index: index,
+			oids:  devClassOIDs,
+		}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}

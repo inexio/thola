@@ -14,15 +14,17 @@ import (
 )
 
 type interfaceCheckOutput struct {
-	IfIndex       *string `json:"ifIndex"`
-	IfDescr       *string `json:"ifDescr"`
-	IfType        *string `json:"ifType"`
-	IfName        *string `json:"ifName"`
-	IfAlias       *string `json:"ifAlias"`
-	IfPhysAddress *string `json:"ifPhysAddress"`
-	IfAdminStatus *string `json:"ifAdminStatus"`
-	IfOperStatus  *string `json:"ifOperStatus"`
-	SubType       *string `json:"subType"`
+	IfIndex       *string `json:"ifIndex" csv:"ifIndex"`
+	IfDescr       *string `json:"ifDescr" csv:"ifDescr"`
+	IfType        *string `json:"ifType" csv:"ifType"`
+	IfName        *string `json:"ifName" csv:"ifName"`
+	IfAlias       *string `json:"ifAlias" csv:"ifAlias"`
+	IfPhysAddress *string `json:"ifPhysAddress" csv:"ifPhysAddress"`
+	IfAdminStatus *string `json:"ifAdminStatus" csv:"ifAdminStatus"`
+	IfOperStatus  *string `json:"ifOperStatus" csv:"ifOperStatus"`
+	MaxSpeedIn    *string `json:"maxSpeedIn" csv:"maxSpeedIn"`
+	MaxSpeedOut   *string `json:"maxSpeedOut" csv:"maxSpeedOut"`
+	SubType       *string `json:"subType" csv:"subType"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -63,7 +65,7 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 				index = &i
 			}
 
-			x := interfaceCheckOutput{
+			currentOutput := interfaceCheckOutput{
 				IfIndex:       index,
 				IfDescr:       interf.IfDescr,
 				IfName:        interf.IfName,
@@ -75,10 +77,26 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 				SubType:       interf.SubType,
 			}
 
-			interfaceOutput = append(interfaceOutput, x)
+			if maxSpeedIn := getMaxSpeedIn(interf); maxSpeedIn != nil {
+				maxSpeedInString := fmt.Sprint(*maxSpeedIn)
+				currentOutput.MaxSpeedIn = &maxSpeedInString
+			}
+
+			if maxSpeedOut := getMaxSpeedOut(interf); maxSpeedOut != nil {
+				maxSpeedOutString := fmt.Sprint(*maxSpeedOut)
+				currentOutput.MaxSpeedOut = &maxSpeedOutString
+			}
+
+			interfaceOutput = append(interfaceOutput, currentOutput)
 		}
 		if len(interfaceOutput) > 0 {
-			output, err := parser.Parse(interfaceOutput, "json")
+			var output []byte
+			if r.PrintInterfacesCSV {
+				output, err = parser.Parse(interfaceOutput, "csv")
+
+			} else {
+				output, err = parser.Parse(interfaceOutput, "json")
+			}
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
 				r.mon.PrintPerformanceData(false)
 				return &CheckResponse{r.mon.GetInfo()}, nil
@@ -283,26 +301,16 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 		}
 
 		//interface_maxspeed_in
-		if i.MaxSpeedIn != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.MaxSpeedIn).SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		} else if i.IfSpeed != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *i.IfSpeed).SetLabel(*i.IfDescr))
+		if maxSpeedIn := getMaxSpeedIn(i); maxSpeedIn != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_in", *maxSpeedIn).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
 		}
 
 		//interface_maxspeed_out
-		if i.MaxSpeedOut != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.MaxSpeedOut).SetLabel(*i.IfDescr))
-			if err != nil {
-				return err
-			}
-		} else if i.IfSpeed != nil {
-			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *i.IfSpeed).SetLabel(*i.IfDescr))
+		if maxSpeedOut := getMaxSpeedOut(i); maxSpeedOut != nil {
+			err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxspeed_out", *maxSpeedOut).SetLabel(*i.IfDescr))
 			if err != nil {
 				return err
 			}
@@ -572,4 +580,22 @@ func checkHCCounter(hcCounter *uint64, counter *uint64) *uint64 {
 		return hcCounter
 	}
 	return counter
+}
+
+func getMaxSpeedIn(interf device.Interface) *uint64 {
+	if interf.MaxSpeedIn != nil {
+		return interf.MaxSpeedIn
+	} else if interf.IfSpeed != nil {
+		return interf.IfSpeed
+	}
+	return nil
+}
+
+func getMaxSpeedOut(interf device.Interface) *uint64 {
+	if interf.MaxSpeedOut != nil {
+		return interf.MaxSpeedOut
+	} else if interf.IfSpeed != nil {
+		return interf.IfSpeed
+	}
+	return nil
 }

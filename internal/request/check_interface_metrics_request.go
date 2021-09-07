@@ -13,6 +13,7 @@ import (
 // swagger:model
 type CheckInterfaceMetricsRequest struct {
 	PrintInterfaces       bool    `yaml:"print_interfaces" json:"print_interfaces" xml:"print_interfaces"`
+	PrintInterfacesCSV    bool    `yaml:"print_interfaces_csv" json:"print_interfaces_csv" xml:"print_interfaces_csv"`
 	IfDescrRegex          *string `yaml:"ifDescr_regex" json:"ifDescr_regex" xml:"ifDescr_regex"`
 	ifDescrRegex          *regexp.Regexp
 	IfDescrRegexReplace   *string  `yaml:"ifDescr_regex_replace" json:"ifDescr_regex_replace" xml:"ifDescr_regex_replace"`

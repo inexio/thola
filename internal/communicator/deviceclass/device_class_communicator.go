@@ -593,7 +593,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...f
 
 	var interfaces []device.Interface
 
-	err = interfacesRaw.Decode(&interfaces)
+	err = interfacesRaw.decode(&interfaces)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode raw interfaces into interface structs")
 	}
