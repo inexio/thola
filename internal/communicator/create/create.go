@@ -142,7 +142,7 @@ func identifyDeviceRecursive(ctx context.Context, children map[string]hierarchy.
 	}
 
 	// return generic device class
-	if (con.SNMP == nil || len(con.SNMP.SnmpClient.GetSuccessfulCachedRequests()) == 0) && (con.HTTP == nil || len(con.HTTP.HTTPClient.GetSuccessfulCachedRequests()) == 0) {
+	if (con.SNMP == nil || !con.SNMP.SnmpClient.HasSuccessfulCachedRequest()) && (con.HTTP == nil || !con.HTTP.HTTPClient.HasSuccessfulCachedRequest()) {
 		return nil, errors.New("no network requests to device succeeded")
 	}
 	return nil, tholaerr.NewNotFoundError("no device class matched")
