@@ -17,6 +17,7 @@ type CheckRequest struct {
 
 func (r *CheckRequest) init() {
 	r.mon = monitoringplugin.NewResponse("checked")
+	_ = r.mon.SetInvalidCharacterBehavior(monitoringplugin.InvalidCharacterReplaceWithErrorAndSetUNKNOWN, "")
 	r.mon.PrintPerformanceData(r.PrintPerformanceData)
 	r.mon.SetPerformanceDataJSONLabel(r.JSONMetrics)
 }

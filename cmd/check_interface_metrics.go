@@ -12,7 +12,6 @@ func init() {
 	checkCMD.AddCommand(checkInterfaceMetricsCMD)
 
 	checkInterfaceMetricsCMD.Flags().Bool("print-interfaces", false, "Print interfaces to plugin output")
-	checkInterfaceMetricsCMD.Flags().Bool("print-interfaces-csv", false, "Print interfaces to plugin output as CSV")
 	checkInterfaceMetricsCMD.Flags().Bool("snmp-gets-instead-of-walk", false, "Use SNMP Gets instead of Walks")
 	checkInterfaceMetricsCMD.Flags().String("ifDescr-regex", "", "Apply a regex on the ifDescr of the interfaces. Use it together with the 'ifDescr-regex-replace' flag")
 	checkInterfaceMetricsCMD.Flags().String("ifDescr-regex-replace", "", "Apply a regex on the ifDescr of the interfaces. Use it together with the 'ifDescr-regex' flag")
@@ -29,10 +28,6 @@ var checkInterfaceMetricsCMD = &cobra.Command{
 		printInterfaces, err := cmd.Flags().GetBool("print-interfaces")
 		if err != nil {
 			log.Fatal().Err(err).Msg("print-interfaces needs to be a boolean")
-		}
-		printInterfacesCSV, err := cmd.Flags().GetBool("print-interfaces-csv")
-		if err != nil {
-			log.Fatal().Err(err).Msg("print-interfaces-csv needs to be a boolean")
 		}
 		snmpGetsInsteadOfWalk, err := cmd.Flags().GetBool("snmp-gets-instead-of-walk")
 		if err != nil {
@@ -63,7 +58,6 @@ var checkInterfaceMetricsCMD = &cobra.Command{
 		r := request.CheckInterfaceMetricsRequest{
 			CheckDeviceRequest:    getCheckDeviceRequest(args[0]),
 			PrintInterfaces:       printInterfaces,
-			PrintInterfacesCSV:    printInterfacesCSV,
 			IfDescrRegex:          utility.IfThenElse(cmd.Flags().Changed("ifDescr-regex"), &ifDescrRegex, nullString).(*string),
 			IfDescrRegexReplace:   utility.IfThenElse(cmd.Flags().Changed("ifDescr-regex-replace"), &ifDescrRegexReplace, nullString).(*string),
 			IfTypeFilter:          ifTypeFilter,

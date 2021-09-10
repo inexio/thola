@@ -90,13 +90,7 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 			interfaceOutput = append(interfaceOutput, currentOutput)
 		}
 		if len(interfaceOutput) > 0 {
-			var output []byte
-			if r.PrintInterfacesCSV {
-				output, err = parser.Parse(interfaceOutput, "csv")
-
-			} else {
-				output, err = parser.Parse(interfaceOutput, "json")
-			}
+			output, err := parser.Parse(interfaceOutput, "csv")
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while marshalling output", true) {
 				r.mon.PrintPerformanceData(false)
 				return &CheckResponse{r.mon.GetInfo()}, nil
