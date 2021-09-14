@@ -83,10 +83,6 @@ func (c *codeCommunicator) GetCPUComponentCPULoad(_ context.Context) ([]float64,
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *codeCommunicator) GetCPUComponentCPUTemperature(_ context.Context) ([]float64, error) {
-	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
-}
-
 func (c *codeCommunicator) GetMemoryComponentMemoryUsage(_ context.Context) (float64, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

@@ -28,9 +28,6 @@ type Communicator interface {
 	// GetIdentifyProperties returns the identify properties of a device like vendor, model...
 	GetIdentifyProperties(ctx context.Context) (device.Properties, error)
 
-	// GetCPUComponent returns the cpu component of a device if available.
-	GetCPUComponent(ctx context.Context) (device.CPUComponent, error)
-
 	// GetUPSComponent returns the ups component of a device if available.
 	GetUPSComponent(ctx context.Context) (device.UPSComponent, error)
 
@@ -86,9 +83,6 @@ type availableCPUCommunicatorFunctions interface {
 
 	// GetCPUComponentCPULoad returns the cpu load of the device.
 	GetCPUComponentCPULoad(ctx context.Context) ([]float64, error)
-
-	// GetCPUComponentCPUTemperature returns the cpu temperature of the device.
-	GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error)
 }
 
 type availableMemoryCommunicatorFunctions interface {

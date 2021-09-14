@@ -128,40 +128,6 @@ func (o *deviceClassCommunicator) GetIdentifyProperties(ctx context.Context) (de
 	return dev.Properties, nil
 }
 
-func (o *deviceClassCommunicator) GetCPUComponent(ctx context.Context) (device.CPUComponent, error) {
-	if !o.HasComponent(component.CPU) {
-		return device.CPUComponent{}, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
-	}
-
-	var cpu device.CPUComponent
-	empty := true
-
-	cpuLoad, err := o.GetCPUComponentCPULoad(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu load")
-		}
-	} else {
-		cpu.Load = cpuLoad
-		empty = false
-	}
-
-	cpuTemp, err := o.GetCPUComponentCPUTemperature(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu temperature")
-		}
-	} else {
-		cpu.Temperature = cpuTemp
-		empty = false
-	}
-
-	if empty {
-		return device.CPUComponent{}, tholaerr.NewNotFoundError("no cpu data available")
-	}
-	return cpu, nil
-}
-
 func (o *deviceClassCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
 	if !o.HasComponent(component.Disk) {
 		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
@@ -664,25 +630,6 @@ func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([
 	r, err := res.Float64()
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
-	}
-	return []float64{r}, nil
-}
-
-func (o *deviceClassCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
-	if o.components.cpu == nil || o.components.cpu.temperature == nil {
-		log.Ctx(ctx).Debug().Str("property", "CPUComponentCPUTemperature").Str("device_class", o.name).Msg("no detection information available")
-		return nil, tholaerr.NewNotImplementedError("no detection information available")
-	}
-	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPUTemperature").Logger()
-	ctx = logger.WithContext(ctx)
-	res, err := o.components.cpu.temperature.getProperty(ctx)
-	if err != nil {
-		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
-		return nil, errors.Wrap(err, "failed to get CPUComponentCPUTemperature")
-	}
-	r, err := res.Float64()
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
 	}
 	return []float64{r}, nil
 }

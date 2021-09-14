@@ -102,40 +102,6 @@ func (c *networkDeviceCommunicator) GetIdentifyProperties(ctx context.Context) (
 	return dev.Properties, nil
 }
 
-func (c *networkDeviceCommunicator) GetCPUComponent(ctx context.Context) (device.CPUComponent, error) {
-	if !c.HasComponent(component.CPU) {
-		return device.CPUComponent{}, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
-	}
-
-	var cpu device.CPUComponent
-	empty := true
-
-	cpuLoad, err := c.GetCPUComponentCPULoad(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu load")
-		}
-	} else {
-		cpu.Load = cpuLoad
-		empty = false
-	}
-
-	cpuTemp, err := c.GetCPUComponentCPUTemperature(ctx)
-	if err != nil {
-		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.CPUComponent{}, errors.Wrap(err, "error occurred during get cpu temperature")
-		}
-	} else {
-		cpu.Temperature = cpuTemp
-		empty = false
-	}
-
-	if empty {
-		return device.CPUComponent{}, tholaerr.NewNotFoundError("no cpu data available")
-	}
-	return cpu, nil
-}
-
 func (c *networkDeviceCommunicator) GetDiskComponent(ctx context.Context) (device.DiskComponent, error) {
 	if !c.HasComponent(component.Disk) {
 		return device.DiskComponent{}, tholaerr.NewComponentNotFoundError("no disk component available for this device")
@@ -602,21 +568,6 @@ func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) 
 	}
 
 	return c.deviceClassCommunicator.GetCPUComponentCPULoad(ctx)
-}
-
-func (c *networkDeviceCommunicator) GetCPUComponentCPUTemperature(ctx context.Context) ([]float64, error) {
-	if c.codeCommunicator != nil {
-		res, err := c.codeCommunicator.GetCPUComponentCPUTemperature(ctx)
-		if err != nil {
-			if !tholaerr.IsNotImplementedError(err) {
-				return nil, errors.Wrap(err, "error in code communicator")
-			}
-		} else {
-			return res, nil
-		}
-	}
-
-	return c.deviceClassCommunicator.GetCPUComponentCPUTemperature(ctx)
 }
 
 func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
