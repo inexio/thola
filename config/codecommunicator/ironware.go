@@ -2,6 +2,7 @@ package codecommunicator
 
 import (
 	"context"
+	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"strconv"
@@ -13,7 +14,7 @@ type ironwareCommunicator struct {
 }
 
 // GetCPUComponentCPULoad returns the cpu load of ironware devices.
-func (c *ironwareCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
+func (c *ironwareCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -22,7 +23,7 @@ func (c *ironwareCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]fl
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk failed")
 	}
-	var cpus []float64
+	var cpus []device.CPU
 	for _, response := range responses {
 		if !strings.HasSuffix(response.GetOID(), "300") {
 			continue
@@ -35,7 +36,7 @@ func (c *ironwareCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]fl
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse snmp response")
 		}
-		cpus = append(cpus, value)
+		cpus = append(cpus, device.CPU{Load: &value})
 	}
 	return cpus, nil
 }

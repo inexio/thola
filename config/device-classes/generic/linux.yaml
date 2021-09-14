@@ -47,7 +47,7 @@ components:
                     detection: constant
                     value: 100
   disk:
-    storages:
+    properties:
       detection: snmpwalk
       values:
         type:

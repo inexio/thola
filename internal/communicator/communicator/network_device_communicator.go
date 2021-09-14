@@ -555,7 +555,7 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 	return amount, err
 }
 
-func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
+func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetCPUComponentCPULoad(ctx)
 		if err != nil {

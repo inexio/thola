@@ -12,24 +12,33 @@ import (
 func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	cpuLoadRequest := ReadCPULoadRequest{ReadRequest{r.BaseRequest}}
-	response, err := cpuLoadRequest.process(ctx)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while processing read cpu-load request", true) {
+	com, err := GetCommunicator(ctx, r.BaseRequest)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while getting communicator", true) {
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
+	result, err := com.GetCPUComponentCPULoad(ctx)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while reading cpu load", true) {
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 	cpuSum := 0.0
-	cpuAmount := len(response.(*ReadCPULoadResponse).CPULoad)
+	cpuAmount := len(result)
 
-	for k, cpuLoad := range response.(*ReadCPULoadResponse).CPULoad {
-		cpuSum += cpuLoad
-
-		performanceDataLabel := "cpu_load"
-		if cpuAmount > 1 {
-			performanceDataLabel += "_" + strconv.Itoa(k)
+	for k, cpu := range result {
+		if cpu.Load == nil {
+			cpuAmount -= 1
+			continue
 		}
-		point := monitoringplugin.NewPerformanceDataPoint(performanceDataLabel, cpuLoad).SetUnit("%")
+		cpuSum += *cpu.Load
+
+		point := monitoringplugin.NewPerformanceDataPoint("cpu_load", *cpu.Load).SetUnit("%")
 		if cpuAmount == 1 {
 			point.SetThresholds(r.CPULoadThresholds)
+		}
+		if cpu.Label != nil {
+			point.SetLabel(*cpu.Label)
+		} else if cpuAmount > 1 {
+			point.SetLabel(strconv.Itoa(k))
 		}
 		err = r.mon.AddPerformanceDataPoint(point)
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
@@ -40,12 +49,15 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	if cpuAmount > 1 {
 		val := cpuSum / float64(cpuAmount)
 		err = r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("cpu_load_average", fmt.Sprintf("%.3f", val)).
+			monitoringplugin.NewPerformanceDataPoint("cpu_load", fmt.Sprintf("%.3f", val)).
 				SetUnit("%").
+				SetLabel("average").
 				SetThresholds(r.CPULoadThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
+	} else if cpuAmount == 0 {
+		r.mon.UpdateStatus(monitoringplugin.UNKNOWN, "no CPUs found")
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil

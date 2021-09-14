@@ -79,8 +79,7 @@ type deviceClassComponentsUPS struct {
 
 // deviceClassComponentsCPU represents the cpu components part of a device class.
 type deviceClassComponentsCPU struct {
-	load        propertyReader
-	temperature propertyReader
+	properties groupPropertyReader
 }
 
 // deviceClassComponentsMemory represents the memory components part of a device class.
@@ -109,7 +108,7 @@ type deviceClassComponentsServer struct {
 
 // deviceClassComponentsDisk represents the disk component part of a device class.
 type deviceClassComponentsDisk struct {
-	storages groupPropertyReader
+	properties groupPropertyReader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
@@ -127,8 +126,8 @@ type deviceClassConfig struct {
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	Count  string
-	Values groupPropertyReader
+	count      string
+	properties groupPropertyReader
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -210,8 +209,7 @@ type yamlComponentsUPSProperties struct {
 
 // yamlComponentsCPUProperties represents the specific properties of cpu components of a yaml device class.
 type yamlComponentsCPUProperties struct {
-	Load        []interface{} `yaml:"load"`
-	Temperature []interface{} `yaml:"temperature"`
+	Properties interface{} `yaml:"properties"`
 }
 
 // yamlComponentsMemoryProperties represents the specific properties of memory components of a yaml device class.
@@ -240,7 +238,7 @@ type yamlComponentsServerProperties struct {
 
 // yamlComponentsDiskProperties represents the specific properties of disk components of a yaml device class.
 type yamlComponentsDiskProperties struct {
-	Storages interface{} `yaml:"storages"`
+	Properties interface{} `yaml:"properties"`
 }
 
 // yamlComponentsHardwareHealthProperties represents the specific properties of hardware health components of a yaml device class.
@@ -544,14 +542,14 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	}
 
 	if y.Properties != nil {
-		interfaceComponent.Values, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.Values)
+		interfaceComponent.properties, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.properties)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert interface properties")
 		}
 	}
 
 	if y.Count != "" {
-		interfaceComponent.Count = y.Count
+		interfaceComponent.count = y.Count
 	}
 
 	return &interfaceComponent, nil
@@ -776,16 +774,10 @@ func (y *yamlComponentsCPUProperties) convert(parentComponent *deviceClassCompon
 		properties = *parentComponent
 	}
 
-	if y.Load != nil {
-		properties.load, err = convertYamlProperty(y.Load, propertyDefault, properties.load)
+	if y.Properties != nil {
+		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
-		}
-	}
-	if y.Temperature != nil {
-		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault, properties.temperature)
-		if err != nil {
-			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
 		}
 	}
 	return properties, nil
@@ -839,8 +831,8 @@ func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponents
 		properties = *parentDisk
 	}
 
-	if y.Storages != nil {
-		properties.storages, err = interface2GroupPropertyReader(y.Storages, properties.storages)
+	if y.Properties != nil {
+		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}

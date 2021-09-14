@@ -82,7 +82,7 @@ type Functions interface {
 type availableCPUCommunicatorFunctions interface {
 
 	// GetCPUComponentCPULoad returns the cpu load of the device.
-	GetCPUComponentCPULoad(ctx context.Context) ([]float64, error)
+	GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error)
 }
 
 type availableMemoryCommunicatorFunctions interface {

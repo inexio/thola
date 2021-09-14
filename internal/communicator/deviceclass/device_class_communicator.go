@@ -547,12 +547,12 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 }
 
 func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
-	if o.components.interfaces == nil || o.components.interfaces.Values == nil {
+	if o.components.interfaces == nil || o.components.interfaces.properties == nil {
 		log.Ctx(ctx).Debug().Str("property", "interfaces").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	interfacesRaw, indices, err := o.components.interfaces.Values.getProperty(ctx, filter...)
+	interfacesRaw, indices, err := o.components.interfaces.properties.getProperty(ctx, filter...)
 	if err != nil {
 		return nil, err
 	}
@@ -583,7 +583,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...f
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
-	if o.components.interfaces == nil || o.components.interfaces.Count == "" {
+	if o.components.interfaces == nil || o.components.interfaces.count == "" {
 		log.Ctx(ctx).Debug().Str("property", "countInterfaces").Str("device_class", o.name).Msg("no interface count information available")
 		return 0, tholaerr.NewNotImplementedError("not implemented")
 	}
@@ -594,7 +594,7 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 		return 0, errors.New("snmp client is empty")
 	}
 
-	oid := o.components.interfaces.Count
+	oid := o.components.interfaces.count
 
 	snmpResponse, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
 	if err != nil {
@@ -615,23 +615,24 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 	return 0, fmt.Errorf("could not parse response to int, response has type %T", response)
 }
 
-func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]float64, error) {
-	if o.components.cpu == nil || o.components.cpu.load == nil {
+func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
+	if o.components.cpu == nil || o.components.cpu.properties == nil {
 		log.Ctx(ctx).Debug().Str("property", "CPUComponentCPULoad").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPULoad").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.cpu.load.getProperty(ctx)
+	res, _, err := o.components.cpu.properties.getProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return nil, errors.Wrap(err, "failed to get CPUComponentCPULoad")
 	}
-	r, err := res.Float64()
+	var cpus []device.CPU
+	err = res.decode(&cpus)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+		return nil, errors.Wrapf(err, "failed to decode group properties into CPUs array")
 	}
-	return []float64{r}, nil
+	return cpus, nil
 }
 
 func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
@@ -654,13 +655,13 @@ func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Cont
 }
 
 func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
-	if o.components.disk == nil || o.components.disk.storages == nil {
+	if o.components.disk == nil || o.components.disk.properties == nil {
 		log.Ctx(ctx).Debug().Str("groupProperty", "DiskComponentStorages").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.disk.storages.getProperty(ctx)
+	res, _, err := o.components.disk.properties.getProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}

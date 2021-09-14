@@ -1,5 +1,7 @@
 package request
 
+import "github.com/inexio/thola/internal/device"
+
 // ReadCPULoadRequest
 //
 // ReadCPULoadRequest is a the request struct for the read cpu request.
@@ -15,6 +17,6 @@ type ReadCPULoadRequest struct {
 //
 // swagger:model
 type ReadCPULoadResponse struct {
-	CPULoad []float64 `yaml:"cpu_load" json:"cpu_load" xml:"cpu_load"`
+	CPUs []device.CPU `yaml:"cpus" json:"cpus" xml:"cpus"`
 	ReadResponse
 }
