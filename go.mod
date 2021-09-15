@@ -6,10 +6,11 @@ require (
 	github.com/dgraph-io/badger/v2 v2.2007.2
 	github.com/go-resty/resty/v2 v2.3.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8
 	github.com/gomodule/redigo v1.8.4
 	github.com/google/go-cmp v0.5.4
 	github.com/gosnmp/gosnmp v1.30.0
-	github.com/inexio/go-monitoringplugin v1.0.7
+	github.com/inexio/go-monitoringplugin v1.0.10
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/labstack/echo/v4 v4.2.1
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db

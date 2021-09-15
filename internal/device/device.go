@@ -272,8 +272,17 @@ type VLAN struct {
 //
 // swagger:model
 type CPUComponent struct {
-	Load        []float64 `yaml:"load" json:"load" xml:"load"`
-	Temperature []float64 `yaml:"temperature" json:"temperature" xml:"temperature"`
+	CPUs []CPU `yaml:"cpus" json:"cpus" xml:"cpus"`
+}
+
+// CPU
+//
+// CPU contains information per CPU.
+//
+// swagger:model
+type CPU struct {
+	Label *string  `yaml:"label" json:"label" xml:"label"`
+	Load  *float64 `yaml:"load" json:"load" xml:"load"`
 }
 
 // DiskComponent

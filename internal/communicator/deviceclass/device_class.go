@@ -79,8 +79,7 @@ type deviceClassComponentsUPS struct {
 
 // deviceClassComponentsCPU represents the cpu components part of a device class.
 type deviceClassComponentsCPU struct {
-	load        propertyReader
-	temperature propertyReader
+	properties groupPropertyReader
 }
 
 // deviceClassComponentsMemory represents the memory components part of a device class.
@@ -109,7 +108,7 @@ type deviceClassComponentsServer struct {
 
 // deviceClassComponentsDisk represents the disk component part of a device class.
 type deviceClassComponentsDisk struct {
-	storages groupPropertyReader
+	properties groupPropertyReader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
@@ -127,8 +126,8 @@ type deviceClassConfig struct {
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	Count  string
-	Values groupPropertyReader
+	count      string
+	properties groupPropertyReader
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -210,8 +209,7 @@ type yamlComponentsUPSProperties struct {
 
 // yamlComponentsCPUProperties represents the specific properties of cpu components of a yaml device class.
 type yamlComponentsCPUProperties struct {
-	Load        []interface{} `yaml:"load"`
-	Temperature []interface{} `yaml:"temperature"`
+	Properties interface{} `yaml:"properties"`
 }
 
 // yamlComponentsMemoryProperties represents the specific properties of memory components of a yaml device class.
@@ -240,7 +238,7 @@ type yamlComponentsServerProperties struct {
 
 // yamlComponentsDiskProperties represents the specific properties of disk components of a yaml device class.
 type yamlComponentsDiskProperties struct {
-	Storages interface{} `yaml:"storages"`
+	Properties interface{} `yaml:"properties"`
 }
 
 // yamlComponentsHardwareHealthProperties represents the specific properties of hardware health components of a yaml device class.
@@ -267,7 +265,7 @@ type yamlComponentsOID struct {
 
 // GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
 func GetHierarchy() (hierarchy.Hierarchy, error) {
-	genericDeviceClassDir := "device-classes"
+	genericDeviceClassDir := "deviceclass"
 	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
 	if err != nil {
 		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to open generic device class file")
@@ -544,27 +542,33 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	}
 
 	if y.Properties != nil {
-		interfaceComponent.Values, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.Values)
+		interfaceComponent.properties, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.properties)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert interface properties")
 		}
 	}
 
 	if y.Count != "" {
-		interfaceComponent.Count = y.Count
+		interfaceComponent.count = y.Count
 	}
 
 	return &interfaceComponent, nil
 }
 
 func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
-	var idxMappings *deviceClassOID
+	res := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID:          y.OID,
+			UseRawResult: y.UseRawResult,
+		},
+	}
+
 	if y.IndicesMapping != nil {
 		mappings, err := y.IndicesMapping.convert()
 		if err != nil {
 			return deviceClassOID{}, errors.New("failed to convert indices mappings")
 		}
-		idxMappings = &mappings
+		res.indicesMapping = &mappings
 	}
 
 	if y.Operators != nil {
@@ -572,24 +576,10 @@ func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
 		if err != nil {
 			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
 		}
-		return deviceClassOID{
-			SNMPGetConfiguration: network.SNMPGetConfiguration{
-				OID:          y.OID,
-				UseRawResult: y.UseRawResult,
-			},
-			operators:      operators,
-			indicesMapping: idxMappings,
-		}, nil
+		res.operators = operators
 	}
 
-	return deviceClassOID{
-		SNMPGetConfiguration: network.SNMPGetConfiguration{
-			OID:          y.OID,
-			UseRawResult: y.UseRawResult,
-		},
-		operators:      nil,
-		indicesMapping: idxMappings,
-	}, nil
+	return res, nil
 }
 
 func (y *yamlComponentsOID) validate() error {
@@ -784,16 +774,10 @@ func (y *yamlComponentsCPUProperties) convert(parentComponent *deviceClassCompon
 		properties = *parentComponent
 	}
 
-	if y.Load != nil {
-		properties.load, err = convertYamlProperty(y.Load, propertyDefault, properties.load)
+	if y.Properties != nil {
+		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
-		}
-	}
-	if y.Temperature != nil {
-		properties.temperature, err = convertYamlProperty(y.Temperature, propertyDefault, properties.temperature)
-		if err != nil {
-			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert temperature property to property reader")
 		}
 	}
 	return properties, nil
@@ -847,8 +831,8 @@ func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponents
 		properties = *parentDisk
 	}
 
-	if y.Storages != nil {
-		properties.storages, err = interface2GroupPropertyReader(y.Storages, properties.storages)
+	if y.Properties != nil {
+		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
@@ -1604,7 +1588,12 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
 			}
 
-			devClassOIDsMerged := parentSNMPGroupPropertyReader.oids.merge(*devClassOIDs)
+			parentSNMPGroupPropertyReaderOIDs, ok := parentSNMPGroupPropertyReader.oids.(*deviceClassOIDs)
+			if !ok {
+				return nil, errors.New("parent SNMP group property reader oids is not of type 'deviceClassOIDs'")
+			}
+
+			devClassOIDsMerged := parentSNMPGroupPropertyReaderOIDs.merge(*devClassOIDs)
 			devClassOIDs = &devClassOIDsMerged
 
 			if index == nil {
@@ -1612,7 +1601,10 @@ func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader grou
 			}
 		}
 
-		return &snmpGroupPropertyReader{index, *devClassOIDs}, nil
+		return &snmpGroupPropertyReader{
+			index: index,
+			oids:  devClassOIDs,
+		}, nil
 	default:
 		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
 	}

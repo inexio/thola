@@ -18,7 +18,49 @@
 			"status_code": 0,
 			"performance_data": [
 				{
-					"metric": "packet_counter_broadcast_in",
+					"metric": "error_counter_in",
+					"label": "ether1",
+					"value": 191167640,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
 					"label": "ether3",
 					"value": 0,
 					"unit": "c",
@@ -32,8 +74,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_in",
-					"label": "ether4",
+					"metric": "traffic_counter_out",
+					"label": "ether3",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -47,6 +89,34 @@
 				},
 				{
 					"metric": "interface_oper_status",
+					"label": "ether4",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_admin_status",
 					"label": "ether1",
 					"value": 1,
 					"unit": "",
@@ -60,8 +130,22 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_discard_in",
-					"label": "ether3",
+					"metric": "traffic_counter_in",
+					"label": "ether1",
+					"value": 724932470,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "ether1",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -74,8 +158,8 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_unicast_out",
-					"label": "ether3",
+					"metric": "packet_counter_multicast_in",
+					"label": "ether2",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -88,10 +172,38 @@
 					"max": null
 				},
 				{
-					"metric": "interface_maxspeed_in",
+					"metric": "interface_admin_status",
 					"label": "ether3",
-					"value": 0,
+					"value": 1,
 					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -116,174 +228,6 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_out",
-					"label": "ether1",
-					"value": 1176294015,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "ether2",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "ether1",
-					"value": 191167640,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "ether2",
-					"value": 0,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_in",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
-					"label": "ether1",
-					"value": 1000000000,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "packet_counter_broadcast_in",
 					"label": "ether1",
 					"value": 0,
@@ -298,276 +242,10 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_multicast_in",
-					"label": "ether1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "ether2",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "ether1",
-					"value": 1000000000,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "ether3",
-					"value": 0,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
-					"label": "ether1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "ether4",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_in",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "interface_admin_status",
-					"label": "ether1",
+					"label": "ether2",
 					"value": 1,
 					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "ether4",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_in",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_broadcast_out",
-					"label": "ether1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -593,48 +271,6 @@
 				},
 				{
 					"metric": "interface_maxspeed_out",
-					"label": "ether2",
-					"value": 0,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "error_counter_out",
-					"label": "ether3",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_oper_status",
-					"label": "ether3",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_maxspeed_in",
 					"label": "ether4",
 					"value": 0,
 					"unit": "",
@@ -662,34 +298,6 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_multicast_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_unicast_out",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
 					"metric": "traffic_counter_out",
 					"label": "ether2",
 					"value": 0,
@@ -704,91 +312,7 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_discard_in",
-					"label": "ether1",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "interface_admin_status",
-					"label": "ether3",
-					"value": 1,
-					"unit": "",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_in",
-					"label": "ether4",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "traffic_counter_in",
-					"label": "ether1",
-					"value": 724932470,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_in",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_discard_out",
+					"metric": "traffic_counter_out",
 					"label": "ether4",
 					"value": 0,
 					"unit": "c",
@@ -803,20 +327,6 @@
 				},
 				{
 					"metric": "error_counter_out",
-					"label": "ether2",
-					"value": 0,
-					"unit": "c",
-					"thresholds": {
-						"warningMin": null,
-						"warningMax": null,
-						"criticalMin": null,
-						"criticalMax": null
-					},
-					"min": null,
-					"max": null
-				},
-				{
-					"metric": "packet_counter_multicast_out",
 					"label": "ether1",
 					"value": 0,
 					"unit": "c",
@@ -830,7 +340,91 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_in",
+					"metric": "packet_counter_discard_in",
+					"label": "ether1",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_out",
+					"label": "ether1",
+					"value": 1176294015,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
 					"label": "ether2",
 					"value": 0,
 					"unit": "c",
@@ -858,7 +452,413 @@
 					"max": null
 				},
 				{
-					"metric": "traffic_counter_out",
+					"metric": "interface_admin_status",
+					"label": "ether4",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "ether1",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_in",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "ether1",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "ether1",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "ether2",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_out",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "ether2",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_in",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_in",
+					"label": "ether3",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_out",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "traffic_counter_in",
+					"label": "ether4",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "ether3",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_oper_status",
+					"label": "ether1",
+					"value": 1,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_multicast_out",
+					"label": "ether1",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "ether1",
+					"value": 1000000000,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "interface_maxspeed_out",
+					"label": "ether2",
+					"value": 0,
+					"unit": "",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_unicast_out",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_broadcast_out",
+					"label": "ether3",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "packet_counter_discard_in",
+					"label": "ether2",
+					"value": 0,
+					"unit": "c",
+					"thresholds": {
+						"warningMin": null,
+						"warningMax": null,
+						"criticalMin": null,
+						"criticalMax": null
+					},
+					"min": null,
+					"max": null
+				},
+				{
+					"metric": "error_counter_in",
 					"label": "ether3",
 					"value": 0,
 					"unit": "c",
@@ -886,10 +886,10 @@
 					"max": null
 				},
 				{
-					"metric": "packet_counter_discard_in",
-					"label": "ether4",
+					"metric": "interface_maxspeed_out",
+					"label": "ether3",
 					"value": 0,
-					"unit": "c",
+					"unit": "",
 					"thresholds": {
 						"warningMin": null,
 						"warningMax": null,
@@ -900,8 +900,8 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_out",
-					"label": "ether1",
+					"metric": "packet_counter_discard_in",
+					"label": "ether4",
 					"value": 0,
 					"unit": "c",
 					"thresholds": {
@@ -918,7 +918,7 @@
 			"messages": [
 				{
 					"status": 0,
-					"message": "[{\"ifIndex\":\"1\",\"ifDescr\":\"ether1\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"ether1\",\"ifAlias\":null,\"ifPhysAddress\":\"50:00:00:01:00:00\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\",\"subType\":null},{\"ifIndex\":\"2\",\"ifDescr\":\"ether2\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"ether2\",\"ifAlias\":null,\"ifPhysAddress\":\"50:00:00:01:00:01\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\",\"subType\":null},{\"ifIndex\":\"3\",\"ifDescr\":\"ether3\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"ether3\",\"ifAlias\":null,\"ifPhysAddress\":\"50:00:00:01:00:02\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\",\"subType\":null},{\"ifIndex\":\"4\",\"ifDescr\":\"ether4\",\"ifType\":\"ethernetCsmacd\",\"ifName\":\"ether4\",\"ifAlias\":null,\"ifPhysAddress\":\"50:00:00:01:00:03\",\"ifAdminStatus\":\"up\",\"ifOperStatus\":\"up\",\"subType\":null}]"
+					"message": "ifIndex,ifDescr,ifType,ifName,ifAlias,ifPhysAddress,ifAdminStatus,ifOperStatus,maxSpeedIn,maxSpeedOut,subType\n1,ether1,ethernetCsmacd,ether1,,50:00:00:01:00:00,up,up,1000000000,1000000000,\n2,ether2,ethernetCsmacd,ether2,,50:00:00:01:00:01,up,up,0,0,\n3,ether3,ethernetCsmacd,ether3,,50:00:00:01:00:02,up,up,0,0,\n4,ether4,ethernetCsmacd,ether4,,50:00:00:01:00:03,up,up,0,0,\n"
 				}
 			]
 		},

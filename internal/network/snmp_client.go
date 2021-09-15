@@ -17,8 +17,37 @@ import (
 	"unicode"
 )
 
+//go:generate go run github.com/vektra/mockery/v2 --name=SNMPClient
+
 // SNMPClient is used to communicate via snmp.
-type SNMPClient struct {
+type SNMPClient interface {
+	Disconnect() error
+
+	SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error)
+	SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error)
+
+	UseCache(b bool)
+	HasSuccessfulCachedRequest() bool
+
+	GetCommunity() string
+	SetCommunity(community string)
+	GetPort() int
+	GetVersion() string
+	GetMaxRepetitions() uint32
+
+	SetMaxRepetitions(maxRepetitions uint32)
+	SetMaxOIDs(maxOIDs int) error
+
+	GetV3Level() *string
+	GetV3ContextName() *string
+	GetV3User() *string
+	GetV3AuthKey() *string
+	GetV3AuthProto() *string
+	GetV3PrivKey() *string
+	GetV3PrivProto() *string
+}
+
+type snmpClient struct {
 	client    *gosnmp.GoSNMP
 	useCache  bool
 	getCache  requestCache
@@ -26,7 +55,7 @@ type SNMPClient struct {
 }
 
 type snmpClientCreation struct {
-	client  *SNMPClient
+	client  SNMPClient
 	version string
 	err     error
 }
@@ -42,7 +71,7 @@ type snmpClientCreationData struct {
 }
 
 // NewSNMPClientByConnectionData tries to create a new snmp client by SNMPConnectionData and returns it.
-func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *SNMPConnectionData) (*SNMPClient, error) {
+func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *SNMPConnectionData) (SNMPClient, error) {
 	if data == nil {
 		return nil, errors.New("snmp connection data is nil")
 	}
@@ -109,7 +138,7 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 	}
 
 	var criticalError error
-	var successfulClient *SNMPClient
+	var successfulClient SNMPClient
 
 	for i := 0; i < amount; i++ {
 		res := <-out
@@ -132,7 +161,7 @@ func NewSNMPClientByConnectionData(ctx context.Context, ipAddress string, data *
 				successfulClient = res.client
 				break
 			}
-			if successfulClient == nil || successfulClient.client.Version < gosnmp.Version2c {
+			if successfulClient == nil || successfulClient.GetVersion() == "1" {
 				successfulClient = res.client
 			}
 		}
@@ -167,7 +196,7 @@ func createNewSNMPClientConcurrent(ctx context.Context, in chan snmpClientCreati
 		default:
 			select {
 			case data := <-in:
-				var client *SNMPClient
+				var client SNMPClient
 				var err error
 				if data.snmpVersion == "3" {
 					client, err = NewSNMPv3Client(ctx, data.ipAddress, data.port, data.timeout, data.retries, data.v3Data)
@@ -183,7 +212,7 @@ func createNewSNMPClientConcurrent(ctx context.Context, in chan snmpClientCreati
 }
 
 // NewSNMPClient creates a new SNMP Client
-func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string, port, timeout, retries int) (*SNMPClient, error) {
+func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string, port, timeout, retries int) (SNMPClient, error) {
 	version, err := getGoSNMPVersion(snmpVersion)
 	if err != nil {
 		return nil, err
@@ -205,7 +234,7 @@ func NewSNMPClient(ctx context.Context, ipAddress, snmpVersion, community string
 }
 
 // NewSNMPv3Client creates a new SNMP v3 Client.
-func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retries int, v3Data SNMPv3ConnectionData) (*SNMPClient, error) {
+func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retries int, v3Data SNMPv3ConnectionData) (SNMPClient, error) {
 	client := &gosnmp.GoSNMP{
 		Context:       ctx,
 		Target:        ipAddress,
@@ -264,7 +293,7 @@ func NewSNMPv3Client(ctx context.Context, ipAddress string, port, timeout, retri
 	return newSNMPClientTestConnection(client)
 }
 
-func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
+func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*snmpClient, error) {
 	err := client.ConnectIPv4()
 	if err != nil {
 		return nil, errors.Wrap(err, "connect ip v4 failed")
@@ -279,7 +308,7 @@ func newSNMPClientTestConnection(client *gosnmp.GoSNMP) (*SNMPClient, error) {
 	client.Retries = gosnmp.Default.Retries
 	client.Timeout = gosnmp.Default.Timeout
 
-	return &SNMPClient{
+	return &snmpClient{
 		client:    client,
 		useCache:  true,
 		getCache:  newRequestCache(),
@@ -353,7 +382,7 @@ func getGoSNMPV3PrivProtocol(protocol string) (gosnmp.SnmpV3PrivProtocol, error)
 }
 
 // SNMPGet sends one or more simple snmpget requests to the target host and returns the result.
-func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error) {
+func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error) {
 	var snmpResponses []SNMPResponse
 	var successful bool
 	var reqOIDs []string
@@ -398,10 +427,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 		}
 
 		for _, currentResponse := range response.Variables {
-			snmpResponse := SNMPResponse{}
-			snmpResponse.oid = currentResponse.Name
-			snmpResponse.value = currentResponse.Value
-			snmpResponse.snmpType = currentResponse.Type
+			snmpResponse := NewSNMPResponse(currentResponse.Name, currentResponse.Type, currentResponse.Value)
 
 			if snmpResponse.WasSuccessful() {
 				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("SNMP Get was successful")
@@ -428,7 +454,7 @@ func (s *SNMPClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 }
 
 // SNMPWalk sends a snmpwalk request to the specified oid.
-func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
+func (s *snmpClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
 	if s.useCache {
 		cacheEntry, err := s.walkCache.get(oid)
 		if err == nil {
@@ -477,11 +503,7 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 
 	var res []SNMPResponse
 	for _, currentResponse := range response {
-		snmpResponse := SNMPResponse{
-			oid:      currentResponse.Name,
-			value:    currentResponse.Value,
-			snmpType: currentResponse.Type,
-		}
+		snmpResponse := NewSNMPResponse(currentResponse.Name, currentResponse.Type, currentResponse.Value)
 		res = append(res, snmpResponse)
 
 		if s.useCache {
@@ -503,37 +525,37 @@ func (s *SNMPClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 }
 
 // UseCache configures whether the snmp cache should be used or not
-func (s *SNMPClient) UseCache(b bool) {
+func (s *snmpClient) UseCache(b bool) {
 	s.useCache = b
 }
 
-// GetSuccessfulCachedRequests returns all successful cached requests.
-func (s *SNMPClient) GetSuccessfulCachedRequests() map[string]cachedRequestResult {
-	return s.getCache.getSuccessfulRequests()
+// HasSuccessfulCachedRequest returns if there was at least one successful cached request.
+func (s *snmpClient) HasSuccessfulCachedRequest() bool {
+	return len(s.getCache.getSuccessfulRequests()) > 0
 }
 
 // Disconnect closes an snmp connection.
-func (s *SNMPClient) Disconnect() error {
+func (s *snmpClient) Disconnect() error {
 	return s.client.Conn.Close()
 }
 
 // GetCommunity returns the community string
-func (s *SNMPClient) GetCommunity() string {
+func (s *snmpClient) GetCommunity() string {
 	return s.client.Community
 }
 
 // SetCommunity updates the community string. This function is not thread safe!
-func (s *SNMPClient) SetCommunity(community string) {
+func (s *snmpClient) SetCommunity(community string) {
 	s.client.Community = community
 }
 
 // GetPort returns the port
-func (s *SNMPClient) GetPort() int {
+func (s *snmpClient) GetPort() int {
 	return int(s.client.Port)
 }
 
 // GetVersion returns the snmp version.
-func (s *SNMPClient) GetVersion() string {
+func (s *snmpClient) GetVersion() string {
 	switch s.client.Version {
 	case gosnmp.Version1:
 		return "1"
@@ -546,17 +568,17 @@ func (s *SNMPClient) GetVersion() string {
 }
 
 // GetMaxRepetitions returns the max repetitions.
-func (s *SNMPClient) GetMaxRepetitions() uint32 {
+func (s *snmpClient) GetMaxRepetitions() uint32 {
 	return s.client.MaxRepetitions
 }
 
 // SetMaxRepetitions sets the maximum repetitions.
-func (s *SNMPClient) SetMaxRepetitions(maxRepetitions uint32) {
+func (s *snmpClient) SetMaxRepetitions(maxRepetitions uint32) {
 	s.client.MaxRepetitions = maxRepetitions
 }
 
 // SetMaxOIDs sets the maximum OIDs.
-func (s *SNMPClient) SetMaxOIDs(maxOIDs int) error {
+func (s *snmpClient) SetMaxOIDs(maxOIDs int) error {
 	if maxOIDs < 1 {
 		return errors.New("invalid max oids")
 	}
@@ -569,7 +591,7 @@ func (s *SNMPClient) SetMaxOIDs(maxOIDs int) error {
 
 // GetV3Level returns the security level of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3Level() *string {
+func (s *snmpClient) GetV3Level() *string {
 	var level string
 	switch s.client.MsgFlags {
 	case gosnmp.NoAuthNoPriv | gosnmp.Reportable:
@@ -586,7 +608,7 @@ func (s *SNMPClient) GetV3Level() *string {
 
 // GetV3ContextName returns the context name of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3ContextName() *string {
+func (s *snmpClient) GetV3ContextName() *string {
 	if s.client.ContextName == "" {
 		return nil
 	}
@@ -596,7 +618,7 @@ func (s *SNMPClient) GetV3ContextName() *string {
 
 // GetV3User returns the user of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3User() *string {
+func (s *snmpClient) GetV3User() *string {
 	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
 	if !ok {
 		return nil
@@ -609,7 +631,7 @@ func (s *SNMPClient) GetV3User() *string {
 
 // GetV3AuthKey returns the auth key of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3AuthKey() *string {
+func (s *snmpClient) GetV3AuthKey() *string {
 	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
 	if !ok {
 		return nil
@@ -622,7 +644,7 @@ func (s *SNMPClient) GetV3AuthKey() *string {
 
 // GetV3AuthProto returns the auth protocol of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3AuthProto() *string {
+func (s *snmpClient) GetV3AuthProto() *string {
 	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
 	if !ok {
 		return nil
@@ -651,7 +673,7 @@ func (s *SNMPClient) GetV3AuthProto() *string {
 
 // GetV3PrivKey returns the priv key of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3PrivKey() *string {
+func (s *snmpClient) GetV3PrivKey() *string {
 	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
 	if !ok {
 		return nil
@@ -664,7 +686,7 @@ func (s *SNMPClient) GetV3PrivKey() *string {
 
 // GetV3PrivProto returns the priv protocol of the snmp v3 connection.
 // Return value is nil if no snmp v3 is being used.
-func (s *SNMPClient) GetV3PrivProto() *string {
+func (s *snmpClient) GetV3PrivProto() *string {
 	r, ok := s.client.SecurityParameters.(*gosnmp.UsmSecurityParameters)
 	if !ok {
 		return nil
@@ -696,6 +718,15 @@ type SNMPResponse struct {
 	oid      string
 	snmpType gosnmp.Asn1BER
 	value    interface{}
+}
+
+// NewSNMPResponse creates a new SNMP Response
+func NewSNMPResponse(oid string, snmpType gosnmp.Asn1BER, value interface{}) SNMPResponse {
+	return SNMPResponse{
+		oid:      oid,
+		snmpType: snmpType,
+		value:    value,
+	}
 }
 
 // WasSuccessful returns if the snmp request was successful.
@@ -789,6 +820,12 @@ func (s *SNMPResponse) GetValueStringRaw() (string, error) {
 // GetOID returns the oid of the response.
 func (s *SNMPResponse) GetOID() string {
 	return s.oid
+}
+
+// GetOIDIndex returns the last index of the responses oid.
+func (s *SNMPResponse) GetOIDIndex() string {
+	x := strings.Split(s.oid, ".")
+	return x[len(x)-1]
 }
 
 // GetSNMPType returns the snmp type of the response.

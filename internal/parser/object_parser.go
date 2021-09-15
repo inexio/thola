@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/gocarina/gocsv"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
 	"github.com/pkg/errors"
@@ -18,6 +19,10 @@ type jsonParser interface {
 
 type xmlParser interface {
 	ToXML() ([]byte, error)
+}
+
+type csvParser interface {
+	ToCSV() ([]byte, error)
 }
 
 type humanReadableParser interface {
@@ -35,6 +40,8 @@ func Parse(i interface{}, format string) ([]byte, error) {
 		return ToJSON(i)
 	case "xml":
 		return ToXML(i)
+	case "csv":
+		return ToCSV(i)
 	case "check-plugin":
 		return ToCheckPluginOutput(i)
 	default:
@@ -48,11 +55,11 @@ func ToXML(i interface{}) ([]byte, error) {
 	if p, ok := i.(xmlParser); ok {
 		return p.ToXML()
 	}
-	responseString, err := xml.Marshal(i)
+	response, err := xml.Marshal(i)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal to xml")
 	}
-	return responseString, nil
+	return response, nil
 }
 
 // ToJSON parses the object to JSON.
@@ -61,11 +68,24 @@ func ToJSON(i interface{}) ([]byte, error) {
 	if p, ok := i.(jsonParser); ok {
 		return p.ToJSON()
 	}
-	responseString, err := json.Marshal(i)
+	response, err := json.Marshal(i)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal to json")
 	}
-	return responseString, nil
+	return response, nil
+}
+
+// ToCSV parses the object to CSV.
+func ToCSV(i interface{}) ([]byte, error) {
+	i = checkIfError(i)
+	if p, ok := i.(csvParser); ok {
+		return p.ToCSV()
+	}
+	response, err := gocsv.MarshalBytes(i)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal to csv")
+	}
+	return response, nil
 }
 
 //ToHumanReadable parses the object to a human readable format.

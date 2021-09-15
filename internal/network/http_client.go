@@ -123,9 +123,9 @@ func (h *HTTPClient) SetFormat(format string) error {
 	return nil
 }
 
-// GetSuccessfulCachedRequests returns all successful cached requests.
-func (h *HTTPClient) GetSuccessfulCachedRequests() map[string]cachedRequestResult {
-	return h.cache.getSuccessfulRequests()
+// HasSuccessfulCachedRequest returns if there was at least one successful cached request.
+func (h *HTTPClient) HasSuccessfulCachedRequest() bool {
+	return len(h.cache.getSuccessfulRequests()) > 0
 }
 
 // Request sends an http request.

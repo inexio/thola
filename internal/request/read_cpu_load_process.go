@@ -19,6 +19,6 @@ func (r *ReadCPULoadRequest) process(ctx context.Context) (Response, error) {
 	}
 
 	return &ReadCPULoadResponse{
-		CPULoad: result,
+		CPUs: result,
 	}, nil
 }
