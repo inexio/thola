@@ -21,15 +21,18 @@ match:
 
 components:
   cpu:
-    load:
-      - detection: snmpget
-        oid: ".1.3.6.1.4.1.2021.10.1.3.2"
-        operators:
-          - type: modify
-            modify_method: multiply
-            value:
-              detection: constant
-              value: 100
+    properties:
+      detection: snmpwalk
+      values:
+        load:
+          oid: .1.3.6.1.4.1.2021.10.1.3.2
+          operators:
+            - type: modify
+              modify_method: multiply
+              value:
+                detection: constant
+                value: 100
+
   memory:
     usage:
       - detection: snmpget
