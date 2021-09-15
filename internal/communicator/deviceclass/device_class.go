@@ -265,7 +265,7 @@ type yamlComponentsOID struct {
 
 // GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
 func GetHierarchy() (hierarchy.Hierarchy, error) {
-	genericDeviceClassDir := "device-classes"
+	genericDeviceClassDir := "deviceclass"
 	genericDeviceClassFile, err := config.FileSystem.Open(filepath.Join(genericDeviceClassDir, "generic.yaml"))
 	if err != nil {
 		return hierarchy.Hierarchy{}, errors.Wrap(err, "failed to open generic device class file")
