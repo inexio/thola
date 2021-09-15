@@ -27,7 +27,7 @@ func (m mapping) get(key string) (string, error) {
 }
 
 func readMapping(file string) (mapping, error) {
-	f, err := config.FileSystem.Open(filepath.Join("mappings", file))
+	f, err := config.FileSystem.Open(filepath.Join("mapping", file))
 	if err != nil {
 		return nil, errors.New("failed to open mappings file")
 	}
