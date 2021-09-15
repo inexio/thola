@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadCPULoadRequest
 //
-// ReadCPULoadRequest is a the request struct for the read cpu request.
+// ReadCPULoadRequest is the request struct for the read cpu request.
 //
 // swagger:model
 type ReadCPULoadRequest struct {
@@ -13,7 +13,7 @@ type ReadCPULoadRequest struct {
 
 // ReadCPULoadResponse
 //
-// ReadCPULoadResponse is a the response struct for the read cpu response.
+// ReadCPULoadResponse is the response struct for the read cpu response.
 //
 // swagger:model
 type ReadCPULoadResponse struct {
