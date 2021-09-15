@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestIronware_GetCPUComponentCPULoad_100thPercent(t *testing.T) {
+func TestIronwareCommunicator_GetCPUComponentCPULoad_100thPercent(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
@@ -59,7 +59,7 @@ func TestIronware_GetCPUComponentCPULoad_100thPercent(t *testing.T) {
 	}
 }
 
-func TestIronware_GetCPUComponentCPULoad_Value(t *testing.T) {
+func TestIronwareCommunicator_GetCPUComponentCPULoad_Value(t *testing.T) {
 	var snmpClient mocks.SNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{

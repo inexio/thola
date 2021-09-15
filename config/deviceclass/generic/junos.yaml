@@ -51,12 +51,6 @@ identify:
             format: "$1"
 
 components:
-  cpu:
-    properties:
-      detection: snmpwalk
-      values:
-        load:
-          oid: .1.3.6.1.4.1.2636.3.1.13.1.8.9.1.0
   memory:
     usage:
       - detection: snmpget
