@@ -272,6 +272,13 @@ func (c *junosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]devic
 		})
 	}
 
+	spuCpus, err := c.getSPUCPUs(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to read out SPU CPU load")
+	} else {
+		cpus = append(cpus, spuCpus...)
+	}
+
 	return cpus, nil
 }
 
@@ -308,4 +315,52 @@ func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]inde
 	}
 
 	return indices, nil
+}
+
+func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	jnxJsSPUMonitoringNodeDescrOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11"
+	jnxJsSPUMonitoringNodeDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringNodeDescrOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringNodeDescr'")
+	}
+
+	indexDescr := make(map[string]string)
+	for _, descr := range jnxJsSPUMonitoringNodeDescr {
+		res, err := descr.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		indexDescr[strings.TrimPrefix(descr.GetOID(), jnxJsSPUMonitoringNodeDescrOID)] = res
+	}
+
+	jnxJsSPUMonitoringCPUUsageOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4"
+	jnxJsSPUMonitoringCPUUsage, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringCPUUsageOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringCPUUsage'")
+	}
+
+	var cpus []device.CPU
+	for _, load := range jnxJsSPUMonitoringCPUUsage {
+		res, err := load.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		resParsed, err := strconv.ParseFloat(res, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse snmp response")
+		}
+		cpu := device.CPU{Load: &resParsed}
+		if descr, ok := indexDescr[strings.TrimPrefix(load.GetOID(), jnxJsSPUMonitoringCPUUsageOID)]; ok {
+			label := "spu_" + descr
+			cpu.Label = &label
+		}
+		cpus = append(cpus, cpu)
+	}
+
+	return cpus, nil
 }
