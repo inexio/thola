@@ -4,5 +4,5 @@ import (
 	"embed"
 )
 
-//go:embed device-classes mappings
+//go:embed deviceclass mapping
 var FileSystem embed.FS

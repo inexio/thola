@@ -8,6 +8,8 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -231,4 +233,134 @@ func (c *junosCommunicator) getPortIfIndexMapping(ctx context.Context) (map[stri
 	}
 
 	return portIfIndex, nil
+}
+
+func (c *junosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
+	indices, err := c.getRoutingEngineIndices(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get routing indices")
+	}
+
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	jnxOperatingCPUOID := ".1.3.6.1.4.1.2636.3.1.13.1.8"
+	var cpus []device.CPU
+	for i, index := range indices {
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID+index.index)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get CPU load")
+		} else if len(response) != 1 {
+			return nil, errors.New("invalid cpu load result")
+		}
+
+		res, err := response[0].GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of cpu load")
+		}
+
+		load, err := strconv.ParseFloat(res, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse cpu load")
+		}
+
+		cpus = append(cpus, device.CPU{
+			Label: &indices[i].label,
+			Load:  &load,
+		})
+	}
+
+	spuCpus, err := c.getSPUCPUs(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to read out SPU CPU load")
+	} else {
+		cpus = append(cpus, spuCpus...)
+	}
+
+	return cpus, nil
+}
+
+type indexAndLabel struct {
+	index string
+	label string
+}
+
+func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]indexAndLabel, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	jnxOperatingDescrOID := ".1.3.6.1.4.1.2636.3.1.13.1.5"
+	jnxOperatingDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxOperatingDescrOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxOperatingDescrOID'")
+	}
+
+	var indices []indexAndLabel
+	for _, response := range jnxOperatingDescr {
+		res, err := response.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+
+		if ok, err = regexp.MatchString("(?i)engine", res); err == nil && ok {
+			indices = append(indices, indexAndLabel{
+				index: strings.TrimPrefix(response.GetOID(), jnxOperatingDescrOID),
+				label: res,
+			})
+		}
+	}
+
+	return indices, nil
+}
+
+func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	jnxJsSPUMonitoringNodeDescrOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11"
+	jnxJsSPUMonitoringNodeDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringNodeDescrOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringNodeDescr'")
+	}
+
+	indexDescr := make(map[string]string)
+	for _, descr := range jnxJsSPUMonitoringNodeDescr {
+		res, err := descr.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		indexDescr[strings.TrimPrefix(descr.GetOID(), jnxJsSPUMonitoringNodeDescrOID)] = res
+	}
+
+	jnxJsSPUMonitoringCPUUsageOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4"
+	jnxJsSPUMonitoringCPUUsage, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringCPUUsageOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringCPUUsage'")
+	}
+
+	var cpus []device.CPU
+	for _, load := range jnxJsSPUMonitoringCPUUsage {
+		res, err := load.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		resParsed, err := strconv.ParseFloat(res, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse snmp response")
+		}
+		cpu := device.CPU{Load: &resParsed}
+		if descr, ok := indexDescr[strings.TrimPrefix(load.GetOID(), jnxJsSPUMonitoringCPUUsageOID)]; ok {
+			label := "spu_" + descr
+			cpu.Label = &label
+		}
+		cpus = append(cpus, cpu)
+	}
+
+	return cpus, nil
 }

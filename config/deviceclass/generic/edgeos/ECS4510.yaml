@@ -1,4 +1,4 @@
-name: "ECS4120"
+name: "ECS4510"
 
 config:
   components:
@@ -10,10 +10,12 @@ match:
     - type: SysObjectID
       match_mode: startsWith
       values:
-        - .1.3.6.1.4.1.259.10.1.45.
+        - .1.3.6.1.4.1.259.10.1.24.
 
 components:
   cpu:
-    load:
-      - detection: snmpget
-        oid: .1.3.6.1.4.1.259.10.1.45.1.39.2.3.0
+    properties:
+      detection: snmpwalk
+      values:
+        load:
+          oid: .1.3.6.1.4.1.259.10.1.24.1.39.2.3

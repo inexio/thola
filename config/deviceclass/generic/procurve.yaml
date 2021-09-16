@@ -38,9 +38,11 @@ identify:
 
 components:
   cpu:
-    load:
-      - detection: snmpget
-        oid: .1.3.6.1.4.1.11.2.14.11.5.1.9.6.1.0
+    properties:
+      detection: snmpwalk
+      values:
+        load:
+          oid: .1.3.6.1.4.1.11.2.14.11.5.1.9.6.1
   memory:
     usage:
       - detection: snmpget

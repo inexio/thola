@@ -12,7 +12,7 @@ import (
 
 func TestMappings(t *testing.T) {
 	fileName := "ifType.yaml"
-	f, err := config.FileSystem.Open(filepath.Join("mappings", fileName))
+	f, err := config.FileSystem.Open(filepath.Join("mapping", fileName))
 	if !assert.NoError(t, err, "failed to open mappings file from virtual file system") {
 		return
 	}

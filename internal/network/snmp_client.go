@@ -822,6 +822,12 @@ func (s *SNMPResponse) GetOID() string {
 	return s.oid
 }
 
+// GetOIDIndex returns the last index of the responses oid.
+func (s *SNMPResponse) GetOIDIndex() string {
+	x := strings.Split(s.oid, ".")
+	return x[len(x)-1]
+}
+
 // GetSNMPType returns the snmp type of the response.
 func (s *SNMPResponse) GetSNMPType() gosnmp.Asn1BER {
 	return s.snmpType
