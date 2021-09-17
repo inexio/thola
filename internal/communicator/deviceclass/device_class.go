@@ -1395,6 +1395,30 @@ func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (proper
 					return nil, errors.New("mappings is empty")
 				}
 				modifier.operator = &mapModifier
+			case "add":
+				valueReaderInterface := m["value"]
+				if !ok {
+					return nil, errors.New("value is missing in add")
+				}
+				valueReader, err := interface2propertyReader(valueReaderInterface, task)
+				if err != nil {
+					return nil, errors.New("value is missing in add modify operator, or is not of type float64")
+				}
+				var addModifier addNumberModifier
+				addModifier.value = valueReader
+				modifier.operator = &addModifier
+			case "subtract":
+				valueReaderInterface := m["value"]
+				if !ok {
+					return nil, errors.New("value is missing in subtract")
+				}
+				valueReader, err := interface2propertyReader(valueReaderInterface, task)
+				if err != nil {
+					return nil, errors.New("value is missing in subtract modify operator, or is not of type float64")
+				}
+				var subtractModifier subtractNumberModifier
+				subtractModifier.value = valueReader
+				modifier.operator = &subtractModifier
 			case "multiply":
 				valueReaderInterface := m["value"]
 				if !ok {

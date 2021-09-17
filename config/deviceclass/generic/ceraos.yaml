@@ -85,10 +85,15 @@ components:
       detection: snmpwalk
       values:
         load:
-          oid: .1.3.6.1.4.1.2021.10.1.3.2
+          oid: 1.3.6.1.4.1.2021.11.11
           operators:
             - type: modify
               modify_method: multiply
+              value:
+                detection: constant
+                value: -1
+            - type: modify
+              modify_method: add
               value:
                 detection: constant
                 value: 100

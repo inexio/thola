@@ -99,24 +99,41 @@ func (o *propertyOperators) apply(ctx context.Context, v value.Value) (value.Val
 	return v, nil
 }
 
+type addNumberModifier struct {
+	value propertyReader
+}
+
+func (m *addNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
+	a, b, err := getCalculationOperators(ctx, v, m.value)
+	if err != nil {
+		return nil, err
+	}
+	result := a.Add(b)
+	return value.New(result), nil
+}
+
+type subtractNumberModifier struct {
+	value propertyReader
+}
+
+func (m *subtractNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
+	a, b, err := getCalculationOperators(ctx, v, m.value)
+	if err != nil {
+		return nil, err
+	}
+	result := a.Sub(b)
+	return value.New(result), nil
+}
+
 type multiplyNumberModifier struct {
 	value propertyReader
 }
 
 func (m *multiplyNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
-	a, err := decimal.NewFromString(v.String())
+	a, b, err := getCalculationOperators(ctx, v, m.value)
 	if err != nil {
-		return value.Empty(), errors.New("cannot covert current value to decimal number")
+		return nil, err
 	}
-	valueProperty, err := m.value.getProperty(ctx)
-	if err != nil {
-		return value.Empty(), errors.New("cannot read argument")
-	}
-	valueFloat, err := valueProperty.Float64()
-	if err != nil {
-		return value.Empty(), errors.New("cannot covert argument to decimal number")
-	}
-	b := decimal.NewFromFloat(valueFloat)
 	result := a.Mul(b)
 	return value.New(result), nil
 }
@@ -126,21 +143,30 @@ type divideNumberModifier struct {
 }
 
 func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
+	a, b, err := getCalculationOperators(ctx, v, m.value)
+	if err != nil {
+		return nil, err
+	}
+	result := a.DivRound(b, 2)
+	return value.New(result), nil
+}
+
+func getCalculationOperators(ctx context.Context, v value.Value, value propertyReader) (decimal.Decimal, decimal.Decimal, error) {
 	a, err := decimal.NewFromString(v.String())
 	if err != nil {
-		return value.Empty(), errors.New("cannot covert current value to decimal number")
+		return decimal.Decimal{}, decimal.Decimal{}, errors.New("cannot covert current value to decimal number")
 	}
-	valueProperty, err := m.value.getProperty(ctx)
+	valueProperty, err := value.getProperty(ctx)
 	if err != nil {
-		return value.Empty(), errors.New("cannot read argument")
+		return decimal.Decimal{}, decimal.Decimal{}, errors.New("cannot read argument")
 	}
 	valueFloat, err := valueProperty.Float64()
 	if err != nil {
-		return value.Empty(), errors.New("cannot covert argument to decimal number")
+		return decimal.Decimal{}, decimal.Decimal{}, errors.New("cannot covert argument to decimal number")
 	}
 	b := decimal.NewFromFloat(valueFloat)
-	result := a.DivRound(b, 2)
-	return value.New(result), nil
+
+	return a, b, nil
 }
 
 type baseStringFilter struct {
