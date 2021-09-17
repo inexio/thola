@@ -516,6 +516,10 @@ func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, e
 }
 
 func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+	if !c.HasComponent(component.Interfaces) {
+		return nil, tholaerr.NewComponentNotFoundError("no interface component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetInterfaces(ctx, filter...)
 		if err != nil {
@@ -531,6 +535,10 @@ func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context, filter ..
 }
 
 func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.Interfaces) {
+		return 0, tholaerr.NewComponentNotFoundError("no interface component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetCountInterfaces(ctx)
 		if err != nil {
@@ -556,6 +564,10 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 }
 
 func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
+	if !c.HasComponent(component.CPU) {
+		return nil, tholaerr.NewComponentNotFoundError("no cpu component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetCPUComponentCPULoad(ctx)
 		if err != nil {
@@ -571,6 +583,10 @@ func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) 
 }
 
 func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.Memory) {
+		return 0, tholaerr.NewComponentNotFoundError("no memory component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetMemoryComponentMemoryUsage(ctx)
 		if err != nil {
@@ -586,6 +602,10 @@ func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Co
 }
 
 func (c *networkDeviceCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {
+	if !c.HasComponent(component.Disk) {
+		return nil, tholaerr.NewComponentNotFoundError("no disk component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetDiskComponentStorages(ctx)
 		if err != nil {
@@ -601,6 +621,10 @@ func (c *networkDeviceCommunicator) GetDiskComponentStorages(ctx context.Context
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentAlarmLowVoltageDisconnect(ctx)
 		if err != nil {
@@ -616,6 +640,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryAmperage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryAmperage(ctx)
 		if err != nil {
@@ -631,6 +659,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryAmperage(ctx context.C
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryCapacity(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryCapacity(ctx)
 		if err != nil {
@@ -646,6 +678,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryCapacity(ctx context.C
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryCurrent(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryCurrent(ctx)
 		if err != nil {
@@ -661,6 +697,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryCurrent(ctx context.Co
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryRemainingTime(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryRemainingTime(ctx)
 		if err != nil {
@@ -676,6 +716,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryRemainingTime(ctx cont
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryTemperature(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryTemperature(ctx)
 		if err != nil {
@@ -691,6 +735,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryTemperature(ctx contex
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentBatteryVoltage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentBatteryVoltage(ctx)
 		if err != nil {
@@ -706,6 +754,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentBatteryVoltage(ctx context.Co
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentCurrentLoad(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentCurrentLoad(ctx)
 		if err != nil {
@@ -721,6 +773,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentCurrentLoad(ctx context.Conte
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentMainsVoltageApplied(ctx context.Context) (bool, error) {
+	if !c.HasComponent(component.UPS) {
+		return false, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentMainsVoltageApplied(ctx)
 		if err != nil {
@@ -736,6 +792,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentMainsVoltageApplied(ctx conte
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentRectifierCurrent(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentRectifierCurrent(ctx)
 		if err != nil {
@@ -751,6 +811,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentRectifierCurrent(ctx context.
 }
 
 func (c *networkDeviceCommunicator) GetUPSComponentSystemVoltage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.UPS) {
+		return 0, tholaerr.NewComponentNotFoundError("no ups component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetUPSComponentSystemVoltage(ctx)
 		if err != nil {
@@ -766,6 +830,10 @@ func (c *networkDeviceCommunicator) GetUPSComponentSystemVoltage(ctx context.Con
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentAgents(ctx context.Context) ([]device.SBCComponentAgent, error) {
+	if !c.HasComponent(component.SBC) {
+		return nil, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentAgents(ctx)
 		if err != nil {
@@ -781,6 +849,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentAgents(ctx context.Context) (
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentRealms(ctx context.Context) ([]device.SBCComponentRealm, error) {
+	if !c.HasComponent(component.SBC) {
+		return nil, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentRealms(ctx)
 		if err != nil {
@@ -796,6 +868,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentRealms(ctx context.Context) (
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentGlobalCallPerSecond(ctx)
 		if err != nil {
@@ -811,6 +887,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentGlobalCallPerSecond(ctx conte
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentGlobalConcurrentSessions(ctx)
 		if err != nil {
@@ -826,6 +906,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx 
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentActiveLocalContacts(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentActiveLocalContacts(ctx)
 		if err != nil {
@@ -841,6 +925,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentActiveLocalContacts(ctx conte
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentTranscodingCapacity(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentTranscodingCapacity(ctx)
 		if err != nil {
@@ -856,6 +944,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentTranscodingCapacity(ctx conte
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentLicenseCapacity(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentLicenseCapacity(ctx)
 		if err != nil {
@@ -871,6 +963,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentLicenseCapacity(ctx context.C
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentSystemRedundancy(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentSystemRedundancy(ctx)
 		if err != nil {
@@ -886,6 +982,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentSystemRedundancy(ctx context.
 }
 
 func (c *networkDeviceCommunicator) GetSBCComponentSystemHealthScore(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SBC) {
+		return 0, tholaerr.NewComponentNotFoundError("no sbc component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetSBCComponentSystemHealthScore(ctx)
 		if err != nil {
@@ -901,6 +1001,10 @@ func (c *networkDeviceCommunicator) GetSBCComponentSystemHealthScore(ctx context
 }
 
 func (c *networkDeviceCommunicator) GetServerComponentProcs(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.Server) {
+		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetServerComponentProcs(ctx)
 		if err != nil {
@@ -916,6 +1020,10 @@ func (c *networkDeviceCommunicator) GetServerComponentProcs(ctx context.Context)
 }
 
 func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.Server) {
+		return 0, tholaerr.NewComponentNotFoundError("no server component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetServerComponentUsers(ctx)
 		if err != nil {
@@ -931,6 +1039,10 @@ func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context)
 }
 
 func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.HardwareHealth) {
+		return 0, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
 		if err != nil {
@@ -946,6 +1058,10 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitor
 }
 
 func (c *networkDeviceCommunicator) GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error) {
+	if !c.HasComponent(component.HardwareHealth) {
+		return nil, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetHardwareHealthComponentFans(ctx)
 		if err != nil {
@@ -961,6 +1077,10 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponentFans(ctx context.C
 }
 
 func (c *networkDeviceCommunicator) GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
+	if !c.HasComponent(component.HardwareHealth) {
+		return nil, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetHardwareHealthComponentPowerSupply(ctx)
 		if err != nil {
