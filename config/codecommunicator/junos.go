@@ -448,29 +448,30 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 	// spu
 	spuIndexDescr, err := c.getSPUIndices(ctx)
 	if err != nil {
-		return nil, err
-	}
-	spuOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5"
-	spuUsages, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5")
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get spu memory usages")
-	}
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to read out SPU memory usage")
+	} else {
+		spuOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5"
+		spuUsages, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5")
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get spu memory usages")
+		}
 
-	for _, res := range spuUsages {
-		resStr, err := res.GetValueString()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		for _, res := range spuUsages {
+			resStr, err := res.GetValueString()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get string value of snmp response")
+			}
+			resParsed, err := strconv.ParseFloat(resStr, 64)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to parse snmp response")
+			}
+			pool := device.MemoryPool{Usage: &resParsed}
+			if descr, ok := spuIndexDescr[strings.TrimPrefix(res.GetOID(), spuOID)]; ok {
+				label := "spu_" + descr
+				pool.Label = &label
+			}
+			pools = append(pools, pool)
 		}
-		resParsed, err := strconv.ParseFloat(resStr, 64)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse snmp response")
-		}
-		pool := device.MemoryPool{Usage: &resParsed}
-		if descr, ok := spuIndexDescr[strings.TrimPrefix(res.GetOID(), spuOID)]; ok {
-			label := "spu_" + descr
-			pool.Label = &label
-		}
-		pools = append(pools, pool)
 	}
 
 	return pools, nil
