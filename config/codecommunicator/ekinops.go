@@ -3,7 +3,7 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -16,7 +16,7 @@ type ekinopsCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of ekinops devices.
-func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")

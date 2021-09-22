@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
@@ -473,7 +473,7 @@ func (o *deviceClassCommunicator) GetVendor(ctx context.Context) (string, error)
 	}
 	logger := log.Ctx(ctx).With().Str("property", "vendor").Logger()
 	ctx = logger.WithContext(ctx)
-	vendor, err := o.identify.properties.vendor.getProperty(ctx)
+	vendor, err := o.identify.properties.vendor.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return "", errors.Wrap(err, "failed to get vendor")
@@ -489,7 +489,7 @@ func (o *deviceClassCommunicator) GetModel(ctx context.Context) (string, error) 
 	}
 	logger := log.Ctx(ctx).With().Str("property", "model").Logger()
 	ctx = logger.WithContext(ctx)
-	model, err := o.identify.properties.model.getProperty(ctx)
+	model, err := o.identify.properties.model.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return "", errors.Wrap(err, "failed to get model")
@@ -505,7 +505,7 @@ func (o *deviceClassCommunicator) GetModelSeries(ctx context.Context) (string, e
 	}
 	logger := log.Ctx(ctx).With().Str("property", "model_series").Logger()
 	ctx = logger.WithContext(ctx)
-	modelSeries, err := o.identify.properties.modelSeries.getProperty(ctx)
+	modelSeries, err := o.identify.properties.modelSeries.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return "", errors.Wrap(err, "failed to get model_series")
@@ -521,7 +521,7 @@ func (o *deviceClassCommunicator) GetSerialNumber(ctx context.Context) (string, 
 	}
 	logger := log.Ctx(ctx).With().Str("property", "serial_number").Logger()
 	ctx = logger.WithContext(ctx)
-	serialNumber, err := o.identify.properties.serialNumber.getProperty(ctx)
+	serialNumber, err := o.identify.properties.serialNumber.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return "", errors.Wrap(err, "failed to get serial_number")
@@ -537,7 +537,7 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 	}
 	logger := log.Ctx(ctx).With().Str("property", "osVersion").Logger()
 	ctx = logger.WithContext(ctx)
-	version, err := o.identify.properties.osVersion.getProperty(ctx)
+	version, err := o.identify.properties.osVersion.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return "", errors.Wrap(err, "failed to get osVersion")
@@ -546,20 +546,20 @@ func (o *deviceClassCommunicator) GetOSVersion(ctx context.Context) (string, err
 	return strings.TrimSpace(version.String()), nil
 }
 
-func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	if o.components.interfaces == nil || o.components.interfaces.properties == nil {
 		log.Ctx(ctx).Debug().Str("property", "interfaces").Str("device_class", o.name).Msg("no interface information available")
 		return nil, tholaerr.NewNotImplementedError("not implemented")
 	}
 
-	interfacesRaw, indices, err := o.components.interfaces.properties.getProperty(ctx, filter...)
+	interfacesRaw, indices, err := o.components.interfaces.properties.GetProperty(ctx, filter...)
 	if err != nil {
 		return nil, err
 	}
 
 	var interfaces []device.Interface
 
-	err = interfacesRaw.decode(&interfaces)
+	err = interfacesRaw.Decode(&interfaces)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode raw interfaces into interface structs")
 	}
@@ -622,13 +622,13 @@ func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([
 	}
 	logger := log.Ctx(ctx).With().Str("property", "CPUComponentCPULoad").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.cpu.properties.getProperty(ctx)
+	res, _, err := o.components.cpu.properties.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return nil, errors.Wrap(err, "failed to get CPUComponentCPULoad")
 	}
 	var cpus []device.CPU
-	err = res.decode(&cpus)
+	err = res.Decode(&cpus)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decode group properties into CPUs array")
 	}
@@ -642,7 +642,7 @@ func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Cont
 	}
 	logger := log.Ctx(ctx).With().Str("property", "MemoryComponentMemoryUsage").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.memory.usage.getProperty(ctx)
+	res, err := o.components.memory.usage.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get MemoryComponentMemoryUsage")
@@ -661,7 +661,7 @@ func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) 
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "DiskComponentStorages").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.disk.properties.getProperty(ctx)
+	res, _, err := o.components.disk.properties.GetProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -687,7 +687,7 @@ func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx c
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentAlarmAlarmLowVoltageDisconnect").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.alarmLowVoltageDisconnect.getProperty(ctx)
+	res, err := o.components.ups.alarmLowVoltageDisconnect.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentAlarmAlarmLowVoltageDisconnect")
@@ -706,7 +706,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryAmperage(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryAmperage").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryAmperage.getProperty(ctx)
+	res, err := o.components.ups.batteryAmperage.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryAmperage")
@@ -725,7 +725,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryCapacity(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryCapacity").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryCapacity.getProperty(ctx)
+	res, err := o.components.ups.batteryCapacity.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryCapacity")
@@ -744,7 +744,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryCurrent(ctx context.Cont
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryCurrent").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryCurrent.getProperty(ctx)
+	res, err := o.components.ups.batteryCurrent.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryCurrent")
@@ -763,7 +763,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryRemainingTime(ctx contex
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryRemainingTime").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryRemainingTime.getProperty(ctx)
+	res, err := o.components.ups.batteryRemainingTime.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryRemainingTime")
@@ -782,7 +782,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryTemperature(ctx context.
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryTemperature").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryTemperature.getProperty(ctx)
+	res, err := o.components.ups.batteryTemperature.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryTemperature")
@@ -801,7 +801,7 @@ func (o *deviceClassCommunicator) GetUPSComponentBatteryVoltage(ctx context.Cont
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentBatteryVoltage").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.batteryVoltage.getProperty(ctx)
+	res, err := o.components.ups.batteryVoltage.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentBatteryVoltage")
@@ -820,7 +820,7 @@ func (o *deviceClassCommunicator) GetUPSComponentCurrentLoad(ctx context.Context
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentCurrentLoad").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.currentLoad.getProperty(ctx)
+	res, err := o.components.ups.currentLoad.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentCurrentLoad")
@@ -839,7 +839,7 @@ func (o *deviceClassCommunicator) GetUPSComponentMainsVoltageApplied(ctx context
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentMainsVoltageApplied").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.mainsVoltageApplied.getProperty(ctx)
+	res, err := o.components.ups.mainsVoltageApplied.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return false, errors.Wrap(err, "failed to get UPSComponentMainsVoltageApplied")
@@ -858,7 +858,7 @@ func (o *deviceClassCommunicator) GetUPSComponentRectifierCurrent(ctx context.Co
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentRectifierCurrent").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.rectifierCurrent.getProperty(ctx)
+	res, err := o.components.ups.rectifierCurrent.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentRectifierCurrent")
@@ -877,7 +877,7 @@ func (o *deviceClassCommunicator) GetUPSComponentSystemVoltage(ctx context.Conte
 	}
 	logger := log.Ctx(ctx).With().Str("property", "UPSComponentSystemVoltage").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.ups.systemVoltage.getProperty(ctx)
+	res, err := o.components.ups.systemVoltage.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get UPSComponentSystemVoltage")
@@ -896,7 +896,7 @@ func (o *deviceClassCommunicator) GetSBCComponentAgents(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentAgents").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.sbc.agents.getProperty(ctx)
+	res, _, err := o.components.sbc.agents.GetProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -915,7 +915,7 @@ func (o *deviceClassCommunicator) GetSBCComponentRealms(ctx context.Context) ([]
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "SBCComponentRealms").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.sbc.realms.getProperty(ctx)
+	res, _, err := o.components.sbc.realms.GetProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -934,7 +934,7 @@ func (o *deviceClassCommunicator) GetSBCComponentGlobalCallPerSecond(ctx context
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalCallPerSecond").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.globalCallPerSecond.getProperty(ctx)
+	res, err := o.components.sbc.globalCallPerSecond.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentGlobalCallPerSecond")
@@ -953,7 +953,7 @@ func (o *deviceClassCommunicator) GetSBCComponentGlobalConcurrentSessions(ctx co
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentGlobalConcurrentSessions").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.globalConcurrentSessions.getProperty(ctx)
+	res, err := o.components.sbc.globalConcurrentSessions.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentGlobalConcurrentSessions")
@@ -972,7 +972,7 @@ func (o *deviceClassCommunicator) GetSBCComponentActiveLocalContacts(ctx context
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentActiveLocalContacts").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.activeLocalContacts.getProperty(ctx)
+	res, err := o.components.sbc.activeLocalContacts.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentActiveLocalContacts")
@@ -991,7 +991,7 @@ func (o *deviceClassCommunicator) GetSBCComponentTranscodingCapacity(ctx context
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentTranscodingCapacity").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.transcodingCapacity.getProperty(ctx)
+	res, err := o.components.sbc.transcodingCapacity.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentTranscodingCapacity")
@@ -1010,7 +1010,7 @@ func (o *deviceClassCommunicator) GetSBCComponentLicenseCapacity(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentLicenseCapacity").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.licenseCapacity.getProperty(ctx)
+	res, err := o.components.sbc.licenseCapacity.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentLicenseCapacity")
@@ -1029,7 +1029,7 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemRedundancy(ctx context.Co
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentSystemRedundancy").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.systemRedundancy.getProperty(ctx)
+	res, err := o.components.sbc.systemRedundancy.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentSystemRedundancy")
@@ -1048,7 +1048,7 @@ func (o *deviceClassCommunicator) GetSBCComponentSystemHealthScore(ctx context.C
 	}
 	logger := log.Ctx(ctx).With().Str("property", "SBCComponentSystemHealthScore").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.sbc.systemHealthScore.getProperty(ctx)
+	res, err := o.components.sbc.systemHealthScore.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get SBCComponentSystemHealthScore")
@@ -1067,7 +1067,7 @@ func (o *deviceClassCommunicator) GetServerComponentProcs(ctx context.Context) (
 	}
 	logger := log.Ctx(ctx).With().Str("property", "ServerComponentProcs").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.server.procs.getProperty(ctx)
+	res, err := o.components.server.procs.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get ServerComponentProcs")
@@ -1086,7 +1086,7 @@ func (o *deviceClassCommunicator) GetServerComponentUsers(ctx context.Context) (
 	}
 	logger := log.Ctx(ctx).With().Str("property", "ServerComponentUsers").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.server.users.getProperty(ctx)
+	res, err := o.components.server.users.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get ServerComponentUsers")
@@ -1105,7 +1105,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorSt
 	}
 	logger := log.Ctx(ctx).With().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.hardwareHealth.environmentMonitorState.getProperty(ctx)
+	res, err := o.components.hardwareHealth.environmentMonitorState.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
 		return 0, errors.Wrap(err, "failed to get HardwareHealthComponentEnvironmentMonitorState")
@@ -1124,7 +1124,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Con
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentFans").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.hardwareHealth.fans.getProperty(ctx)
+	res, _, err := o.components.hardwareHealth.fans.GetProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
@@ -1143,7 +1143,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 	}
 	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentPowerSupply").Logger()
 	ctx = logger.WithContext(ctx)
-	res, _, err := o.components.hardwareHealth.powerSupply.getProperty(ctx)
+	res, _, err := o.components.hardwareHealth.powerSupply.GetProperty(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}

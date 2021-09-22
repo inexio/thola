@@ -3,7 +3,7 @@ package communicator
 import (
 	"context"
 	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
@@ -515,7 +515,7 @@ func (c *networkDeviceCommunicator) GetOSVersion(ctx context.Context) (string, e
 	return c.deviceClassCommunicator.GetOSVersion(ctx)
 }
 
-func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+func (c *networkDeviceCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	if !c.HasComponent(component.Interfaces) {
 		return nil, tholaerr.NewComponentNotFoundError("no interface component available for this device")
 	}

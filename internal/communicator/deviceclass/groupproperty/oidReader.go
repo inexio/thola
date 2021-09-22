@@ -1,172 +1,84 @@
-package deviceclass
+package groupproperty
 
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/filter"
+	relatedTask "github.com/inexio/thola/internal/communicator/deviceclass/condition"
+	"github.com/inexio/thola/internal/communicator/deviceclass/property"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/value"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"regexp"
 	"strconv"
 	"strings"
 )
 
-//go:generate go run github.com/vektra/mockery/v2 --name=oidReader --inpackage
+//go:generate go run github.com/vektra/mockery/v2 --name=OIDReader --inpackage
 
-type propertyGroup map[string]interface{}
-
-type propertyGroups []propertyGroup
-
-func (g *propertyGroups) decode(destination interface{}) error {
-	return mapstructure.WeakDecode(g, destination)
-}
-
-type groupPropertyReader interface {
-	getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error)
-}
-
-type snmpGroupPropertyReader struct {
-	index oidReader
-	oids  oidReader
-}
-
-func (s *snmpGroupPropertyReader) getProperty(ctx context.Context, filter ...filter.PropertyFilter) (propertyGroups, []value.Value, error) {
-	wantedIndices, filteredIndices, err := s.getFilteredIndices(ctx, filter...)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to filter oid indices")
-	}
-
-	useSNMPGetsInsteadOfWalk, ok := network.SNMPGetsInsteadOfWalkFromContext(ctx)
+func Interface2OIDReader(i interface{}) (OIDReader, error) {
+	values, ok := i.(map[interface{}]interface{})
 	if !ok {
-		log.Ctx(ctx).Debug().Msg("SNMPGetsInsteadOfWalk not found in context, using walks")
+		return nil, errors.New("values needs to be a map")
 	}
 
-	if !useSNMPGetsInsteadOfWalk {
-		wantedIndices = nil
-	}
+	result := make(deviceClassOIDs)
 
-	groups, err := s.oids.readOID(ctx, wantedIndices, true)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to read oids")
-	}
-
-	var res propertyGroups
-	var indices []value.Value
-
-	// this sorts the groups after their index
-	//TODO efficiency
-	size := len(groups)
-	for i := 0; i < size; i++ {
-		var smallestIndex int
-		firstRun := true
-		for index := range groups {
-			if firstRun {
-				smallestIndex = index
-				firstRun = false
-			}
-			if index < smallestIndex {
-				smallestIndex = index
-			}
-		}
-		x, ok := groups[smallestIndex].(map[string]interface{})
+	for val, data := range values {
+		dataMap, ok := data.(map[interface{}]interface{})
 		if !ok {
-			return nil, nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
+			return nil, errors.New("value data needs to be a map")
 		}
 
-		delete(groups, smallestIndex)
-		if !useSNMPGetsInsteadOfWalk {
-			if _, ok := filteredIndices[strconv.Itoa(smallestIndex)]; ok {
-				continue
+		valString, ok := val.(string)
+		if !ok {
+			return nil, errors.New("key of snmp property reader must be a string")
+		}
+
+		if v, ok := dataMap["values"]; ok {
+			if len(dataMap) != 1 {
+				return nil, errors.New("value with subvalues has to many keys")
 			}
-		}
-		res = append(res, x)
-		indices = append(indices, value.New(smallestIndex))
-	}
-
-	return res, indices, nil
-}
-
-func (s *snmpGroupPropertyReader) getFilteredIndices(ctx context.Context, filter ...filter.PropertyFilter) ([]value.Value, map[string]struct{}, error) {
-	indices := make(map[string]struct{})
-	filteredIndices := make(map[string]struct{})
-
-	if s.index != nil {
-		res, err := s.index.readOID(ctx, nil, false)
-		if err == nil {
-			for idx := range res {
-				indices[strconv.Itoa(idx)] = struct{}{}
+			reader, err := Interface2OIDReader(v)
+			if err != nil {
+				return nil, err
 			}
-		}
-	}
-
-	for _, f := range filter {
-		// compile filter regex
-		regex, err := regexp.Compile(f.Regex)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "filter regex failed to compile")
-		}
-
-		// find filter oid
-		attrs := strings.Split(f.Key, "/")
-		reader := s.oids
-		for _, attr := range attrs {
-			// check if current oid reader contains multiple OIDs
-			multipleReader, ok := reader.(*deviceClassOIDs)
-			if !ok || multipleReader == nil {
-				return nil, nil, errors.New("filter attribute does not exist")
-			}
-
-			// check if oid reader contains OID(s) for the current attribute name
-			if reader, ok = (*multipleReader)[attr]; !ok {
-				return nil, nil, errors.New("filter attribute does not exist")
-			}
-		}
-
-		// check if the current oid reader contains only a single oid
-		singleReader, ok := reader.(*deviceClassOID)
-		if !ok || singleReader == nil {
-			return nil, nil, errors.New("filter attribute does not exist")
-		}
-
-		results, err := singleReader.readOID(ctx, nil, false)
-		if err != nil {
-			log.Ctx(ctx).Debug().Err(err).Str("oid", string(singleReader.OID)).Msg("failed to read out filter oid, skipping filter")
+			result[valString] = reader
 			continue
 		}
 
-		for index, result := range results {
-			// add to indices map
-			indices[strconv.Itoa(index)] = struct{}{}
-			if regex.MatchString(result.(value.Value).String()) {
-				// if filter matches add to filtered indices map
-				filteredIndices[strconv.Itoa(index)] = struct{}{}
-				log.Ctx(ctx).Debug().Str("filter_key", f.Key).Str("filter_regex", f.Regex).
-					Str("received_value", result.(value.Value).String()).
-					Msgf("filter matched on index '%d'", index)
+		if ignore, ok := dataMap["ignore"]; ok {
+			if b, ok := ignore.(bool); ok && b {
+				result[valString] = &emptyOIDReader{}
+				continue
 			}
 		}
-	}
 
-	var res []value.Value
-	for index := range indices {
-		if _, ok := filteredIndices[index]; !ok {
-			res = append(res, value.New(index))
+		var oid yamlComponentsOID
+		err := mapstructure.Decode(data, &oid)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
 		}
+		err = oid.validate()
+		if err != nil {
+			return nil, errors.Wrapf(err, "oid reader for %s is invalid", valString)
+		}
+		devClassOID, err := oid.convert()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert yaml OID to device class OID")
+		}
+		result[valString] = &devClassOID
 	}
-
-	return res, filteredIndices, nil
+	return &result, nil
 }
 
-type oidReader interface {
+type OIDReader interface {
 	readOID(context.Context, []value.Value, bool) (map[int]interface{}, error)
 }
 
 // deviceClassOIDs is a recursive data structure which maps labels to either a single OID (deviceClassOID) or another deviceClassOIDs
-type deviceClassOIDs map[string]oidReader
+type deviceClassOIDs map[string]OIDReader
 
 func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
 	result := make(map[int]map[string]interface{})
@@ -220,8 +132,8 @@ func (d *deviceClassOIDs) merge(overwrite deviceClassOIDs) deviceClassOIDs {
 // deviceClassOID represents a single OID which can be read
 type deviceClassOID struct {
 	network.SNMPGetConfiguration
-	operators      propertyOperators
-	indicesMapping oidReader
+	operators      property.Operators
+	indicesMapping OIDReader
 }
 
 func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
@@ -301,7 +213,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			continue
 		}
 		if res != "" || !skipEmpty {
-			resNormalized, err := d.operators.apply(ctx, value.New(res))
+			resNormalized, err := d.operators.Apply(ctx, value.New(res))
 			if err != nil {
 				if tholaerr.IsDidNotMatchError(err) {
 					continue
@@ -356,4 +268,44 @@ type emptyOIDReader struct{}
 
 func (n *emptyOIDReader) readOID(context.Context, []value.Value, bool) (map[int]interface{}, error) {
 	return nil, tholaerr.NewComponentNotFoundError("oid is ignored")
+}
+
+type yamlComponentsOID struct {
+	network.SNMPGetConfiguration `mapstructure:",squash"`
+	Operators                    []interface{}
+	IndicesMapping               *yamlComponentsOID `mapstructure:"indices_mapping"`
+}
+
+func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
+	res := deviceClassOID{
+		SNMPGetConfiguration: network.SNMPGetConfiguration{
+			OID:          y.OID,
+			UseRawResult: y.UseRawResult,
+		},
+	}
+
+	if y.IndicesMapping != nil {
+		mappings, err := y.IndicesMapping.convert()
+		if err != nil {
+			return deviceClassOID{}, errors.New("failed to convert indices mappings")
+		}
+		res.indicesMapping = &mappings
+	}
+
+	if y.Operators != nil {
+		operators, err := property.InterfaceSlice2Operators(y.Operators, relatedTask.PropertyDefault)
+		if err != nil {
+			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
+		}
+		res.operators = operators
+	}
+
+	return res, nil
+}
+
+func (y *yamlComponentsOID) validate() error {
+	if err := y.OID.Validate(); err != nil {
+		return errors.Wrap(err, "oid is invalid")
+	}
+	return nil
 }

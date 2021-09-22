@@ -3,7 +3,7 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -18,7 +18,7 @@ type advaCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of adva devices.
-func (c *advaCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+func (c *advaCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	interfaces, err := c.parent.GetInterfaces(ctx, filter...)
 	if err != nil {
 		return nil, err

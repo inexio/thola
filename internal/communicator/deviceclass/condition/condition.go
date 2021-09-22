@@ -1,38 +1,141 @@
-package deviceclass
+package condition
 
 import (
 	"context"
+	"fmt"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
+	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"regexp"
 	"strings"
 )
 
-type condition interface {
-	check(ctx context.Context) (bool, error)
+func Interface2Condition(i interface{}, task RelatedTask) (Condition, error) {
+	m, ok := i.(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
+	}
+
+	var stringType string
+	if _, ok := m["type"]; ok {
+		stringType, ok = m["type"].(string)
+		if !ok {
+			return nil, errors.New("condition type needs to be a string")
+		}
+	} else {
+		// if condition type is empty, and it has conditions and optionally a logical operator,
+		// and no other attributes, then it will be considered as a conditionSet per default
+		if _, ok = m["conditions"]; ok {
+			// if there is only "conditions" in the map or only "conditions" and "logical_operator", nothing else
+			if _, ok = m["logical_operator"]; (ok && len(m) == 2) || len(m) == 1 {
+				stringType = "conditionSet"
+			} else {
+				return nil, errors.New("no condition type set and attributes do not match conditionSet")
+			}
+		} else {
+			return nil, errors.New("no condition type set and attributes do not match conditionSet")
+		}
+	}
+
+	if stringType == "conditionSet" {
+		var yamlConditionSet yamlConditionSet
+		err := mapstructure.Decode(i, &yamlConditionSet)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode conditionSet")
+		}
+		return yamlConditionSet.convert()
+	}
+	//SNMP SnmpCondition Types
+	if stringType == "SysObjectID" || stringType == "SysDescription" || stringType == "snmpget" {
+		var condition snmpCondition
+		err := mapstructure.Decode(i, &condition)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode Condition")
+		}
+		err = condition.validate()
+		if err != nil {
+			return nil, errors.Wrap(err, "invalid snmp condition")
+		}
+		return &condition, nil
+	}
+	//HTTP
+	if stringType == "HttpGetBody" {
+		var condition httpCondition
+		err := mapstructure.Decode(i, &condition)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode condition")
+		}
+		err = condition.validate()
+		if err != nil {
+			return nil, errors.Wrap(err, "invalid http condition")
+		}
+		return &condition, nil
+	}
+
+	if stringType == "Vendor" {
+		if task <= PropertyVendor {
+			return nil, errors.New("cannot use vendor condition, vendor is not available here yet")
+		}
+		var condition vendorCondition
+		err := mapstructure.Decode(i, &condition)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode condition")
+		}
+		return &condition, nil
+	}
+
+	if stringType == "Model" {
+		if task <= PropertyModel {
+			return nil, errors.New("cannot use model condition, model is not available here yet")
+		}
+		var condition modelCondition
+		err := mapstructure.Decode(i, &condition)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode condition")
+		}
+		return &condition, nil
+	}
+
+	if stringType == "ModelSeries" {
+		if task <= PropertyModelSeries {
+			return nil, errors.New("cannot use model series condition, model series is not available here yet")
+		}
+		var condition modelSeriesCondition
+		err := mapstructure.Decode(i, &condition)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to decode condition")
+		}
+		return &condition, nil
+	}
+	return nil, fmt.Errorf("invalid condition type '%s'", stringType)
 }
 
-// Condition is a single condition.
-type Condition struct {
-	Type      string    `yaml:"type"`
-	MatchMode matchMode `yaml:"match_mode" mapstructure:"match_mode"`
-	Value     []string  `yaml:"values" mapstructure:"values"`
+type Condition interface {
+	Check(ctx context.Context) (bool, error)
+	ContainsUniqueRequest() bool
 }
 
-// ConditionSet defines a set of conditions.
-type ConditionSet struct {
-	LogicalOperator logicalOperator
-	Conditions      []condition
+// singleCondition is a single condition.
+type singleCondition struct {
+	Type      string
+	MatchMode MatchMode `mapstructure:"match_mode"`
+	Value     []string  `mapstructure:"values"`
 }
 
-func (c *ConditionSet) check(ctx context.Context) (bool, error) {
+// multipleConditions defines a set of conditions.
+type multipleConditions struct {
+	LogicalOperator LogicalOperator
+	Conditions      []Condition
+}
+
+func (c *multipleConditions) Check(ctx context.Context) (bool, error) {
 	log.Ctx(ctx).Debug().Msg("starting with matching condition set (OR)")
 	for _, condition := range c.Conditions {
-		match, err := condition.check(ctx)
+		match, err := condition.Check(ctx)
 		if err != nil {
 			return false, errors.Wrap(err, "error during match condition")
 		}
@@ -54,13 +157,22 @@ func (c *ConditionSet) check(ctx context.Context) (bool, error) {
 	return false, nil
 }
 
-// SnmpCondition is a condition based on snmp.
-type SnmpCondition struct {
-	Condition                    `yaml:",inline" mapstructure:",squash"`
-	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
+func (c *multipleConditions) ContainsUniqueRequest() bool {
+	for _, con := range c.Conditions {
+		if con.ContainsUniqueRequest() {
+			return true
+		}
+	}
+	return false
 }
 
-func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
+// snmpCondition is a condition based on snmp.
+type snmpCondition struct {
+	singleCondition              `mapstructure:",squash"`
+	network.SNMPGetConfiguration `mapstructure:",squash"`
+}
+
+func (s *snmpCondition) Check(ctx context.Context) (bool, error) {
 	if s.Type == "snmpget" {
 		logger := log.Ctx(ctx).With().Str("condition", "snmp").Str("condition_type", s.Type).Str("match_mode", string(s.MatchMode)).Str("oid", string(s.OID)).Logger()
 		ctx = logger.WithContext(ctx)
@@ -118,11 +230,11 @@ func (s *SnmpCondition) check(ctx context.Context) (bool, error) {
 		return false, errors.New("invalid condition type")
 	}
 
-	return matchStrings(ctx, val, s.MatchMode, s.Value...)
+	return MatchStrings(ctx, val, s.MatchMode, s.Value...)
 }
 
-func (s *SnmpCondition) validate() error {
-	err := s.MatchMode.validate()
+func (s *snmpCondition) validate() error {
+	err := s.MatchMode.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid matchmode")
 	}
@@ -150,13 +262,20 @@ func (s *SnmpCondition) validate() error {
 	return nil
 }
 
-// HTTPCondition is a condition based on http.
-type HTTPCondition struct {
-	Condition `yaml:",inline" mapstructure:",squash"`
-	URI       string
+func (s *snmpCondition) ContainsUniqueRequest() bool {
+	if s.Type == "snmpget" {
+		return true
+	}
+	return false
 }
 
-func (s *HTTPCondition) check(ctx context.Context) (bool, error) {
+// httpCondition is a condition based on http.
+type httpCondition struct {
+	singleCondition `mapstructure:",squash"`
+	URI             string
+}
+
+func (s *httpCondition) Check(ctx context.Context) (bool, error) {
 	logger := log.Ctx(ctx).With().Str("condition", "http").Str("condition_type", s.Type).Str("match_mode", string(s.MatchMode)).Str("uri", s.URI).Logger()
 	ctx = logger.WithContext(ctx)
 
@@ -182,7 +301,7 @@ func (s *HTTPCondition) check(ctx context.Context) (bool, error) {
 				log.Ctx(ctx).Debug().Str("protocol", con.HTTP.HTTPClient.GetProtocolString()).Int("port", port).Msg("http(s) request was successful")
 				value = string(r.Body())
 
-				matched, err := matchStrings(ctx, value, s.MatchMode, s.Value...)
+				matched, err := MatchStrings(ctx, value, s.MatchMode, s.Value...)
 				if err != nil {
 					return false, errors.Wrap(err, "error during match Strings")
 				}
@@ -199,8 +318,12 @@ func (s *HTTPCondition) check(ctx context.Context) (bool, error) {
 	return false, nil
 }
 
-func (s *HTTPCondition) validate() error {
-	err := s.MatchMode.validate()
+func (s *httpCondition) ContainsUniqueRequest() bool {
+	return true
+}
+
+func (s *httpCondition) validate() error {
+	err := s.MatchMode.Validate()
 	if err != nil {
 		return errors.Wrap(err, "invalid matchmode")
 	}
@@ -214,12 +337,12 @@ func (s *HTTPCondition) validate() error {
 	return nil
 }
 
-// VendorCondition is a condition based on a vendor.
-type VendorCondition struct {
-	Condition `yaml:",inline" mapstructure:",squash"`
+// vendorCondition is a condition based on a vendor.
+type vendorCondition struct {
+	singleCondition `mapstructure:",squash"`
 }
 
-func (m *VendorCondition) check(ctx context.Context) (bool, error) {
+func (m *vendorCondition) Check(ctx context.Context) (bool, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
 		return false, errors.New("no properties found in context")
@@ -227,15 +350,19 @@ func (m *VendorCondition) check(ctx context.Context) (bool, error) {
 	if properties.Properties.Vendor == nil {
 		return false, tholaerr.NewPreConditionError("vendor has not yet been determined")
 	}
-	return matchStrings(ctx, *properties.Properties.Vendor, m.MatchMode, m.Value...)
+	return MatchStrings(ctx, *properties.Properties.Vendor, m.MatchMode, m.Value...)
 }
 
-// ModelCondition is a condition based on a model.
-type ModelCondition struct {
-	Condition `yaml:",inline" mapstructure:",squash"`
+func (m *vendorCondition) ContainsUniqueRequest() bool {
+	return false
 }
 
-func (m *ModelCondition) check(ctx context.Context) (bool, error) {
+// modelCondition is a condition based on a model.
+type modelCondition struct {
+	singleCondition `mapstructure:",squash"`
+}
+
+func (m *modelCondition) Check(ctx context.Context) (bool, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
 		return false, errors.New("no properties found in context")
@@ -243,15 +370,19 @@ func (m *ModelCondition) check(ctx context.Context) (bool, error) {
 	if properties.Properties.Model == nil {
 		return false, tholaerr.NewPreConditionError("model has not yet been determined")
 	}
-	return matchStrings(ctx, *properties.Properties.Model, m.MatchMode, m.Value...)
+	return MatchStrings(ctx, *properties.Properties.Model, m.MatchMode, m.Value...)
 }
 
-// ModelSeriesCondition is a condition based on a model series.
-type ModelSeriesCondition struct {
-	Condition `yaml:",inline" mapstructure:",squash"`
+func (m *modelCondition) ContainsUniqueRequest() bool {
+	return false
 }
 
-func (m *ModelSeriesCondition) check(ctx context.Context) (bool, error) {
+// modelSeriesCondition is a condition based on a model series.
+type modelSeriesCondition struct {
+	singleCondition `mapstructure:",squash"`
+}
+
+func (m *modelSeriesCondition) Check(ctx context.Context) (bool, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
 		return false, errors.New("no properties found in context")
@@ -259,17 +390,85 @@ func (m *ModelSeriesCondition) check(ctx context.Context) (bool, error) {
 	if properties.Properties.ModelSeries == nil {
 		return false, tholaerr.NewPreConditionError("model series has not yet been determined")
 	}
-	return matchStrings(ctx, *properties.Properties.ModelSeries, m.MatchMode, m.Value...)
+	return MatchStrings(ctx, *properties.Properties.ModelSeries, m.MatchMode, m.Value...)
+}
+
+func (m *modelSeriesCondition) ContainsUniqueRequest() bool {
+	return false
 }
 
 type alwaysTrueCondition struct {
 }
 
-func (a *alwaysTrueCondition) check(_ context.Context) (bool, error) {
+func (a *alwaysTrueCondition) Check(_ context.Context) (bool, error) {
 	return true, nil
 }
 
-func matchStrings(ctx context.Context, str string, mode matchMode, matches ...string) (bool, error) {
+func (a *alwaysTrueCondition) ContainsUniqueRequest() bool {
+	return false
+}
+
+func GetAlwaysTrueCondition() Condition {
+	return &alwaysTrueCondition{}
+}
+
+type yamlConditionSet struct {
+	LogicalOperator LogicalOperator `mapstructure:"logical_operator"`
+	Conditions      []interface{}
+}
+
+func (y *yamlConditionSet) convert() (Condition, error) {
+	err := y.validate()
+	if err != nil {
+		return nil, errors.Wrap(err, "invalid yaml condition set")
+	}
+	var conditionSet multipleConditions
+	for _, condition := range y.Conditions {
+		matcher, err := Interface2Condition(condition, ClassifyDevice)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert interface to condition")
+		}
+		conditionSet.Conditions = append(conditionSet.Conditions, matcher)
+	}
+	conditionSet.LogicalOperator = y.LogicalOperator
+	return &conditionSet, nil
+}
+
+func (y *yamlConditionSet) validate() error {
+	if len(y.Conditions) == 0 {
+		return errors.New("empty condition array")
+	}
+	err := y.LogicalOperator.validate()
+	if err != nil {
+		if y.LogicalOperator == "" {
+			y.LogicalOperator = "OR" // default logical operator is always OR
+		}
+		return errors.Wrap(err, "invalid logical operator")
+	}
+	return nil
+}
+
+// LogicalOperator represents a logical operator (OR or AND).
+type LogicalOperator string
+
+func (l *LogicalOperator) validate() error {
+	if *l != "AND" && *l != "OR" {
+		return errors.New(string("unknown logical operator '" + *l + "'"))
+	}
+	return nil
+}
+
+// MatchMode represents a match mode that is used to match a condition.
+type MatchMode string
+
+func (m *MatchMode) Validate() error {
+	if *m != "contains" && *m != "!contains" && *m != "startsWith" && *m != "!startsWith" && *m != "regex" && *m != "!regex" && *m != "equals" && *m != "!equals" {
+		return errors.New(string("unknown matchmode \"" + *m + "\""))
+	}
+	return nil
+}
+
+func MatchStrings(ctx context.Context, str string, mode MatchMode, matches ...string) (bool, error) {
 	switch mode {
 	case "contains":
 		for _, match := range matches {

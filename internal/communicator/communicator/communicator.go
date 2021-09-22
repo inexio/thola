@@ -3,7 +3,7 @@ package communicator
 import (
 	"context"
 	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
 )
 
@@ -65,7 +65,7 @@ type Functions interface {
 	GetOSVersion(ctx context.Context) (string, error)
 
 	// GetInterfaces returns the interfaces of a device.
-	GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error)
+	GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error)
 
 	// GetCountInterfaces returns the count of interfaces of a device.
 	GetCountInterfaces(ctx context.Context) (int, error)

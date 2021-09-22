@@ -2,7 +2,7 @@ package network
 
 import "context"
 
-type ctxKey int
+type ctxKey byte
 
 const (
 	requestDeviceConnectionKey ctxKey = iota + 1

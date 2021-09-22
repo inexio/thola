@@ -1,11 +1,9 @@
-package deviceclass
+package groupproperty
 
 import (
 	"context"
 	"github.com/gosnmp/gosnmp"
-	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/network"
-	"github.com/inexio/thola/internal/network/mocks"
 	"github.com/inexio/thola/internal/utility"
 	"github.com/inexio/thola/internal/value"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +13,7 @@ import (
 
 // TestDeviceClassOID_readOID tests deviceClassOID.readOid(...) without indices and skipEmpty = false
 func TestDeviceClassOID_readOID(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -52,7 +50,7 @@ func TestDeviceClassOID_readOID(t *testing.T) {
 
 // TestDeviceClassOID_readOID_skipEmpty tests deviceClassOID.readOid(...) without indices and skipEmpty = true
 func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -88,7 +86,7 @@ func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
 
 // TestDeviceClassOID_readOID_withIndices tests deviceClassOID.readOid(...) with indices and skipEmpty = false
 func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -127,7 +125,7 @@ func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
 
 // TestDeviceClassOID_readOID_withIndicesSkipEmpty tests deviceClassOID.readOid(...) with indices and skipEmpty = true
 func TestDeviceClassOID_readOID_withIndicesSkipEmpty(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -165,7 +163,7 @@ func TestDeviceClassOID_readOID_withIndicesSkipEmpty(t *testing.T) {
 
 // TestDeviceClassOID_readOID_indicesMapping tests deviceClassOID.readOid(...) with an indices mapping and no given indices
 func TestDeviceClassOID_readOID_indicesMapping(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -214,7 +212,7 @@ func TestDeviceClassOID_readOID_indicesMapping(t *testing.T) {
 
 // TestDeviceClassOID_readOID_indicesMapping tests deviceClassOID.readOid(...) with an indices mapping and given indices
 func TestDeviceClassOID_readOID_indicesMappingWithIndices(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -262,8 +260,8 @@ func TestDeviceClassOID_readOID_indicesMappingWithIndices(t *testing.T) {
 
 // TestDeviceClassOIDs_readOID tests deviceClassOIDs.readOid(...)
 func TestDeviceClassOIDs_readOID(t *testing.T) {
-	var ifIndexOidReader mockOidReader
-	var ifDescrOidReader mockOidReader
+	var ifIndexOidReader MockOIDReader
+	var ifDescrOidReader MockOIDReader
 	ctx := context.Background()
 
 	ifIndexOidReader.
@@ -309,9 +307,9 @@ func TestDeviceClassOIDs_readOID(t *testing.T) {
 
 // TestDeviceClassOIDs_readOID tests deviceClassOIDs.readOid(...) including multiple level of oidReaders
 func TestDeviceClassOIDs_readOID_multipleLevel(t *testing.T) {
-	var ifIndexOidReader mockOidReader
-	var ifDescrOidReader mockOidReader
-	var radioInterfaceOidReader mockOidReader
+	var ifIndexOidReader MockOIDReader
+	var ifDescrOidReader MockOIDReader
+	var radioInterfaceOidReader MockOIDReader
 	ctx := context.Background()
 
 	ifIndexOidReader.
@@ -376,8 +374,8 @@ func TestDeviceClassOIDs_readOID_multipleLevel(t *testing.T) {
 	}
 }
 
-func TestSNMPGroupPropertyReader_getProperty(t *testing.T) {
-	var oidReader mockOidReader
+func TestSNMPReader_getProperty(t *testing.T) {
+	var oidReader MockOIDReader
 	ctx := context.Background()
 
 	oidReader.
@@ -397,11 +395,11 @@ func TestSNMPGroupPropertyReader_getProperty(t *testing.T) {
 			},
 		}, nil)
 
-	sut := snmpGroupPropertyReader{
+	sut := snmpReader{
 		oids: &oidReader,
 	}
 
-	expectedPropertyGroups := propertyGroups{
+	expectedPropertyGroups := PropertyGroups{
 		propertyGroup{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -429,8 +427,8 @@ func TestSNMPGroupPropertyReader_getProperty(t *testing.T) {
 	}
 }
 
-func TestSNMPGroupPropertyReader_getProperty_filter(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+func TestSNMPReader_getProperty_filter(t *testing.T) {
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -451,22 +449,24 @@ func TestSNMPGroupPropertyReader_getProperty_filter(t *testing.T) {
 			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
 		}, nil)
 
-	sut := snmpGroupPropertyReader{
-		oids: &deviceClassOIDs{
-			"ifIndex": &deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID: "1",
+	sut := baseReader{
+		reader: &snmpReader{
+			oids: &deviceClassOIDs{
+				"ifIndex": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "1",
+					},
 				},
-			},
-			"ifDescr": &deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID: "2",
+				"ifDescr": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "2",
+					},
 				},
 			},
 		},
 	}
 
-	expectedPropertyGroups := propertyGroups{
+	expectedPropertyGroups := PropertyGroups{
 		propertyGroup{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -482,9 +482,9 @@ func TestSNMPGroupPropertyReader_getProperty_filter(t *testing.T) {
 		value.New(3),
 	}
 
-	res, indices, err := sut.getProperty(ctx, filter.PropertyFilter{
-		Key:   "ifDescr",
-		Regex: "2",
+	res, indices, err := sut.GetProperty(ctx, &groupFilter{
+		key:   "ifDescr",
+		regex: "2",
 	})
 	if assert.NoError(t, err) {
 		assert.Equal(t, expectedPropertyGroups, res)
@@ -492,9 +492,9 @@ func TestSNMPGroupPropertyReader_getProperty_filter(t *testing.T) {
 	}
 }
 
-func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalk(t *testing.T) {
-	var oidReader mockOidReader
-	var indexOIDReader mockOidReader
+func TestSNMPReader_getProperty_getsInsteadOfWalk(t *testing.T) {
+	var oidReader MockOIDReader
+	var indexOIDReader MockOIDReader
 	ctx := network.NewContextWithSNMPGetsInsteadOfWalk(context.Background(), true)
 
 	oidReader.
@@ -534,12 +534,12 @@ func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalk(t *testing.T) {
 			},
 		}, nil)
 
-	sut := snmpGroupPropertyReader{
+	sut := snmpReader{
 		oids:  &oidReader,
 		index: &indexOIDReader,
 	}
 
-	expectedPropertyGroups := propertyGroups{
+	expectedPropertyGroups := PropertyGroups{
 		propertyGroup{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -567,8 +567,8 @@ func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalk(t *testing.T) {
 	}
 }
 
-func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalkFilter(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+func TestSNMPReader_getProperty_getsInsteadOfWalkFilter(t *testing.T) {
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(network.NewContextWithSNMPGetsInsteadOfWalk(context.Background(), true),
 		&network.RequestDeviceConnection{
 			SNMP: &network.RequestDeviceConnectionSNMP{
@@ -604,22 +604,24 @@ func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalkFilter(t *testing.
 			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
 		}, nil)
 
-	sut := snmpGroupPropertyReader{
-		oids: &deviceClassOIDs{
-			"ifIndex": &deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID: "1",
+	sut := baseReader{
+		reader: &snmpReader{
+			oids: &deviceClassOIDs{
+				"ifIndex": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "1",
+					},
 				},
-			},
-			"ifDescr": &deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID: "2",
+				"ifDescr": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "2",
+					},
 				},
 			},
 		},
 	}
 
-	expectedPropertyGroups := propertyGroups{
+	expectedPropertyGroups := PropertyGroups{
 		propertyGroup{
 			"ifIndex": value.New(1),
 			"ifDescr": value.New("Port 1"),
@@ -635,9 +637,9 @@ func TestSNMPGroupPropertyReader_getProperty_getsInsteadOfWalkFilter(t *testing.
 		value.New(3),
 	}
 
-	res, indices, err := sut.getProperty(ctx, filter.PropertyFilter{
-		Key:   "ifDescr",
-		Regex: "2",
+	res, indices, err := sut.GetProperty(ctx, &groupFilter{
+		key:   "ifDescr",
+		regex: "2",
 	})
 	if assert.NoError(t, err) {
 		assert.Equal(t, expectedPropertyGroups, res)

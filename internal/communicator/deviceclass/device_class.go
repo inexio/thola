@@ -4,32 +4,29 @@ package deviceclass
 
 import (
 	"context"
-	"fmt"
 	"github.com/inexio/thola/config"
 	"github.com/inexio/thola/config/codecommunicator"
 	"github.com/inexio/thola/internal/communicator/communicator"
 	"github.com/inexio/thola/internal/communicator/component"
+	"github.com/inexio/thola/internal/communicator/deviceclass/condition"
+	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
+	"github.com/inexio/thola/internal/communicator/deviceclass/property"
 	"github.com/inexio/thola/internal/communicator/hierarchy"
-	"github.com/inexio/thola/internal/mapping"
-	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
-	"github.com/inexio/thola/internal/value"
-	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
 // deviceClass represents a device class.
 type deviceClass struct {
 	name           string
-	match          condition
+	match          condition.Condition
 	config         deviceClassConfig
 	identify       deviceClassIdentify
 	components     deviceClassComponents
@@ -43,11 +40,11 @@ type deviceClassIdentify struct {
 
 // deviceClassIdentifyProperties represents the identify properties part of a device class.
 type deviceClassIdentifyProperties struct {
-	vendor       propertyReader
-	model        propertyReader
-	modelSeries  propertyReader
-	serialNumber propertyReader
-	osVersion    propertyReader
+	vendor       property.Reader
+	model        property.Reader
+	modelSeries  property.Reader
+	serialNumber property.Reader
+	osVersion    property.Reader
 }
 
 // deviceClassComponents represents the components part of a device class.
@@ -64,58 +61,58 @@ type deviceClassComponents struct {
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
 type deviceClassComponentsUPS struct {
-	alarmLowVoltageDisconnect propertyReader
-	batteryAmperage           propertyReader
-	batteryCapacity           propertyReader
-	batteryCurrent            propertyReader
-	batteryRemainingTime      propertyReader
-	batteryTemperature        propertyReader
-	batteryVoltage            propertyReader
-	currentLoad               propertyReader
-	mainsVoltageApplied       propertyReader
-	rectifierCurrent          propertyReader
-	systemVoltage             propertyReader
+	alarmLowVoltageDisconnect property.Reader
+	batteryAmperage           property.Reader
+	batteryCapacity           property.Reader
+	batteryCurrent            property.Reader
+	batteryRemainingTime      property.Reader
+	batteryTemperature        property.Reader
+	batteryVoltage            property.Reader
+	currentLoad               property.Reader
+	mainsVoltageApplied       property.Reader
+	rectifierCurrent          property.Reader
+	systemVoltage             property.Reader
 }
 
 // deviceClassComponentsCPU represents the cpu components part of a device class.
 type deviceClassComponentsCPU struct {
-	properties groupPropertyReader
+	properties groupproperty.Reader
 }
 
 // deviceClassComponentsMemory represents the memory components part of a device class.
 type deviceClassComponentsMemory struct {
-	usage propertyReader
+	usage property.Reader
 }
 
 // deviceClassComponentsSBC represents the sbc components part of a device class.
 type deviceClassComponentsSBC struct {
-	agents                   groupPropertyReader
-	realms                   groupPropertyReader
-	globalCallPerSecond      propertyReader
-	globalConcurrentSessions propertyReader
-	activeLocalContacts      propertyReader
-	transcodingCapacity      propertyReader
-	licenseCapacity          propertyReader
-	systemRedundancy         propertyReader
-	systemHealthScore        propertyReader
+	agents                   groupproperty.Reader
+	realms                   groupproperty.Reader
+	globalCallPerSecond      property.Reader
+	globalConcurrentSessions property.Reader
+	activeLocalContacts      property.Reader
+	transcodingCapacity      property.Reader
+	licenseCapacity          property.Reader
+	systemRedundancy         property.Reader
+	systemHealthScore        property.Reader
 }
 
 // deviceClassComponentsServer represents the server components part of a device class.
 type deviceClassComponentsServer struct {
-	procs propertyReader
-	users propertyReader
+	procs property.Reader
+	users property.Reader
 }
 
 // deviceClassComponentsDisk represents the disk component part of a device class.
 type deviceClassComponentsDisk struct {
-	properties groupPropertyReader
+	properties groupproperty.Reader
 }
 
 // deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
 type deviceClassComponentsHardwareHealth struct {
-	environmentMonitorState propertyReader
-	fans                    groupPropertyReader
-	powerSupply             groupPropertyReader
+	environmentMonitorState property.Reader
+	fans                    groupproperty.Reader
+	powerSupply             groupproperty.Reader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -127,7 +124,7 @@ type deviceClassConfig struct {
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
 	count      string
-	properties groupPropertyReader
+	properties groupproperty.Reader
 }
 
 // deviceClassSNMP represents the snmp config part of a device class.
@@ -135,12 +132,6 @@ type deviceClassSNMP struct {
 	MaxRepetitions uint32 `yaml:"max_repetitions"`
 	MaxOids        int    `yaml:"max_oids"`
 }
-
-// logicalOperator represents a logical operator (OR or AND).
-type logicalOperator string
-
-// matchMode represents a match mode that is used to match a condition.
-type matchMode string
 
 // yamlDeviceClass represents the structure and the parts of a yaml device class.
 type yamlDeviceClass struct {
@@ -172,11 +163,6 @@ type yamlDeviceClassComponents struct {
 type yamlDeviceClassConfig struct {
 	SNMP       deviceClassSNMP `yaml:"snmp"`
 	Components map[string]bool `yaml:"components"`
-}
-
-type yamlConditionSet struct {
-	LogicalOperator logicalOperator `yaml:"logical_operator" mapstructure:"logical_operator"`
-	Conditions      []interface{}
 }
 
 // yamlDeviceClassIdentifyProperties represents the identify properties of a yaml device class.
@@ -255,12 +241,6 @@ type yamlComponentsHardwareHealthProperties struct {
 type yamlComponentsInterfaces struct {
 	Count      string      `yaml:"count"`
 	Properties interface{} `yaml:"properties"`
-}
-
-type yamlComponentsOID struct {
-	network.SNMPGetConfiguration `yaml:",inline" mapstructure:",squash"`
-	Operators                    []interface{}      `yaml:"operators"`
-	IndicesMapping               *yamlComponentsOID `yaml:"indices_mapping" mapstructure:"indices_mapping"`
 }
 
 // GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
@@ -379,7 +359,7 @@ func (d *deviceClass) getName() string {
 
 // match checks if data in context matches the device class.
 func (d *deviceClass) matchDevice(ctx context.Context) (bool, error) {
-	return d.match.check(ctx)
+	return d.match.Check(ctx)
 }
 
 // getAvailableComponents returns the available components.
@@ -403,17 +383,17 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 	}
 	devClass.name += y.Name
 	if y.Name == "generic" {
-		devClass.match = &alwaysTrueCondition{}
+		devClass.match = condition.GetAlwaysTrueCondition()
 		devClass.identify = deviceClassIdentify{
 			properties: deviceClassIdentifyProperties{},
 		}
 	} else {
-		cond, err := interface2condition(y.Match, classifyDevice)
+		cond, err := condition.Interface2Condition(y.Match, condition.ClassifyDevice)
 		if err != nil {
 			return deviceClass{}, errors.Wrap(err, "failed to convert device class condition")
 		}
 		devClass.match = cond
-		devClass.tryToMatchLast = conditionContainsUniqueRequest(cond)
+		devClass.tryToMatchLast = cond.ContainsUniqueRequest()
 		identify, err := y.Identify.convert(devClass.identify)
 		if err != nil {
 			return deviceClass{}, errors.Wrap(err, "failed to convert identify")
@@ -454,11 +434,11 @@ func (y *yamlDeviceClassIdentify) convert(parentIdentify deviceClassIdentify) (d
 		return deviceClassIdentify{}, errors.Wrap(err, "identify is invalid")
 	}
 	var identify deviceClassIdentify
-	properties, err := y.Properties.convert(parentIdentify.properties)
+	prop, err := y.Properties.convert(parentIdentify.properties)
 	if err != nil {
 		return deviceClassIdentify{}, errors.Wrap(err, "failed to read yaml identify properties")
 	}
-	identify.properties = properties
+	identify.properties = prop
 
 	return identify, nil
 }
@@ -542,7 +522,7 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	}
 
 	if y.Properties != nil {
-		interfaceComponent.properties, err = interface2GroupPropertyReader(y.Properties, interfaceComponent.properties)
+		interfaceComponent.properties, err = groupproperty.Interface2Reader(y.Properties, interfaceComponent.properties)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert interface properties")
 		}
@@ -555,58 +535,6 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	return &interfaceComponent, nil
 }
 
-func (y *yamlComponentsOID) convert() (deviceClassOID, error) {
-	res := deviceClassOID{
-		SNMPGetConfiguration: network.SNMPGetConfiguration{
-			OID:          y.OID,
-			UseRawResult: y.UseRawResult,
-		},
-	}
-
-	if y.IndicesMapping != nil {
-		mappings, err := y.IndicesMapping.convert()
-		if err != nil {
-			return deviceClassOID{}, errors.New("failed to convert indices mappings")
-		}
-		res.indicesMapping = &mappings
-	}
-
-	if y.Operators != nil {
-		operators, err := interfaceSlice2propertyOperators(y.Operators, propertyDefault)
-		if err != nil {
-			return deviceClassOID{}, errors.Wrap(err, "failed to read yaml oids operators")
-		}
-		res.operators = operators
-	}
-
-	return res, nil
-}
-
-func (y *yamlComponentsOID) validate() error {
-	if err := y.OID.Validate(); err != nil {
-		return errors.Wrap(err, "oid is invalid")
-	}
-	return nil
-}
-
-func conditionContainsUniqueRequest(c condition) bool {
-	switch c := c.(type) {
-	case *SnmpCondition:
-		if c.Type == "snmpget" {
-			return true
-		}
-	case *HTTPCondition:
-		return true
-	case *ConditionSet:
-		for _, con := range c.Conditions {
-			if conditionContainsUniqueRequest(con) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func (y *yamlDeviceClassIdentify) validate() error {
 	if y.Properties == nil {
 		y.Properties = &yamlDeviceClassIdentifyProperties{}
@@ -615,40 +543,40 @@ func (y *yamlDeviceClassIdentify) validate() error {
 }
 
 func (y *yamlDeviceClassIdentifyProperties) convert(parentProperties deviceClassIdentifyProperties) (deviceClassIdentifyProperties, error) {
-	properties := parentProperties
+	prop := parentProperties
 	var err error
 
 	if y.Vendor != nil {
-		properties.vendor, err = convertYamlProperty(y.Vendor, propertyVendor, properties.vendor)
+		prop.vendor, err = property.InterfaceSlice2Reader(y.Vendor, condition.PropertyVendor, prop.vendor)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert vendor property to property reader")
 		}
 	}
 	if y.Model != nil {
-		properties.model, err = convertYamlProperty(y.Model, propertyModel, properties.model)
+		prop.model, err = property.InterfaceSlice2Reader(y.Model, condition.PropertyModel, prop.model)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model property to property reader")
 		}
 	}
 	if y.ModelSeries != nil {
-		properties.modelSeries, err = convertYamlProperty(y.ModelSeries, propertyModelSeries, properties.modelSeries)
+		prop.modelSeries, err = property.InterfaceSlice2Reader(y.ModelSeries, condition.PropertyModelSeries, prop.modelSeries)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model series property to property reader")
 		}
 	}
 	if y.SerialNumber != nil {
-		properties.serialNumber, err = convertYamlProperty(y.SerialNumber, propertyDefault, properties.serialNumber)
+		prop.serialNumber, err = property.InterfaceSlice2Reader(y.SerialNumber, condition.PropertyDefault, prop.serialNumber)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert serial number property to property reader")
 		}
 	}
 	if y.OSVersion != nil {
-		properties.osVersion, err = convertYamlProperty(y.OSVersion, propertyDefault, properties.osVersion)
+		prop.osVersion, err = property.InterfaceSlice2Reader(y.OSVersion, condition.PropertyDefault, prop.osVersion)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert osVersion property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlDeviceClassConfig) convert(parentConfig deviceClassConfig) (deviceClassConfig, error) {
@@ -691,1015 +619,247 @@ func (y *yamlDeviceClassConfig) validate() error {
 }
 
 func (y *yamlComponentsUPSProperties) convert(parentComponent *deviceClassComponentsUPS) (deviceClassComponentsUPS, error) {
-	var properties deviceClassComponentsUPS
+	var prop deviceClassComponentsUPS
 	var err error
 	if parentComponent != nil {
-		properties = *parentComponent
+		prop = *parentComponent
 	}
 
 	if y.AlarmLowVoltageDisconnect != nil {
-		properties.alarmLowVoltageDisconnect, err = convertYamlProperty(y.AlarmLowVoltageDisconnect, propertyDefault, properties.alarmLowVoltageDisconnect)
+		prop.alarmLowVoltageDisconnect, err = property.InterfaceSlice2Reader(y.AlarmLowVoltageDisconnect, condition.PropertyDefault, prop.alarmLowVoltageDisconnect)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm low voltage disconnect property to property reader")
 		}
 	}
 	if y.BatteryAmperage != nil {
-		properties.batteryAmperage, err = convertYamlProperty(y.BatteryAmperage, propertyDefault, properties.batteryAmperage)
+		prop.batteryAmperage, err = property.InterfaceSlice2Reader(y.BatteryAmperage, condition.PropertyDefault, prop.batteryAmperage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery amperage property to property reader")
 		}
 	}
 	if y.BatteryCapacity != nil {
-		properties.batteryCapacity, err = convertYamlProperty(y.BatteryCapacity, propertyDefault, properties.batteryCapacity)
+		prop.batteryCapacity, err = property.InterfaceSlice2Reader(y.BatteryCapacity, condition.PropertyDefault, prop.batteryCapacity)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery capacity property to property reader")
 		}
 	}
 	if y.BatteryCurrent != nil {
-		properties.batteryCurrent, err = convertYamlProperty(y.BatteryCurrent, propertyDefault, properties.batteryCurrent)
+		prop.batteryCurrent, err = property.InterfaceSlice2Reader(y.BatteryCurrent, condition.PropertyDefault, prop.batteryCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery current property to property reader")
 		}
 	}
 	if y.BatteryRemainingTime != nil {
-		properties.batteryRemainingTime, err = convertYamlProperty(y.BatteryRemainingTime, propertyDefault, properties.batteryRemainingTime)
+		prop.batteryRemainingTime, err = property.InterfaceSlice2Reader(y.BatteryRemainingTime, condition.PropertyDefault, prop.batteryRemainingTime)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery remaining time property to property reader")
 		}
 	}
 	if y.BatteryTemperature != nil {
-		properties.batteryTemperature, err = convertYamlProperty(y.BatteryTemperature, propertyDefault, properties.batteryTemperature)
+		prop.batteryTemperature, err = property.InterfaceSlice2Reader(y.BatteryTemperature, condition.PropertyDefault, prop.batteryTemperature)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery temperature property to property reader")
 		}
 	}
 	if y.BatteryVoltage != nil {
-		properties.batteryVoltage, err = convertYamlProperty(y.BatteryVoltage, propertyDefault, properties.batteryVoltage)
+		prop.batteryVoltage, err = property.InterfaceSlice2Reader(y.BatteryVoltage, condition.PropertyDefault, prop.batteryVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery voltage property to property reader")
 		}
 	}
 	if y.CurrentLoad != nil {
-		properties.currentLoad, err = convertYamlProperty(y.CurrentLoad, propertyDefault, properties.currentLoad)
+		prop.currentLoad, err = property.InterfaceSlice2Reader(y.CurrentLoad, condition.PropertyDefault, prop.currentLoad)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert current load property to property reader")
 		}
 	}
 	if y.MainsVoltageApplied != nil {
-		properties.mainsVoltageApplied, err = convertYamlProperty(y.MainsVoltageApplied, propertyDefault, properties.mainsVoltageApplied)
+		prop.mainsVoltageApplied, err = property.InterfaceSlice2Reader(y.MainsVoltageApplied, condition.PropertyDefault, prop.mainsVoltageApplied)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert mains voltage applied property to property reader")
 		}
 	}
 	if y.RectifierCurrent != nil {
-		properties.rectifierCurrent, err = convertYamlProperty(y.RectifierCurrent, propertyDefault, properties.rectifierCurrent)
+		prop.rectifierCurrent, err = property.InterfaceSlice2Reader(y.RectifierCurrent, condition.PropertyDefault, prop.rectifierCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert rectifier current property to property reader")
 		}
 	}
 	if y.SystemVoltage != nil {
-		properties.systemVoltage, err = convertYamlProperty(y.SystemVoltage, propertyDefault, properties.systemVoltage)
+		prop.systemVoltage, err = property.InterfaceSlice2Reader(y.SystemVoltage, condition.PropertyDefault, prop.systemVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert system voltage property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsCPUProperties) convert(parentComponent *deviceClassComponentsCPU) (deviceClassComponentsCPU, error) {
-	var properties deviceClassComponentsCPU
+	var prop deviceClassComponentsCPU
 	var err error
 
 	if parentComponent != nil {
-		properties = *parentComponent
+		prop = *parentComponent
 	}
 
 	if y.Properties != nil {
-		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
+		prop.properties, err = groupproperty.Interface2Reader(y.Properties, prop.properties)
 		if err != nil {
 			return deviceClassComponentsCPU{}, errors.Wrap(err, "failed to convert load property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsMemoryProperties) convert(parentComponent *deviceClassComponentsMemory) (deviceClassComponentsMemory, error) {
-	var properties deviceClassComponentsMemory
+	var prop deviceClassComponentsMemory
 	var err error
 
 	if parentComponent != nil {
-		properties = *parentComponent
+		prop = *parentComponent
 	}
 
 	if y.Usage != nil {
-		properties.usage, err = convertYamlProperty(y.Usage, propertyDefault, properties.usage)
+		prop.usage, err = property.InterfaceSlice2Reader(y.Usage, condition.PropertyDefault, prop.usage)
 		if err != nil {
 			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsServerProperties) convert(parentComponent *deviceClassComponentsServer) (deviceClassComponentsServer, error) {
-	var properties deviceClassComponentsServer
+	var prop deviceClassComponentsServer
 	var err error
 
 	if parentComponent != nil {
-		properties = *parentComponent
+		prop = *parentComponent
 	}
 
 	if y.Procs != nil {
-		properties.procs, err = convertYamlProperty(y.Procs, propertyDefault, properties.procs)
+		prop.procs, err = property.InterfaceSlice2Reader(y.Procs, condition.PropertyDefault, prop.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert procs property to property reader")
 		}
 	}
 	if y.Users != nil {
-		properties.users, err = convertYamlProperty(y.Users, propertyDefault, properties.procs)
+		prop.users, err = property.InterfaceSlice2Reader(y.Users, condition.PropertyDefault, prop.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsDiskProperties) convert(parentDisk *deviceClassComponentsDisk) (deviceClassComponentsDisk, error) {
-	var properties deviceClassComponentsDisk
+	var prop deviceClassComponentsDisk
 	var err error
 
 	if parentDisk != nil {
-		properties = *parentDisk
+		prop = *parentDisk
 	}
 
 	if y.Properties != nil {
-		properties.properties, err = interface2GroupPropertyReader(y.Properties, properties.properties)
+		prop.properties, err = groupproperty.Interface2Reader(y.Properties, prop.properties)
 		if err != nil {
 			return deviceClassComponentsDisk{}, errors.Wrap(err, "failed to convert storages property to group property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsSBCProperties) convert(parentComponentsSBC *deviceClassComponentsSBC) (deviceClassComponentsSBC, error) {
-	var properties deviceClassComponentsSBC
+	var prop deviceClassComponentsSBC
 	var err error
 
 	if parentComponentsSBC != nil {
-		properties = *parentComponentsSBC
+		prop = *parentComponentsSBC
 	}
 
 	if y.Agents != nil {
-		properties.agents, err = interface2GroupPropertyReader(y.Agents, properties.agents)
+		prop.agents, err = groupproperty.Interface2Reader(y.Agents, prop.agents)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert agents property to group property reader")
 		}
 	}
 	if y.Realms != nil {
-		properties.realms, err = interface2GroupPropertyReader(y.Realms, properties.realms)
+		prop.realms, err = groupproperty.Interface2Reader(y.Realms, prop.realms)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert realms property to group property reader")
 		}
 	}
 	if y.ActiveLocalContacts != nil {
-		properties.activeLocalContacts, err = convertYamlProperty(y.ActiveLocalContacts, propertyDefault, properties.activeLocalContacts)
+		prop.activeLocalContacts, err = property.InterfaceSlice2Reader(y.ActiveLocalContacts, condition.PropertyDefault, prop.activeLocalContacts)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
 		}
 	}
 	if y.GlobalCallPerSecond != nil {
-		properties.globalCallPerSecond, err = convertYamlProperty(y.GlobalCallPerSecond, propertyDefault, properties.globalCallPerSecond)
+		prop.globalCallPerSecond, err = property.InterfaceSlice2Reader(y.GlobalCallPerSecond, condition.PropertyDefault, prop.globalCallPerSecond)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
 		}
 	}
 	if y.GlobalConcurrentSessions != nil {
-		properties.globalConcurrentSessions, err = convertYamlProperty(y.GlobalConcurrentSessions, propertyDefault, properties.globalConcurrentSessions)
+		prop.globalConcurrentSessions, err = property.InterfaceSlice2Reader(y.GlobalConcurrentSessions, condition.PropertyDefault, prop.globalConcurrentSessions)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
 		}
 	}
 	if y.LicenseCapacity != nil {
-		properties.licenseCapacity, err = convertYamlProperty(y.LicenseCapacity, propertyDefault, properties.licenseCapacity)
+		prop.licenseCapacity, err = property.InterfaceSlice2Reader(y.LicenseCapacity, condition.PropertyDefault, prop.licenseCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
 		}
 	}
 	if y.TranscodingCapacity != nil {
-		properties.transcodingCapacity, err = convertYamlProperty(y.TranscodingCapacity, propertyDefault, properties.transcodingCapacity)
+		prop.transcodingCapacity, err = property.InterfaceSlice2Reader(y.TranscodingCapacity, condition.PropertyDefault, prop.transcodingCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
 		}
 	}
 	if y.SystemRedundancy != nil {
-		properties.systemRedundancy, err = convertYamlProperty(y.SystemRedundancy, propertyDefault, properties.systemRedundancy)
+		prop.systemRedundancy, err = property.InterfaceSlice2Reader(y.SystemRedundancy, condition.PropertyDefault, prop.systemRedundancy)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
 
 	if y.SystemHealthScore != nil {
-		properties.systemHealthScore, err = convertYamlProperty(y.SystemHealthScore, propertyDefault, properties.systemHealthScore)
+		prop.systemHealthScore, err = property.InterfaceSlice2Reader(y.SystemHealthScore, condition.PropertyDefault, prop.systemHealthScore)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system health score property to property reader")
 		}
 	}
-	return properties, nil
+	return prop, nil
 }
 
 func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *deviceClassComponentsHardwareHealth) (deviceClassComponentsHardwareHealth, error) {
-	var properties deviceClassComponentsHardwareHealth
+	var prop deviceClassComponentsHardwareHealth
 	var err error
 
 	if parentHardwareHealth != nil {
-		properties = *parentHardwareHealth
+		prop = *parentHardwareHealth
 	}
 
 	if y.Fans != nil {
-		properties.fans, err = interface2GroupPropertyReader(y.Fans, properties.fans)
+		prop.fans, err = groupproperty.Interface2Reader(y.Fans, prop.fans)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert fans property to group property reader")
 		}
 	}
 	if y.PowerSupply != nil {
-		properties.powerSupply, err = interface2GroupPropertyReader(y.PowerSupply, properties.powerSupply)
+		prop.powerSupply, err = groupproperty.Interface2Reader(y.PowerSupply, prop.powerSupply)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
 		}
 	}
 	if y.EnvironmentMonitorState != nil {
-		properties.environmentMonitorState, err = convertYamlProperty(y.EnvironmentMonitorState, propertyDefault, properties.environmentMonitorState)
+		prop.environmentMonitorState, err = property.InterfaceSlice2Reader(y.EnvironmentMonitorState, condition.PropertyDefault, prop.environmentMonitorState)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
 		}
 	}
 
-	return properties, nil
-}
-
-func (y *yamlConditionSet) convert() (condition, error) {
-	err := y.validate()
-	if err != nil {
-		return nil, errors.Wrap(err, "invalid yaml condition set")
-	}
-	var conditionSet ConditionSet
-	for _, condition := range y.Conditions {
-		matcher, err := interface2condition(condition, classifyDevice)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert interface to condition")
-		}
-		conditionSet.Conditions = append(conditionSet.Conditions, matcher)
-	}
-	conditionSet.LogicalOperator = y.LogicalOperator
-	return &conditionSet, nil
-}
-
-func (y *yamlConditionSet) validate() error {
-	if len(y.Conditions) == 0 {
-		return errors.New("empty condition array")
-	}
-	err := y.LogicalOperator.validate()
-	if err != nil {
-		if y.LogicalOperator == "" {
-			y.LogicalOperator = "OR" // default logical operator is always OR
-		}
-		return errors.Wrap(err, "invalid logical operator")
-	}
-	return nil
-}
-
-type relatedTask int
-
-const (
-	classifyDevice relatedTask = iota + 1
-	propertyVendor
-	propertyModel
-	propertyModelSeries
-	propertyDefault
-)
-
-func interface2condition(i interface{}, task relatedTask) (condition, error) {
-	m, ok := i.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
-	}
-
-	var stringType string
-	if _, ok := m["type"]; ok {
-		stringType, ok = m["type"].(string)
-		if !ok {
-			return nil, errors.New("condition type needs to be a string")
-		}
-	} else {
-		// if condition type is empty, and it has conditions and optionally a logical operator,
-		// and no other attributes, then it will be considered as a conditionSet per default
-		if _, ok = m["conditions"]; ok {
-			// if there is only "conditions" in the map or only "conditions" and "logical_operator", nothing else
-			if _, ok = m["logical_operator"]; (ok && len(m) == 2) || len(m) == 1 {
-				stringType = "conditionSet"
-			} else {
-				return nil, errors.New("no condition type set and attributes do not match conditionSet")
-			}
-		} else {
-			return nil, errors.New("no condition type set and attributes do not match conditionSet")
-		}
-	}
-
-	if stringType == "conditionSet" {
-		var yamlConditionSet yamlConditionSet
-		err := mapstructure.Decode(i, &yamlConditionSet)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode conditionSet")
-		}
-		return yamlConditionSet.convert()
-	}
-	//SNMP SnmpCondition Types
-	if stringType == "SysObjectID" || stringType == "SysDescription" || stringType == "snmpget" {
-		var condition SnmpCondition
-		err := mapstructure.Decode(i, &condition)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode Condition")
-		}
-		err = condition.validate()
-		if err != nil {
-			return nil, errors.Wrap(err, "invalid snmp condition")
-		}
-		return &condition, nil
-	}
-	//HTTP
-	if stringType == "HttpGetBody" {
-		var condition HTTPCondition
-		err := mapstructure.Decode(i, &condition)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode condition")
-		}
-		err = condition.validate()
-		if err != nil {
-			return nil, errors.Wrap(err, "invalid http condition")
-		}
-		return &condition, nil
-	}
-
-	if stringType == "Vendor" {
-		if task <= propertyVendor {
-			return nil, errors.New("cannot use vendor condition, vendor is not available here yet")
-		}
-		var condition VendorCondition
-		err := mapstructure.Decode(i, &condition)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode condition")
-		}
-		return &condition, nil
-	}
-
-	if stringType == "Model" {
-		if task <= propertyModel {
-			return nil, errors.New("cannot use model condition, model is not available here yet")
-		}
-		var condition ModelCondition
-		err := mapstructure.Decode(i, &condition)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode condition")
-		}
-		return &condition, nil
-	}
-
-	if stringType == "ModelSeries" {
-		if task <= propertyModelSeries {
-			return nil, errors.New("cannot use model series condition, model series is not available here yet")
-		}
-		var condition ModelSeriesCondition
-		err := mapstructure.Decode(i, &condition)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode condition")
-		}
-		return &condition, nil
-	}
-	return nil, fmt.Errorf("invalid condition type '%s'", stringType)
-}
-
-func convertYamlProperty(i []interface{}, task relatedTask, parentProperty propertyReader) (propertyReader, error) {
-	var readerSet propertyReaderSet
-	for _, i := range i {
-		reader, err := interface2propertyReader(i, task)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert yaml identify property")
-		}
-		readerSet = append(readerSet, reader)
-	}
-	if parentProperty != nil {
-		readerSet = append(readerSet, parentProperty)
-	}
-	return &readerSet, nil
-}
-
-func interface2propertyReader(i interface{}, task relatedTask) (propertyReader, error) {
-	m, ok := i.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
-	}
-	if _, ok := m["detection"]; !ok {
-		return nil, errors.New("detection is missing in property")
-	}
-	stringDetection, ok := m["detection"].(string)
-	if !ok {
-		return nil, errors.New("property detection needs to be a string")
-	}
-	var basePropReader basePropertyReader
-	switch stringDetection {
-	case "snmpget":
-		var pr snmpGetPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode constant propertyReader")
-		}
-		basePropReader.propertyReader = &pr
-	case "constant":
-		v, ok := m["value"]
-		if !ok {
-			return nil, errors.New("value is missing in constant property reader")
-		}
-		var pr constantPropertyReader
-		if _, ok := v.(map[interface{}]interface{}); ok {
-			return nil, errors.New("value must not be a map")
-		}
-		if _, ok := v.([]interface{}); ok {
-			return nil, errors.New("value must not be an array")
-		}
-		pr.Value = value.New(v)
-		basePropReader.propertyReader = &pr
-	case "SysObjectID":
-		var pr sysObjectIDPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode sysObjectIDPropertyReader")
-		}
-		basePropReader.propertyReader = &pr
-	case "SysDescription":
-		var pr sysDescriptionPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode sysDescriptionPropertyReader")
-		}
-		basePropReader.propertyReader = &pr
-	case "Vendor":
-		if task <= propertyVendor {
-			return nil, errors.New("cannot use vendor property, model series is not available here yet")
-		}
-		var pr vendorPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode vendor PropertyReader")
-		}
-		basePropReader.propertyReader = &pr
-	case "Model":
-		if task <= propertyModel {
-			return nil, errors.New("cannot use model property, model series is not available here yet")
-		}
-		var pr modelPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode model PropertyReader")
-		}
-		basePropReader.propertyReader = &pr
-	case "ModelSeries":
-		if task <= propertyModelSeries {
-			return nil, errors.New("cannot use model series property, model series is not available here yet")
-		}
-		var pr modelSeriesPropertyReader
-		err := mapstructure.Decode(i, &pr)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode model series PropertyReader")
-		}
-		basePropReader.propertyReader = &pr
-
-	default:
-		return nil, errors.New("invalid detection type " + stringDetection)
-	}
-	if operators, ok := m["operators"]; ok {
-		operatorSlice, ok := operators.([]interface{})
-		if !ok {
-			return nil, errors.New("operators has to be an array")
-		}
-		operators, err := interfaceSlice2propertyOperators(operatorSlice, task)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert interface slice to string operators")
-		}
-		basePropReader.operators = operators
-	}
-	if preConditionInterface, ok := m["pre_condition"]; ok {
-		preCondition, err := interface2condition(preConditionInterface, task)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert pre condition interface 2 condition")
-		}
-		basePropReader.preCondition = preCondition
-	}
-	return &basePropReader, nil
-}
-
-func interfaceSlice2propertyOperators(i []interface{}, task relatedTask) (propertyOperators, error) {
-	var propertyOperators propertyOperators
-	for _, opInterface := range i {
-		m, ok := opInterface.(map[interface{}]interface{})
-		if !ok {
-			return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
-		}
-		if _, ok := m["type"]; !ok {
-			return nil, errors.New("operator type is missing!")
-		}
-		stringType, ok := m["type"].(string)
-		if !ok {
-			return nil, errors.New("operator type needs to be a string")
-		}
-
-		switch stringType {
-		case "filter":
-			var adapter filterOperatorAdapter
-			var filter baseStringFilter
-			filterMethod, ok := m["filter_method"]
-			if ok {
-				if filterMethodString, ok := filterMethod.(string); ok {
-					filter.FilterMethod = matchMode(filterMethodString)
-				} else {
-					return nil, errors.New("filter method needs to be a string")
-				}
-				err := filter.FilterMethod.validate()
-				if err != nil {
-					return nil, errors.Wrap(err, "invalid filter method")
-				}
-			} else {
-				filter.FilterMethod = "contains"
-			}
-			val, ok := m["value"]
-			if !ok {
-				return nil, errors.New("value is missing")
-			}
-			if valueString, ok := val.(string); ok {
-				filter.Value = valueString
-			}
-			if returnOnMismatchInt, ok := m["return_on_mismatch"]; ok {
-				if returnOnMismatch, ok := returnOnMismatchInt.(bool); ok {
-					filter.returnOnMismatch = returnOnMismatch
-				} else {
-					return nil, errors.New("return_on_mismatch needs to be a boolean")
-				}
-			}
-			adapter.operator = &filter
-			propertyOperators = append(propertyOperators, &adapter)
-		case "modify":
-			var modifier modifyOperatorAdapter
-			modifyMethod, ok := m["modify_method"]
-			if !ok {
-				return nil, errors.New("modify method is missing in modify operator")
-			}
-			modifyMethodString, ok := modifyMethod.(string)
-			if !ok {
-				return nil, errors.New("modify method isn't a string")
-			}
-			switch modifyMethodString {
-			case "regexSubmatch":
-				format, ok := m["format"]
-				if !ok {
-					return nil, errors.New("format is missing")
-				}
-				formatString, ok := format.(string)
-				if !ok {
-					return nil, errors.New("format has to be a string")
-				}
-				regex, ok := m["regex"]
-				if !ok {
-					return nil, errors.New("regex is missing")
-				}
-				regexString, ok := regex.(string)
-				if !ok {
-					return nil, errors.New("regex has to be a string")
-				}
-				var returnOnMismatch bool
-				if returnOnMismatchInt, ok := m["return_on_mismatch"]; ok {
-					if returnOnMismatch, ok = returnOnMismatchInt.(bool); !ok {
-						return nil, errors.New("return_on_mismatch needs to be a boolean")
-					}
-				}
-				mod, err := newRegexSubmatchModifier(regexString, formatString, returnOnMismatch)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to create new regex submatch modifier")
-				}
-				modifier.operator = mod
-			case "regexReplace":
-				replace, ok := m["replace"]
-				if !ok {
-					return nil, errors.New("replace is missing")
-				}
-				replaceString, ok := replace.(string)
-				if !ok {
-					return nil, errors.New("replace has to be a string")
-				}
-				regex, ok := m["regex"]
-				if !ok {
-					return nil, errors.New("regex is missing")
-				}
-				regexString, ok := regex.(string)
-				if !ok {
-					return nil, errors.New("regex has to be a string")
-				}
-				mod, err := newRegexReplaceModifier(regexString, replaceString)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to create new regex replace modifier")
-				}
-				modifier.operator = mod
-			case "toUpperCase":
-				var toUpperCaseModifier toUpperCaseModifier
-				modifier.operator = &toUpperCaseModifier
-			case "toLowerCase":
-				var toLowerCaseModifier toLowerCaseModifier
-				modifier.operator = &toLowerCaseModifier
-			case "overwrite":
-				overwriteString, ok := m["value"].(string)
-				if !ok {
-					return nil, errors.New("value is missing in overwrite operator, or is not of type string")
-				}
-				var overwriteModifier overwriteModifier
-				overwriteModifier.overwriteString = overwriteString
-				modifier.operator = &overwriteModifier
-			case "addPrefix":
-				prefix, ok := m["value"].(string)
-				if !ok {
-					return nil, errors.New("value is missing in addPrefix operator, or is not of type string")
-				}
-				var prefixModifier addPrefixModifier
-				prefixModifier.prefix = prefix
-				modifier.operator = &prefixModifier
-			case "addSuffix":
-				suffix, ok := m["value"].(string)
-				if !ok {
-					return nil, errors.New("value is missing in addSuffix operator, or is not of type string")
-				}
-				var suffixModifier addSuffixModifier
-				suffixModifier.suffix = suffix
-				modifier.operator = &suffixModifier
-			case "insertReadValue":
-				format, ok := m["format"].(string)
-				if !ok {
-					return nil, errors.New("format is missing in insertReadValue operator, or is not of type string")
-				}
-				valueReaderInterface, ok := m["read_value"]
-				if !ok {
-					return nil, errors.New("read value is missing in insertReadValue operator")
-				}
-				valueReader, err := interface2propertyReader(valueReaderInterface, task)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to convert read_value to propertyReader in insertReadValue operator")
-				}
-				var irvModifier insertReadValueModifier
-				irvModifier.format = format
-				irvModifier.readValueReader = valueReader
-				modifier.operator = &irvModifier
-			case "map":
-				mappingsInterface, ok := m["mappings"]
-				if !ok {
-					return nil, errors.New("mappings is missing in map string modifier")
-				}
-				var ignoreOnMismatch bool
-				ignoreOnMismatchInterface, ok := m["ignore_on_mismatch"]
-				if ok {
-					ignoreOnMismatchBool, ok := ignoreOnMismatchInterface.(bool)
-					if !ok {
-						return nil, errors.New("ignore_on_mismatch in map modifier needs to be boolean")
-					}
-					ignoreOnMismatch = ignoreOnMismatchBool
-				}
-
-				var mapModifier mapModifier
-				mapModifier.ignoreOnMismatch = ignoreOnMismatch
-
-				mappings, ok := mappingsInterface.(map[interface{}]interface{})
-				if !ok {
-					file, ok := mappingsInterface.(string)
-					if !ok {
-						return nil, errors.New("mappings needs to be a map[string]string or string in map string modifier")
-					}
-					mappingsFile, err := mapping.GetMapping(file)
-					if err != nil {
-						return nil, errors.Wrap(err, "can't get specified mapping")
-					}
-					mapModifier.mappings = mappingsFile
-				} else {
-					mapModifier.mappings = make(map[string]string)
-					for k, val := range mappings {
-						key := fmt.Sprint(k)
-						valString := fmt.Sprint(val)
-
-						mapModifier.mappings[key] = valString
-					}
-				}
-				if len(mapModifier.mappings) == 0 {
-					return nil, errors.New("mappings is empty")
-				}
-				modifier.operator = &mapModifier
-			case "add":
-				valueReaderInterface := m["value"]
-				if !ok {
-					return nil, errors.New("value is missing in add")
-				}
-				valueReader, err := interface2propertyReader(valueReaderInterface, task)
-				if err != nil {
-					return nil, errors.New("value is missing in add modify operator, or is not of type float64")
-				}
-				var addModifier addNumberModifier
-				addModifier.value = valueReader
-				modifier.operator = &addModifier
-			case "subtract":
-				valueReaderInterface := m["value"]
-				if !ok {
-					return nil, errors.New("value is missing in subtract")
-				}
-				valueReader, err := interface2propertyReader(valueReaderInterface, task)
-				if err != nil {
-					return nil, errors.New("value is missing in subtract modify operator, or is not of type float64")
-				}
-				var subtractModifier subtractNumberModifier
-				subtractModifier.value = valueReader
-				modifier.operator = &subtractModifier
-			case "multiply":
-				valueReaderInterface := m["value"]
-				if !ok {
-					return nil, errors.New("value is missing in multiply")
-				}
-				valueReader, err := interface2propertyReader(valueReaderInterface, task)
-				if err != nil {
-					return nil, errors.New("value is missing in multiply modify operator, or is not of type float64")
-				}
-				var multiplyModifier multiplyNumberModifier
-				multiplyModifier.value = valueReader
-				modifier.operator = &multiplyModifier
-			case "divide":
-				valueReaderInterface := m["value"]
-				if !ok {
-					return nil, errors.New("value is missing in divide")
-				}
-				valueReader, err := interface2propertyReader(valueReaderInterface, task)
-				if err != nil {
-					return nil, errors.New("value is missing in divide modify operator, or is not of type float64")
-				}
-				var divideModifier divideNumberModifier
-				divideModifier.value = valueReader
-				modifier.operator = &divideModifier
-			default:
-				return nil, fmt.Errorf("invalid modify method '%s'", modifyMethod)
-			}
-			propertyOperators = append(propertyOperators, &modifier)
-		case "switch":
-			var sw switchOperatorAdapter
-			var switcher genericStringSwitch
-			var switchValue string
-
-			// get switch mode, default = equals
-			switchMode, ok := m["switch_mode"]
-			if ok {
-				if switchModeString, ok := switchMode.(string); ok {
-					switcher.switchMode = matchMode(switchModeString)
-				} else {
-					return nil, errors.New("filter method needs to be a string")
-				}
-				err := switcher.switchMode.validate()
-				if err != nil {
-					return nil, errors.Wrap(err, "invalid filter method")
-				}
-			} else {
-				switcher.switchMode = "equals"
-			}
-
-			// get switch value, default = "default"
-			switchValueInterface, ok := m["switch_value"]
-			if ok {
-				if switchValue, ok = switchValueInterface.(string); !ok {
-					return nil, errors.New("switch value needs to be a string")
-				}
-			} else {
-				switchValue = "default"
-			}
-
-			// get switchValueGetter
-			switch switchValue {
-			case "default":
-				switcher.switchValueGetter = &defaultStringSwitchValueGetter{}
-			case "snmpwalkCount":
-				switchValueGetter := snmpwalkCountStringSwitchValueGetter{}
-				oid, ok := m["oid"].(string)
-				if !ok {
-					return nil, errors.New("oid in snmpwalkCount switch operator is missing, or is not a string")
-				}
-				switchValueGetter.oid = oid
-				if filter, ok := m["snmp_result_filter"]; ok {
-					var bStrFilter baseStringFilter
-					err := mapstructure.Decode(filter, &bStrFilter)
-					if err != nil {
-						return nil, errors.Wrap(err, "failed to decode snmp_result_filter")
-					}
-					err = bStrFilter.FilterMethod.validate()
-					if err != nil {
-						return nil, errors.Wrap(err, "invalid filter method")
-					}
-					switchValueGetter.filter = &bStrFilter
-
-					if useOidForFilter, ok := m["use_oid_for_filter"].(bool); ok {
-						switchValueGetter.useOidForFilter = useOidForFilter
-					}
-				}
-				switcher.switchValueGetter = &switchValueGetter
-			}
-
-			// following operators
-			cases, ok := m["cases"].([]interface{})
-			if !ok {
-				return nil, errors.New("cases are missing in switch operator, or it is not an array")
-			}
-
-			for _, cInterface := range cases {
-				c, ok := cInterface.(map[interface{}]interface{})
-				if !ok {
-					return nil, errors.New("switch case needs to be a map")
-				}
-				caseString, ok := c["case"].(string)
-				if !ok {
-					caseInt, ok := c["case"].(int)
-					if !ok {
-						return nil, errors.New("case string is missing in switch operator case, or is not a string or int")
-					}
-					caseString = strconv.Itoa(caseInt)
-				}
-				subOperatorsInterface, ok := c["operators"].([]interface{})
-				if !ok {
-					return nil, fmt.Errorf("operators are missing in switch operator case, or it is not an array, in switch case '%s'", caseString)
-				}
-				subOperators, err := interfaceSlice2propertyOperators(subOperatorsInterface, task)
-				if err != nil {
-					return nil, errors.Wrapf(err, "failed to convert []interface{} to propertyOperators in switch case '%s'", caseString)
-				}
-				switchCase := stringSwitchCase{
-					caseString: caseString,
-					operators:  subOperators,
-				}
-				switcher.cases = append(switcher.cases, switchCase)
-			}
-
-			sw.operator = &switcher
-			propertyOperators = append(propertyOperators, &sw)
-		default:
-			return nil, fmt.Errorf("invalid operator type '%s'", stringType)
-		}
-	}
-	return propertyOperators, nil
-}
-
-func interface2GroupPropertyReader(i interface{}, parentGroupPropertyReader groupPropertyReader) (groupPropertyReader, error) {
-	m, ok := i.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("failed to convert group properties to map[interface{}]interface{}")
-	}
-	if _, ok := m["detection"]; !ok {
-		return nil, errors.New("detection is missing in group properties")
-	}
-	stringDetection, ok := m["detection"].(string)
-	if !ok {
-		return nil, errors.New("property detection needs to be a string")
-	}
-	switch stringDetection {
-	case "snmpwalk":
-		var index oidReader
-		if idx, ok := m["index"]; ok {
-			idxString, ok := idx.(string)
-			if !ok {
-				return nil, errors.New("index needs to be string (oid)")
-			}
-			oid := network.OID(idxString)
-			if err := oid.Validate(); err != nil {
-				return nil, errors.Wrap(err, "index needs to be an oid")
-			}
-			devClassOid := deviceClassOID{
-				SNMPGetConfiguration: network.SNMPGetConfiguration{
-					OID: oid,
-				},
-			}
-			index = &devClassOid
-		}
-
-		if _, ok := m["values"]; !ok {
-			return nil, errors.New("values are missing")
-		}
-		reader, err := interface2oidReader(m["values"])
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to parse oid reader")
-		}
-
-		devClassOIDs, ok := reader.(*deviceClassOIDs)
-		if !ok {
-			return nil, errors.New("oid reader is no list of oids")
-		}
-
-		inheritValuesFromParent := true
-		if b, ok := m["inherit_values"]; ok {
-			bb, ok := b.(bool)
-			if !ok {
-				return nil, errors.New("inherit_values needs to be a boolean")
-			}
-			inheritValuesFromParent = bb
-		}
-
-		//overwrite parent
-		if inheritValuesFromParent && parentGroupPropertyReader != nil {
-			parentSNMPGroupPropertyReader, ok := parentGroupPropertyReader.(*snmpGroupPropertyReader)
-			if !ok {
-				return nil, errors.New("can't merge SNMP group property reader with property reader of different type")
-			}
-
-			parentSNMPGroupPropertyReaderOIDs, ok := parentSNMPGroupPropertyReader.oids.(*deviceClassOIDs)
-			if !ok {
-				return nil, errors.New("parent SNMP group property reader oids is not of type 'deviceClassOIDs'")
-			}
-
-			devClassOIDsMerged := parentSNMPGroupPropertyReaderOIDs.merge(*devClassOIDs)
-			devClassOIDs = &devClassOIDsMerged
-
-			if index == nil {
-				index = parentSNMPGroupPropertyReader.index
-			}
-		}
-
-		return &snmpGroupPropertyReader{
-			index: index,
-			oids:  devClassOIDs,
-		}, nil
-	default:
-		return nil, fmt.Errorf("unknown detection type '%s'", stringDetection)
-	}
-}
-
-func interface2oidReader(i interface{}) (oidReader, error) {
-	values, ok := i.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("values needs to be a map")
-	}
-
-	result := make(deviceClassOIDs)
-
-	for val, data := range values {
-		dataMap, ok := data.(map[interface{}]interface{})
-		if !ok {
-			return nil, errors.New("value data needs to be a map")
-		}
-
-		valString, ok := val.(string)
-		if !ok {
-			return nil, errors.New("key of snmp property reader must be a string")
-		}
-
-		if v, ok := dataMap["values"]; ok {
-			if len(dataMap) != 1 {
-				return nil, errors.New("value with subvalues has to many keys")
-			}
-			reader, err := interface2oidReader(v)
-			if err != nil {
-				return nil, err
-			}
-			result[valString] = reader
-			continue
-		}
-
-		if ignore, ok := dataMap["ignore"]; ok {
-			if b, ok := ignore.(bool); ok && b {
-				result[valString] = &emptyOIDReader{}
-				continue
-			}
-		}
-
-		var oid yamlComponentsOID
-		err := mapstructure.Decode(data, &oid)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode values map to yamlComponentsOIDs")
-		}
-		err = oid.validate()
-		if err != nil {
-			return nil, errors.Wrapf(err, "oid reader for %s is invalid", valString)
-		}
-		devClassOID, err := oid.convert()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to convert yaml OID to device class OID")
-		}
-		result[valString] = &devClassOID
-	}
-	return &result, nil
-}
-
-func (m *matchMode) validate() error {
-	if *m != "contains" && *m != "!contains" && *m != "startsWith" && *m != "!startsWith" && *m != "regex" && *m != "!regex" && *m != "equals" && *m != "!equals" {
-		return errors.New(string("unknown matchmode \"" + *m + "\""))
-	}
-	return nil
-}
-
-func (l *logicalOperator) validate() error {
-	if *l != "AND" && *l != "OR" {
-		return errors.New(string("unknown logical operator \"" + *l + "\""))
-	}
-	return nil
+	return prop, nil
 }
