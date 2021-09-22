@@ -263,10 +263,7 @@ func (s *snmpCondition) validate() error {
 }
 
 func (s *snmpCondition) ContainsUniqueRequest() bool {
-	if s.Type == "snmpget" {
-		return true
-	}
-	return false
+	return s.Type == "snmpget"
 }
 
 // httpCondition is a condition based on http.
