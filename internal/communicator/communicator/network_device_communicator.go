@@ -582,16 +582,16 @@ func (c *networkDeviceCommunicator) GetCPUComponentCPULoad(ctx context.Context) 
 	return c.deviceClassCommunicator.GetCPUComponentCPULoad(ctx)
 }
 
-func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+func (c *networkDeviceCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
 	if !c.HasComponent(component.Memory) {
-		return 0, tholaerr.NewComponentNotFoundError("no memory component available for this device")
+		return nil, tholaerr.NewComponentNotFoundError("no memory component available for this device")
 	}
 
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetMemoryComponentMemoryUsage(ctx)
 		if err != nil {
 			if !tholaerr.IsNotImplementedError(err) {
-				return 0, errors.Wrap(err, "error in code communicator")
+				return nil, errors.Wrap(err, "error in code communicator")
 			}
 		} else {
 			return res, nil

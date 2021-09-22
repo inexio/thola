@@ -635,23 +635,25 @@ func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([
 	return cpus, nil
 }
 
-func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error) {
+func (o *deviceClassCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
 	if o.components.memory == nil || o.components.memory.usage == nil {
 		log.Ctx(ctx).Debug().Str("property", "MemoryComponentMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
-		return 0, tholaerr.NewNotImplementedError("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "MemoryComponentMemoryUsage").Logger()
 	ctx = logger.WithContext(ctx)
-	res, err := o.components.memory.usage.GetProperty(ctx)
+	res, _, err := o.components.memory.usage.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
-		return 0, errors.Wrap(err, "failed to get MemoryComponentMemoryUsage")
+		return nil, errors.Wrap(err, "failed to get MemoryComponentMemoryUsage")
 	}
-	r, err := res.Float64()
+
+	var pools []device.MemoryPool
+	err = res.Decode(&pools)
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+		return nil, errors.Wrap(err, "failed to decode group properties into CPUs array")
 	}
-	return r, nil
+	return pools, nil
 }
 
 func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) ([]device.DiskComponentStorage, error) {

@@ -323,19 +323,9 @@ func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error
 		return nil, errors.New("no device connection available")
 	}
 
-	jnxJsSPUMonitoringNodeDescrOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11"
-	jnxJsSPUMonitoringNodeDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringNodeDescrOID)
+	indexDescr, err := c.getSPUIndices(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringNodeDescr'")
-	}
-
-	indexDescr := make(map[string]string)
-	for _, descr := range jnxJsSPUMonitoringNodeDescr {
-		res, err := descr.GetValueString()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get string value of snmp response")
-		}
-		indexDescr[strings.TrimPrefix(descr.GetOID(), jnxJsSPUMonitoringNodeDescrOID)] = res
+		return nil, err
 	}
 
 	jnxJsSPUMonitoringCPUUsageOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4"
@@ -363,4 +353,117 @@ func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error
 	}
 
 	return cpus, nil
+}
+
+func (c *junosCommunicator) getSPUIndices(ctx context.Context) (map[string]string, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	jnxJsSPUMonitoringNodeDescrOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11"
+	jnxJsSPUMonitoringNodeDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringNodeDescrOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringNodeDescr'")
+	}
+
+	indexDescr := make(map[string]string)
+	for _, descr := range jnxJsSPUMonitoringNodeDescr {
+		res, err := descr.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		indexDescr[strings.TrimPrefix(descr.GetOID(), jnxJsSPUMonitoringNodeDescrOID)] = res
+	}
+
+	return indexDescr, nil
+}
+
+func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	var pools []device.MemoryPool
+
+	// kernel memory used
+	kernelMemUsedRes, err := con.SNMP.SnmpClient.SNMPGet(ctx, "1.3.6.1.4.1.2636.3.1.16.0")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read out kernel memory usage")
+	}
+	if len(kernelMemUsedRes) > 0 {
+		str, err := kernelMemUsedRes[0].GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert kernel memory usage to string")
+		}
+		f, err := strconv.ParseFloat(str, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert kernel memory usage to float64")
+		}
+		label := "kernel"
+		pools = append(pools, device.MemoryPool{
+			Label: &label,
+			Usage: &f,
+		})
+	}
+
+	// engines
+	indices, err := c.getRoutingEngineIndices(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get routing engine indices")
+	}
+	for i, index := range indices {
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2636.3.1.13.1.11"+index.index)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get memory usage")
+		} else if len(response) != 1 {
+			return nil, errors.New("invalid memory usage result")
+		}
+
+		res, err := response[0].GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of memory usage")
+		}
+
+		usage, err := strconv.ParseFloat(res, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse memory usage")
+		}
+
+		pools = append(pools, device.MemoryPool{
+			Label: &indices[i].label,
+			Usage: &usage,
+		})
+	}
+
+	// spu
+	spuIndexDescr, err := c.getSPUIndices(ctx)
+	if err != nil {
+		return nil, err
+	}
+	spuOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5"
+	spuUsages, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.5")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get spu memory usages")
+	}
+
+	for _, res := range spuUsages {
+		resStr, err := res.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get string value of snmp response")
+		}
+		resParsed, err := strconv.ParseFloat(resStr, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse snmp response")
+		}
+		pool := device.MemoryPool{Usage: &resParsed}
+		if descr, ok := spuIndexDescr[strings.TrimPrefix(res.GetOID(), spuOID)]; ok {
+			label := "spu_" + descr
+			pool.Label = &label
+		}
+		pools = append(pools, pool)
+	}
+
+	return pools, nil
 }

@@ -81,7 +81,7 @@ type deviceClassComponentsCPU struct {
 
 // deviceClassComponentsMemory represents the memory components part of a device class.
 type deviceClassComponentsMemory struct {
-	usage property.Reader
+	usage groupproperty.Reader
 }
 
 // deviceClassComponentsSBC represents the sbc components part of a device class.
@@ -200,7 +200,7 @@ type yamlComponentsCPUProperties struct {
 
 // yamlComponentsMemoryProperties represents the specific properties of memory components of a yaml device class.
 type yamlComponentsMemoryProperties struct {
-	Usage []interface{} `yaml:"usage"`
+	Properties interface{} `yaml:"properties"`
 }
 
 // yamlComponentsSBCProperties represents the specific properties of sbc components of a yaml device class.
@@ -719,10 +719,10 @@ func (y *yamlComponentsMemoryProperties) convert(parentComponent *deviceClassCom
 		prop = *parentComponent
 	}
 
-	if y.Usage != nil {
-		prop.usage, err = property.InterfaceSlice2Reader(y.Usage, condition.PropertyDefault, prop.usage)
+	if y.Properties != nil {
+		prop.usage, err = groupproperty.Interface2Reader(y.Properties, prop.usage)
 		if err != nil {
-			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to property reader")
+			return deviceClassComponentsMemory{}, errors.Wrap(err, "failed to convert memory usage property to group property reader")
 		}
 	}
 	return prop, nil

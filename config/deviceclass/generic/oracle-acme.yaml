@@ -41,9 +41,11 @@ components:
           oid: .1.3.6.1.4.1.9148.3.2.1.1.1.0
 
   memory:
-    usage:
-      - detection: snmpget
-        oid: .1.3.6.1.4.1.9148.3.2.1.1.2.0
+    properties:
+      detection: snmpwalk
+      values:
+        usage:
+          oid: .1.3.6.1.4.1.9148.3.2.1.1.2.0
   sbc:
     agents:
       detection: snmpwalk

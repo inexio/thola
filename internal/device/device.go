@@ -285,6 +285,25 @@ type CPU struct {
 	Load  *float64 `yaml:"load" json:"load" xml:"load"`
 }
 
+// MemoryComponent
+//
+// MemoryComponent represents a Memory component
+//
+// swagger:model
+type MemoryComponent struct {
+	Pools []MemoryPool `yaml:"pools" json:"pools" xml:"pools"`
+}
+
+// MemoryPool
+//
+// MemoryPool contains information per memory pool.
+//
+// swagger:model
+type MemoryPool struct {
+	Label *string  `yaml:"label" json:"label" xml:"label"`
+	Usage *float64 `yaml:"usage" json:"usage" xml:"usage"`
+}
+
 // DiskComponent
 //
 // DiskComponent represents a disk component.

@@ -88,7 +88,7 @@ type availableCPUCommunicatorFunctions interface {
 type availableMemoryCommunicatorFunctions interface {
 
 	// GetMemoryComponentMemoryUsage returns the memory usage of the device.
-	GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error)
+	GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error)
 }
 
 type availableDiskCommunicatorFunctions interface {
