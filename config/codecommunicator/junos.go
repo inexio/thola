@@ -3,8 +3,8 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -21,6 +21,14 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	interfaces, err := c.deviceClass.GetInterfaces(ctx, filter...)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, fil := range filter {
+		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok {
+			if valueFilter.GetFilterProperties() == "vlan" {
+				return interfaces, nil
+			}
+		}
 	}
 
 	interfacesWithVLANs, err := c.addVLANsNonELS(ctx, interfaces)

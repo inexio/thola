@@ -2,8 +2,8 @@ package property
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/deviceclass/condition"
 	"github.com/inexio/thola/internal/device"
+	condition2 "github.com/inexio/thola/internal/deviceclass/condition"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/value"
@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func InterfaceSlice2Reader(i []interface{}, task condition.RelatedTask, parentProperty Reader) (Reader, error) {
+func InterfaceSlice2Reader(i []interface{}, task condition2.RelatedTask, parentProperty Reader) (Reader, error) {
 	var readerSet readerSet
 	for _, i := range i {
 		reader, err := interface2PReader(i, task)
@@ -27,7 +27,7 @@ func InterfaceSlice2Reader(i []interface{}, task condition.RelatedTask, parentPr
 	return &readerSet, nil
 }
 
-func interface2PReader(i interface{}, task condition.RelatedTask) (Reader, error) {
+func interface2PReader(i interface{}, task condition2.RelatedTask) (Reader, error) {
 	m, ok := i.(map[interface{}]interface{})
 	if !ok {
 		return nil, errors.New("failed to convert interface to map[interface{}]interface{}")
@@ -77,7 +77,7 @@ func interface2PReader(i interface{}, task condition.RelatedTask) (Reader, error
 		}
 		basePropReader.reader = &pr
 	case "Vendor":
-		if task <= condition.PropertyVendor {
+		if task <= condition2.PropertyVendor {
 			return nil, errors.New("cannot use vendor property, model series is not available here yet")
 		}
 		var pr vendorReader
@@ -87,7 +87,7 @@ func interface2PReader(i interface{}, task condition.RelatedTask) (Reader, error
 		}
 		basePropReader.reader = &pr
 	case "Model":
-		if task <= condition.PropertyModel {
+		if task <= condition2.PropertyModel {
 			return nil, errors.New("cannot use model property, model series is not available here yet")
 		}
 		var pr modelReader
@@ -97,7 +97,7 @@ func interface2PReader(i interface{}, task condition.RelatedTask) (Reader, error
 		}
 		basePropReader.reader = &pr
 	case "ModelSeries":
-		if task <= condition.PropertyModelSeries {
+		if task <= condition2.PropertyModelSeries {
 			return nil, errors.New("cannot use model series property, model series is not available here yet")
 		}
 		var pr modelSeriesReader
@@ -122,7 +122,7 @@ func interface2PReader(i interface{}, task condition.RelatedTask) (Reader, error
 		basePropReader.operators = operators
 	}
 	if preConditionInterface, ok := m["pre_condition"]; ok {
-		preCondition, err := condition.Interface2Condition(preConditionInterface, task)
+		preCondition, err := condition2.Interface2Condition(preConditionInterface, task)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert pre condition interface 2 condition")
 		}
@@ -151,7 +151,7 @@ func (p *readerSet) GetProperty(ctx context.Context) (value.Value, error) {
 type baseReader struct {
 	reader       Reader
 	operators    Operators
-	preCondition condition.Condition
+	preCondition condition2.Condition
 }
 
 func (b *baseReader) GetProperty(ctx context.Context) (value.Value, error) {

@@ -4,7 +4,7 @@ package request
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/communicator"
+	"github.com/inexio/thola/internal/communicator"
 	"github.com/inexio/thola/internal/communicator/create"
 	"github.com/inexio/thola/internal/database"
 	"github.com/inexio/thola/internal/device"

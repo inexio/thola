@@ -3,9 +3,9 @@ package deviceclass
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
+	"github.com/inexio/thola/internal/component"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/mitchellh/mapstructure"

@@ -2,9 +2,9 @@ package create
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/communicator"
-	"github.com/inexio/thola/internal/communicator/deviceclass"
+	"github.com/inexio/thola/internal/communicator"
 	"github.com/inexio/thola/internal/communicator/hierarchy"
+	"github.com/inexio/thola/internal/deviceclass"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"

@@ -3,8 +3,8 @@ package groupproperty
 import (
 	"context"
 	"fmt"
-	relatedTask "github.com/inexio/thola/internal/communicator/deviceclass/condition"
-	"github.com/inexio/thola/internal/communicator/deviceclass/property"
+	relatedTask "github.com/inexio/thola/internal/deviceclass/condition"
+	"github.com/inexio/thola/internal/deviceclass/property"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/value"

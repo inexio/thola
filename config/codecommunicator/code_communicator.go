@@ -3,9 +3,9 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/communicator"
-	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
+	"github.com/inexio/thola/internal/communicator"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
 	"regexp"

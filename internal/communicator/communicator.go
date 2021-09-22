@@ -2,9 +2,9 @@ package communicator
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
+	"github.com/inexio/thola/internal/component"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 )
 
 // Communicator represents a communicator for a device.

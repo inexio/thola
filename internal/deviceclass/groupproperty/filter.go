@@ -104,3 +104,60 @@ func (g *groupFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 
 	return reader, nil
 }
+
+type ValueFilter interface {
+	GetFilterProperties() string
+}
+
+type valueFilter struct {
+	value string
+}
+
+func GetValueFilter(value string) Filter {
+	return &valueFilter{
+		value: value,
+	}
+}
+
+func (g *valueFilter) GetFilterProperties() string {
+	return g.value
+}
+
+func (g *valueFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpReader, error) {
+	var recursiveAnonymous func(OIDReader, []string) (OIDReader, error)
+	recursiveAnonymous = func(currentReader OIDReader, key []string) (OIDReader, error) {
+		// check if current oid reader contains multiple OIDs
+		multipleReader, ok := currentReader.(*deviceClassOIDs)
+		if !ok || multipleReader == nil {
+			return nil, errors.New("filter attribute does not exist")
+		}
+
+		//copy values
+		readerCopy := make(deviceClassOIDs)
+		for k, v := range *multipleReader {
+			if k == key[0] {
+				if len(key) > 1 {
+					r, err := recursiveAnonymous(v, key[1:])
+					if err != nil {
+						return nil, err
+					}
+					readerCopy[k] = r
+				} else {
+					log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in snmpReader")
+				}
+				continue
+			}
+			readerCopy[k] = v
+		}
+
+		return &readerCopy, nil
+	}
+
+	var err error
+	attrs := strings.Split(g.value, "/")
+	reader.oids, err = recursiveAnonymous(reader.oids, attrs)
+	if err != nil {
+		return snmpReader{}, err
+	}
+	return reader, nil
+}

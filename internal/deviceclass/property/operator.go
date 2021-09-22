@@ -3,7 +3,7 @@ package property
 import (
 	"context"
 	"fmt"
-	"github.com/inexio/thola/internal/communicator/deviceclass/condition"
+	condition2 "github.com/inexio/thola/internal/deviceclass/condition"
 	"github.com/inexio/thola/internal/mapping"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-func InterfaceSlice2Operators(i []interface{}, task condition.RelatedTask) (Operators, error) {
+func InterfaceSlice2Operators(i []interface{}, task condition2.RelatedTask) (Operators, error) {
 	var propertyOperators Operators
 	for _, opInterface := range i {
 		m, ok := opInterface.(map[interface{}]interface{})
@@ -39,7 +39,7 @@ func InterfaceSlice2Operators(i []interface{}, task condition.RelatedTask) (Oper
 			filterMethod, ok := m["filter_method"]
 			if ok {
 				if filterMethodString, ok := filterMethod.(string); ok {
-					filter.FilterMethod = condition.MatchMode(filterMethodString)
+					filter.FilterMethod = condition2.MatchMode(filterMethodString)
 				} else {
 					return nil, errors.New("filter method needs to be a string")
 				}
@@ -277,7 +277,7 @@ func InterfaceSlice2Operators(i []interface{}, task condition.RelatedTask) (Oper
 			switchMode, ok := m["switch_mode"]
 			if ok {
 				if switchModeString, ok := switchMode.(string); ok {
-					switcher.switchMode = condition.MatchMode(switchModeString)
+					switcher.switchMode = condition2.MatchMode(switchModeString)
 				} else {
 					return nil, errors.New("filter method needs to be a string")
 				}
@@ -529,13 +529,13 @@ func getCalculationOperators(ctx context.Context, v value.Value, value Reader) (
 }
 
 type baseStringFilter struct {
-	Value            string              `mapstructure:"value"`
-	FilterMethod     condition.MatchMode `mapstructure:"filter_method"`
-	returnOnMismatch bool                `mapstructure:"return_on_mismatch"`
+	Value            string               `mapstructure:"value"`
+	FilterMethod     condition2.MatchMode `mapstructure:"filter_method"`
+	returnOnMismatch bool                 `mapstructure:"return_on_mismatch"`
 }
 
 func (f *baseStringFilter) filter(ctx context.Context, v value.Value) error {
-	match, err := condition.MatchStrings(ctx, v.String(), f.FilterMethod, f.Value)
+	match, err := condition2.MatchStrings(ctx, v.String(), f.FilterMethod, f.Value)
 	if err != nil {
 		return errors.Wrap(err, "error during match strings")
 	}
@@ -667,7 +667,7 @@ func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, err
 
 type genericStringSwitch struct {
 	switchValueGetter stringSwitchValueGetter
-	switchMode        condition.MatchMode
+	switchMode        condition2.MatchMode
 	cases             []stringSwitchCase
 }
 
@@ -683,7 +683,7 @@ func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) 
 	}
 	switchString := switchValue.String()
 	for _, c := range w.cases {
-		b, err := condition.MatchStrings(ctx, switchString, w.switchMode, c.caseString)
+		b, err := condition2.MatchStrings(ctx, switchString, w.switchMode, c.caseString)
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msg("error during match strings")
 			continue

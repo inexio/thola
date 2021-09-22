@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/inexio/thola/internal/communicator/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
 	"github.com/pkg/errors"
@@ -114,6 +114,8 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 	for _, f := range r.IfDescrFilter {
 		res = append(res, groupproperty.GetGroupFilter("ifDescr", f))
 	}
+
+	res = append(res, groupproperty.GetValueFilter("vlan"))
 
 	return res
 }
