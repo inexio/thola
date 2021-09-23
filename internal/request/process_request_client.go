@@ -6,7 +6,7 @@ import (
 	"context"
 )
 
-type ctxKey int
+type ctxKey byte
 
 const requestIDKey ctxKey = iota + 1
 

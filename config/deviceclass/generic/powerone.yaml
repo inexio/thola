@@ -3,7 +3,6 @@ name: "powerone"
 config:
   components:
     interfaces: false
-    ups: true
 
 match:
   logical_operator: "OR"

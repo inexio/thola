@@ -5,7 +5,6 @@ import (
 	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
-	"github.com/inexio/thola/internal/network/mocks"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -13,7 +12,7 @@ import (
 
 //TestIosCommunicator_GetCPUComponentCPULoad: 1 CPU with no label, rev and dep OID both return the same value (behavior of most devices)
 func TestIosCommunicator_GetCPUComponentCPULoad(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -50,7 +49,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad(t *testing.T) {
 
 //TestIosCommunicator_GetCPUComponentCPULoad_onlyDepOID: 1 CPU with no label, only dep OID returns value (behavior of old cisco devices)
 func TestIosCommunicator_GetCPUComponentCPULoad_onlyDepOID(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -85,7 +84,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad_onlyDepOID(t *testing.T) {
 
 //TestIosCommunicator_GetCPUComponentCPULoad_onlyRevOID: 1 CPU with no label, only rev OID returns value
 func TestIosCommunicator_GetCPUComponentCPULoad_onlyRevOID(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -120,7 +119,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad_onlyRevOID(t *testing.T) {
 
 //TestIosCommunicator_GetCPUComponentCPULoad_withLabel: 1 CPU with label, rev and dep OID both return the same value (behavior of most devices)
 func TestIosCommunicator_GetCPUComponentCPULoad_withLabel(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -164,7 +163,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad_withLabel(t *testing.T) {
 
 //TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUs: 3 CPU with no label, rev and dep OID both return the same value (behavior of most devices)
 func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUs(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -215,7 +214,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUs(t *testing.T) {
 
 //TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUsWithLabel: 3 CPU with label, rev and dep OID both return the same value (behavior of most devices)
 func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUsWithLabel(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -285,7 +284,7 @@ func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUsWithLabel(t *testing
 
 //TestIosCommunicator_GetCPUComponentCPULoad_prioritiseRevOID checks if dev oid is prioritised over dep oid
 func TestIosCommunicator_GetCPUComponentCPULoad_prioritiseRevOID(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,

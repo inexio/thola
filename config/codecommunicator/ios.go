@@ -5,7 +5,9 @@ import (
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
+	"github.com/shopspring/decimal"
 	"strconv"
+	"strings"
 )
 
 type iosCommunicator struct {
@@ -108,4 +110,78 @@ func (c *iosCommunicator) getCPUBySNMPResponse(res network.SNMPResponse) (device
 		Label: nil,
 		Load:  &valFloat,
 	}, nil
+}
+
+// GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
+func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return nil, errors.New("no device connection available")
+	}
+
+	var pools []device.MemoryPool
+
+	poolLabelsOID := ".1.3.6.1.4.1.9.9.221.1.1.1.1.3"
+	poolLabels, err := con.SNMP.SnmpClient.SNMPWalk(ctx, poolLabelsOID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read out memory pools")
+	}
+
+	for _, poolLabelVal := range poolLabels {
+		poolLabel, err := poolLabelVal.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get memory pool label")
+		}
+
+		idx := strings.Split(poolLabelVal.GetOID(), poolLabelsOID)[1]
+
+		// get used value for memory pool
+		used, err := c.getMemoryDecimalValue(ctx, con, ".1.3.6.1.4.1.9.9.221.1.1.1.1.18"+idx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.7"+idx)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to get used value for mempool '%s'", poolLabel)
+		}
+
+		// get used value for memory pool
+		free, err := c.getMemoryDecimalValue(ctx, con, ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"+idx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.8"+idx)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to get free value for mempool '%s'", poolLabel)
+		}
+
+		// usage = ( used / (free+used) ) * 100
+		usage, _ := used.DivRound(used.Add(free), 4).Mul(decimal.NewFromInt(100)).Float64()
+
+		pools = append(pools, device.MemoryPool{
+			Label: &poolLabel,
+			Usage: &usage,
+		})
+	}
+
+	return pools, nil
+}
+
+func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *network.RequestDeviceConnection, oid string, hcOid string) (decimal.Decimal, error) {
+	var snmpResponse network.SNMPResponse
+	hcRes, err := con.SNMP.SnmpClient.SNMPGet(ctx, hcOid)
+	if err == nil && len(hcRes) > 0 {
+		snmpResponse = hcRes[0]
+	} else {
+		res, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+		if err != nil {
+			return decimal.Decimal{}, errors.Wrap(err, "failed to read out hc and non hc oid")
+		}
+		if len(res) == 0 {
+			return decimal.Decimal{}, errors.New("failed to read out hc and non hc value")
+		}
+		snmpResponse = res[0]
+	}
+	str, err := snmpResponse.GetValueString()
+	if err != nil {
+		return decimal.Decimal{}, errors.Wrapf(err, "failed to convert value to string")
+	}
+	num, err := decimal.NewFromString(str)
+	if err != nil {
+		return decimal.Decimal{}, errors.Wrapf(err, "failed to convert value to decimal number")
+	}
+
+	return num, nil
 }

@@ -5,14 +5,13 @@ import (
 	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
-	"github.com/inexio/thola/internal/network/mocks"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestJunosCommunicator_GetCPUComponentCPULoad_WithSPU(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,
@@ -51,7 +50,7 @@ func TestJunosCommunicator_GetCPUComponentCPULoad_WithSPU(t *testing.T) {
 }
 
 func TestJunosCommunicator_GetCPUComponentCPULoad(t *testing.T) {
-	var snmpClient mocks.SNMPClient
+	var snmpClient network.MockSNMPClient
 	ctx := network.NewContextWithDeviceConnection(context.Background(), &network.RequestDeviceConnection{
 		SNMP: &network.RequestDeviceConnectionSNMP{
 			SnmpClient: &snmpClient,

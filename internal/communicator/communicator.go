@@ -2,9 +2,9 @@ package communicator
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/component"
-	"github.com/inexio/thola/internal/communicator/filter"
+	"github.com/inexio/thola/internal/component"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 )
 
 // Communicator represents a communicator for a device.
@@ -65,7 +65,7 @@ type Functions interface {
 	GetOSVersion(ctx context.Context) (string, error)
 
 	// GetInterfaces returns the interfaces of a device.
-	GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error)
+	GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error)
 
 	// GetCountInterfaces returns the count of interfaces of a device.
 	GetCountInterfaces(ctx context.Context) (int, error)
@@ -88,7 +88,7 @@ type availableCPUCommunicatorFunctions interface {
 type availableMemoryCommunicatorFunctions interface {
 
 	// GetMemoryComponentMemoryUsage returns the memory usage of the device.
-	GetMemoryComponentMemoryUsage(ctx context.Context) (float64, error)
+	GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error)
 }
 
 type availableDiskCommunicatorFunctions interface {

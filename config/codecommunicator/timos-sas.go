@@ -2,8 +2,8 @@ package codecommunicator
 
 import (
 	"context"
-	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"strconv"
@@ -15,7 +15,7 @@ type timosSASCommunicator struct {
 }
 
 // GetInterfaces returns the interfaces of a Nokia SAS-T device.
-func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...filter.PropertyFilter) ([]device.Interface, error) {
+func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	interfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
 		return nil, err

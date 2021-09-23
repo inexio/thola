@@ -9,6 +9,10 @@ match:
       values:
         - "ACC"
 
+config:
+  components:
+    ups: true
+
 identify:
   properties:
     model:

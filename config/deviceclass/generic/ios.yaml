@@ -5,6 +5,7 @@ config:
     max_repetitions: 1
   components:
     cpu: true
+    memory: true
 
 match:
   conditions:

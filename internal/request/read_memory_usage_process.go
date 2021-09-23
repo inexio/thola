@@ -19,6 +19,6 @@ func (r *ReadMemoryUsageRequest) process(ctx context.Context) (Response, error) 
 	}
 
 	return &ReadMemoryUsageResponse{
-		MemoryUsage: result,
+		MemoryPools: result,
 	}, nil
 }

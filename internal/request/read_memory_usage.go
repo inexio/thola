@@ -1,5 +1,7 @@
 package request
 
+import "github.com/inexio/thola/internal/device"
+
 // ReadMemoryUsageRequest
 //
 // ReadMemoryUsageRequest is a the request struct for the read memory usage request.
@@ -15,6 +17,6 @@ type ReadMemoryUsageRequest struct {
 //
 // swagger:model
 type ReadMemoryUsageResponse struct {
-	MemoryUsage float64 `yaml:"memory_usage" json:"memory_usage" xml:"memory_usage"`
+	MemoryPools []device.MemoryPool `yaml:"memory_pools" json:"memory_pools" xml:"memory_pools"`
 	ReadResponse
 }

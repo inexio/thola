@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
-	"github.com/inexio/thola/internal/communicator/filter"
 	"github.com/inexio/thola/internal/device"
+	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
 	"github.com/pkg/errors"
@@ -102,27 +102,20 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }
 
-func (r *CheckInterfaceMetricsRequest) getFilter() []filter.PropertyFilter {
-	var res []filter.PropertyFilter
+func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
+	var res []groupproperty.Filter
 
 	for _, f := range r.IfTypeFilter {
-		res = append(res, filter.PropertyFilter{
-			Key:   "ifType",
-			Regex: f,
-		})
+		res = append(res, groupproperty.GetGroupFilter("ifType", f))
 	}
 	for _, f := range r.IfNameFilter {
-		res = append(res, filter.PropertyFilter{
-			Key:   "ifName",
-			Regex: f,
-		})
+		res = append(res, groupproperty.GetGroupFilter("ifName", f))
 	}
 	for _, f := range r.IfDescrFilter {
-		res = append(res, filter.PropertyFilter{
-			Key:   "ifDescr",
-			Regex: f,
-		})
+		res = append(res, groupproperty.GetGroupFilter("ifDescr", f))
 	}
+
+	res = append(res, groupproperty.GetValueFilter("vlan"))
 
 	return res
 }

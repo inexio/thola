@@ -2,7 +2,6 @@ name: "linux"
 
 config:
   components:
-    cpu: true
     memory: true
     disk: true
     server: true
@@ -20,35 +19,39 @@ match:
         - '^Linux'
 
 components:
-  cpu:
+  memory:
     properties:
       detection: snmpwalk
       values:
-        load:
-          oid: .1.3.6.1.4.1.2021.10.1.3.2
+        usage:
+          oid: ".1.3.6.1.4.1.2021.4.6.0"
           operators:
+            - type: modify
+              modify_method: add
+              value:
+                detection: snmpget
+                oid: ".1.3.6.1.4.1.2021.4.14.0"
+            - type: modify
+              modify_method: add
+              value:
+                detection: snmpget
+                oid: ".1.3.6.1.4.1.2021.4.15.0"
             - type: modify
               modify_method: multiply
               value:
                 detection: constant
+                value: -100
+            - type: modify
+              modify_method: divide
+              value:
+                detection: snmpget
+                oid: ".1.3.6.1.4.1.2021.4.5.0"
+            - type: modify
+              modify_method: add
+              value:
+                detection: constant
                 value: 100
 
-  memory:
-    usage:
-      - detection: snmpget
-        oid: ".1.3.6.1.4.1.2021.4.6.0"
-        operators:
-          - type: modify
-            modify_method: divide
-            value:
-              detection: snmpget
-              oid: ".1.3.6.1.4.1.2021.4.5.0"
-              operators:
-                - type: modify
-                  modify_method: divide
-                  value:
-                    detection: constant
-                    value: 100
   disk:
     properties:
       detection: snmpwalk

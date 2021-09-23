@@ -17,7 +17,7 @@ import (
 	"unicode"
 )
 
-//go:generate go run github.com/vektra/mockery/v2 --name=SNMPClient
+//go:generate go run github.com/vektra/mockery/v2 --name=SNMPClient --inpackage
 
 // SNMPClient is used to communicate via snmp.
 type SNMPClient interface {
