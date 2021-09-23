@@ -114,6 +114,17 @@ func (c *iosCommunicator) getCPUBySNMPResponse(res network.SNMPResponse) (device
 
 // GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
 func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
+	// first try cisco enhanced mempool mib, if it fails try old mempool mib
+	pools, err := c.getMemoryComponentMemoryUsage(ctx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.3", ".1.3.6.1.4.1.9.9.221.1.1.1.1.7", ".1.3.6.1.4.1.9.9.221.1.1.1.1.18", ".1.3.6.1.4.1.9.9.221.1.1.1.1.8", ".1.3.6.1.4.1.9.9.221.1.1.1.1.20")
+	if err == nil {
+		return pools, err
+	}
+
+	return c.getMemoryComponentMemoryUsage(ctx, ".1.3.6.1.4.1.9.9.48.1.1.1.2", ".1.3.6.1.4.1.9.9.48.1.1.1.5", "", ".1.3.6.1.4.1.9.9.48.1.1.1.6", "")
+}
+
+// GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
+func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poolLabelsOID, usedOID, usedHCOID, freeOID, freeHCOID string) ([]device.MemoryPool, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -121,7 +132,6 @@ func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]
 
 	var pools []device.MemoryPool
 
-	poolLabelsOID := ".1.3.6.1.4.1.9.9.221.1.1.1.1.3"
 	poolLabels, err := con.SNMP.SnmpClient.SNMPWalk(ctx, poolLabelsOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read out memory pools")
@@ -136,13 +146,13 @@ func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]
 		idx := strings.Split(poolLabelVal.GetOID(), poolLabelsOID)[1]
 
 		// get used value for memory pool
-		used, err := c.getMemoryDecimalValue(ctx, con, ".1.3.6.1.4.1.9.9.221.1.1.1.1.18"+idx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.7"+idx)
+		used, err := c.getMemoryDecimalValue(ctx, con, usedOID+idx, usedHCOID+idx)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get used value for mempool '%s'", poolLabel)
 		}
 
-		// get used value for memory pool
-		free, err := c.getMemoryDecimalValue(ctx, con, ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"+idx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.8"+idx)
+		// get free value for memory pool
+		free, err := c.getMemoryDecimalValue(ctx, con, freeOID+idx, freeHCOID+idx)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get free value for mempool '%s'", poolLabel)
 		}
@@ -161,8 +171,13 @@ func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]
 
 func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *network.RequestDeviceConnection, oid string, hcOid string) (decimal.Decimal, error) {
 	var snmpResponse network.SNMPResponse
-	hcRes, err := con.SNMP.SnmpClient.SNMPGet(ctx, hcOid)
-	if err == nil && len(hcRes) > 0 {
+	var hcRes []network.SNMPResponse
+	var err error
+
+	if hcOid != "" {
+		hcRes, err = con.SNMP.SnmpClient.SNMPGet(ctx, hcOid)
+	}
+	if hcOid != "" && err == nil && len(hcRes) > 0 {
 		snmpResponse = hcRes[0]
 	} else {
 		res, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
