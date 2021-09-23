@@ -18,7 +18,7 @@ type ceraosIP10Communicator struct {
 func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
 	subInterfaces, err := c.parent.GetInterfaces(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "an unexpected error occurred while trying to get ifTable of sub communicator")
+		return nil, err
 	}
 
 	var targetInterface device.Interface
