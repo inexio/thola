@@ -426,10 +426,30 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Conte
 	powerSupply, err := c.GetHardwareHealthComponentPowerSupply(ctx)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
-			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get sbc component sbc global call per second")
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get power supply")
 		}
 	} else {
 		hardwareHealth.PowerSupply = powerSupply
+		empty = false
+	}
+
+	temp, err := c.GetHardwareHealthComponentTemperature(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get temperature")
+		}
+	} else {
+		hardwareHealth.Temperature = temp
+		empty = false
+	}
+
+	volt, err := c.GetHardwareHealthComponentVoltage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HardwareHealthComponent{}, errors.Wrap(err, "error occurred during get voltage")
+		}
+	} else {
+		hardwareHealth.Voltage = volt
 		empty = false
 	}
 
@@ -1093,4 +1113,42 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponentPowerSupply(ctx co
 	}
 
 	return c.deviceClassCommunicator.GetHardwareHealthComponentPowerSupply(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentTemperature(ctx context.Context) ([]device.HardwareHealthComponentTemperature, error) {
+	if !c.HasComponent(component.HardwareHealth) {
+		return nil, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetHardwareHealthComponentTemperature(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return nil, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetHardwareHealthComponentTemperature(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentVoltage(ctx context.Context) ([]device.HardwareHealthComponentVoltage, error) {
+	if !c.HasComponent(component.HardwareHealth) {
+		return nil, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetHardwareHealthComponentVoltage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return nil, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetHardwareHealthComponentVoltage(ctx)
 }

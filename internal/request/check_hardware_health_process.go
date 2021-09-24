@@ -42,11 +42,17 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 	}
 
 	for _, powerSupply := range res.PowerSupply {
-		if r.mon.UpdateStatusIf(powerSupply.State == nil || powerSupply.Description == nil, monitoringplugin.UNKNOWN, "description or state is missing for power supply") {
+		if r.mon.UpdateStatusIf(powerSupply.State == nil, monitoringplugin.UNKNOWN, "state is missing for power supply") {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
-		p := monitoringplugin.NewPerformanceDataPoint("power_supply_state", *powerSupply.State).SetLabel(*powerSupply.Description)
+		p := monitoringplugin.NewPerformanceDataPoint("power_supply_state", *powerSupply.State)
+		if powerSupply.Description != nil {
+			p.SetLabel(*powerSupply.Description)
+		} else if r.mon.UpdateStatusIf(len(res.PowerSupply) != 1, monitoringplugin.UNKNOWN, "description is missing for power supply") {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
 		err = r.mon.AddPerformanceDataPoint(p)
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)

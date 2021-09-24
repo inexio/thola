@@ -185,6 +185,14 @@ func (c *codeCommunicator) GetHardwareHealthComponentFans(_ context.Context) ([]
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
+func (c *codeCommunicator) GetHardwareHealthComponentTemperature(_ context.Context) ([]device.HardwareHealthComponentTemperature, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHardwareHealthComponentVoltage(_ context.Context) ([]device.HardwareHealthComponentVoltage, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
 func (c *codeCommunicator) GetHardwareHealthComponentPowerSupply(_ context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }

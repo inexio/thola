@@ -1156,3 +1156,41 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 	}
 	return powerSupply, nil
 }
+
+func (o *deviceClassCommunicator) GetHardwareHealthComponentTemperature(ctx context.Context) ([]device.HardwareHealthComponentTemperature, error) {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+		log.Ctx(ctx).Debug().Str("groupProperty", "HardwareHealthComponentFans").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentTemperature").Logger()
+	ctx = logger.WithContext(ctx)
+	res, _, err := o.components.hardwareHealth.temperature.GetProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var temperatures []device.HardwareHealthComponentTemperature
+	err = res.Decode(&temperatures)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into temperature struct")
+	}
+	return temperatures, nil
+}
+
+func (o *deviceClassCommunicator) GetHardwareHealthComponentVoltage(ctx context.Context) ([]device.HardwareHealthComponentVoltage, error) {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+		log.Ctx(ctx).Debug().Str("groupProperty", "HardwareHealthComponentVoltage").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "HardwareHealthComponentTemperature").Logger()
+	ctx = logger.WithContext(ctx)
+	res, _, err := o.components.hardwareHealth.voltage.GetProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var voltage []device.HardwareHealthComponentVoltage
+	err = res.Decode(&voltage)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into voltage struct")
+	}
+	return voltage, nil
+}

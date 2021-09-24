@@ -411,6 +411,8 @@ type HardwareHealthComponent struct {
 	EnvironmentMonitorState *int                                 `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
 	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
 	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
+	Temperature             []HardwareHealthComponentTemperature `yaml:"temperature" json:"temperature" xml:"temperature"`
+	Voltage                 []HardwareHealthComponentVoltage     `yaml:"voltage" json:"voltage" xml:"voltage"`
 }
 
 // HardwareHealthComponentFan
@@ -419,9 +421,44 @@ type HardwareHealthComponent struct {
 //
 // swagger:model
 type HardwareHealthComponentFan struct {
-	Description *string `yaml:"description" json:"description" xml:"description"`
-	State       *int    `yaml:"state" json:"state" xml:"state"`
+	Description *string                       `yaml:"description" json:"description" xml:"description"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
 }
+
+// HardwareHealthComponentTemperature
+//
+// HardwareHealthComponentTemperature represents one fan of a device.
+//
+// swagger:model
+type HardwareHealthComponentTemperature struct {
+	Description *string                       `yaml:"description" json:"description" xml:"description"`
+	Temperature *float64                      `yaml:"temperature" json:"temperature" xml:"temperature"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
+}
+
+// HardwareHealthComponentVoltage
+//
+// HardwareHealthComponentVoltage represents the voltage of a device.
+//
+// swagger:model
+type HardwareHealthComponentVoltage struct {
+	Description *string                       `yaml:"description" json:"description" xml:"description"`
+	Voltage     *float64                      `yaml:"voltage" json:"voltage" xml:"voltage"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
+}
+
+type HardwareHealthComponentState byte
+
+const (
+	Initial HardwareHealthComponentState = iota + 1
+	Normal
+	Warning
+	Critical
+	Shutdown
+	NotPresent
+	NotFunctioning
+	Unknown
+)
 
 // HardwareHealthComponentPowerSupply
 //
