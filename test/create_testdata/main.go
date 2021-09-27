@@ -372,6 +372,29 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 		checkSBCResponse.RawOutput = ""
 	}
 
+	var checkHardwareHealthResponse *request.CheckResponse
+	res, err = test.ProcessRequest(
+		&request.CheckHardwareHealthRequest{
+			CheckDeviceRequest: request.CheckDeviceRequest{
+				BaseRequest:  baseRequest,
+				CheckRequest: request.CheckRequest{},
+			},
+		},
+		port,
+	)
+	if err != nil {
+		log.Info().Err(err).Msg("check hardware-health for device " + device + " failed")
+	} else if res.GetExitCode() == 3 {
+		errString, err := parser.Parse(res, "")
+		if err != nil {
+			return test.DeviceTestData{}, errors.New("failed to parse error message")
+		}
+		log.Info().Err(errors.New(string(errString))).Msg("check hardware-health for device " + device + " failed")
+	} else {
+		checkHardwareHealthResponse = res.(*request.CheckResponse)
+		checkHardwareHealthResponse.RawOutput = ""
+	}
+
 	return test.DeviceTestData{
 		Type: "snmpsim",
 		Expectations: test.DeviceTestDataExpectations{
@@ -384,6 +407,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 			CheckDisk:             checkDiskResponse,
 			CheckServer:           checkServerResponse,
 			CheckSBC:              checkSBCResponse,
+			CheckHardwareHealth:   checkHardwareHealthResponse,
 		},
 		Connection: connectionData,
 	}, nil

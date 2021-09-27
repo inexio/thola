@@ -273,6 +273,10 @@ func (t *testDeviceInfoSNMPSim) generateRequest(requestType string) (request.Req
 		r := request.CheckDiskRequest{}
 		r.DeviceData = t.requestDeviceData
 		return &r, nil
+	case "check hardware-health":
+		r := request.CheckHardwareHealthRequest{}
+		r.DeviceData = t.requestDeviceData
+		return &r, nil
 	default:
 		return nil, errors.New("unknown requestType: " + requestType)
 	}
@@ -323,6 +327,10 @@ func (e *DeviceTestDataExpectations) compareExpectations(response request.Respon
 	case "check disk":
 		if !cmp.Equal(e.CheckDisk, response, metricsTransformer(), metricsRawOutputFilter()) {
 			return errors.New("difference:\n" + cmp.Diff(e.CheckDisk, response, metricsTransformer(), metricsRawOutputFilter()))
+		}
+	case "check hardware-health":
+		if !cmp.Equal(e.CheckHardwareHealth, response, metricsTransformer(), metricsRawOutputFilter()) {
+			return errors.New("difference:\n" + cmp.Diff(e.CheckHardwareHealth, response, metricsTransformer(), metricsRawOutputFilter()))
 		}
 	default:
 		return errors.New("unknown request type: " + requestType)

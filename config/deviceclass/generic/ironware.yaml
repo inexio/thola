@@ -6,6 +6,7 @@ config:
   components:
     cpu: true
     memory: true
+    hardware_health: true
 
 match:
   conditions:
@@ -40,3 +41,18 @@ components:
       values:
         usage:
           oid: .1.3.6.1.4.1.1991.1.1.2.1.53.0
+  hardware_health:
+    fans:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.1991.1.1.1.3.1.1.2
+        state:
+          oid: .1.3.6.1.4.1.1991.1.1.1.3.1.1.3
+          operators:
+            - type: modify
+              modify_method: map
+              mappings:
+                1: "unknown"
+                2: "normal"
+                3: "critical"

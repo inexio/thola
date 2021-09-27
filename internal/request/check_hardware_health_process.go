@@ -18,14 +18,18 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 	res := response.(*ReadHardwareHealthResponse)
 
 	if res.EnvironmentMonitorState != nil {
-		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("environment_monitor_state", *res.EnvironmentMonitorState))
+		stateInt, err := (*res.EnvironmentMonitorState).GetInt()
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "read out invalid environment monitor state", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("environment_monitor_state", stateInt))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 
-		// state 2 only works for oracle-acme sbcs, this needs to be generalized once check hardware health is made for all device classes
-		r.mon.UpdateStatusIf(*res.EnvironmentMonitorState != 2, monitoringplugin.CRITICAL, "environment monitor state is critical")
+		r.mon.UpdateStatusIf((*res.EnvironmentMonitorState) != "normal", monitoringplugin.CRITICAL, "environment monitor state is critical")
 	}
 
 	for _, fan := range res.Fans {
@@ -33,7 +37,14 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
-		p := monitoringplugin.NewPerformanceDataPoint("fan_state", *fan.State).SetLabel(*fan.Description)
+
+		stateInt, err := (*fan.State).GetInt()
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "read out invalid hardware health component state for fan", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+
+		p := monitoringplugin.NewPerformanceDataPoint("fan_state", stateInt).SetLabel(*fan.Description)
 		err = r.mon.AddPerformanceDataPoint(p)
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -46,7 +57,14 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
-		p := monitoringplugin.NewPerformanceDataPoint("power_supply_state", *powerSupply.State)
+
+		stateInt, err := (*powerSupply.State).GetInt()
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "read out invalid hardware health component state for power supply", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+
+		p := monitoringplugin.NewPerformanceDataPoint("power_supply_state", stateInt)
 		if powerSupply.Description != nil {
 			p.SetLabel(*powerSupply.Description)
 		} else if r.mon.UpdateStatusIf(len(res.PowerSupply) != 1, monitoringplugin.UNKNOWN, "description is missing for power supply") {

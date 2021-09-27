@@ -1058,16 +1058,16 @@ func (c *networkDeviceCommunicator) GetServerComponentUsers(ctx context.Context)
 	return c.deviceClassCommunicator.GetServerComponentUsers(ctx)
 }
 
-func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
+func (c *networkDeviceCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (device.HardwareHealthComponentState, error) {
 	if !c.HasComponent(component.HardwareHealth) {
-		return 0, tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
+		return "", tholaerr.NewComponentNotFoundError("no hardware health component available for this device")
 	}
 
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetHardwareHealthComponentEnvironmentMonitorState(ctx)
 		if err != nil {
 			if !tholaerr.IsNotImplementedError(err) {
-				return 0, errors.Wrap(err, "error in code communicator")
+				return "", errors.Wrap(err, "error in code communicator")
 			}
 		} else {
 			return res, nil

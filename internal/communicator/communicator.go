@@ -181,7 +181,7 @@ type availableHardwareHealthCommunicatorFunctions interface {
 	GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error)
 
 	// GetHardwareHealthComponentEnvironmentMonitorState returns the environment monitoring state of the device.
-	GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error)
+	GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (device.HardwareHealthComponentState, error)
 
 	// GetHardwareHealthComponentTemperature returns the temperature sensors of the device.
 	GetHardwareHealthComponentTemperature(context.Context) ([]device.HardwareHealthComponentTemperature, error)

@@ -177,8 +177,8 @@ func (c *codeCommunicator) GetSBCComponentSystemRedundancy(_ context.Context) (i
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *codeCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(_ context.Context) (int, error) {
-	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+func (c *codeCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(_ context.Context) (device.HardwareHealthComponentState, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
 func (c *codeCommunicator) GetHardwareHealthComponentFans(_ context.Context) ([]device.HardwareHealthComponentFan, error) {
