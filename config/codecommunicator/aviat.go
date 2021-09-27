@@ -25,8 +25,27 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		return nil, errors.New("snmp client is empty")
 	}
 
+	// aviatModemStatusMaxCapacity
+	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.4.1.1")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get aviatModemStatusMaxCapacity")
+	}
+
+	var maxCapacity uint64
+	for _, r := range res {
+		capacityString, err := r.GetValueString()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get aviatModemStatusMaxCapacity value")
+		}
+		capacity, err := strconv.ParseUint(capacityString, 10, 64)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse aviatModemStatusMaxCapacity value")
+		}
+		maxCapacity += capacity
+	}
+
 	// aviatModemCurCapacityTx
-	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.1.1.11")
+	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.1.1.11")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get aviatModemCurCapacityTx")
 	}
@@ -65,6 +84,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 
 	for i, interf := range interfaces {
 		if interf.IfName != nil && strings.HasPrefix(*interf.IfName, "Radio") {
+			interfaces[i].MaxSpeedIn = &maxCapacity
+			interfaces[i].MaxSpeedOut = &maxCapacity
 			interfaces[i].Radio = &device.RadioInterface{
 				MaxbitrateOut: &maxBitRateTx,
 				MaxbitrateIn:  &maxBitRateRx,
