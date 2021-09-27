@@ -158,7 +158,12 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 		}
 
 		// usage = ( used / (free+used) ) * 100
-		usage, _ := used.DivRound(used.Add(free), 4).Mul(decimal.NewFromInt(100)).Float64()
+		total := used.Add(free)
+		if total.IsZero() {
+			return nil, errors.New("total memory is zero, division by zero not possible")
+		}
+
+		usage, _ := used.DivRound(total, 4).Mul(decimal.NewFromInt(100)).Float64()
 
 		pools = append(pools, device.MemoryPool{
 			Label: &poolLabel,

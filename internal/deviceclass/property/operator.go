@@ -519,6 +519,10 @@ func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value
 		return nil, err
 	}
 
+	if b.IsZero() {
+		return nil, errors.New("divisor is zero, division by zero not possible")
+	}
+
 	result := a.DivRound(b, m.precision)
 	return value.New(result), nil
 }
