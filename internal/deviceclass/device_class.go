@@ -113,6 +113,8 @@ type deviceClassComponentsHardwareHealth struct {
 	environmentMonitorState property.Reader
 	fans                    groupproperty.Reader
 	powerSupply             groupproperty.Reader
+	temperature             groupproperty.Reader
+	voltage                 groupproperty.Reader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -232,6 +234,8 @@ type yamlComponentsHardwareHealthProperties struct {
 	EnvironmentMonitorState []interface{} `yaml:"environment_monitor_state"`
 	Fans                    interface{}   `yaml:"fans"`
 	PowerSupply             interface{}   `yaml:"power_supply"`
+	Temperature             interface{}   `yaml:"temperature"`
+	Voltage                 interface{}   `yaml:"voltage"`
 }
 
 //
@@ -852,6 +856,18 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 		prop.powerSupply, err = groupproperty.Interface2Reader(y.PowerSupply, prop.powerSupply)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert power supply property to group property reader")
+		}
+	}
+	if y.Temperature != nil {
+		prop.temperature, err = groupproperty.Interface2Reader(y.Temperature, prop.temperature)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert temperature property to group property reader")
+		}
+	}
+	if y.Voltage != nil {
+		prop.voltage, err = groupproperty.Interface2Reader(y.Voltage, prop.voltage)
+		if err != nil {
+			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert voltage property to group property reader")
 		}
 	}
 	if y.EnvironmentMonitorState != nil {

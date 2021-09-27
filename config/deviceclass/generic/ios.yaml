@@ -6,6 +6,7 @@ config:
   components:
     cpu: true
     memory: true
+    hardware_health: true
 
 match:
   conditions:
@@ -18,16 +19,6 @@ match:
       values:
         - '(?i)^CISCO\s'
   logical_operator: OR
-
-components:
-  interfaces:
-    properties:
-      detection: snmpwalk
-      values:
-        ethernet_like:
-          values:
-            etherStatsCRCAlignErrors:
-              oid: 1.3.6.1.4.1.9.2.2.1.1.12
 
 identify:
   properties:
@@ -61,3 +52,58 @@ identify:
             modify_method: regexSubmatch
             regex: 'Version ([^, ]+)'
             format: "$1"
+
+components:
+  interfaces:
+    properties:
+      detection: snmpwalk
+      values:
+        ethernet_like:
+          values:
+            etherStatsCRCAlignErrors:
+              oid: 1.3.6.1.4.1.9.2.2.1.1.12
+  hardware_health:
+    fans:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.9.9.13.1.4.1.2
+        state:
+          oid: .1.3.6.1.4.1.9.9.13.1.4.1.3
+    power_supply:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.9.9.13.1.5.1.2
+        state:
+          oid: .1.3.6.1.4.1.9.9.13.1.5.1.3
+    voltage:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.9.9.13.1.2.1.2
+          operators:
+            - type: modify
+              modify_method: regexReplace
+              regex: 'in mV'
+              replace: ''
+        voltage:
+          oid: .1.3.6.1.4.1.9.9.13.1.2.1.3
+          operators:
+            - type: modify
+              modify_method: divide
+              precision: 3
+              value:
+                detection: constant
+                value: 1000
+        state:
+          oid: .1.3.6.1.4.1.9.9.13.1.2.1.7
+    temperature:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.9.9.13.1.3.1.2
+        temperature:
+          oid: .1.3.6.1.4.1.9.9.13.1.3.1.3
+        state:
+          oid: .1.3.6.1.4.1.9.9.13.1.3.1.6

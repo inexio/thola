@@ -3,7 +3,7 @@ package property
 import (
 	"context"
 	"fmt"
-	condition2 "github.com/inexio/thola/internal/deviceclass/condition"
+	"github.com/inexio/thola/internal/deviceclass/condition"
 	"github.com/inexio/thola/internal/mapping"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-func InterfaceSlice2Operators(i []interface{}, task condition2.RelatedTask) (Operators, error) {
+func InterfaceSlice2Operators(i []interface{}, task condition.RelatedTask) (Operators, error) {
 	var propertyOperators Operators
 	for _, opInterface := range i {
 		m, ok := opInterface.(map[interface{}]interface{})
@@ -39,7 +39,7 @@ func InterfaceSlice2Operators(i []interface{}, task condition2.RelatedTask) (Ope
 			filterMethod, ok := m["filter_method"]
 			if ok {
 				if filterMethodString, ok := filterMethod.(string); ok {
-					filter.FilterMethod = condition2.MatchMode(filterMethodString)
+					filter.FilterMethod = condition.MatchMode(filterMethodString)
 				} else {
 					return nil, errors.New("filter method needs to be a string")
 				}
@@ -261,7 +261,18 @@ func InterfaceSlice2Operators(i []interface{}, task condition2.RelatedTask) (Ope
 				if err != nil {
 					return nil, errors.New("value is missing in divide modify operator, or is not of type float64")
 				}
+
 				var divideModifier divideNumberModifier
+
+				divideModifier.precision = 2
+				if precisionInterface, ok := m["precision"]; ok {
+					if precisionInt, ok := precisionInterface.(int); ok {
+						divideModifier.precision = int32(precisionInt)
+					} else {
+						return nil, errors.New("precision needs to be an integer")
+					}
+				}
+
 				divideModifier.value = valueReader
 				modifier.operator = &divideModifier
 			default:
@@ -277,7 +288,7 @@ func InterfaceSlice2Operators(i []interface{}, task condition2.RelatedTask) (Ope
 			switchMode, ok := m["switch_mode"]
 			if ok {
 				if switchModeString, ok := switchMode.(string); ok {
-					switcher.switchMode = condition2.MatchMode(switchModeString)
+					switcher.switchMode = condition.MatchMode(switchModeString)
 				} else {
 					return nil, errors.New("filter method needs to be a string")
 				}
@@ -498,7 +509,8 @@ func (m *multiplyNumberModifier) modify(ctx context.Context, v value.Value) (val
 }
 
 type divideNumberModifier struct {
-	value Reader
+	value     Reader
+	precision int32
 }
 
 func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
@@ -506,7 +518,12 @@ func (m *divideNumberModifier) modify(ctx context.Context, v value.Value) (value
 	if err != nil {
 		return nil, err
 	}
-	result := a.DivRound(b, 2)
+
+	if b.IsZero() {
+		return nil, errors.New("divisor is zero, division by zero not possible")
+	}
+
+	result := a.DivRound(b, m.precision)
 	return value.New(result), nil
 }
 
@@ -529,13 +546,13 @@ func getCalculationOperators(ctx context.Context, v value.Value, value Reader) (
 }
 
 type baseStringFilter struct {
-	Value            string               `mapstructure:"value"`
-	FilterMethod     condition2.MatchMode `mapstructure:"filter_method"`
-	returnOnMismatch bool                 `mapstructure:"return_on_mismatch"`
+	Value            string              `mapstructure:"value"`
+	FilterMethod     condition.MatchMode `mapstructure:"filter_method"`
+	returnOnMismatch bool                `mapstructure:"return_on_mismatch"`
 }
 
 func (f *baseStringFilter) filter(ctx context.Context, v value.Value) error {
-	match, err := condition2.MatchStrings(ctx, v.String(), f.FilterMethod, f.Value)
+	match, err := condition.MatchStrings(ctx, v.String(), f.FilterMethod, f.Value)
 	if err != nil {
 		return errors.Wrap(err, "error during match strings")
 	}
@@ -667,7 +684,7 @@ func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, err
 
 type genericStringSwitch struct {
 	switchValueGetter stringSwitchValueGetter
-	switchMode        condition2.MatchMode
+	switchMode        condition.MatchMode
 	cases             []stringSwitchCase
 }
 
@@ -683,7 +700,7 @@ func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) 
 	}
 	switchString := switchValue.String()
 	for _, c := range w.cases {
-		b, err := condition2.MatchStrings(ctx, switchString, w.switchMode, c.caseString)
+		b, err := condition.MatchStrings(ctx, switchString, w.switchMode, c.caseString)
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msg("error during match strings")
 			continue
