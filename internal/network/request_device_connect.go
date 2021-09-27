@@ -38,11 +38,12 @@ func (r *RequestDeviceConnectionSNMP) GetSysDescription(ctx context.Context) (st
 		if err != nil {
 			return "", errors.Wrap(err, "error during snmpget")
 		}
-		sysDescription, err := response[0].GetValueString()
+		sysDescription, err := response[0].GetValue()
 		if err != nil {
 			return "", errors.Wrap(err, "failed to get snmp result string")
 		}
-		r.CommonOIDs.SysDescription = &sysDescription
+		sysDescriptionString := sysDescription.String()
+		r.CommonOIDs.SysDescription = &sysDescriptionString
 	}
 	return *r.CommonOIDs.SysDescription, nil
 }
@@ -55,11 +56,12 @@ func (r *RequestDeviceConnectionSNMP) GetSysObjectID(ctx context.Context) (strin
 			return "", errors.Wrap(err, "error during snmpget")
 		}
 
-		sysObjectID, err := response[0].GetValueString()
+		sysObjectID, err := response[0].GetValue()
 		if err != nil {
 			return "", errors.Wrap(err, "failed to get snmp result string")
 		}
-		r.CommonOIDs.SysObjectID = &sysObjectID
+		sysObjectIDString := sysObjectID.String()
+		r.CommonOIDs.SysObjectID = &sysObjectIDString
 	}
 	return *r.CommonOIDs.SysObjectID, nil
 }

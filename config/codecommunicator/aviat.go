@@ -6,7 +6,6 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
-	"strconv"
 	"strings"
 )
 
@@ -33,11 +32,11 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 
 	var maxCapacity uint64
 	for _, r := range res {
-		capacityString, err := r.GetValueString()
+		capacityVal, err := r.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get aviatModemStatusMaxCapacity value")
 		}
-		capacity, err := strconv.ParseUint(capacityString, 10, 64)
+		capacity, err := capacityVal.UInt64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse aviatModemStatusMaxCapacity value")
 		}
@@ -52,11 +51,11 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 
 	var maxBitRateTx uint64
 	for _, r := range res {
-		bitRateString, err := r.GetValueString()
+		bitRateVal, err := r.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get aviatModemCurCapacityTx value")
 		}
-		bitRate, err := strconv.ParseUint(bitRateString, 10, 64)
+		bitRate, err := bitRateVal.UInt64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse aviatModemCurCapacityTx value")
 		}
@@ -71,11 +70,11 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 
 	var maxBitRateRx uint64
 	for _, r := range res {
-		bitRateString, err := r.GetValueString()
+		bitRateVal, err := r.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get aviatModemCurCapacityRx value")
 		}
-		bitRate, err := strconv.ParseUint(bitRateString, 10, 64)
+		bitRate, err := bitRateVal.UInt64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse aviatModemCurCapacityRx value")
 		}

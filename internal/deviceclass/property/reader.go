@@ -145,7 +145,7 @@ func (p *readerSet) GetProperty(ctx context.Context) (value.Value, error) {
 			return property, nil
 		}
 	}
-	return value.Empty(), tholaerr.NewNotFoundError("failed to read out property")
+	return nil, tholaerr.NewNotFoundError("failed to read out property")
 }
 
 type baseReader struct {
@@ -159,21 +159,21 @@ func (b *baseReader) GetProperty(ctx context.Context) (value.Value, error) {
 		conditionsMatched, err := b.preCondition.Check(ctx)
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msg("error during pre condition check")
-			return value.Empty(), errors.Wrap(err, "an error occurred while checking preconditions")
+			return nil, errors.Wrap(err, "an error occurred while checking preconditions")
 		}
 		if !conditionsMatched {
 			log.Ctx(ctx).Debug().Err(err).Msg("pre condition not fulfilled")
-			return value.Empty(), errors.New("pre condition failed")
+			return nil, errors.New("pre condition failed")
 		}
 	}
 	v, err := b.reader.GetProperty(ctx)
 	if err != nil {
-		return value.Empty(), err
+		return nil, err
 	}
 	v, err = b.applyOperators(ctx, v)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("error while applying operators")
-		return value.Empty(), errors.Wrap(err, "error while applying operators")
+		return nil, errors.Wrap(err, "error while applying operators")
 	}
 	log.Ctx(ctx).Debug().Msgf("property determined (%v)", v)
 	return v, nil
@@ -198,13 +198,13 @@ type sysObjectIDReader struct {
 func (c *sysObjectIDReader) GetProperty(ctx context.Context) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return value.Empty(), errors.New("snmp data is missing, SysObjectID property cannot be read")
+		return nil, errors.New("snmp data is missing, SysObjectID property cannot be read")
 	}
 
 	sysObjectID, err := con.SNMP.GetSysObjectID(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Str("property_reader", "SysObjectID").Msg("failed to get sys object id")
-		return value.Empty(), errors.New("failed to get sys object id")
+		return nil, errors.New("failed to get sys object id")
 	}
 	log.Ctx(ctx).Debug().Str("property_reader", "SysObjectID").Msg("received SysObjectID successfully")
 
@@ -216,13 +216,13 @@ type sysDescriptionReader struct{}
 func (c *sysDescriptionReader) GetProperty(ctx context.Context) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return value.Empty(), errors.New("snmp data is missing, SysDescription property cannot be read")
+		return nil, errors.New("snmp data is missing, SysDescription property cannot be read")
 	}
 
 	sysDescription, err := con.SNMP.GetSysDescription(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Str("property_reader", "SysDescription").Msg("failed to get sys description")
-		return value.Empty(), errors.New("failed to get sys description")
+		return nil, errors.New("failed to get sys description")
 	}
 	log.Ctx(ctx).Debug().Str("property_reader", "SysDescription").Msg("received SysDescription successfully")
 
@@ -236,24 +236,23 @@ type snmpGetReader struct {
 func (s *snmpGetReader) GetProperty(ctx context.Context) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil || con.SNMP.SnmpClient == nil {
-		return value.Empty(), errors.New("No SNMP Data available!")
+		return nil, errors.New("No SNMP Data available!")
 	}
-	oid := string(s.OID)
-	result, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+	result, err := con.SNMP.SnmpClient.SNMPGet(ctx, s.OID)
 	if err != nil {
-		log.Ctx(ctx).Debug().Err(err).Str("property_reader", "snmpget").Msg("snmpget on oid " + oid + " failed")
-		return value.Empty(), errors.Wrap(err, "snmpget failed")
+		log.Ctx(ctx).Debug().Err(err).Str("property_reader", "snmpget").Msg("snmpget on oid " + s.OID.String() + " failed")
+		return nil, errors.Wrap(err, "snmpget failed")
 	}
 
 	var val interface{}
 	if s.UseRawResult {
-		val, err = result[0].GetValueStringRaw()
+		val, err = result[0].GetValueRaw()
 	} else {
 		val, err = result[0].GetValue()
 	}
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Str("property_reader", "snmpget").Msg("snmpget failed")
-		return value.Empty(), err
+		return nil, err
 	}
 	log.Ctx(ctx).Debug().Str("property_reader", "snmpget").Msg("snmpget successful")
 	return value.New(val), nil
@@ -264,12 +263,12 @@ type vendorReader struct{}
 func (v *vendorReader) GetProperty(ctx context.Context) (value.Value, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
-		return value.Empty(), errors.New("no properties found in context")
+		return nil, errors.New("no properties found in context")
 	}
 
 	if properties.Properties.Vendor == nil {
 		log.Ctx(ctx).Debug().Str("property_reader", "vendor").Msg("vendor has not yet been determined")
-		return value.Empty(), tholaerr.NewPreConditionError("vendor has not yet been determined")
+		return nil, tholaerr.NewPreConditionError("vendor has not yet been determined")
 	}
 	return value.New(*properties.Properties.Vendor), nil
 }
@@ -279,12 +278,12 @@ type modelReader struct{}
 func (m *modelReader) GetProperty(ctx context.Context) (value.Value, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
-		return value.Empty(), errors.New("no properties found in context")
+		return nil, errors.New("no properties found in context")
 	}
 
 	if properties.Properties.Model == nil {
 		log.Ctx(ctx).Debug().Str("property_reader", "model").Msg("model has not yet been determined")
-		return value.Empty(), tholaerr.NewPreConditionError("model has not yet been determined")
+		return nil, tholaerr.NewPreConditionError("model has not yet been determined")
 	}
 	return value.New(*properties.Properties.Model), nil
 }
@@ -294,12 +293,12 @@ type modelSeriesReader struct{}
 func (m *modelSeriesReader) GetProperty(ctx context.Context) (value.Value, error) {
 	properties, ok := device.DevicePropertiesFromContext(ctx)
 	if !ok {
-		return value.Empty(), errors.New("no properties found in context")
+		return nil, errors.New("no properties found in context")
 	}
 
 	if properties.Properties.ModelSeries == nil {
 		log.Ctx(ctx).Debug().Str("property_reader", "model_series").Msg("model series has not yet been determined")
-		return value.Empty(), tholaerr.NewPreConditionError("model series has not yet been determined")
+		return nil, tholaerr.NewPreConditionError("model series has not yet been determined")
 	}
 	return value.New(*properties.Properties.ModelSeries), nil
 }

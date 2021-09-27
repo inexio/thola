@@ -19,14 +19,14 @@ func TestIronwareCommunicator_GetCPUComponentCPULoad_100thPercent(t *testing.T) 
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.1991.1.1.2.11.1.1.6").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6.1.1.5", gosnmp.OctetString, "600"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6.1.1.300", gosnmp.OctetString, "600"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6.2.1.5", gosnmp.OctetString, "1100"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6.2.1.300", gosnmp.OctetString, "1100"),
 		}, nil).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.1991.1.1.2.11.1.1.1").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1.1.1.5", gosnmp.OctetString, "1"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1.1.1.300", gosnmp.OctetString, "1"),
@@ -67,16 +67,16 @@ func TestIronwareCommunicator_GetCPUComponentCPULoad_Value(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.1991.1.1.2.11.1.1.6").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.1991.1.1.2.11.1.1.6")).
 		Return(nil, errors.New("No Such Object available on this agent at this OID")).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.1991.1.1.2.11.1.1.4").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.1991.1.1.2.11.1.1.4")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.4.1.1.5", gosnmp.OctetString, "6"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.4.1.1.300", gosnmp.OctetString, "6"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.4.2.1.5", gosnmp.OctetString, "11"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.4.2.1.300", gosnmp.OctetString, "11"),
 		}, nil).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.1991.1.1.2.11.1.1.1").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1.1.1.5", gosnmp.OctetString, "1"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.1991.1.1.2.11.1.1.1.1.1.300", gosnmp.OctetString, "1"),

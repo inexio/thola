@@ -6,7 +6,6 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
-	"strconv"
 	"strings"
 )
 
@@ -37,12 +36,12 @@ func (c *iosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.
 			return nil, err
 		}
 		cpus = append(cpus, cpu)
-		indices[cpuLoadResponse.GetOIDIndex()] = len(cpus) - 1 //current entry
+		indices[cpuLoadResponse.GetOID().GetIndex()] = len(cpus) - 1 //current entry
 	}
 
 	// check deprecated cpu load oid. if one of the entries does not already exist in the cpu arr, add it
 	for _, cpuLoadResponseDeprecated := range cpuLoad5minDeprecated {
-		idx := cpuLoadResponseDeprecated.GetOIDIndex()
+		idx := cpuLoadResponseDeprecated.GetOID().GetIndex()
 
 		if _, ok := indices[idx]; ok {
 			continue
@@ -53,7 +52,7 @@ func (c *iosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.
 			return nil, err
 		}
 		cpus = append(cpus, cpu)
-		indices[cpuLoadResponseDeprecated.GetOIDIndex()] = len(cpus) - 1 //current entry
+		indices[cpuLoadResponseDeprecated.GetOID().GetIndex()] = len(cpus) - 1 //current entry
 	}
 
 	// read out physical indices for cpus
@@ -64,45 +63,46 @@ func (c *iosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.
 	}
 
 	for _, physicalIndexResult := range physicalIndicesResult {
-		idx := physicalIndexResult.GetOIDIndex()
+		idx := physicalIndexResult.GetOID().GetIndex()
 		cpuIndex, ok := indices[idx]
 		if !ok {
 			continue
 		}
 
-		physicalIndex, err := physicalIndexResult.GetValueString()
+		physicalIndex, err := physicalIndexResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get physical index as string")
 		}
 
 		// 0 == physical entry not supported
-		if physicalIndex == "0" {
+		if physicalIndex.String() == "0" {
 			continue
 		}
 
-		physicalNameResponse, err := con.SNMP.SnmpClient.SNMPGet(ctx, "1.3.6.1.2.1.47.1.1.1.1.7."+physicalIndex)
+		physicalNameResponse, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID("1.3.6.1.2.1.47.1.1.1.1.7."+physicalIndex.String()))
 		if err != nil {
 			// cannot get physical name, continue
 			continue
 		}
 
-		physicalName, err := physicalNameResponse[0].GetValueString()
+		physicalName, err := physicalNameResponse[0].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "physical name is not a string")
 		}
+		physicalNameString := physicalName.String()
 
-		cpus[cpuIndex].Label = &physicalName
+		cpus[cpuIndex].Label = &physicalNameString
 	}
 
 	return cpus, nil
 }
 
 func (c *iosCommunicator) getCPUBySNMPResponse(res network.SNMPResponse) (device.CPU, error) {
-	val, err := res.GetValueString()
+	val, err := res.GetValue()
 	if err != nil {
 		return device.CPU{}, errors.Wrap(err, "failed to get cpu load value")
 	}
-	valFloat, err := strconv.ParseFloat(val, 64)
+	valFloat, err := val.Float64()
 	if err != nil {
 		return device.CPU{}, errors.Wrap(err, "cpu load is not a float value")
 	}
@@ -124,7 +124,7 @@ func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]
 }
 
 // GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
-func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poolLabelsOID, usedOID, usedHCOID, freeOID, freeHCOID string) ([]device.MemoryPool, error) {
+func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poolLabelsOID, usedOID, usedHCOID, freeOID, freeHCOID network.OID) ([]device.MemoryPool, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -138,21 +138,22 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 	}
 
 	for _, poolLabelVal := range poolLabels {
-		poolLabel, err := poolLabelVal.GetValueString()
+		poolLabel, err := poolLabelVal.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get memory pool label")
 		}
+		poolLabelString := poolLabel.String()
 
-		idx := strings.Split(poolLabelVal.GetOID(), poolLabelsOID)[1]
+		idx := strings.Split(poolLabelVal.GetOID().String(), poolLabelsOID.String())[1]
 
 		// get used value for memory pool
-		used, err := c.getMemoryDecimalValue(ctx, con, usedOID+idx, usedHCOID+idx)
+		used, err := c.getMemoryDecimalValue(ctx, con, usedOID.AddSuffix(idx), usedHCOID.AddSuffix(idx))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get used value for mempool '%s'", poolLabel)
 		}
 
 		// get free value for memory pool
-		free, err := c.getMemoryDecimalValue(ctx, con, freeOID+idx, freeHCOID+idx)
+		free, err := c.getMemoryDecimalValue(ctx, con, freeOID.AddSuffix(idx), freeHCOID.AddSuffix(idx))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get free value for mempool '%s'", poolLabel)
 		}
@@ -166,7 +167,7 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 		usage, _ := used.DivRound(total, 4).Mul(decimal.NewFromInt(100)).Float64()
 
 		pools = append(pools, device.MemoryPool{
-			Label: &poolLabel,
+			Label: &poolLabelString,
 			Usage: &usage,
 		})
 	}
@@ -174,7 +175,7 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 	return pools, nil
 }
 
-func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *network.RequestDeviceConnection, oid string, hcOid string) (decimal.Decimal, error) {
+func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *network.RequestDeviceConnection, oid, hcOid network.OID) (decimal.Decimal, error) {
 	var snmpResponse network.SNMPResponse
 	var hcRes []network.SNMPResponse
 	var err error
@@ -194,11 +195,11 @@ func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *networ
 		}
 		snmpResponse = res[0]
 	}
-	str, err := snmpResponse.GetValueString()
+	str, err := snmpResponse.GetValue()
 	if err != nil {
 		return decimal.Decimal{}, errors.Wrapf(err, "failed to convert value to string")
 	}
-	num, err := decimal.NewFromString(str)
+	num, err := decimal.NewFromString(str.String())
 	if err != nil {
 		return decimal.Decimal{}, errors.Wrapf(err, "failed to convert value to decimal number")
 	}

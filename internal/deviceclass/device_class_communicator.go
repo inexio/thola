@@ -608,7 +608,7 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 		return 0, errors.Wrap(err, "response is empty")
 	}
 
-	if responseInt, ok := response.(int); ok {
+	if responseInt, err := response.Int(); err == nil {
 		return responseInt, nil
 	}
 

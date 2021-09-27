@@ -6,7 +6,6 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
 	"strings"
 )
 
@@ -17,12 +16,12 @@ type ekinopsModuleReaderTransponder struct {
 }
 
 type ekinopsTransponderOIDs struct {
-	identifierOID  string
-	labelOID       string
-	txPowerOID     string
-	rxPowerOID     string
-	correctedFEC   string
-	uncorrectedFEC string
+	identifierOID  network.OID
+	labelOID       network.OID
+	txPowerOID     network.OID
+	rxPowerOID     network.OID
+	correctedFEC   network.OID
+	uncorrectedFEC network.OID
 
 	powerTransformFunc ekinopsPowerTransformFunc
 }
@@ -115,27 +114,27 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 	var opticalTransponderInterfaces []device.OpticalTransponderInterface
 	for k, identifierResult := range identifierResults {
 		var opticalTransponderInterface device.OpticalTransponderInterface
-		identifier, err := identifierResult.GetValueString()
+		identifier, err := identifierResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get identifier for optical amplifier interface")
 		}
-		identifier = strings.Split(identifier, "\n")[0]
+		identifierString := strings.Split(identifier.String(), "\n")[0]
 
-		label, err := labelResults[k].GetValueString()
+		label, err := labelResults[k].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get label for optical amplifier interface")
 		}
-		label = strings.Split(label, "\n")[0]
+		labelString := strings.Split(label.String(), "\n")[0]
 
-		opticalTransponderInterface.Identifier = &identifier
-		opticalTransponderInterface.Label = &label
+		opticalTransponderInterface.Identifier = &identifierString
+		opticalTransponderInterface.Label = &labelString
 
 		if rxPowerResult != nil {
-			value, err := rxPowerResult[k].GetValueString()
+			value, err := rxPowerResult[k].GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get rx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 64)
+			valueFloat, err := value.Float64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
@@ -148,11 +147,11 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 		}
 
 		if txPowerResult != nil {
-			value, err := txPowerResult[k].GetValueString()
+			value, err := txPowerResult[k].GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get tx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 64)
+			valueFloat, err := value.Float64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
@@ -165,11 +164,11 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 		}
 
 		if correctedFECResult != nil {
-			value, err := correctedFECResult[k].GetValueString()
+			value, err := correctedFECResult[k].GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get corrected for optical amplifier interface")
 			}
-			valueUint, err := strconv.ParseUint(value, 0, 64)
+			valueUint, err := value.UInt64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to uint64")
 			}
@@ -178,11 +177,11 @@ func ekinopsReadTransponderMetrics(ctx context.Context, oids ekinopsTransponderO
 		}
 
 		if uncorrectedFECResult != nil {
-			value, err := uncorrectedFECResult[k].GetValueString()
+			value, err := uncorrectedFECResult[k].GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get uncorrected for optical amplifier interface")
 			}
-			valueUint, err := strconv.ParseUint(value, 0, 64)
+			valueUint, err := value.UInt64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to uint64")
 			}

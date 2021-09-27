@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
-	"strconv"
 )
 
 type poweroneACCCommunicator struct {
@@ -25,7 +24,7 @@ func (c *poweronePCCCommunicator) GetUPSComponentMainsVoltageApplied(ctx context
 	return getPoweroneMainsVoltageApplied(ctx, ".1.3.6.1.4.1.5961.3.3.2.0")
 }
 
-func getPoweroneMainsVoltageApplied(ctx context.Context, oid string) (bool, error) {
+func getPoweroneMainsVoltageApplied(ctx context.Context, oid network.OID) (bool, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return false, errors.New("no device connection available")
@@ -37,11 +36,11 @@ func getPoweroneMainsVoltageApplied(ctx context.Context, oid string) (bool, erro
 	if len(response) != 1 {
 		return false, errors.New("no or more than one snmp response available")
 	}
-	valueString, err := response[0].GetValueString()
+	val, err := response[0].GetValue()
 	if err != nil {
 		return false, errors.Wrap(err, "couldn't get string value")
 	}
-	value, err := strconv.Atoi(valueString)
+	value, err := val.Int()
 	if err != nil {
 		return false, errors.Wrap(err, "failed to parse snmp response")
 	}

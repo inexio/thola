@@ -183,17 +183,17 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			indices = newIndices
 		}
 
-		oid := string(d.OID)
-		if !strings.HasSuffix(oid, ".") {
-			oid += "."
+		oid := d.OID
+		if !strings.HasSuffix(oid.String(), ".") {
+			oid = oid.AddSuffix(".")
 		}
-		var oids []string
+		var oids []network.OID
 		for _, index := range indices {
-			oids = append(oids, oid+index.String())
+			oids = append(oids, oid.AddSuffix(index.String()))
 		}
 		snmpResponse, err = con.SNMP.SnmpClient.SNMPGet(ctx, oids...)
 	} else {
-		snmpResponse, err = con.SNMP.SnmpClient.SNMPWalk(ctx, string(d.OID))
+		snmpResponse, err = con.SNMP.SnmpClient.SNMPWalk(ctx, d.OID)
 	}
 	if err != nil {
 		if tholaerr.IsNotFoundError(err) {
@@ -204,7 +204,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 	}
 
 	for _, response := range snmpResponse {
-		logger := log.Ctx(ctx).With().Str("oid", response.GetOID()).Logger()
+		logger := log.Ctx(ctx).With().Str("oid", response.GetOID().String()).Logger()
 		ctx = logger.WithContext(ctx)
 
 		res, err := response.GetValueBySNMPGetConfiguration(d.SNMPGetConfiguration)
@@ -212,7 +212,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			log.Ctx(ctx).Debug().Err(err).Msg("couldn't get value from response")
 			continue
 		}
-		if res != "" || !skipEmpty {
+		if !res.IsEmpty() || !skipEmpty {
 			resNormalized, err := d.operators.Apply(ctx, value.New(res))
 			if err != nil {
 				if tholaerr.IsDidNotMatchError(err) {
@@ -221,7 +221,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (response: %s)", res)
 				return nil, errors.Wrapf(err, "response couldn't be normalized (response: %s)", res)
 			}
-			oid := strings.Split(response.GetOID(), ".")
+			oid := strings.Split(response.GetOID().String(), ".")
 			index, err := strconv.Atoi(oid[len(oid)-1])
 			if err != nil {
 				log.Ctx(ctx).Debug().Err(err).Msg("index isn't an integer")

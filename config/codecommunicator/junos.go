@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -58,15 +57,15 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 
 	vlanIndexFilterID := make(map[string]string)
 	for _, response := range res {
-		filterID, err := response.GetValueString()
+		filterID, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
 
 		oid := response.GetOID()
-		oidSplit := strings.Split(oid, ".")
+		oidSplit := strings.Split(oid.String(), ".")
 
-		vlanIndexFilterID[oidSplit[len(oidSplit)-1]] = filterID
+		vlanIndexFilterID[oidSplit[len(oidSplit)-1]] = filterID.String()
 	}
 
 	// jnxL2aldVlanName
@@ -77,17 +76,17 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 
 	filterIDVLAN := make(map[string]device.VLAN)
 	for _, response := range res {
-		name, err := response.GetValueString()
+		name, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
 
 		oid := response.GetOID()
-		oidSplit := strings.Split(oid, ".")
+		oidSplit := strings.Split(oid.String(), ".")
 		filterID := vlanIndexFilterID[oidSplit[len(oidSplit)-1]]
 
 		filterIDVLAN[filterID] = device.VLAN{
-			Name: name,
+			Name: name.String(),
 		}
 	}
 
@@ -97,7 +96,7 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 	}
 
 	// dot1qTpFdbPort
-	dot1qTpFdbPort := "1.3.6.1.2.1.17.7.1.2.2.1.2"
+	dot1qTpFdbPort := network.OID("1.3.6.1.2.1.17.7.1.2.2.1.2")
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, dot1qTpFdbPort)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get dot1qTpFdbPort")
@@ -106,14 +105,14 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 	ifIndexFilterIDs := make(map[string][]string)
 out:
 	for _, response := range res {
-		port, err := response.GetValueString()
+		port, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
 
-		oid := strings.TrimPrefix(response.GetOID(), ".")
-		oidSplit := strings.Split(strings.TrimPrefix(strings.TrimPrefix(oid, dot1qTpFdbPort), "."), ".")
-		ifIndex := portIfIndex[port]
+		oid := strings.TrimPrefix(response.GetOID().String(), ".")
+		oidSplit := strings.Split(strings.TrimPrefix(strings.TrimPrefix(oid, dot1qTpFdbPort.String()), "."), ".")
+		ifIndex := portIfIndex[port.String()]
 
 		for _, filterID := range ifIndexFilterIDs[ifIndex] {
 			if filterID == oidSplit[0] {
@@ -161,18 +160,19 @@ func (c *junosCommunicator) addVLANsNonELS(ctx context.Context, interfaces []dev
 	vlanIndexVLAN := make(map[string]device.VLAN)
 	ifIndexVLANIndices := make(map[string][]string)
 	for _, response := range res {
-		status, err := response.GetValueString()
+		status, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
+		statusString := status.String()
 
 		oid := response.GetOID()
-		oidSplit := strings.Split(oid, ".")
+		oidSplit := strings.Split(oid.String(), ".")
 
 		ifIndex := portIfIndex[oidSplit[len(oidSplit)-1]]
 		ifIndexVLANIndices[ifIndex] = append(ifIndexVLANIndices[ifIndex], oidSplit[len(oidSplit)-2])
 		vlanIndexVLAN[oidSplit[len(oidSplit)-2]] = device.VLAN{
-			Status: &status,
+			Status: &statusString,
 		}
 	}
 
@@ -183,16 +183,16 @@ func (c *junosCommunicator) addVLANsNonELS(ctx context.Context, interfaces []dev
 	}
 
 	for _, response := range res {
-		name, err := response.GetValueString()
+		name, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
 
 		oid := response.GetOID()
-		oidSplit := strings.Split(oid, ".")
+		oidSplit := strings.Split(oid.String(), ".")
 
 		if vlan, ok := vlanIndexVLAN[oidSplit[len(oidSplit)-1]]; ok {
-			vlan.Name = name
+			vlan.Name = name.String()
 			vlanIndexVLAN[oidSplit[len(oidSplit)-1]] = vlan
 		}
 	}
@@ -229,15 +229,15 @@ func (c *junosCommunicator) getPortIfIndexMapping(ctx context.Context) (map[stri
 
 	portIfIndex := make(map[string]string)
 	for _, response := range res {
-		ifIndex, err := response.GetValueString()
+		ifIndex, err := response.GetValue()
 		if err != nil {
 			return nil, err
 		}
 
 		oid := response.GetOID()
-		oidSplit := strings.Split(oid, ".")
+		oidSplit := strings.Split(oid.String(), ".")
 
-		portIfIndex[oidSplit[len(oidSplit)-1]] = ifIndex
+		portIfIndex[oidSplit[len(oidSplit)-1]] = ifIndex.String()
 	}
 
 	return portIfIndex, nil
@@ -254,22 +254,22 @@ func (c *junosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]devic
 		return nil, errors.New("no device connection available")
 	}
 
-	jnxOperatingCPUOID := ".1.3.6.1.4.1.2636.3.1.13.1.8"
+	jnxOperatingCPUOID := network.OID(".1.3.6.1.4.1.2636.3.1.13.1.8")
 	var cpus []device.CPU
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID+index.index)
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID.AddSuffix(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get CPU load")
 		} else if len(response) != 1 {
 			return nil, errors.New("invalid cpu load result")
 		}
 
-		res, err := response[0].GetValueString()
+		res, err := response[0].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of cpu load")
 		}
 
-		load, err := strconv.ParseFloat(res, 64)
+		load, err := res.Float64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse cpu load")
 		}
@@ -301,7 +301,7 @@ func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]inde
 		return nil, errors.New("no device connection available")
 	}
 
-	jnxOperatingDescrOID := ".1.3.6.1.4.1.2636.3.1.13.1.5"
+	jnxOperatingDescrOID := network.OID(".1.3.6.1.4.1.2636.3.1.13.1.5")
 	jnxOperatingDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxOperatingDescrOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get 'jnxOperatingDescrOID'")
@@ -309,15 +309,15 @@ func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]inde
 
 	var indices []indexAndLabel
 	for _, response := range jnxOperatingDescr {
-		res, err := response.GetValueString()
+		res, err := response.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of snmp response")
 		}
 
-		if ok, err = regexp.MatchString("(?i)engine", res); err == nil && ok {
+		if ok, err = regexp.MatchString("(?i)engine", res.String()); err == nil && ok {
 			indices = append(indices, indexAndLabel{
-				index: strings.TrimPrefix(response.GetOID(), jnxOperatingDescrOID),
-				label: res,
+				index: strings.TrimPrefix(response.GetOID().String(), jnxOperatingDescrOID.String()),
+				label: res.String(),
 			})
 		}
 	}
@@ -336,7 +336,7 @@ func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error
 		return nil, err
 	}
 
-	jnxJsSPUMonitoringCPUUsageOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4"
+	jnxJsSPUMonitoringCPUUsageOID := network.OID(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4")
 	jnxJsSPUMonitoringCPUUsage, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringCPUUsageOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringCPUUsage'")
@@ -344,16 +344,16 @@ func (c *junosCommunicator) getSPUCPUs(ctx context.Context) ([]device.CPU, error
 
 	var cpus []device.CPU
 	for _, load := range jnxJsSPUMonitoringCPUUsage {
-		res, err := load.GetValueString()
+		res, err := load.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of snmp response")
 		}
-		resParsed, err := strconv.ParseFloat(res, 64)
+		resParsed, err := res.Float64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse snmp response")
 		}
 		cpu := device.CPU{Load: &resParsed}
-		if descr, ok := indexDescr[strings.TrimPrefix(load.GetOID(), jnxJsSPUMonitoringCPUUsageOID)]; ok {
+		if descr, ok := indexDescr[strings.TrimPrefix(load.GetOID().String(), jnxJsSPUMonitoringCPUUsageOID.String())]; ok {
 			label := "spu_" + descr
 			cpu.Label = &label
 		}
@@ -369,7 +369,7 @@ func (c *junosCommunicator) getSPUIndices(ctx context.Context) (map[string]strin
 		return nil, errors.New("no device connection available")
 	}
 
-	jnxJsSPUMonitoringNodeDescrOID := ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11"
+	jnxJsSPUMonitoringNodeDescrOID := network.OID(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11")
 	jnxJsSPUMonitoringNodeDescr, err := con.SNMP.SnmpClient.SNMPWalk(ctx, jnxJsSPUMonitoringNodeDescrOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get 'jnxJsSPUMonitoringNodeDescr'")
@@ -377,11 +377,11 @@ func (c *junosCommunicator) getSPUIndices(ctx context.Context) (map[string]strin
 
 	indexDescr := make(map[string]string)
 	for _, descr := range jnxJsSPUMonitoringNodeDescr {
-		res, err := descr.GetValueString()
+		res, err := descr.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of snmp response")
 		}
-		indexDescr[strings.TrimPrefix(descr.GetOID(), jnxJsSPUMonitoringNodeDescrOID)] = res
+		indexDescr[strings.TrimPrefix(descr.GetOID().String(), jnxJsSPUMonitoringNodeDescrOID.String())] = res.String()
 	}
 
 	return indexDescr, nil
@@ -401,11 +401,11 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 		return nil, errors.Wrap(err, "failed to read out kernel memory usage")
 	}
 	if len(kernelMemUsedRes) > 0 {
-		str, err := kernelMemUsedRes[0].GetValueString()
+		val, err := kernelMemUsedRes[0].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert kernel memory usage to string")
 		}
-		f, err := strconv.ParseFloat(str, 64)
+		f, err := val.Float64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to convert kernel memory usage to float64")
 		}
@@ -422,19 +422,19 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 		return nil, errors.Wrap(err, "failed to get routing engine indices")
 	}
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2636.3.1.13.1.11"+index.index)
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.11").AddSuffix(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get memory usage")
 		} else if len(response) != 1 {
 			return nil, errors.New("invalid memory usage result")
 		}
 
-		res, err := response[0].GetValueString()
+		res, err := response[0].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of memory usage")
 		}
 
-		usage, err := strconv.ParseFloat(res, 64)
+		usage, err := res.Float64()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse memory usage")
 		}
@@ -457,16 +457,16 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 		}
 
 		for _, res := range spuUsages {
-			resStr, err := res.GetValueString()
+			resVal, err := res.GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get string value of snmp response")
 			}
-			resParsed, err := strconv.ParseFloat(resStr, 64)
+			resParsed, err := resVal.Float64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response")
 			}
 			pool := device.MemoryPool{Usage: &resParsed}
-			if descr, ok := spuIndexDescr[strings.TrimPrefix(res.GetOID(), spuOID)]; ok {
+			if descr, ok := spuIndexDescr[strings.TrimPrefix(res.GetOID().String(), spuOID)]; ok {
 				label := "spu_" + descr
 				pool.Label = &label
 			}

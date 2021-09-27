@@ -208,8 +208,7 @@ func (s *snmpCondition) Check(ctx context.Context) (bool, error) {
 			return false, errors.Wrap(err, "failed to get SysObjectID")
 		}
 	} else if s.Type == "snmpget" {
-		oid := string(s.OID)
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, s.OID)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
 				log.Ctx(ctx).Debug().Err(err).Msg("snmpget returned no result")
@@ -218,13 +217,14 @@ func (s *snmpCondition) Check(ctx context.Context) (bool, error) {
 			log.Ctx(ctx).Error().Err(err).Msg("error during snmpget")
 			return false, errors.Wrap(err, "snmpget request returned an error")
 		}
-		val, err = response[0].GetValueBySNMPGetConfiguration(s.SNMPGetConfiguration)
+		value, err := response[0].GetValueBySNMPGetConfiguration(s.SNMPGetConfiguration)
 		if err != nil {
 			if tholaerr.IsNotFoundError(err) {
 				return false, nil
 			}
 			return false, err
 		}
+		val = value.String()
 
 	} else {
 		return false, errors.New("invalid condition type")

@@ -20,15 +20,15 @@ func TestIosCommunicator_GetCPUComponentCPULoad(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return(nil, errors.New("no such oid"))
 
 	sut := iosCommunicator{codeCommunicator{}}
@@ -57,13 +57,13 @@ func TestIosCommunicator_GetCPUComponentCPULoad_onlyDepOID(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return(nil, errors.New("no such oid")).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return(nil, errors.New("no such oid"))
 
 	sut := iosCommunicator{codeCommunicator{}}
@@ -92,13 +92,13 @@ func TestIosCommunicator_GetCPUComponentCPULoad_onlyRevOID(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return(nil, errors.New("no such oid")).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return(nil, errors.New("no such oid"))
 
 	sut := iosCommunicator{codeCommunicator{}}
@@ -127,19 +127,19 @@ func TestIosCommunicator_GetCPUComponentCPULoad_withLabel(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.2.1", gosnmp.Integer, 1),
 		}, nil).
-		On("SNMPGet", ctx, "1.3.6.1.2.1.47.1.1.1.1.7.1").
+		On("SNMPGet", ctx, network.OID("1.3.6.1.2.1.47.1.1.1.1.7.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.3.6.1.2.1.47.1.1.1.1.7.1", gosnmp.OctetString, "cpu1"),
 		}, nil)
@@ -171,19 +171,19 @@ func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUs(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.2", gosnmp.Gauge32, uint(20)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.3", gosnmp.Gauge32, uint(30)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(10)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.2", gosnmp.Gauge32, uint(20)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.3", gosnmp.Gauge32, uint(30)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return(nil, errors.New("no such oid"))
 
 	sut := iosCommunicator{codeCommunicator{}}
@@ -222,33 +222,33 @@ func TestIosCommunicator_GetCPUComponentCPULoad_multipleCPUsWithLabel(t *testing
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.2", gosnmp.Gauge32, uint(20)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.3", gosnmp.Gauge32, uint(30)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(10)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.2", gosnmp.Gauge32, uint(20)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.3", gosnmp.Gauge32, uint(30)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.2.1", gosnmp.Integer, 3),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.2.2", gosnmp.Integer, 4),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.2.3", gosnmp.Integer, 5),
 		}, nil).
-		On("SNMPGet", ctx, "1.3.6.1.2.1.47.1.1.1.1.7.3").
+		On("SNMPGet", ctx, network.OID("1.3.6.1.2.1.47.1.1.1.1.7.3")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.3.6.1.2.1.47.1.1.1.1.7.3", gosnmp.OctetString, "cpu1"),
 		}, nil).
-		On("SNMPGet", ctx, "1.3.6.1.2.1.47.1.1.1.1.7.4").
+		On("SNMPGet", ctx, network.OID("1.3.6.1.2.1.47.1.1.1.1.7.4")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.3.6.1.2.1.47.1.1.1.1.7.4", gosnmp.OctetString, "cpu2"),
 		}, nil).
-		On("SNMPGet", ctx, "1.3.6.1.2.1.47.1.1.1.1.7.5").
+		On("SNMPGet", ctx, network.OID("1.3.6.1.2.1.47.1.1.1.1.7.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.3.6.1.2.1.47.1.1.1.1.7.5", gosnmp.OctetString, "cpu3"),
 		}, nil)
@@ -292,17 +292,17 @@ func TestIosCommunicator_GetCPUComponentCPULoad_prioritiseRevOID(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.8").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.8")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.1", gosnmp.Gauge32, uint(10)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.3", gosnmp.Gauge32, uint(10)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.5").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.5.1", gosnmp.Gauge32, uint(20)),
 			network.NewSNMPResponse(".1.3.6.1.4.1.9.9.109.1.1.1.1.8.2", gosnmp.Gauge32, uint(20)),
 		}, nil).
-		On("SNMPWalk", ctx, "1.3.6.1.4.1.9.9.109.1.1.1.1.2").
+		On("SNMPWalk", ctx, network.OID("1.3.6.1.4.1.9.9.109.1.1.1.1.2")).
 		Return(nil, errors.New("no such oid"))
 
 	sut := iosCommunicator{codeCommunicator{}}

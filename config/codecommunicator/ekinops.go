@@ -44,17 +44,17 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 	var moduleReaders []ekinopsModuleReader
 
 	for k, slotResult := range slotResults {
-		slotIdentifier, err := slotResult.GetValueString()
+		slotIdentifier, err := slotResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get snmp result as string")
 		}
 
-		module, err := moduleResults[k].GetValueString()
+		module, err := moduleResults[k].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get module result as string")
 		}
 
-		moduleReader, err := ekinopsGetModuleReader(slotIdentifier, module)
+		moduleReader, err := ekinopsGetModuleReader(slotIdentifier.String(), module.String())
 		if err != nil {
 			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module)
 			continue
