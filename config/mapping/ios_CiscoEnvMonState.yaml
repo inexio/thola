@@ -1,0 +1,6 @@
+1: "normal"
+2: "warning"
+3: "critical"
+4: "shutdown"
+5: "not_present"
+6: "not_functioning"

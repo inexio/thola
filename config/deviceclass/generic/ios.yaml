@@ -70,6 +70,10 @@ components:
           oid: .1.3.6.1.4.1.9.9.13.1.4.1.2
         state:
           oid: .1.3.6.1.4.1.9.9.13.1.4.1.3
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: ios_CiscoEnvMonState.yaml
     power_supply:
       detection: snmpwalk
       values:
@@ -77,6 +81,10 @@ components:
           oid: .1.3.6.1.4.1.9.9.13.1.5.1.2
         state:
           oid: .1.3.6.1.4.1.9.9.13.1.5.1.3
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: ios_CiscoEnvMonState.yaml
     voltage:
       detection: snmpwalk
       values:
@@ -98,6 +106,10 @@ components:
                 value: 1000
         state:
           oid: .1.3.6.1.4.1.9.9.13.1.2.1.7
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: ios_CiscoEnvMonState.yaml
     temperature:
       detection: snmpwalk
       values:
@@ -107,3 +119,7 @@ components:
           oid: .1.3.6.1.4.1.9.9.13.1.3.1.3
         state:
           oid: .1.3.6.1.4.1.9.9.13.1.3.1.6
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: ios_CiscoEnvMonState.yaml

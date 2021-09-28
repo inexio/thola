@@ -1100,23 +1100,24 @@ func (o *deviceClassCommunicator) GetServerComponentUsers(ctx context.Context) (
 	return r, nil
 }
 
-func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (int, error) {
+func (o *deviceClassCommunicator) GetHardwareHealthComponentEnvironmentMonitorState(ctx context.Context) (device.HardwareHealthComponentState, error) {
 	if o.components.hardwareHealth == nil || o.components.hardwareHealth.environmentMonitorState == nil {
 		log.Ctx(ctx).Debug().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Str("device_class", o.name).Msg("no detection information available")
-		return 0, tholaerr.NewNotImplementedError("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
 	}
 	logger := log.Ctx(ctx).With().Str("property", "HardwareHealthComponentEnvironmentMonitorState").Logger()
 	ctx = logger.WithContext(ctx)
 	res, err := o.components.hardwareHealth.environmentMonitorState.GetProperty(ctx)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
-		return 0, errors.Wrap(err, "failed to get HardwareHealthComponentEnvironmentMonitorState")
+		return "", errors.Wrap(err, "failed to get HardwareHealthComponentEnvironmentMonitorState")
 	}
-	result, err := res.Int()
-	if err != nil {
-		return 0, errors.Wrapf(err, "failed to convert result '%v' to int", res)
+
+	state := device.HardwareHealthComponentState(res.String())
+	if _, err := state.GetInt(); err != nil {
+		return "", fmt.Errorf("read out invalid hardware health component state '%s'", state)
 	}
-	return result, nil
+	return state, nil
 }
 
 func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Context) ([]device.HardwareHealthComponentFan, error) {
@@ -1139,7 +1140,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentFans(ctx context.Con
 }
 
 func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
-	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.powerSupply == nil {
 		log.Ctx(ctx).Debug().Str("groupProperty", "HardwareHealthComponentPowerSupply").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
@@ -1158,7 +1159,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentPowerSupply(ctx cont
 }
 
 func (o *deviceClassCommunicator) GetHardwareHealthComponentTemperature(ctx context.Context) ([]device.HardwareHealthComponentTemperature, error) {
-	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.temperature == nil {
 		log.Ctx(ctx).Debug().Str("groupProperty", "HardwareHealthComponentFans").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
@@ -1177,7 +1178,7 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentTemperature(ctx cont
 }
 
 func (o *deviceClassCommunicator) GetHardwareHealthComponentVoltage(ctx context.Context) ([]device.HardwareHealthComponentVoltage, error) {
-	if o.components.hardwareHealth == nil || o.components.hardwareHealth.fans == nil {
+	if o.components.hardwareHealth == nil || o.components.hardwareHealth.voltage == nil {
 		log.Ctx(ctx).Debug().Str("groupProperty", "HardwareHealthComponentVoltage").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}

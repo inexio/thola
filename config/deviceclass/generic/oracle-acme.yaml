@@ -108,6 +108,10 @@ components:
     environment_monitor_state:
       - detection: snmpget
         oid: .1.3.6.1.4.1.9148.3.3.1.1.0
+        operators:
+          - type: modify
+            modify_method: map
+            mappings: oracle-acme_ApEnvMonState.yaml
     fans:
       detection: snmpwalk
       values:
@@ -115,6 +119,10 @@ components:
           oid: 1.3.6.1.4.1.9148.3.3.1.4.1.1.3
         state:
           oid: 1.3.6.1.4.1.9148.3.3.1.4.1.1.5
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: oracle-acme_ApEnvMonState.yaml
     power_supply:
       detection: snmpwalk
       values:
@@ -122,3 +130,7 @@ components:
           oid: .1.3.6.1.4.1.9148.3.3.1.5.1.1.3
         state:
           oid: .1.3.6.1.4.1.9148.3.3.1.5.1.1.4
+          operators:
+            - type: modify
+              modify_method: map
+              mappings: oracle-acme_ApEnvMonState.yaml

@@ -31,6 +31,7 @@ type DeviceTestDataExpectations struct {
 	CheckDisk             *request.CheckResponse               `json:"checkDisk" mapstructure:"checkDisk"`
 	CheckServer           *request.CheckResponse               `json:"checkServer" mapstructure:"checkServer"`
 	CheckSBC              *request.CheckResponse               `json:"checkSBC" mapstructure:"checkSBC"`
+	CheckHardwareHealth   *request.CheckResponse               `json:"checkHardwareHealth" mapstructure:"checkHardwareHealth"`
 }
 
 // GetAvailableRequestTypes returns all available request types
@@ -71,6 +72,10 @@ func (d *DeviceTestData) GetAvailableRequestTypes() []string {
 
 	if d.Expectations.CheckSBC != nil {
 		res = append(res, "check sbc")
+	}
+
+	if d.Expectations.CheckHardwareHealth != nil {
+		res = append(res, "check hardware-health")
 	}
 
 	return res
@@ -138,6 +143,9 @@ func ProcessRequest(r request.Request, port int) (request.Response, error) {
 		response = &request.CheckResponse{}
 	case *request.CheckSBCRequest:
 		requestEndpoint = "check/sbc"
+		response = &request.CheckResponse{}
+	case *request.CheckHardwareHealthRequest:
+		requestEndpoint = "check/hardware-health"
 		response = &request.CheckResponse{}
 	default:
 		return nil, errors.New("unknown request type")

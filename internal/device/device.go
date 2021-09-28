@@ -3,6 +3,7 @@ package device
 import (
 	"context"
 	"errors"
+	"fmt"
 )
 
 type ctxKey int
@@ -408,7 +409,7 @@ type SBCComponentRealm struct {
 //
 // swagger:model
 type HardwareHealthComponent struct {
-	EnvironmentMonitorState *int                                 `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
+	EnvironmentMonitorState *HardwareHealthComponentState        `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
 	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
 	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
 	Temperature             []HardwareHealthComponentTemperature `yaml:"temperature" json:"temperature" xml:"temperature"`
@@ -447,18 +448,29 @@ type HardwareHealthComponentVoltage struct {
 	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
 }
 
-type HardwareHealthComponentState byte
+type HardwareHealthComponentState string
 
-const (
-	Initial HardwareHealthComponentState = iota + 1
-	Normal
-	Warning
-	Critical
-	Shutdown
-	NotPresent
-	NotFunctioning
-	Unknown
-)
+func (h HardwareHealthComponentState) GetInt() (int, error) {
+	switch h {
+	case "initial":
+		return 0, nil
+	case "normal":
+		return 1, nil
+	case "warning":
+		return 2, nil
+	case "critical":
+		return 3, nil
+	case "shutdown":
+		return 4, nil
+	case "not_present":
+		return 5, nil
+	case "not_functioning":
+		return 6, nil
+	case "unknown":
+		return 7, nil
+	}
+	return 7, fmt.Errorf("invalid hardware health state '%s'", h)
+}
 
 // HardwareHealthComponentPowerSupply
 //
@@ -466,8 +478,8 @@ const (
 //
 // swagger:model
 type HardwareHealthComponentPowerSupply struct {
-	Description *string `yaml:"description" json:"description" xml:"description"`
-	State       *int    `yaml:"state" json:"state" xml:"state"`
+	Description *string                       `yaml:"description" json:"description" xml:"description"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
 }
 
 // Rate
