@@ -2,6 +2,7 @@ package codecommunicator
 
 import (
 	"context"
+	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
@@ -166,9 +167,22 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 
 		usage, _ := used.DivRound(total, 4).Mul(decimal.NewFromInt(100)).Float64()
 
+		var performanceDataPointModifier device.PerformanceDataPointModifier
+		if strings.HasPrefix(poolLabelString, "lsmpi_io") {
+			performanceDataPointModifier = func(p *monitoringplugin.PerformanceDataPoint) {
+				p.SetThresholds(monitoringplugin.Thresholds{
+					WarningMin:  nil,
+					WarningMax:  nil,
+					CriticalMin: 0,
+					CriticalMax: 99.99,
+				})
+			}
+		}
+
 		pools = append(pools, device.MemoryPool{
-			Label: &poolLabelString,
-			Usage: &usage,
+			Label:                        &poolLabelString,
+			Usage:                        &usage,
+			PerformanceDataPointModifier: performanceDataPointModifier,
 		})
 	}
 
