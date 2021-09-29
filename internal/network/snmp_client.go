@@ -849,8 +849,14 @@ func (o OID) GetIndex() string {
 }
 
 // GetIndexAfterOID returns the index of the OID based on the baseOID.
-func (o OID) GetIndexAfterOID(baseOID OID) string {
-	return strings.Trim(strings.TrimPrefix(strings.TrimPrefix(o.String(), "."), strings.TrimPrefix(baseOID.String(), ".")), ".")
+func (o OID) GetIndexAfterOID(baseOID OID) (string, error) {
+	oidStr := strings.TrimPrefix(o.String(), ".")
+	baseOIDStr := strings.TrimPrefix(baseOID.String(), ".")
+
+	if !strings.HasPrefix(oidStr, baseOIDStr) {
+		return "", errors.New("subtree does not exist")
+	}
+	return strings.Trim(strings.TrimPrefix(oidStr, baseOIDStr), "."), nil
 }
 
 // Cmp compares two OIDs.

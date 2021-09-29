@@ -216,7 +216,11 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []string, skipEmpt
 				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (response: %s)", res)
 				return nil, errors.Wrapf(err, "response couldn't be normalized (response: %s)", res)
 			}
-			result[response.GetOID().GetIndexAfterOID(d.OID)] = resNormalized
+			idx, err := response.GetOID().GetIndexAfterOID(d.OID)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get index after oid")
+			}
+			result[idx] = resNormalized
 		}
 	}
 
