@@ -200,13 +200,13 @@ func (c *fortigateCommunicator) getHardwareHealthComponentReadOutSensors(ctx con
 
 			switch alarm.String() {
 			case "0":
-				state := device.HardwareHealthComponentState("normal")
+				state := device.HardwareHealthComponentStateNormal
 				sensor.State = &state
 			case "1":
-				state := device.HardwareHealthComponentState("critical")
+				state := device.HardwareHealthComponentStateCritical
 				sensor.State = &state
 			default:
-				state := device.HardwareHealthComponentState("unknown")
+				state := device.HardwareHealthComponentStateUnknown
 				sensor.State = &state
 			}
 		}

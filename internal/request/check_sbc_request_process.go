@@ -77,8 +77,12 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 	}
 
 	for _, agent := range sbc.Agents {
+		if agent.Hostname == nil {
+			continue
+		}
+
 		if agent.CurrentActiveSessionsInbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_inbound", *agent.CurrentActiveSessionsInbound).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_inbound", *agent.CurrentActiveSessionsInbound).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -87,7 +91,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if agent.CurrentSessionRateInbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_inbound", *agent.CurrentSessionRateInbound).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_inbound", *agent.CurrentSessionRateInbound).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -96,7 +100,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if agent.CurrentActiveSessionsOutbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_outbound", *agent.CurrentActiveSessionsOutbound).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_outbound", *agent.CurrentActiveSessionsOutbound).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -105,7 +109,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if agent.CurrentSessionRateOutbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_outbound", *agent.CurrentSessionRateOutbound).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_outbound", *agent.CurrentSessionRateOutbound).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -114,7 +118,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if agent.PeriodASR != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("period_asr", *agent.PeriodASR).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("period_asr", *agent.PeriodASR).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -123,7 +127,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if agent.Status != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("status", *agent.Status).SetLabel(agent.Hostname)
+			p := monitoringplugin.NewPerformanceDataPoint("status", *agent.Status).SetLabel(*agent.Hostname)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -133,8 +137,12 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 	}
 
 	for _, realm := range sbc.Realms {
+		if realm.Name == nil {
+			continue
+		}
+
 		if realm.CurrentActiveSessionsInbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_inbound", *realm.CurrentActiveSessionsInbound).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_inbound", *realm.CurrentActiveSessionsInbound).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -143,7 +151,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.CurrentSessionRateInbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_inbound", *realm.CurrentSessionRateInbound).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_inbound", *realm.CurrentSessionRateInbound).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -152,7 +160,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.CurrentActiveSessionsOutbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_outbound", *realm.CurrentActiveSessionsOutbound).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("current_active_sessions_outbound", *realm.CurrentActiveSessionsOutbound).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -161,7 +169,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.CurrentSessionRateOutbound != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_outbound", *realm.CurrentSessionRateOutbound).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("current_session_rate_outbound", *realm.CurrentSessionRateOutbound).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -170,7 +178,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.PeriodASR != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("period_asr", *realm.PeriodASR).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("period_asr", *realm.PeriodASR).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -179,7 +187,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.Status != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("status", *realm.Status).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("status", *realm.Status).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)
@@ -188,7 +196,7 @@ func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 		}
 
 		if realm.ActiveLocalContacts != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("active_local_contacts", *realm.ActiveLocalContacts).SetLabel(realm.Name)
+			p := monitoringplugin.NewPerformanceDataPoint("active_local_contacts", *realm.ActiveLocalContacts).SetLabel(*realm.Name)
 			err = r.mon.AddPerformanceDataPoint(p)
 			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 				r.mon.PrintPerformanceData(false)

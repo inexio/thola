@@ -84,9 +84,10 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 		oid := response.GetOID()
 		oidSplit := strings.Split(oid.String(), ".")
 		filterID := vlanIndexFilterID[oidSplit[len(oidSplit)-1]]
+		nameString := name.String()
 
 		filterIDVLAN[filterID] = device.VLAN{
-			Name: name.String(),
+			Name: &nameString,
 		}
 	}
 
@@ -192,7 +193,8 @@ func (c *junosCommunicator) addVLANsNonELS(ctx context.Context, interfaces []dev
 		oidSplit := strings.Split(oid.String(), ".")
 
 		if vlan, ok := vlanIndexVLAN[oidSplit[len(oidSplit)-1]]; ok {
-			vlan.Name = name.String()
+			vlanName := name.String()
+			vlan.Name = &vlanName
 			vlanIndexVLAN[oidSplit[len(oidSplit)-1]] = vlan
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/shopspring/decimal"
+	"strconv"
 	"strings"
 )
 
@@ -116,12 +117,22 @@ func (c *iosCommunicator) getCPUBySNMPResponse(res network.SNMPResponse) (device
 // GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
 func (c *iosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) ([]device.MemoryPool, error) {
 	// first try cisco enhanced mempool mib, if it fails try old mempool mib
-	pools, err := c.getMemoryComponentMemoryUsage(ctx, ".1.3.6.1.4.1.9.9.221.1.1.1.1.3", ".1.3.6.1.4.1.9.9.221.1.1.1.1.7", ".1.3.6.1.4.1.9.9.221.1.1.1.1.18", ".1.3.6.1.4.1.9.9.221.1.1.1.1.8", ".1.3.6.1.4.1.9.9.221.1.1.1.1.20")
+	pools, err := c.getMemoryComponentMemoryUsage(ctx,
+		".1.3.6.1.4.1.9.9.221.1.1.1.1.3",
+		".1.3.6.1.4.1.9.9.221.1.1.1.1.7",
+		".1.3.6.1.4.1.9.9.221.1.1.1.1.18",
+		".1.3.6.1.4.1.9.9.221.1.1.1.1.8",
+		".1.3.6.1.4.1.9.9.221.1.1.1.1.20")
 	if err == nil {
 		return pools, err
 	}
 
-	return c.getMemoryComponentMemoryUsage(ctx, ".1.3.6.1.4.1.9.9.48.1.1.1.2", ".1.3.6.1.4.1.9.9.48.1.1.1.5", "", ".1.3.6.1.4.1.9.9.48.1.1.1.6", "")
+	return c.getMemoryComponentMemoryUsage(ctx,
+		".1.3.6.1.4.1.9.9.48.1.1.1.2",
+		".1.3.6.1.4.1.9.9.48.1.1.1.5",
+		"",
+		".1.3.6.1.4.1.9.9.48.1.1.1.6",
+		"")
 }
 
 // GetMemoryComponentMemoryUsage returns the memory usage of ios devices.
@@ -219,4 +230,74 @@ func (c *iosCommunicator) getMemoryDecimalValue(ctx context.Context, con *networ
 	}
 
 	return num, nil
+}
+
+func (c *iosCommunicator) GetHardwareHealthComponentPowerSupply(ctx context.Context) ([]device.HardwareHealthComponentPowerSupply, error) {
+	res, err := c.deviceClass.GetHardwareHealthComponentPowerSupply(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 1; i <= 3; i++ {
+		chassisPS, err := c.getChassisPowerSupply(ctx, i)
+		if err == nil {
+			res = append(res, chassisPS)
+		}
+	}
+
+	return res, nil
+}
+
+func (c *iosCommunicator) getChassisPowerSupply(ctx context.Context, id int) (device.HardwareHealthComponentPowerSupply, error) {
+	var chassisPsXStatus network.OID
+	switch id {
+	case 1:
+		chassisPsXStatus = "1.3.6.1.4.1.9.5.1.2.4"
+	case 2:
+		chassisPsXStatus = "1.3.6.1.4.1.9.5.1.2.7"
+	case 3:
+		chassisPsXStatus = "1.3.6.1.4.1.9.5.1.2.21"
+	default:
+		return device.HardwareHealthComponentPowerSupply{}, errors.New("invalid power supply id given")
+	}
+
+	con, ok := network.DeviceConnectionFromContext(ctx)
+	if !ok || con.SNMP == nil {
+		return device.HardwareHealthComponentPowerSupply{}, errors.New("no device connection available")
+	}
+
+	response, err := con.SNMP.SnmpClient.SNMPWalk(ctx, chassisPsXStatus)
+	if err != nil {
+		return device.HardwareHealthComponentPowerSupply{}, errors.Wrap(err, "failed to get 'chassisPs3Status'")
+	}
+
+	if len(response) == 1 {
+		val, err := response[0].GetValue()
+		if err != nil {
+			return device.HardwareHealthComponentPowerSupply{}, errors.Wrap(err, "failed to get 'chassisPs3Status' value")
+		}
+		var state device.HardwareHealthComponentState
+		switch val.String() {
+		// other
+		case "1":
+			// power supply not present
+		// ok
+		case "2":
+			state = device.HardwareHealthComponentStateNormal
+		// minorFault
+		case "3":
+			state = device.HardwareHealthComponentStateWarning
+		// majorFault
+		case "4":
+			state = device.HardwareHealthComponentStateCritical
+		}
+		if state != "" {
+			descr := "chassis_" + strconv.Itoa(id)
+			return device.HardwareHealthComponentPowerSupply{
+				Description: &descr,
+				State:       &state,
+			}, nil
+		}
+	}
+	return device.HardwareHealthComponentPowerSupply{}, errors.New("power supply not found")
 }

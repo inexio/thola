@@ -250,7 +250,7 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 			valFin, _ := a.Mul(b).Float64()
 
 			channels[subtree] = device.OpticalChannel{
-				Channel: s[len(s)-2],
+				Channel: &s[len(s)-2],
 				RXPower: &valFin,
 			}
 		}
@@ -278,7 +278,7 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 
 			if channel, ok := channels[subtree]; !ok {
 				channels[subtree] = device.OpticalChannel{
-					Channel: s[len(s)-2],
+					Channel: &s[len(s)-2],
 					TXPower: &valFin,
 				}
 			} else {
