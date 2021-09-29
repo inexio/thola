@@ -882,12 +882,12 @@ func (o OID) Cmp(oid OID) (int, error) {
 	return 0, nil
 }
 
-// AddIndex returns a OID with the specified suffix OID attached.
-func (o OID) AddIndex(suffix string) OID {
-	if !strings.HasSuffix(o.String(), ".") && !strings.HasPrefix(suffix, ".") {
-		return OID(o.String() + "." + suffix)
-	} else if strings.HasSuffix(o.String(), ".") && strings.HasPrefix(suffix, ".") {
-		return OID(strings.TrimSuffix(o.String(), ".") + suffix)
+// AddIndex returns a OID with the specified index attached.
+func (o OID) AddIndex(index string) OID {
+	if !strings.HasSuffix(o.String(), ".") && !strings.HasPrefix(index, ".") {
+		return OID(o.String() + "." + index)
+	} else if strings.HasSuffix(o.String(), ".") && strings.HasPrefix(index, ".") {
+		return OID(strings.TrimSuffix(o.String(), ".") + index)
 	}
-	return OID(o.String() + suffix)
+	return OID(o.String() + index)
 }
