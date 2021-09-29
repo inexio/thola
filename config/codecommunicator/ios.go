@@ -148,13 +148,13 @@ func (c *iosCommunicator) getMemoryComponentMemoryUsage(ctx context.Context, poo
 		idx := strings.Split(poolLabelVal.GetOID().String(), poolLabelsOID.String())[1]
 
 		// get used value for memory pool
-		used, err := c.getMemoryDecimalValue(ctx, con, usedOID.AddSuffix(idx), usedHCOID.AddSuffix(idx))
+		used, err := c.getMemoryDecimalValue(ctx, con, usedOID.AddIndex(idx), usedHCOID.AddIndex(idx))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get used value for mempool '%s'", poolLabel)
 		}
 
 		// get free value for memory pool
-		free, err := c.getMemoryDecimalValue(ctx, con, freeOID.AddSuffix(idx), freeHCOID.AddSuffix(idx))
+		free, err := c.getMemoryDecimalValue(ctx, con, freeOID.AddIndex(idx), freeHCOID.AddIndex(idx))
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get free value for mempool '%s'", poolLabel)
 		}

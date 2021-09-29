@@ -56,3 +56,10 @@ components:
                 1: "unknown"
                 2: "normal"
                 3: "critical"
+    temperature:
+      detection: snmpwalk
+      values:
+        description:
+          oid: .1.3.6.1.4.1.1991.1.1.2.13.1.1.3
+        temperature:
+          oid: .1.3.6.1.4.1.1991.1.1.2.13.1.1.4

@@ -8,7 +8,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
 )
 
 func Interface2Reader(i interface{}, parentReader Reader) (Reader, error) {
@@ -142,7 +141,7 @@ type snmpReader struct {
 }
 
 func (s snmpReader) getProperty(ctx context.Context) (PropertyGroups, []value.Value, error) {
-	var wantedIndices []value.Value
+	var wantedIndices []string
 
 	useSNMPGetsInsteadOfWalk, ok := network.SNMPGetsInsteadOfWalkFromContext(ctx)
 	if !ok {
@@ -162,7 +161,7 @@ func (s snmpReader) getProperty(ctx context.Context) (PropertyGroups, []value.Va
 		}
 
 		for index := range indices {
-			wantedIndices = append(wantedIndices, value.New(index))
+			wantedIndices = append(wantedIndices, index)
 		}
 	}
 
@@ -178,25 +177,30 @@ func (s snmpReader) getProperty(ctx context.Context) (PropertyGroups, []value.Va
 	//TODO efficiency
 	size := len(groups)
 	for i := 0; i < size; i++ {
-		var smallestIndex int
+		var smallestIndex string
 		firstRun := true
 		for index := range groups {
 			if firstRun {
 				smallestIndex = index
 				firstRun = false
+				continue
 			}
-			if index < smallestIndex {
+			cmp, err := network.OID(index).Cmp(network.OID(smallestIndex))
+			if err != nil {
+				return nil, nil, errors.Wrap(err, "failed to compare indices")
+			}
+			if cmp == -1 {
 				smallestIndex = index
 			}
 		}
 		x, ok := groups[smallestIndex].(map[string]interface{})
 		if !ok {
-			return nil, nil, fmt.Errorf("oidReader for index '%d' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
+			return nil, nil, fmt.Errorf("oidReader for index '%s' returned unexpected data type: %T", smallestIndex, groups[smallestIndex])
 		}
 
 		delete(groups, smallestIndex)
 		if !useSNMPGetsInsteadOfWalk {
-			if _, ok := s.filteredIndices[strconv.Itoa(smallestIndex)]; ok {
+			if _, ok := s.filteredIndices[smallestIndex]; ok {
 				continue
 			}
 		}
@@ -222,7 +226,7 @@ func (s snmpReader) getIndices(ctx context.Context) (map[string]struct{}, error)
 	}
 	res := make(map[string]struct{})
 	for index := range indices {
-		res[strconv.Itoa(index)] = struct{}{}
+		res[index] = struct{}{}
 	}
 
 	return res, nil

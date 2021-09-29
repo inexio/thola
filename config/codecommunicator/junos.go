@@ -257,7 +257,7 @@ func (c *junosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]devic
 	jnxOperatingCPUOID := network.OID(".1.3.6.1.4.1.2636.3.1.13.1.8")
 	var cpus []device.CPU
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID.AddSuffix(index.index))
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID.AddIndex(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get CPU load")
 		} else if len(response) != 1 {
@@ -422,7 +422,7 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 		return nil, errors.Wrap(err, "failed to get routing engine indices")
 	}
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.11").AddSuffix(index.index))
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.11").AddIndex(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get memory usage")
 		} else if len(response) != 1 {

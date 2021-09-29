@@ -52,13 +52,13 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 		}
 
 		// retrieve inbound
-		inbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
+		inbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4.").AddIndex(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve inbound counter")
 		}
 
 		// retrieve outbound
-		outbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
+		outbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6.").AddIndex(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve outbound counter")
 		}

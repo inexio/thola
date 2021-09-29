@@ -6,7 +6,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -85,19 +84,18 @@ func (g *groupFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 	}
 
 	for index, result := range results {
-		indexString := strconv.Itoa(index)
 		if regex.MatchString(result.(value.Value).String()) {
 			// if filter matches add to filtered indices map and delete from wanted indices
-			reader.filteredIndices[indexString] = struct{}{}
-			delete(reader.wantedIndices, indexString)
+			reader.filteredIndices[index] = struct{}{}
+			delete(reader.wantedIndices, index)
 			log.Ctx(ctx).Debug().Str("filter_key", g.key).Str("filter_regex", g.regex).
 				Str("received_value", result.(value.Value).String()).
-				Msgf("filter matched on index '%d'", index)
+				Msgf("filter matched on index '%s'", index)
 		} else {
 			// if filter does not match check if index was filtered before
-			if _, ok := reader.filteredIndices[indexString]; !ok {
+			if _, ok := reader.filteredIndices[index]; !ok {
 				// if not add it to wanted indices map
-				reader.wantedIndices[indexString] = struct{}{}
+				reader.wantedIndices[index] = struct{}{}
 			}
 		}
 	}
