@@ -17,10 +17,10 @@ type ekinopsModuleReaderOPM8 struct {
 }
 
 type ekinopsOPMOIDs struct {
-	identifierOID string
-	labelOID      string
-	rxPowerOID    string
-	channelsOid   string
+	identifierOID network.OID
+	labelOID      network.OID
+	rxPowerOID    network.OID
+	channelsOid   network.OID
 
 	powerTransformFunc ekinopsPowerTransformFunc
 }
@@ -82,27 +82,27 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 	var opticalOPMInterfaces []device.OpticalOPMInterface
 	for k, identifierResult := range identifierResults {
 		var opticalOPMInterface device.OpticalOPMInterface
-		identifier, err := identifierResult.GetValueString()
+		identifier, err := identifierResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get identifier for optical amplifier interface")
 		}
-		identifier = strings.Split(identifier, "\n")[0]
+		identifierString := strings.Split(identifier.String(), "\n")[0]
 
-		label, err := labelResults[k].GetValueString()
+		label, err := labelResults[k].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get label for optical amplifier interface")
 		}
-		label = strings.Split(label, "\n")[0]
+		labelString := strings.Split(label.String(), "\n")[0]
 
-		opticalOPMInterface.Identifier = &identifier
-		opticalOPMInterface.Label = &label
+		opticalOPMInterface.Identifier = &identifierString
+		opticalOPMInterface.Label = &labelString
 
 		if rxPowerResult != nil {
-			value, err := rxPowerResult[k].GetValueString()
+			value, err := rxPowerResult[k].GetValue()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to get tx power for optical amplifier interface")
 			}
-			valueFloat, err := strconv.ParseFloat(value, 64)
+			valueFloat, err := value.Float64()
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 			}
@@ -125,19 +125,19 @@ func ekinopsReadOPMMetrics(ctx context.Context, oids ekinopsOPMOIDs) ([]device.O
 	// results to map
 	channelValues := make(map[int]map[int]float64)
 	for _, channelResult := range channelsResults {
-		valueString, err := channelResult.GetValueString()
+		val, err := channelResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to get snmp response as string (oid: %s)", channelResult.GetOID())
 		}
-		value, err := strconv.ParseFloat(valueString, 64)
+		value, err := val.Float64()
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to parse snmp response to float64 (response: %s)", valueString)
+			return nil, errors.Wrapf(err, "failed to parse snmp response to float64 (response: %s)", val)
 		}
 		if oids.powerTransformFunc != nil {
 			value = oids.powerTransformFunc(value)
 		}
 
-		oidArr := strings.Split(channelResult.GetOID(), ".")
+		oidArr := strings.Split(channelResult.GetOID().String(), ".")
 		if oidArr[len(oidArr)-2] == "1" {
 			continue
 		}

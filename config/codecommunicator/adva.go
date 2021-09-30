@@ -49,15 +49,15 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 	rxPower := make(map[string]float64)
 
 	for _, resp := range rxPowerRaw {
-		res, err := resp.GetValueString()
+		res, err := resp.GetValue()
 		if err != nil {
 			return errors.Wrap(err, "failed to convert rx power to string")
 		}
-		rxValue, err := decimal.NewFromString(res)
+		rxValue, err := decimal.NewFromString(res.String())
 		if err != nil {
 			return errors.Wrap(err, "failed to convert rx power to decimal")
 		}
-		oid := strings.Split(resp.GetOID(), ".")
+		oid := strings.Split(resp.GetOID().String(), ".")
 		rxPower[oid[len(oid)-1]], _ = rxValue.Mul(decimal.NewFromFloat(0.1)).Float64()
 	}
 
@@ -69,15 +69,15 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 	txPower := make(map[string]float64)
 
 	for _, resp := range txPowerRaw {
-		res, err := resp.GetValueString()
+		res, err := resp.GetValue()
 		if err != nil {
 			return errors.Wrap(err, "failed to convert tx power to string")
 		}
-		txValue, err := decimal.NewFromString(res)
+		txValue, err := decimal.NewFromString(res.String())
 		if err != nil {
 			return errors.Wrap(err, "failed to convert tx power to decimal")
 		}
-		oid := strings.Split(resp.GetOID(), ".")
+		oid := strings.Split(resp.GetOID().String(), ".")
 		txPower[oid[len(oid)-1]], _ = txValue.Mul(decimal.NewFromFloat(0.1)).Float64()
 	}
 
@@ -110,14 +110,14 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 			}
 
 			// corrected fec 15m
-			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2."+fmt.Sprint(*interf.IfIndex)+".1")
+			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
-				valString, err := res[0].GetValueString()
+				val, err := res[0].GetValue()
 				if err != nil {
 					return errors.Wrap(err, "failed to get corrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
-				val, err := strconv.ParseFloat(valString, 64)
+				valFloat, err := val.Float64()
 				if err != nil {
 					return errors.Wrap(err, "failed to parse corrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
@@ -128,19 +128,19 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 
 				interfaces[i].DWDM.CorrectedFEC = append(interfaces[i].DWDM.CorrectedFEC, device.Rate{
 					Time:  "15m",
-					Value: val,
+					Value: valFloat,
 				})
 			}
 
 			// uncorrected fec 15m
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3."+fmt.Sprint(*interf.IfIndex)+".1")
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
-				valString, err := res[0].GetValueString()
+				val, err := res[0].GetValue()
 				if err != nil {
 					return errors.Wrap(err, "failed to get uncorrected 15m bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
-				val, err := strconv.ParseFloat(valString, 64)
+				valFloat, err := val.Float64()
 				if err != nil {
 					return errors.Wrap(err, "failed to parse uncorrected 15m bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
@@ -151,19 +151,19 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 
 				interfaces[i].DWDM.UncorrectedFEC = append(interfaces[i].DWDM.UncorrectedFEC, device.Rate{
 					Time:  "15m",
-					Value: val,
+					Value: valFloat,
 				})
 			}
 
 			// corrected fec 1d
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.2."+fmt.Sprint(*interf.IfIndex)+".1")
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.2.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
-				valString, err := res[0].GetValueString()
+				val, err := res[0].GetValue()
 				if err != nil {
 					return errors.Wrap(err, "failed to get corrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
-				val, err := strconv.ParseFloat(valString, 64)
+				valFloat, err := val.Float64()
 				if err != nil {
 					return errors.Wrap(err, "failed to parse corrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
@@ -174,19 +174,19 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 
 				interfaces[i].DWDM.CorrectedFEC = append(interfaces[i].DWDM.CorrectedFEC, device.Rate{
 					Time:  "1d",
-					Value: val,
+					Value: valFloat,
 				})
 			}
 
 			// uncorrected fec 1d
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, ".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.3."+fmt.Sprint(*interf.IfIndex)+".1")
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.3.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
-				valString, err := res[0].GetValueString()
+				valFloat, err := res[0].GetValue()
 				if err != nil {
 					return errors.Wrap(err, "failed to get uncorrected 1d bit error rate string value for interface "+fmt.Sprint(*interf.IfIndex))
 				}
 
-				val, err := strconv.ParseFloat(valString, 64)
+				val, err := valFloat.Float64()
 				if err != nil {
 					return errors.Wrap(err, "failed to parse uncorrected 1d bit error rate for interface "+fmt.Sprint(*interf.IfIndex))
 				}
@@ -229,20 +229,20 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 
 	channels := make(map[string]device.OpticalChannel)
 
-	facilityPhysInstValueInputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2"
+	facilityPhysInstValueInputPower := network.OID(".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.2")
 	facilityPhysInstValueInputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueInputPower)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to walk facilityPhysInstValueInputPower")
 	}
 
 	for _, res := range facilityPhysInstValueInputPowerValues {
-		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueInputPower)
+		subtree := strings.TrimPrefix(res.GetOID().String(), facilityPhysInstValueInputPower.String())
 		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 3 && s[len(s)-2] != "0" && s[len(s)-3] == "33152" {
-			val, err := res.GetValueString()
+			val, err := res.GetValue()
 			if err != nil {
 				return errors.Wrap(err, "failed to get rx value of channel "+subtree)
 			}
-			a, err := decimal.NewFromString(val)
+			a, err := decimal.NewFromString(val.String())
 			if err != nil {
 				return errors.Wrap(err, "failed to parse rx value of channel "+subtree)
 			}
@@ -256,20 +256,20 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 		}
 	}
 
-	facilityPhysInstValueOutputPower := ".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1"
+	facilityPhysInstValueOutputPower := network.OID(".1.3.6.1.4.1.2544.1.11.11.7.2.1.1.1.1")
 	facilityPhysInstValueOutputPowerValues, err := con.SNMP.SnmpClient.SNMPWalk(ctx, facilityPhysInstValueOutputPower)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("failed to walk facilityPhysInstValueOutputPower")
 	}
 
 	for _, res := range facilityPhysInstValueOutputPowerValues {
-		subtree := strings.TrimPrefix(res.GetOID(), facilityPhysInstValueOutputPower)
+		subtree := strings.TrimPrefix(res.GetOID().String(), facilityPhysInstValueOutputPower.String())
 		if s := strings.Split(strings.Trim(subtree, "."), "."); len(s) > 3 && s[len(s)-2] != "0" && s[len(s)-3] == "33152" {
-			val, err := res.GetValueString()
+			val, err := res.GetValue()
 			if err != nil {
 				return errors.Wrap(err, "failed to get tx value of channel "+subtree)
 			}
-			a, err := decimal.NewFromString(val)
+			a, err := decimal.NewFromString(val.String())
 			if err != nil {
 				return errors.Wrap(err, "failed to parse tx value of channel "+subtree)
 			}
@@ -307,7 +307,7 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 	return nil
 }
 
-func (c *advaCommunicator) getPowerValues(ctx context.Context, oid string) (map[string]float64, error) {
+func (c *advaCommunicator) getPowerValues(ctx context.Context, oid network.OID) (map[string]float64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("no device connection available")
@@ -315,23 +315,23 @@ func (c *advaCommunicator) getPowerValues(ctx context.Context, oid string) (map[
 
 	values, err := con.SNMP.SnmpClient.SNMPWalk(ctx, oid)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to walk "+oid)
+		return nil, errors.Wrap(err, "failed to walk "+oid.String())
 	}
 
 	descrToValues := make(map[string]float64)
 
 	for _, val := range values {
-		subtree := strings.TrimPrefix(val.GetOID(), oid)
+		subtree := strings.TrimPrefix(val.GetOID().String(), oid.String())
 		subtreeSplit := strings.Split(strings.Trim(subtree, "."), ".")
 		if len(subtreeSplit) < 3 {
-			return nil, errors.New("invalid value for oid " + oid)
+			return nil, errors.New("invalid value for oid " + oid.String())
 		}
 
-		valueString, err := val.GetValueString()
+		value, err := val.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get rx value")
 		}
-		valueDecimal, err := decimal.NewFromString(valueString)
+		valueDecimal, err := decimal.NewFromString(value.String())
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to parse rx value")
 		}

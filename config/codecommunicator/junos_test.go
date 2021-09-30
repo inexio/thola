@@ -19,16 +19,16 @@ func TestJunosCommunicator_GetCPUComponentCPULoad_WithSPU(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.2636.3.1.13.1.5").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.5.1.1.0", gosnmp.OctetString, "test"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.5.2.1.0", gosnmp.OctetString, "Routing Engine 0"),
 		}, nil).
-		On("SNMPGet", ctx, ".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0").
+		On("SNMPGet", ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0", gosnmp.OctetString, "26"),
 		}, nil).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11")).
 		Return(nil, errors.New("No Such Object available on this agent at this OID"))
 
 	sut := junosCommunicator{codeCommunicator{}}
@@ -58,20 +58,20 @@ func TestJunosCommunicator_GetCPUComponentCPULoad(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.2636.3.1.13.1.5").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.5")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.5.1.1.0", gosnmp.OctetString, "test"),
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.5.2.1.0", gosnmp.OctetString, "Routing Engine 0"),
 		}, nil).
-		On("SNMPGet", ctx, ".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0").
+		On("SNMPGet", ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.1.13.1.8.2.1.0", gosnmp.OctetString, "26"),
 		}, nil).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.11.0", gosnmp.OctetString, "single"),
 		}, nil).
-		On("SNMPWalk", ctx, ".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4").
+		On("SNMPWalk", ctx, network.OID(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.3.6.1.4.1.2636.3.39.1.12.1.1.1.4.0", gosnmp.OctetString, "7"),
 		}, nil)

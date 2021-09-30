@@ -14,6 +14,9 @@ func toHumanReadable(value reflect.Value, insertion int) string {
 	case reflect.Struct:
 		var output string
 		for i := 0; i < value.NumField(); i++ {
+			if value.Type().Field(i).Tag.Get("human_readable") == "-" {
+				continue
+			}
 			fieldValue := toHumanReadable(value.Field(i), insertion+1)
 			if strings.TrimSpace(fieldValue) == "" {
 				continue

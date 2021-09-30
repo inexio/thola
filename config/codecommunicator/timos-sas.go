@@ -27,7 +27,7 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 	}
 
 	// get all sap interfaces
-	sapDescriptionsOID := ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5"
+	sapDescriptionsOID := network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5")
 	sapDescriptions, err := con.SNMP.SnmpClient.SNMPWalk(ctx, sapDescriptionsOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk failed")
@@ -35,7 +35,7 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 
 	for _, response := range sapDescriptions {
 		// construct description
-		suffix := strings.Split(strings.TrimPrefix(response.GetOID(), sapDescriptionsOID), ".")
+		suffix := strings.Split(strings.TrimPrefix(response.GetOID().String(), sapDescriptionsOID.String()), ".")
 		physIndex := suffix[2]
 		subID := suffix[3]
 
@@ -52,13 +52,13 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 		}
 
 		// retrieve inbound
-		inbound, err := getCounterFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4."+suffix[1]+"."+physIndex+"."+subID)
+		inbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.4.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve inbound counter")
 		}
 
 		// retrieve outbound
-		outbound, err := getCounterFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6."+suffix[1]+"."+physIndex+"."+subID)
+		outbound, err := getCounterFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.6.2.2.2.8.1.1.1.6.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve outbound counter")
 		}

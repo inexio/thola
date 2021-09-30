@@ -21,7 +21,7 @@ func TestDeviceClassOID_readOID(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1").
+		On("SNMPWalk", ctx, network.OID("1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "Port 2"),
@@ -58,7 +58,7 @@ func TestDeviceClassOID_readOID_skipEmpty(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1").
+		On("SNMPWalk", ctx, network.OID("1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "Port 2"),
@@ -96,7 +96,7 @@ func TestDeviceClassOID_readOID_withIndices(t *testing.T) {
 	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, true)
 
 	snmpClient.
-		On("SNMPGet", ctx, "1.1", "1.2", "1.3", "1.4").
+		On("SNMPGet", ctx, network.OID("1.1"), network.OID("1.2"), network.OID("1.3"), network.OID("1.4")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse(".1.2", gosnmp.OctetString, "Port 2"),
@@ -135,7 +135,7 @@ func TestDeviceClassOID_readOID_withIndicesSkipEmpty(t *testing.T) {
 	ctx = network.NewContextWithSNMPGetsInsteadOfWalk(ctx, true)
 
 	snmpClient.
-		On("SNMPGet", ctx, "1.1", "1.2", "1.3", "1.4").
+		On("SNMPGet", ctx, network.OID("1.1"), network.OID("1.2"), network.OID("1.3"), network.OID("1.4")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".1.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse(".1.2", gosnmp.OctetString, "Port 2"),
@@ -171,13 +171,13 @@ func TestDeviceClassOID_readOID_indicesMapping(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1").
+		On("SNMPWalk", ctx, network.OID("1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "3"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "1"),
 		}, nil).
-		On("SNMPWalk", ctx, "2").
+		On("SNMPWalk", ctx, network.OID("2")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("2.2", gosnmp.OctetString, "Port 2"),
@@ -220,13 +220,13 @@ func TestDeviceClassOID_readOID_indicesMappingWithIndices(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1").
+		On("SNMPWalk", ctx, network.OID("1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "3"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "1"),
 		}, nil).
-		On("SNMPGet", ctx, "2.3", "2.2", "2.1").
+		On("SNMPGet", ctx, network.OID("2.3"), network.OID("2.2"), network.OID("2.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse(".2.3", gosnmp.OctetString, "Port 3"),
 			network.NewSNMPResponse(".2.2", gosnmp.OctetString, "Port 2"),
@@ -436,13 +436,13 @@ func TestSNMPReader_getProperty_filter(t *testing.T) {
 	})
 
 	snmpClient.
-		On("SNMPWalk", ctx, "1").
+		On("SNMPWalk", ctx, network.OID("1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
 			network.NewSNMPResponse("1.2", gosnmp.OctetString, "2"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
 		}, nil).
-		On("SNMPWalk", ctx, "2").
+		On("SNMPWalk", ctx, network.OID("2")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("2.2", gosnmp.OctetString, "Port 2"),
@@ -577,27 +577,27 @@ func TestSNMPReader_getProperty_getsInsteadOfWalkFilter(t *testing.T) {
 		})
 
 	snmpClient.
-		On("SNMPGet", ctx, "1.1", "1.3").
+		On("SNMPGet", ctx, network.OID("1.1"), network.OID("1.3")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
 		}, nil).
-		On("SNMPGet", ctx, "1.3", "1.1").
+		On("SNMPGet", ctx, network.OID("1.3"), network.OID("1.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("1.1", gosnmp.OctetString, "1"),
 			network.NewSNMPResponse("1.3", gosnmp.OctetString, "3"),
 		}, nil).
-		On("SNMPGet", ctx, "2.1", "2.3").
+		On("SNMPGet", ctx, network.OID("2.1"), network.OID("2.3")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
 		}, nil).
-		On("SNMPGet", ctx, "2.3", "2.1").
+		On("SNMPGet", ctx, network.OID("2.3"), network.OID("2.1")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("2.3", gosnmp.OctetString, "Port 3"),
 		}, nil).
-		On("SNMPWalk", ctx, "2").
+		On("SNMPWalk", ctx, network.OID("2")).
 		Return([]network.SNMPResponse{
 			network.NewSNMPResponse("2.1", gosnmp.OctetString, "Port 1"),
 			network.NewSNMPResponse("2.2", gosnmp.OctetString, "Port 2"),

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/inexio/go-monitoringplugin"
 )
 
 type ctxKey int
@@ -23,6 +24,9 @@ const (
 	StatusNotPresent     Status = "notPresent"
 	StatusLowerLayerDown Status = "lowerLayerDown"
 )
+
+// PerformanceDataPointModifier is used to overwrite PerformanceDataPoints
+type PerformanceDataPointModifier func(p *monitoringplugin.PerformanceDataPoint)
 
 // Device
 //
@@ -301,8 +305,9 @@ type MemoryComponent struct {
 //
 // swagger:model
 type MemoryPool struct {
-	Label *string  `yaml:"label" json:"label" xml:"label"`
-	Usage *float64 `yaml:"usage" json:"usage" xml:"usage"`
+	Label                        *string  `yaml:"label" json:"label" xml:"label"`
+	Usage                        *float64 `yaml:"usage" json:"usage" xml:"usage"`
+	PerformanceDataPointModifier `yaml:"-" json:"-" xml:"-" human_readable:"-"`
 }
 
 // DiskComponent

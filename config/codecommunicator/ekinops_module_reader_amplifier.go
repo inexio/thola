@@ -7,7 +7,6 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
 	"strings"
 )
 
@@ -18,11 +17,11 @@ type ekinopsModuleReaderAmplifier struct {
 }
 
 type ekinopsAmplifierOIDs struct {
-	identifierOID string
-	labelOID      string
-	txPowerOID    string
-	rxPowerOID    string
-	gainOID       string
+	identifierOID network.OID
+	labelOID      network.OID
+	txPowerOID    network.OID
+	rxPowerOID    network.OID
+	gainOID       network.OID
 
 	powerTransformFunc ekinopsPowerTransformFunc
 }
@@ -81,16 +80,18 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	var opticalAmplifierInterfaces []device.OpticalAmplifierInterface
 	for k, identifierResult := range identifierResults {
 		var opticalAmplifierInterface device.OpticalAmplifierInterface
-		identifier, err := identifierResult.GetValueString()
+		identifier, err := identifierResult.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get identifier for optical amplifier interface")
 		}
-		label, err := labelResults[k].GetValueString()
+		identifierString := identifier.String()
+		label, err := labelResults[k].GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get label for optical amplifier interface")
 		}
-		opticalAmplifierInterface.Identifier = &identifier
-		opticalAmplifierInterface.Label = &label
+		labelString := label.String()
+		opticalAmplifierInterface.Identifier = &identifierString
+		opticalAmplifierInterface.Label = &labelString
 		opticalAmplifierInterfaces = append(opticalAmplifierInterfaces, opticalAmplifierInterface)
 	}
 
@@ -103,11 +104,11 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for tx power oid failed")
 	}
-	avStr, err := txPowerResult[0].GetValueString()
+	avVal, err := txPowerResult[0].GetValue()
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for tx power oid failed")
 	}
-	av, err := strconv.ParseFloat(avStr, 64)
+	av, err := avVal.Float64()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
@@ -119,11 +120,11 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for rx power oid failed")
 	}
-	avStr, err = rxPowerResult[0].GetValueString()
+	avVal, err = rxPowerResult[0].GetValue()
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for rx power oid failed")
 	}
-	av, err = strconv.ParseFloat(avStr, 64)
+	av, err = avVal.Float64()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse snmp response to float64")
 	}
@@ -135,11 +136,11 @@ func ekinopsReadAmplifierMetrics(ctx context.Context, oids ekinopsAmplifierOIDs)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for gain oid failed")
 	}
-	avStr, err = gainResult[0].GetValueString()
+	avVal, err = gainResult[0].GetValue()
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpget failed for gain oid failed")
 	}
-	av, err = strconv.ParseFloat(avStr, 64)
+	av, err = avVal.Float64()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse gain to float64")
 	}

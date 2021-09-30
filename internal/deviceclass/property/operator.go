@@ -315,12 +315,12 @@ func InterfaceSlice2Operators(i []interface{}, task condition.RelatedTask) (Oper
 			case "default":
 				switcher.switchValueGetter = &defaultStringSwitchValueGetter{}
 			case "snmpwalkCount":
-				switchValueGetter := snmpwalkCountStringSwitchValueGetter{}
+				switchValueGetter := snmpWalkCountStringSwitchValueGetter{}
 				oid, ok := m["oid"].(string)
 				if !ok {
 					return nil, errors.New("oid in snmpwalkCount switch operator is missing, or is not a string")
 				}
-				switchValueGetter.oid = oid
+				switchValueGetter.oid = network.OID(oid)
 				if filter, ok := m["snmp_result_filter"]; ok {
 					var bStrFilter baseStringFilter
 					err := mapstructure.Decode(filter, &bStrFilter)
@@ -394,7 +394,7 @@ func (o *Operators) Apply(ctx context.Context, v value.Value) (value.Value, erro
 			if operator.returnOnError() {
 				return v, nil
 			}
-			return value.Empty(), errors.Wrap(err, "operator failed")
+			return nil, errors.Wrap(err, "operator failed")
 		}
 		v = x
 	}
@@ -441,7 +441,7 @@ type filterOperatorAdapter struct {
 func (o *filterOperatorAdapter) operate(ctx context.Context, v value.Value) (value.Value, error) {
 	err := o.operator.filter(ctx, v)
 	if err != nil {
-		return value.Empty(), err
+		return nil, err
 	}
 	return v, err
 }
@@ -623,7 +623,7 @@ func newRegexSubmatchModifier(regex string, format string, returnOnMismatch bool
 func (o *regexSubmatchModifier) modify(_ context.Context, v value.Value) (value.Value, error) {
 	subMatches := o.regex.FindStringSubmatch(v.String())
 	if subMatches == nil {
-		return value.Empty(), errors.New("regex does not match")
+		return nil, errors.New("regex does not match")
 	}
 	return value.New(o.regex.ReplaceAllString(subMatches[0], o.format)), nil
 }
@@ -660,7 +660,7 @@ type insertReadValueModifier struct {
 func (r *insertReadValueModifier) modify(ctx context.Context, v value.Value) (value.Value, error) {
 	readValue, err := r.readValueReader.GetProperty(ctx)
 	if err != nil {
-		return value.Empty(), errors.Wrap(err, "failed to read out value")
+		return nil, errors.Wrap(err, "failed to read out value")
 	}
 	str := strings.ReplaceAll(r.format, "$property$", v.String())
 	str = strings.ReplaceAll(str, "$read_value$", fmt.Sprint(readValue))
@@ -677,9 +677,9 @@ func (r *mapModifier) modify(_ context.Context, v value.Value) (value.Value, err
 		return value.New(val), nil
 	}
 	if r.ignoreOnMismatch {
-		return value.Empty(), nil
+		return nil, nil
 	}
-	return value.Empty(), tholaerr.NewNotFoundError("string not found in mapping")
+	return nil, tholaerr.NewNotFoundError("string not found in mapping")
 }
 
 type genericStringSwitch struct {
@@ -696,7 +696,7 @@ type stringSwitchCase struct {
 func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) (value.Value, error) {
 	switchValue, err := w.switchValueGetter.getSwitchValue(ctx, s)
 	if err != nil {
-		return value.Empty(), errors.Wrap(err, "failed to get switch string")
+		return nil, errors.Wrap(err, "failed to get switch string")
 	}
 	switchString := switchValue.String()
 	for _, c := range w.cases {
@@ -711,7 +711,7 @@ func (w *genericStringSwitch) switchOperate(ctx context.Context, s value.Value) 
 		}
 		x, err := c.operators.Apply(ctx, s)
 		if err != nil {
-			return value.Empty(), errors.Wrapf(err, "failed to apply operations inside switch case '%s'", c.caseString)
+			return nil, errors.Wrapf(err, "failed to apply operations inside switch case '%s'", c.caseString)
 		}
 		return value.New(x), nil
 	}
@@ -729,29 +729,29 @@ func (w *defaultStringSwitchValueGetter) getSwitchValue(_ context.Context, v val
 	return v, nil
 }
 
-type snmpwalkCountStringSwitchValueGetter struct {
-	oid             string
+type snmpWalkCountStringSwitchValueGetter struct {
+	oid             network.OID
 	useOidForFilter bool
 	filter          *baseStringFilter
 }
 
-func (w *snmpwalkCountStringSwitchValueGetter) getSwitchValue(ctx context.Context, _ value.Value) (value.Value, error) {
+func (w *snmpWalkCountStringSwitchValueGetter) getSwitchValue(ctx context.Context, _ value.Value) (value.Value, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
-		return value.Empty(), errors.New("no snmp connection available, snmpwalk not possible")
+		return nil, errors.New("no snmp connection available, snmpwalk not possible")
 	}
 	var i int
 
 	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, w.oid)
 	if err != nil {
-		return value.Empty(), errors.Wrap(err, "snmpwalk failed")
+		return nil, errors.Wrap(err, "snmpwalk failed")
 	}
 	for _, r := range res {
-		var str string
+		var val value.Value
 		if w.useOidForFilter {
-			str = r.GetOID()
+			val = value.New(r.GetOID().String())
 		} else {
-			str, err = r.GetValueString()
+			val, err = r.GetValue()
 			if err != nil {
 				//LOG
 				continue
@@ -759,7 +759,7 @@ func (w *snmpwalkCountStringSwitchValueGetter) getSwitchValue(ctx context.Contex
 		}
 
 		if w.filter != nil {
-			err = w.filter.filter(ctx, value.New(str))
+			err = w.filter.filter(ctx, val)
 			if err == nil {
 				i++
 			}

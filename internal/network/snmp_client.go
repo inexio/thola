@@ -8,6 +8,7 @@ import (
 	"github.com/gosnmp/gosnmp"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
+	"github.com/inexio/thola/internal/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/encoding/charmap"
@@ -23,8 +24,8 @@ import (
 type SNMPClient interface {
 	Disconnect() error
 
-	SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error)
-	SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error)
+	SNMPGet(ctx context.Context, oid ...OID) ([]SNMPResponse, error)
+	SNMPWalk(ctx context.Context, oid OID) ([]SNMPResponse, error)
 
 	UseCache(b bool)
 	HasSuccessfulCachedRequest() bool
@@ -382,14 +383,14 @@ func getGoSNMPV3PrivProtocol(protocol string) (gosnmp.SnmpV3PrivProtocol, error)
 }
 
 // SNMPGet sends one or more simple snmpget requests to the target host and returns the result.
-func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse, error) {
+func (s *snmpClient) SNMPGet(ctx context.Context, oid ...OID) ([]SNMPResponse, error) {
 	var snmpResponses []SNMPResponse
 	var successful bool
-	var reqOIDs []string
+	var reqOIDs []OID
 
 	if s.useCache {
 		for _, o := range oid {
-			cacheEntry, err := s.getCache.get(o)
+			cacheEntry, err := s.getCache.get(o.String())
 			if err != nil {
 				reqOIDs = append(reqOIDs, o)
 			} else {
@@ -397,7 +398,7 @@ func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 				if !ok {
 					return nil, errors.New("cached SNMP Get result is not a SNMP response")
 				}
-				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", o).Msg("used cached SNMP Get result")
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", o.String()).Msg("used cached SNMP Get result")
 				snmpResponses = append(snmpResponses, res)
 				if res.WasSuccessful() {
 					successful = true
@@ -408,7 +409,7 @@ func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 		reqOIDs = oid
 	}
 
-	var batch []string
+	var batch []OID
 	s.client.Context = ctx
 
 	for len(reqOIDs) > 0 {
@@ -420,25 +421,29 @@ func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 		}
 		batch, reqOIDs = reqOIDs[:batchSize], reqOIDs[batchSize:]
 
-		response, err := s.client.Get(batch)
+		var batchString []string
+		for _, elem := range batch {
+			batchString = append(batchString, elem.String())
+		}
+		response, err := s.client.Get(batchString)
 		if err != nil {
-			log.Ctx(ctx).Trace().Str("network_request", "snmpget").Strs("oid", batch).Err(err).Msg("SNMP Get failed")
+			log.Ctx(ctx).Trace().Str("network_request", "snmpget").Strs("oid", batchString).Err(err).Msg("SNMP Get failed")
 			return nil, errors.Wrap(err, "error during snmpget")
 		}
 
 		for _, currentResponse := range response.Variables {
-			snmpResponse := NewSNMPResponse(currentResponse.Name, currentResponse.Type, currentResponse.Value)
+			snmpResponse := NewSNMPResponse(OID(currentResponse.Name), currentResponse.Type, currentResponse.Value)
 
 			if snmpResponse.WasSuccessful() {
-				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("SNMP Get was successful")
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid.String()).Msg("SNMP Get was successful")
 				successful = true
 				if s.useCache {
-					s.getCache.add(snmpResponse.oid, snmpResponse, nil)
+					s.getCache.add(snmpResponse.oid.String(), snmpResponse, nil)
 				}
 			} else {
-				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid).Msg("No Such Object available on this agent at this OID")
+				log.Ctx(ctx).Trace().Str("network_request", "snmpget").Str("oid", snmpResponse.oid.String()).Msg("No Such Object available on this agent at this OID")
 				if s.useCache {
-					s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+					s.getCache.add(snmpResponse.oid.String(), snmpResponse, errors.New("SNMP Request failed"))
 				}
 			}
 
@@ -454,11 +459,11 @@ func (s *snmpClient) SNMPGet(ctx context.Context, oid ...string) ([]SNMPResponse
 }
 
 // SNMPWalk sends a snmpwalk request to the specified oid.
-func (s *snmpClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, error) {
+func (s *snmpClient) SNMPWalk(ctx context.Context, oid OID) ([]SNMPResponse, error) {
 	if s.useCache {
-		cacheEntry, err := s.walkCache.get(oid)
+		cacheEntry, err := s.walkCache.get(oid.String())
 		if err == nil {
-			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("used cached snmp walk result")
+			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid.String()).Msg("used cached snmp walk result")
 			if cacheEntry.err != nil {
 				return nil, cacheEntry.err
 			}
@@ -475,51 +480,51 @@ func (s *snmpClient) SNMPWalk(ctx context.Context, oid string) ([]SNMPResponse, 
 	var response []gosnmp.SnmpPDU
 	var err error
 	if s.client.Version != gosnmp.Version1 {
-		response, err = s.client.BulkWalkAll(oid)
+		response, err = s.client.BulkWalkAll(oid.String())
 		if err != nil {
-			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Err(err).Msg("snmp bulk walk failed")
+			log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid.String()).Err(err).Msg("snmp bulk walk failed")
 		}
 	}
 	if s.client.Version == gosnmp.Version1 || err != nil {
-		response, err = s.client.WalkAll(oid)
+		response, err = s.client.WalkAll(oid.String())
 	}
 	if err != nil {
-		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Err(err).Msg("snmp walk failed")
+		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid.String()).Err(err).Msg("snmp walk failed")
 		err = errors.Wrap(err, "snmpwalk failed")
 		if s.useCache {
-			s.walkCache.add(oid, nil, err)
+			s.walkCache.add(oid.String(), nil, err)
 		}
 		return nil, err
 	}
 
 	if response == nil {
-		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("No Such Object available on this agent at this OID")
+		log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid.String()).Msg("No Such Object available on this agent at this OID")
 		err = tholaerr.NewNotFoundError("No Such Object available on this agent at this OID")
 		if s.useCache {
-			s.walkCache.add(oid, nil, err)
+			s.walkCache.add(oid.String(), nil, err)
 		}
 		return nil, err
 	}
 
 	var res []SNMPResponse
 	for _, currentResponse := range response {
-		snmpResponse := NewSNMPResponse(currentResponse.Name, currentResponse.Type, currentResponse.Value)
+		snmpResponse := NewSNMPResponse(OID(currentResponse.Name), currentResponse.Type, currentResponse.Value)
 		res = append(res, snmpResponse)
 
 		if s.useCache {
 			if snmpResponse.WasSuccessful() {
-				s.getCache.add(snmpResponse.oid, snmpResponse, nil)
+				s.getCache.add(snmpResponse.oid.String(), snmpResponse, nil)
 			} else {
-				s.getCache.add(snmpResponse.oid, snmpResponse, errors.New("SNMP Request failed"))
+				s.getCache.add(snmpResponse.oid.String(), snmpResponse, errors.New("SNMP Request failed"))
 			}
 		}
 	}
 
 	if s.useCache {
-		s.walkCache.add(oid, res, nil)
+		s.walkCache.add(oid.String(), res, nil)
 	}
 
-	log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid).Msg("snmp walk successful")
+	log.Ctx(ctx).Trace().Str("network_request", "snmpwalk").Str("oid", oid.String()).Msg("snmp walk successful")
 
 	return res, nil
 }
@@ -715,13 +720,13 @@ func (s *snmpClient) GetV3PrivProto() *string {
 
 // SNMPResponse is the response returned for a single snmp request.
 type SNMPResponse struct {
-	oid      string
+	oid      OID
 	snmpType gosnmp.Asn1BER
 	value    interface{}
 }
 
 // NewSNMPResponse creates a new SNMP Response
-func NewSNMPResponse(oid string, snmpType gosnmp.Asn1BER, value interface{}) SNMPResponse {
+func NewSNMPResponse(oid OID, snmpType gosnmp.Asn1BER, value interface{}) SNMPResponse {
 	return SNMPResponse{
 		oid:      oid,
 		snmpType: snmpType,
@@ -732,6 +737,34 @@ func NewSNMPResponse(oid string, snmpType gosnmp.Asn1BER, value interface{}) SNM
 // WasSuccessful returns if the snmp request was successful.
 func (s *SNMPResponse) WasSuccessful() bool {
 	return s.snmpType != gosnmp.NoSuchObject && s.snmpType != gosnmp.NoSuchInstance && s.snmpType != gosnmp.Null
+}
+
+// GetValue returns the value of the snmp response.
+func (s *SNMPResponse) GetValue() (value.Value, error) {
+	if !s.WasSuccessful() {
+		return nil, tholaerr.NewNotFoundError("no such object")
+	}
+	v, err := s.getValueDecoded()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode value")
+	}
+	return value.New(v), nil
+}
+
+// GetValueRaw returns the raw value string of the snmp response.
+func (s *SNMPResponse) GetValueRaw() (value.Value, error) {
+	if !s.WasSuccessful() {
+		return nil, tholaerr.NewNotFoundError("no such object")
+	}
+	if s.snmpType == gosnmp.OctetString {
+		switch x := s.value.(type) {
+		case string:
+			return value.New(strings.ToUpper(hex.EncodeToString([]byte(x)))), nil
+		case []byte:
+			return value.New(strings.ToUpper(hex.EncodeToString(x))), nil
+		}
+	}
+	return value.New(s.value), nil
 }
 
 func (s *SNMPResponse) getValueDecoded() (interface{}, error) {
@@ -755,77 +788,9 @@ func (s *SNMPResponse) getValueDecoded() (interface{}, error) {
 	return i, nil
 }
 
-// GetValue returns the value of the snmp response.
-func (s *SNMPResponse) GetValue() (interface{}, error) {
-	if !s.WasSuccessful() {
-		return "", tholaerr.NewNotFoundError("no such object")
-	}
-	v, err := s.getValueDecoded()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to decode value")
-	}
-	return v, nil
-}
-
-// GetValueString returns the value string of the snmp response.
-func (s *SNMPResponse) GetValueString() (string, error) {
-	return s.getValueString(true)
-}
-
-func (s *SNMPResponse) getValueString(decoded bool) (string, error) {
-	if !s.WasSuccessful() {
-		return "", tholaerr.NewNotFoundError("no such object")
-	}
-	v := s.value
-	var err error
-	var value string
-
-	if decoded {
-		v, err = s.getValueDecoded()
-		if err != nil {
-			return "", errors.Wrap(err, "failed to decode value")
-		}
-	}
-
-	switch x := v.(type) {
-	case string:
-		value = x
-	case []byte:
-		value = string(x)
-	case nil:
-		return "", tholaerr.NewNotFoundError("value is nil")
-	default:
-		value = fmt.Sprint(x)
-	}
-	return value, nil
-}
-
-// GetValueStringRaw returns the raw value string of the snmp response.
-func (s *SNMPResponse) GetValueStringRaw() (string, error) {
-	if !s.WasSuccessful() {
-		return "", tholaerr.NewNotFoundError("no such object")
-	}
-	if s.snmpType == gosnmp.OctetString {
-		switch x := s.value.(type) {
-		case string:
-			return strings.ToUpper(hex.EncodeToString([]byte(x))), nil
-		case []byte:
-			return strings.ToUpper(hex.EncodeToString(x)), nil
-		}
-	}
-
-	return s.getValueString(false)
-}
-
 // GetOID returns the oid of the response.
-func (s *SNMPResponse) GetOID() string {
+func (s *SNMPResponse) GetOID() OID {
 	return s.oid
-}
-
-// GetOIDIndex returns the last index of the responses oid.
-func (s *SNMPResponse) GetOIDIndex() string {
-	x := strings.Split(s.oid, ".")
-	return x[len(x)-1]
 }
 
 // GetSNMPType returns the snmp type of the response.
@@ -840,29 +805,33 @@ type SNMPGetConfiguration struct {
 }
 
 // GetValueBySNMPGetConfiguration returns the value of the snmp response according to the snmpgetConfig
-func (s *SNMPResponse) GetValueBySNMPGetConfiguration(snmpgetConfig SNMPGetConfiguration) (string, error) {
-	var value string
+func (s *SNMPResponse) GetValueBySNMPGetConfiguration(snmpGetConfig SNMPGetConfiguration) (value.Value, error) {
+	var val value.Value
 	var err error
-	if snmpgetConfig.UseRawResult {
-		value, err = s.GetValueStringRaw()
+	if snmpGetConfig.UseRawResult {
+		val, err = s.GetValueRaw()
 		if err != nil {
-			return "", errors.Wrap(err, "failed to get snmp result raw string")
+			return nil, errors.Wrap(err, "failed to get snmp result raw string")
 		}
 	} else {
-		value, err = s.GetValueString()
+		val, err = s.GetValue()
 		if err != nil {
-			return "", errors.Wrap(err, "failed to get snmp result string")
+			return nil, errors.Wrap(err, "failed to get snmp result string")
 		}
 	}
-	return value, nil
+	return val, nil
 }
 
-// OID represents an SNMP oid.
+// OID represents an SNMP OID.
 type OID string
 
-// Validate checks if the oid is syntactically correct
-func (o *OID) Validate() error {
-	m, err := regexp.MatchString("^[0-9.]+$", string(*o))
+func (o OID) String() string {
+	return string(o)
+}
+
+// Validate checks if the OID is syntactically correct
+func (o OID) Validate() error {
+	m, err := regexp.MatchString("^[0-9.]+$", string(o))
 	if err != nil {
 		return errors.Wrap(err, "regex match string failed")
 	}
@@ -870,4 +839,15 @@ func (o *OID) Validate() error {
 		return errors.New("invalid oid")
 	}
 	return nil
+}
+
+// GetIndex returns the last index of the OID.
+func (o OID) GetIndex() string {
+	x := strings.Split(o.String(), ".")
+	return x[len(x)-1]
+}
+
+// AddSuffix returns a OID with the specified suffix attached.
+func (o OID) AddSuffix(suffix string) OID {
+	return OID(o.String() + suffix)
 }

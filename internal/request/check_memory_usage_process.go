@@ -33,6 +33,11 @@ func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error)
 		} else if len(memoryPools) > 1 {
 			point.SetLabel(strconv.Itoa(k))
 		}
+
+		if memPool.PerformanceDataPointModifier != nil {
+			memPool.PerformanceDataPointModifier(point)
+		}
+
 		err = r.mon.AddPerformanceDataPoint(point)
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			return &CheckResponse{r.mon.GetInfo()}, nil

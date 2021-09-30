@@ -12,6 +12,7 @@ import (
 	condition2 "github.com/inexio/thola/internal/deviceclass/condition"
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/deviceclass/property"
+	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
 	"github.com/pkg/errors"
@@ -125,7 +126,7 @@ type deviceClassConfig struct {
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	count      string
+	count      network.OID
 	properties groupproperty.Reader
 }
 
@@ -533,7 +534,7 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 	}
 
 	if y.Count != "" {
-		interfaceComponent.count = y.Count
+		interfaceComponent.count = network.OID(y.Count)
 	}
 
 	return &interfaceComponent, nil

@@ -37,7 +37,7 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	interfaces = normalizeTimosInterfaces(interfaces, indexDescriptions)
 
 	// get all sap interfaces
-	sapDescriptionsOID := ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5"
+	sapDescriptionsOID := network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.5")
 	sapDescriptions, err := con.SNMP.SnmpClient.SNMPWalk(ctx, sapDescriptionsOID)
 	if err != nil {
 		log.Ctx(ctx).Debug().Err(err).Msg("sap interfaces are not available on this device")
@@ -45,13 +45,13 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	}
 
 	for _, response := range sapDescriptions {
-		special, err := response.GetValueString()
+		special, err := response.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
 		}
 
 		// construct description
-		suffix := strings.Split(strings.TrimPrefix(response.GetOID(), sapDescriptionsOID), ".")
+		suffix := strings.Split(strings.TrimPrefix(response.GetOID().String(), sapDescriptionsOID.String()), ".")
 		physIndex := suffix[2]
 		subID := suffix[3]
 		description, ok := indexDescriptions[physIndex]
@@ -59,8 +59,8 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 			return nil, errors.New("invalid physical index")
 		}
 		description += ":" + subID
-		if special != "" {
-			description += " " + special
+		if !special.IsEmpty() {
+			description += " " + special.String()
 		}
 
 		// construct index
@@ -70,13 +70,13 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		}
 
 		// retrieve admin status
-		admin, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6."+suffix[1]+"."+physIndex+"."+subID)
+		admin, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve admin status")
 		}
 
 		// retrieve oper status
-		oper, err := getStatusFromSnmpGet(ctx, ".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7."+suffix[1]+"."+physIndex+"."+subID)
+		oper, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve oper status")
 		}
@@ -101,7 +101,7 @@ func getPhysPortDescriptions(ctx context.Context) (map[string]string, error) {
 		return nil, errors.New("no device connection available")
 	}
 
-	physPortsOID := ".1.3.6.1.4.1.6527.3.1.2.2.4.2.1.6.1"
+	physPortsOID := network.OID(".1.3.6.1.4.1.6527.3.1.2.2.4.2.1.6.1")
 	physPorts, err := con.SNMP.SnmpClient.SNMPWalk(ctx, physPortsOID)
 	if err != nil {
 		return nil, errors.Wrap(err, "snmpwalk failed")
@@ -110,18 +110,18 @@ func getPhysPortDescriptions(ctx context.Context) (map[string]string, error) {
 	indexDescriptions := make(map[string]string)
 
 	for _, response := range physPorts {
-		description, err := response.GetValueString()
+		description, err := response.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
 		}
-		index := strings.TrimPrefix(response.GetOID(), physPortsOID+".")
-		indexDescriptions[index] = description
+		index := strings.TrimPrefix(response.GetOID().String(), physPortsOID.AddSuffix(".").String())
+		indexDescriptions[index] = description.String()
 	}
 	return indexDescriptions, nil
 }
 
 // getCounterFromSnmpGet returns the snmpget value at the given oid as uint64 counter.
-func getCounterFromSnmpGet(ctx context.Context, oid string) (uint64, error) {
+func getCounterFromSnmpGet(ctx context.Context, oid network.OID) (uint64, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return 0, errors.New("no device connection available")
@@ -131,11 +131,11 @@ func getCounterFromSnmpGet(ctx context.Context, oid string) (uint64, error) {
 	if err != nil || len(res) != 1 {
 		return 0, errors.Wrap(err, "snmpget failed")
 	}
-	resString, err := res[0].GetValueString()
+	resValue, err := res[0].GetValue()
 	if err != nil {
 		return 0, errors.Wrap(err, "couldn't parse snmp response")
 	}
-	resCounter, err := strconv.ParseUint(resString, 0, 64)
+	resCounter, err := resValue.UInt64()
 	if err != nil {
 		return 0, errors.Wrap(err, "couldn't parse snmp response")
 	}
@@ -143,7 +143,7 @@ func getCounterFromSnmpGet(ctx context.Context, oid string) (uint64, error) {
 }
 
 // getStatusFromSnmpGet returns the snmpget value at the given oid as device.Status.
-func getStatusFromSnmpGet(ctx context.Context, oid string) (device.Status, error) {
+func getStatusFromSnmpGet(ctx context.Context, oid network.OID) (device.Status, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return "", errors.New("no device connection available")
@@ -153,11 +153,11 @@ func getStatusFromSnmpGet(ctx context.Context, oid string) (device.Status, error
 	if err != nil || len(res) != 1 {
 		return "", errors.Wrap(err, "snmpget failed")
 	}
-	resString, err := res[0].GetValueString()
+	resValue, err := res[0].GetValue()
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't parse snmp response")
 	}
-	resInt, err := strconv.Atoi(resString)
+	resInt, err := resValue.Int()
 	if err != nil {
 		return "", errors.Wrap(err, "couldn't parse snmp response")
 	}
