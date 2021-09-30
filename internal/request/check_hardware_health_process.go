@@ -33,7 +33,7 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 
-		r.mon.UpdateStatusIf((*res.EnvironmentMonitorState) != "normal", monitoringplugin.CRITICAL, "environment monitor state is critical")
+		r.mon.UpdateStatusIf((*res.EnvironmentMonitorState) != device.HardwareHealthComponentStateNormal, monitoringplugin.CRITICAL, "environment monitor state is critical")
 	}
 
 	// check duplicate labels
@@ -42,7 +42,7 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 		duplicateLabelCheckerFans.addLabel(fan.Description)
 	}
 	for _, fan := range res.Fans {
-		if r.mon.UpdateStatusIf(fan.State == nil, monitoringplugin.UNKNOWN, "description or state is missing for fan") {
+		if r.mon.UpdateStatusIf(fan.State == nil, monitoringplugin.UNKNOWN, "state is missing for fan") {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
