@@ -2,6 +2,7 @@ package request
 
 import (
 	"github.com/inexio/go-monitoringplugin"
+	"strconv"
 )
 
 // CheckRequest
@@ -26,6 +27,45 @@ func (r *CheckRequest) handlePreProcessError(err error) (Response, error) {
 	r.init()
 	r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, err.Error(), false)
 	return &CheckResponse{r.mon.GetInfo()}, nil
+}
+
+type labelCounter struct {
+	duplicated bool
+	current    int
+}
+
+type duplicateLabelChecker map[string]*labelCounter
+
+func (d *duplicateLabelChecker) addLabel(label *string) {
+	l := ""
+	if label != nil {
+		l = *label
+	}
+	if lc, ok := (*d)[l]; ok {
+		lc.duplicated = true
+	} else {
+		(*d)[l] = &labelCounter{
+			duplicated: false,
+			current:    1,
+		}
+	}
+}
+
+func (d *duplicateLabelChecker) getModifiedLabel(label *string) string {
+	l := ""
+	if label != nil {
+		l = *label
+	}
+	if lc, ok := (*d)[l]; ok {
+		if lc.duplicated {
+			if l != "" {
+				l += "_"
+			}
+			l += strconv.Itoa(lc.current)
+			lc.current++
+		}
+	}
+	return l
 }
 
 // CheckResponse

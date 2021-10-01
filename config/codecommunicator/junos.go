@@ -84,9 +84,10 @@ func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device
 		oid := response.GetOID()
 		oidSplit := strings.Split(oid.String(), ".")
 		filterID := vlanIndexFilterID[oidSplit[len(oidSplit)-1]]
+		nameString := name.String()
 
 		filterIDVLAN[filterID] = device.VLAN{
-			Name: name.String(),
+			Name: &nameString,
 		}
 	}
 
@@ -192,7 +193,8 @@ func (c *junosCommunicator) addVLANsNonELS(ctx context.Context, interfaces []dev
 		oidSplit := strings.Split(oid.String(), ".")
 
 		if vlan, ok := vlanIndexVLAN[oidSplit[len(oidSplit)-1]]; ok {
-			vlan.Name = name.String()
+			vlanName := name.String()
+			vlan.Name = &vlanName
 			vlanIndexVLAN[oidSplit[len(oidSplit)-1]] = vlan
 		}
 	}
@@ -257,7 +259,7 @@ func (c *junosCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]devic
 	jnxOperatingCPUOID := network.OID(".1.3.6.1.4.1.2636.3.1.13.1.8")
 	var cpus []device.CPU
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID.AddSuffix(index.index))
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, jnxOperatingCPUOID.AddIndex(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get CPU load")
 		} else if len(response) != 1 {
@@ -422,7 +424,7 @@ func (c *junosCommunicator) GetMemoryComponentMemoryUsage(ctx context.Context) (
 		return nil, errors.Wrap(err, "failed to get routing engine indices")
 	}
 	for i, index := range indices {
-		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.11").AddSuffix(index.index))
+		response, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2636.3.1.13.1.11").AddIndex(index.index))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get memory usage")
 		} else if len(response) != 1 {

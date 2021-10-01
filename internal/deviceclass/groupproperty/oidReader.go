@@ -11,8 +11,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
-	"strings"
 )
 
 //go:generate go run github.com/vektra/mockery/v2 --name=OIDReader --inpackage
@@ -50,6 +48,7 @@ func Interface2OIDReader(i interface{}) (OIDReader, error) {
 
 		if ignore, ok := dataMap["ignore"]; ok {
 			if b, ok := ignore.(bool); ok && b {
+				//TODO delete from map?
 				result[valString] = &emptyOIDReader{}
 				continue
 			}
@@ -74,14 +73,14 @@ func Interface2OIDReader(i interface{}) (OIDReader, error) {
 }
 
 type OIDReader interface {
-	readOID(context.Context, []value.Value, bool) (map[int]interface{}, error)
+	readOID(context.Context, []string, bool) (map[string]interface{}, error)
 }
 
 // deviceClassOIDs is a recursive data structure which maps labels to either a single OID (deviceClassOID) or another deviceClassOIDs
 type deviceClassOIDs map[string]OIDReader
 
-func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
-	result := make(map[int]map[string]interface{})
+func (d *deviceClassOIDs) readOID(ctx context.Context, indices []string, skipEmpty bool) (map[string]interface{}, error) {
+	result := make(map[string]map[string]interface{})
 	for label, reader := range *d {
 		res, err := reader.readOID(ctx, indices, skipEmpty)
 		if err != nil {
@@ -100,7 +99,7 @@ func (d *deviceClassOIDs) readOID(ctx context.Context, indices []value.Value, sk
 		}
 	}
 
-	r := make(map[int]interface{})
+	r := make(map[string]interface{})
 	for k, v := range result {
 		r[k] = v
 	}
@@ -136,10 +135,10 @@ type deviceClassOID struct {
 	indicesMapping OIDReader
 }
 
-func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, skipEmpty bool) (map[int]interface{}, error) {
-	result := make(map[int]interface{})
+func (d *deviceClassOID) readOID(ctx context.Context, indices []string, skipEmpty bool) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
 
-	logger := log.Ctx(ctx).With().Str("oid", string(d.OID)).Logger()
+	logger := log.Ctx(ctx).With().Str("oid", d.OID.String()).Logger()
 	ctx = logger.WithContext(ctx)
 
 	con, ok := network.DeviceConnectionFromContext(ctx)
@@ -160,22 +159,22 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 				return nil, errors.Wrap(err, "failed to read indices")
 			}
 
-			ifIndexRelIndex := make(map[string]value.Value)
-			for relIndex, ifIndex := range mappingIndices {
-				ifIndexValue, ok := ifIndex.(value.Value)
+			indexRelIndex := make(map[string]string)
+			for relIndex, index := range mappingIndices {
+				indexValue, ok := index.(value.Value)
 				if !ok {
 					return nil, errors.New("index mapping oid didn't return a result of type 'value'")
 				}
-				ifIndexString := ifIndexValue.String()
-				if idx, ok := ifIndexRelIndex[ifIndexString]; ok {
-					return nil, fmt.Errorf("index mapping resulted in duplicate ifIndex mapping on '%s'", idx.String())
+				indexString := indexValue.String()
+				if idx, ok := indexRelIndex[indexString]; ok {
+					return nil, fmt.Errorf("index mapping resulted in duplicate index mapping on '%s'", idx)
 				}
-				ifIndexRelIndex[ifIndexString] = value.New(relIndex)
+				indexRelIndex[indexString] = relIndex
 			}
 
-			var newIndices []value.Value
-			for _, ifIndex := range indices {
-				if relIndex, ok := ifIndexRelIndex[ifIndex.String()]; ok {
+			var newIndices []string
+			for _, index := range indices {
+				if relIndex, ok := indexRelIndex[index]; ok {
 					newIndices = append(newIndices, relIndex)
 				}
 			}
@@ -183,13 +182,9 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			indices = newIndices
 		}
 
-		oid := d.OID
-		if !strings.HasSuffix(oid.String(), ".") {
-			oid = oid.AddSuffix(".")
-		}
 		var oids []network.OID
 		for _, index := range indices {
-			oids = append(oids, oid.AddSuffix(index.String()))
+			oids = append(oids, d.OID.AddIndex(index))
 		}
 		snmpResponse, err = con.SNMP.SnmpClient.SNMPGet(ctx, oids...)
 	} else {
@@ -213,7 +208,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 			continue
 		}
 		if !res.IsEmpty() || !skipEmpty {
-			resNormalized, err := d.operators.Apply(ctx, value.New(res))
+			resNormalized, err := d.operators.Apply(ctx, res)
 			if err != nil {
 				if tholaerr.IsDidNotMatchError(err) {
 					continue
@@ -221,13 +216,11 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 				log.Ctx(ctx).Debug().Err(err).Msgf("response couldn't be normalized (response: %s)", res)
 				return nil, errors.Wrapf(err, "response couldn't be normalized (response: %s)", res)
 			}
-			oid := strings.Split(response.GetOID().String(), ".")
-			index, err := strconv.Atoi(oid[len(oid)-1])
+			idx, err := response.GetOID().GetIndexAfterOID(d.OID)
 			if err != nil {
-				log.Ctx(ctx).Debug().Err(err).Msg("index isn't an integer")
-				return nil, errors.Wrap(err, "index isn't an integer")
+				return nil, errors.Wrap(err, "failed to get index after oid")
 			}
-			result[index] = resNormalized
+			result[idx] = resNormalized
 		}
 	}
 
@@ -237,27 +230,23 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read mapping indices")
 		}
-		mappedResult := make(map[int]interface{})
+		mappedResult := make(map[string]interface{})
 
 		for k, v := range result {
 			mappedIdx, ok := mappingIndices[k]
 			if !ok {
 				continue
 			}
-			idxValue, ok := mappedIdx.(value.Value)
+			idx, ok := mappedIdx.(value.Value)
 			if !ok {
 				return nil, errors.New("index mapping oid didn't return a result of type 'value'")
 			}
-			idx, err := idxValue.Int()
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to convert Value to int")
-			}
 
-			if _, ok := mappedResult[idx]; ok {
+			if _, ok := mappedResult[idx.String()]; ok {
 				return nil, fmt.Errorf("index mapping resulted in duplicate index '%d'", idx)
 			}
 
-			mappedResult[idx] = v
+			mappedResult[idx.String()] = v
 		}
 		result = mappedResult
 	}
@@ -266,7 +255,7 @@ func (d *deviceClassOID) readOID(ctx context.Context, indices []value.Value, ski
 
 type emptyOIDReader struct{}
 
-func (n *emptyOIDReader) readOID(context.Context, []value.Value, bool) (map[int]interface{}, error) {
+func (n *emptyOIDReader) readOID(context.Context, []string, bool) (map[string]interface{}, error) {
 	return nil, tholaerr.NewComponentNotFoundError("oid is ignored")
 }
 

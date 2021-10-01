@@ -454,7 +454,7 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Conte
 	}
 
 	if empty {
-		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no sbc data available")
+		return device.HardwareHealthComponent{}, tholaerr.NewNotFoundError("no hardware health data available")
 	}
 
 	return hardwareHealth, nil

@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/encoding/charmap"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -843,11 +844,56 @@ func (o OID) Validate() error {
 
 // GetIndex returns the last index of the OID.
 func (o OID) GetIndex() string {
-	x := strings.Split(o.String(), ".")
+	x := strings.Split(strings.Trim(o.String(), "."), ".")
 	return x[len(x)-1]
 }
 
-// AddSuffix returns a OID with the specified suffix attached.
-func (o OID) AddSuffix(suffix string) OID {
-	return OID(o.String() + suffix)
+// GetIndexAfterOID returns the index of the OID based on the baseOID.
+func (o OID) GetIndexAfterOID(baseOID OID) (string, error) {
+	oidStr := strings.TrimPrefix(o.String(), ".")
+	baseOIDStr := strings.TrimPrefix(baseOID.String(), ".")
+
+	if !strings.HasPrefix(oidStr, baseOIDStr) {
+		return "", errors.New("subtree does not exist")
+	}
+	return strings.Trim(strings.TrimPrefix(oidStr, baseOIDStr), "."), nil
+}
+
+// Cmp compares two OIDs.
+func (o OID) Cmp(oid OID) (int, error) {
+	o1 := strings.Split(strings.Trim(o.String(), "."), ".")
+	o2 := strings.Split(strings.Trim(oid.String(), "."), ".")
+
+	for i, v1 := range o1 {
+		if i >= len(o2) {
+			return 1, nil
+		}
+		v1Int, err := strconv.Atoi(v1)
+		if err != nil {
+			return 0, errors.Wrap(err, "receiver oid is not a valid oid")
+		}
+		v2Int, err := strconv.Atoi(o2[i])
+		if err != nil {
+			return 0, errors.Wrap(err, "input oid is not a valid oid")
+		}
+		if v1Int < v2Int {
+			return -1, nil
+		} else if v1Int > v2Int {
+			return 1, nil
+		}
+	}
+	if len(o1) < len(o2) {
+		return -1, nil
+	}
+	return 0, nil
+}
+
+// AddIndex returns a OID with the specified index attached.
+func (o OID) AddIndex(index string) OID {
+	if !strings.HasSuffix(o.String(), ".") && !strings.HasPrefix(index, ".") {
+		return OID(o.String() + "." + index)
+	} else if strings.HasSuffix(o.String(), ".") && strings.HasPrefix(index, ".") {
+		return OID(strings.TrimSuffix(o.String(), ".") + index)
+	}
+	return OID(o.String() + index)
 }

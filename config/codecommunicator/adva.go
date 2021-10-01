@@ -110,7 +110,7 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 			}
 
 			// corrected fec 15m
-			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
+			res, err := con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.2.").AddIndex(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
 				val, err := res[0].GetValue()
 				if err != nil {
@@ -133,7 +133,7 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 			}
 
 			// uncorrected fec 15m
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.180.1.3.").AddIndex(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
 				val, err := res[0].GetValue()
 				if err != nil {
@@ -156,7 +156,7 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 			}
 
 			// corrected fec 1d
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.2.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.2.").AddIndex(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
 				val, err := res[0].GetValue()
 				if err != nil {
@@ -179,7 +179,7 @@ func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []d
 			}
 
 			// uncorrected fec 1d
-			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.3.").AddSuffix(fmt.Sprint(*interf.IfIndex)+".1"))
+			res, err = con.SNMP.SnmpClient.SNMPGet(ctx, network.OID(".1.3.6.1.4.1.2544.1.11.2.6.2.181.1.3.").AddIndex(fmt.Sprint(*interf.IfIndex)+".1"))
 			if err == nil && len(res) == 1 {
 				valFloat, err := res[0].GetValue()
 				if err != nil {
@@ -250,7 +250,7 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 			valFin, _ := a.Mul(b).Float64()
 
 			channels[subtree] = device.OpticalChannel{
-				Channel: s[len(s)-2],
+				Channel: &s[len(s)-2],
 				RXPower: &valFin,
 			}
 		}
@@ -278,7 +278,7 @@ func (c *advaCommunicator) getChannels(ctx context.Context, interfaces []device.
 
 			if channel, ok := channels[subtree]; !ok {
 				channels[subtree] = device.OpticalChannel{
-					Channel: s[len(s)-2],
+					Channel: &s[len(s)-2],
 					TXPower: &valFin,
 				}
 			} else {

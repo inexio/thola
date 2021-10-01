@@ -4,6 +4,7 @@ config:
   components:
     cpu: true
     memory: true
+    hardware_health: true
 
 match:
   conditions:

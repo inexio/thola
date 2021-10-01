@@ -38,7 +38,7 @@ func New(i interface{}) Value {
 	default:
 		v = value(fmt.Sprint(t))
 	}
-	return &v
+	return v
 }
 
 // String returns the value as a string

@@ -70,13 +70,13 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		}
 
 		// retrieve admin status
-		admin, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
+		admin, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.6.").AddIndex(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve admin status")
 		}
 
 		// retrieve oper status
-		oper, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7.").AddSuffix(suffix[1]+"."+physIndex+"."+subID))
+		oper, err := getStatusFromSnmpGet(ctx, network.OID(".1.3.6.1.4.1.6527.3.1.2.4.3.2.1.7.").AddIndex(suffix[1]+"."+physIndex+"."+subID))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to retrieve oper status")
 		}
@@ -114,7 +114,7 @@ func getPhysPortDescriptions(ctx context.Context) (map[string]string, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "couldn't get string value")
 		}
-		index := strings.TrimPrefix(response.GetOID().String(), physPortsOID.AddSuffix(".").String())
+		index := strings.TrimPrefix(response.GetOID().String(), physPortsOID.AddIndex(".").String())
 		indexDescriptions[index] = description.String()
 	}
 	return indexDescriptions, nil

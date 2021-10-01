@@ -49,6 +49,8 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &junosCommunicator{base}, nil
 	case "aviat":
 		return &aviatCommunicator{base}, nil
+	case "fortigate":
+		return &fortigateCommunicator{base}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }

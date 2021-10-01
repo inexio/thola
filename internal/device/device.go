@@ -233,7 +233,7 @@ type OpticalOPMInterface struct {
 //
 // swagger:model
 type OpticalChannel struct {
-	Channel string   `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
+	Channel *string  `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
 	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
 	TXPower *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
 }
@@ -263,7 +263,7 @@ type VLANInformation struct {
 //
 // swagger:model
 type VLAN struct {
-	Name   string  `yaml:"name,omitempty" json:"name,omitempty" xml:"name,omitempty" mapstructure:"name"`
+	Name   *string `yaml:"name,omitempty" json:"name,omitempty" xml:"name,omitempty" mapstructure:"name"`
 	Status *string `yaml:"status,omitempty" json:"status,omitempty" xml:"status,omitempty" mapstructure:"status"`
 }
 
@@ -383,13 +383,13 @@ type SBCComponent struct {
 //
 // swagger:model
 type SBCComponentAgent struct {
-	Hostname                      string `yaml:"hostname" json:"hostname" xml:"hostname" mapstructure:"hostname"`
-	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
-	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
-	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
-	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
-	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"period_asr"`
-	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
+	Hostname                      *string `yaml:"hostname" json:"hostname" xml:"hostname" mapstructure:"hostname"`
+	CurrentActiveSessionsInbound  *int    `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int    `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int    `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int    `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int    `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"period_asr"`
+	Status                        *int    `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
 // SBCComponentRealm
@@ -398,14 +398,14 @@ type SBCComponentAgent struct {
 //
 // swagger:model
 type SBCComponentRealm struct {
-	Name                          string `yaml:"name" json:"name" xml:"name"`
-	CurrentActiveSessionsInbound  *int   `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
-	CurrentSessionRateInbound     *int   `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
-	CurrentActiveSessionsOutbound *int   `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
-	CurrentSessionRateOutbound    *int   `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
-	PeriodASR                     *int   `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"d_asr"`
-	ActiveLocalContacts           *int   `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts" mapstructure:"active_local_contacts"`
-	Status                        *int   `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
+	Name                          *string `yaml:"name" json:"name" xml:"name"`
+	CurrentActiveSessionsInbound  *int    `yaml:"current_active_sessions_inbound" json:"current_active_sessions_inbound" xml:"current_active_sessions_inbound" mapstructure:"current_active_sessions_inbound"`
+	CurrentSessionRateInbound     *int    `yaml:"current_session_rate_inbound" json:"current_session_rate_inbound" xml:"current_session_rate_inbound" mapstructure:"current_session_rate_inbound"`
+	CurrentActiveSessionsOutbound *int    `yaml:"current_active_sessions_outbound" json:"current_active_sessions_outbound" xml:"current_active_sessions_outbound" mapstructure:"current_active_sessions_outbound"`
+	CurrentSessionRateOutbound    *int    `yaml:"current_session_rate_outbound" json:"current_session_rate_outbound" xml:"current_session_rate_outbound" mapstructure:"current_session_rate_outbound"`
+	PeriodASR                     *int    `yaml:"period_asr" json:"period_asr" xml:"period_asr" mapstructure:"d_asr"`
+	ActiveLocalContacts           *int    `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts" mapstructure:"active_local_contacts"`
+	Status                        *int    `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
 // HardwareHealthComponent
@@ -455,23 +455,34 @@ type HardwareHealthComponentVoltage struct {
 
 type HardwareHealthComponentState string
 
+const (
+	HardwareHealthComponentStateInitial        HardwareHealthComponentState = "initial"
+	HardwareHealthComponentStateNormal         HardwareHealthComponentState = "normal"
+	HardwareHealthComponentStateWarning        HardwareHealthComponentState = "warning"
+	HardwareHealthComponentStateCritical       HardwareHealthComponentState = "critical"
+	HardwareHealthComponentStateShutdown       HardwareHealthComponentState = "shutdown"
+	HardwareHealthComponentStateNotPresent     HardwareHealthComponentState = "not_present"
+	HardwareHealthComponentStateNotFunctioning HardwareHealthComponentState = "not_functioning"
+	HardwareHealthComponentStateUnknown        HardwareHealthComponentState = "unknown"
+)
+
 func (h HardwareHealthComponentState) GetInt() (int, error) {
 	switch h {
-	case "initial":
+	case HardwareHealthComponentStateInitial:
 		return 0, nil
-	case "normal":
+	case HardwareHealthComponentStateNormal:
 		return 1, nil
-	case "warning":
+	case HardwareHealthComponentStateWarning:
 		return 2, nil
-	case "critical":
+	case HardwareHealthComponentStateCritical:
 		return 3, nil
-	case "shutdown":
+	case HardwareHealthComponentStateShutdown:
 		return 4, nil
-	case "not_present":
+	case HardwareHealthComponentStateNotPresent:
 		return 5, nil
-	case "not_functioning":
+	case HardwareHealthComponentStateNotFunctioning:
 		return 6, nil
-	case "unknown":
+	case HardwareHealthComponentStateUnknown:
 		return 7, nil
 	}
 	return 7, fmt.Errorf("invalid hardware health state '%s'", h)

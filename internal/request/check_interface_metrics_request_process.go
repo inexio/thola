@@ -459,17 +459,19 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 
 			for _, channel := range i.DWDM.Channels {
-				if channel.RXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
-					if err != nil {
-						return err
+				if channel.Channel != nil {
+					if channel.RXPower != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
 					}
-				}
 
-				if channel.TXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *channel.TXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
-					if err != nil {
-						return err
+					if channel.TXPower != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("tx_power", *channel.TXPower).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
 					}
 				}
 			}
@@ -534,8 +536,8 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				}
 			}
 			for _, channel := range i.OpticalOPM.Channels {
-				if channel.RXPower != nil {
-					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + channel.Channel))
+				if channel.Channel != nil && channel.RXPower != nil {
+					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + *channel.Channel))
 					if err != nil {
 						return err
 					}
