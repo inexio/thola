@@ -42,9 +42,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 		duplicateLabelCheckerFans.addLabel(fan.Description)
 	}
 	for _, fan := range res.Fans {
-		if r.mon.UpdateStatusIf(fan.State == nil, monitoringplugin.UNKNOWN, "state is missing for fan") {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if fan.State == nil {
+			continue
 		}
 
 		stateInt, err := (*fan.State).GetInt()
@@ -55,8 +54,10 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 
 		p := monitoringplugin.NewPerformanceDataPoint("fan_state", stateInt)
 
+		outputDescription := "fan state"
 		if label := duplicateLabelCheckerFans.getModifiedLabel(fan.Description); label != "" {
 			p.SetLabel(label)
+			outputDescription += " (" + label + ")"
 		}
 
 		err = r.mon.AddPerformanceDataPoint(p)
@@ -65,8 +66,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 
-		r.mon.UpdateStatusIf(*fan.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, "fan state is warning")
-		r.mon.UpdateStatusIf(*fan.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, "fan state is critical")
+		r.mon.UpdateStatusIf(*fan.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, outputDescription+" is warning")
+		r.mon.UpdateStatusIf(*fan.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, outputDescription+" is critical")
 	}
 
 	// check duplicate labels
@@ -75,9 +76,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 		duplicateLabelCheckerPS.addLabel(ps.Description)
 	}
 	for _, powerSupply := range res.PowerSupply {
-		if r.mon.UpdateStatusIf(powerSupply.State == nil, monitoringplugin.UNKNOWN, "state is missing for power supply") {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if powerSupply.State == nil {
+			continue
 		}
 
 		stateInt, err := (*powerSupply.State).GetInt()
@@ -88,8 +88,10 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 
 		p := monitoringplugin.NewPerformanceDataPoint("power_supply_state", stateInt)
 
+		outputDescription := "power supply state"
 		if label := duplicateLabelCheckerPS.getModifiedLabel(powerSupply.Description); label != "" {
 			p.SetLabel(label)
+			outputDescription += " (" + label + ")"
 		}
 
 		err = r.mon.AddPerformanceDataPoint(p)
@@ -98,8 +100,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 
-		r.mon.UpdateStatusIf(*powerSupply.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, "power supply state is warning")
-		r.mon.UpdateStatusIf(*powerSupply.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, "power supply state is critical")
+		r.mon.UpdateStatusIf(*powerSupply.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, outputDescription+" is warning")
+		r.mon.UpdateStatusIf(*powerSupply.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, outputDescription+" is critical")
 	}
 
 	// check duplicate labels
@@ -108,9 +110,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 		duplicateLabelCheckerTemp.addLabel(t.Description)
 	}
 	for _, temp := range res.Temperature {
-		if r.mon.UpdateStatusIf(temp.State == nil && temp.Temperature == nil, monitoringplugin.UNKNOWN, "temperature sensor has no state and temperature value") {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if temp.State == nil && temp.Temperature == nil {
+			continue
 		}
 
 		if temp.Temperature != nil {
@@ -135,8 +136,10 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 
 			p := monitoringplugin.NewPerformanceDataPoint("temperature_state", stateInt)
 
+			outputDescription := "temperature state"
 			if label := duplicateLabelCheckerTemp.getModifiedLabel(temp.Description); label != "" {
 				p.SetLabel(label)
+				outputDescription += " (" + label + ")"
 			}
 
 			err = r.mon.AddPerformanceDataPoint(p)
@@ -145,8 +148,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 				return &CheckResponse{r.mon.GetInfo()}, nil
 			}
 
-			r.mon.UpdateStatusIf(*temp.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, "temperature state is warning")
-			r.mon.UpdateStatusIf(*temp.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, "temperature state is critical")
+			r.mon.UpdateStatusIf(*temp.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, outputDescription+" is warning")
+			r.mon.UpdateStatusIf(*temp.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, outputDescription+" is critical")
 		}
 	}
 
@@ -156,9 +159,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 		duplicateLabelCheckerVolt.addLabel(v.Description)
 	}
 	for _, volt := range res.Voltage {
-		if r.mon.UpdateStatusIf(volt.State == nil && volt.Voltage == nil, monitoringplugin.UNKNOWN, "voltage sensor has no state and voltage value") {
-			r.mon.PrintPerformanceData(false)
-			return &CheckResponse{r.mon.GetInfo()}, nil
+		if volt.State == nil && volt.Voltage == nil {
+			continue
 		}
 
 		if volt.Voltage != nil {
@@ -183,8 +185,10 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 
 			p := monitoringplugin.NewPerformanceDataPoint("voltage_state", stateInt)
 
+			outputDescription := "voltage state"
 			if label := duplicateLabelCheckerVolt.getModifiedLabel(volt.Description); label != "" {
 				p.SetLabel(label)
+				outputDescription += " (" + label + ")"
 			}
 
 			err = r.mon.AddPerformanceDataPoint(p)
@@ -193,8 +197,8 @@ func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, err
 				return &CheckResponse{r.mon.GetInfo()}, nil
 			}
 
-			r.mon.UpdateStatusIf(*volt.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, "voltage state is warning")
-			r.mon.UpdateStatusIf(*volt.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, "voltage state is critical")
+			r.mon.UpdateStatusIf(*volt.State == device.HardwareHealthComponentStateWarning, monitoringplugin.WARNING, outputDescription+" is warning")
+			r.mon.UpdateStatusIf(*volt.State == device.HardwareHealthComponentStateCritical, monitoringplugin.CRITICAL, outputDescription+" is critical")
 		}
 	}
 
