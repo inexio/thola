@@ -313,7 +313,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 
 			if counter := checkHCCounter(i.EthernetLike.Dot3HCStatsFCSErrors, i.EthernetLike.Dot3StatsFCSErrors); counter != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_FCSErrors", *counter).SetUnit("c").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_fcs_errors", *counter).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -334,7 +334,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 
 			if i.EthernetLike.Dot3StatsSQETestErrors != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_SQETest_errors", *i.EthernetLike.Dot3StatsSQETestErrors).SetUnit("c").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_sqe_test_errors", *i.EthernetLike.Dot3StatsSQETestErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}
@@ -390,7 +390,7 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 
 			if i.EthernetLike.EtherStatsCRCAlignErrors != nil {
-				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_CRCAlign_errors", *i.EthernetLike.EtherStatsCRCAlignErrors).SetUnit("c").SetLabel(*i.IfDescr))
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("error_counter_crc_align_errors", *i.EthernetLike.EtherStatsCRCAlignErrors).SetUnit("c").SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
 				}

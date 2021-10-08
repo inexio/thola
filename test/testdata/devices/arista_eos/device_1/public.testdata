@@ -284,7 +284,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "Ethernet3",
 					"value": 0,
 					"unit": "c",
@@ -368,7 +368,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "Ethernet1",
 					"value": 0,
 					"unit": "c",
@@ -494,7 +494,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "Ethernet1",
 					"value": 0,
 					"unit": "c",
@@ -508,7 +508,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "Ethernet2",
 					"value": 0,
 					"unit": "c",
@@ -592,7 +592,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "Management1",
 					"value": 0,
 					"unit": "c",
@@ -718,7 +718,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "Ethernet3",
 					"value": 0,
 					"unit": "c",
@@ -732,7 +732,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "Ethernet2",
 					"value": 0,
 					"unit": "c",
@@ -830,7 +830,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "Ethernet2",
 					"value": 0,
 					"unit": "c",
@@ -844,7 +844,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "Ethernet3",
 					"value": 0,
 					"unit": "c",
@@ -872,7 +872,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "Management1",
 					"value": 0,
 					"unit": "c",
@@ -914,7 +914,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "Management1",
 					"value": 0,
 					"unit": "c",
@@ -1306,7 +1306,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "Ethernet1",
 					"value": 0,
 					"unit": "c",
