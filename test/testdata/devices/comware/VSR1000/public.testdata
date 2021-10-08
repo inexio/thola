@@ -18,7 +18,7 @@
 			"status_code": 0,
 			"performance_data": [
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -158,7 +158,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet4/0",
 					"value": 0,
 					"unit": "c",
@@ -242,7 +242,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "c",
@@ -284,7 +284,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
@@ -396,7 +396,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet8/0",
 					"value": 0,
 					"unit": "c",
@@ -662,7 +662,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet8/0",
 					"value": 0,
 					"unit": "c",
@@ -928,7 +928,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet1/0",
 					"value": 0,
 					"unit": "c",
@@ -1390,7 +1390,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
@@ -1964,7 +1964,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",
@@ -2216,7 +2216,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
@@ -2412,7 +2412,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet6/0",
 					"value": 0,
 					"unit": "c",
@@ -2426,7 +2426,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet2/0",
 					"value": 0,
 					"unit": "c",
@@ -2636,7 +2636,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
@@ -2790,7 +2790,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet5/0",
 					"value": 0,
 					"unit": "c",
@@ -2818,7 +2818,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "GigabitEthernet7/0",
 					"value": 0,
 					"unit": "c",
@@ -3406,7 +3406,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "GigabitEthernet3/0",
 					"value": 0,
 					"unit": "c",

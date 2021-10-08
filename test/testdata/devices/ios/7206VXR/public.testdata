@@ -88,7 +88,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "VoIP-Null0",
 					"value": 0,
 					"unit": "c",
@@ -368,7 +368,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_SQETest_errors",
+					"metric": "error_counter_sqe_test_errors",
 					"label": "FastEthernet0/0",
 					"value": 0,
 					"unit": "c",
@@ -634,7 +634,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "Null0",
 					"value": 0,
 					"unit": "c",
@@ -718,7 +718,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_FCSErrors",
+					"metric": "error_counter_fcs_errors",
 					"label": "FastEthernet0/0",
 					"value": 0,
 					"unit": "c",
@@ -872,7 +872,7 @@
 					"max": null
 				},
 				{
-					"metric": "error_counter_CRCAlign_errors",
+					"metric": "error_counter_crc_align_errors",
 					"label": "FastEthernet0/0",
 					"value": 0,
 					"unit": "c",
