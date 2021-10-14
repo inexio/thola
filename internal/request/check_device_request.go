@@ -10,6 +10,6 @@ type CheckDeviceRequest struct {
 	CheckRequest
 }
 
-func (r *CheckDeviceRequest) handlePreProcessError(err error) (Response, error) {
-	return r.CheckRequest.handlePreProcessError(err)
+func (r *CheckDeviceRequest) HandlePreProcessError(err error) (Response, error) {
+	return r.CheckRequest.HandlePreProcessError(err)
 }

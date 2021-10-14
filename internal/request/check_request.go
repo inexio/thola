@@ -23,7 +23,7 @@ func (r *CheckRequest) init() {
 	r.mon.SetPerformanceDataJSONLabel(r.JSONMetrics)
 }
 
-func (r *CheckRequest) handlePreProcessError(err error) (Response, error) {
+func (r *CheckRequest) HandlePreProcessError(err error) (Response, error) {
 	r.init()
 	r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, err.Error(), false)
 	return &CheckResponse{r.mon.GetInfo()}, nil

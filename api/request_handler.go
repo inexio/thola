@@ -10,6 +10,7 @@ import (
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
@@ -988,6 +989,48 @@ func returnInFormat(ctx echo.Context, statusCode int, resp interface{}) error {
 	return ctx.String(http.StatusInternalServerError, "Invalid output format set")
 }
 
+type response struct {
+	res request.Response
+	err error
+}
+
+func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
+	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
+	ctx := logger.WithContext(context.Background())
+
+	if ip != nil && !viper.GetBool("request.no-ip-lock") {
+		ctx, cancel := request.CheckForTimeout(ctx, r)
+		defer cancel()
+
+		responseChan := make(chan response)
+		go handleAPIRequestWithLock(ctx, r, *ip, responseChan)
+		select {
+		case <-ctx.Done():
+			return r.HandlePreProcessError(errors.New("request timed out while waiting on the IP lock"))
+		case res := <-responseChan:
+			return res.res, res.err
+		}
+	} else {
+		return request.ProcessRequest(ctx, r)
+	}
+}
+
+func handleAPIRequestWithLock(ctx context.Context, r request.Request, ip string, responseChan chan response) {
+	lock := getDeviceLock(ip)
+	lock.Lock()
+	defer func() {
+		lock.Unlock()
+		log.Ctx(ctx).Debug().Msg("unlocked IP " + ip)
+	}()
+	log.Ctx(ctx).Debug().Msg("locked IP " + ip)
+
+	res, err := request.ProcessRequest(ctx, r)
+	responseChan <- response{
+		res: res,
+		err: err,
+	}
+}
+
 func getDeviceLock(ip string) *sync.Mutex {
 	deviceLocks.RLock()
 	lock, ok := deviceLocks.locks[ip]
@@ -1001,22 +1044,4 @@ func getDeviceLock(ip string) *sync.Mutex {
 		deviceLocks.Unlock()
 	}
 	return lock
-}
-
-func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
-	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
-	ctx := logger.WithContext(context.Background())
-
-	if ip != nil && !viper.GetBool("request.no-ip-lock") {
-		lock := getDeviceLock(*ip)
-		lock.Lock()
-		defer func() {
-			lock.Unlock()
-			log.Ctx(ctx).Debug().Msg("unlocked IP " + *ip)
-		}()
-
-		log.Ctx(ctx).Debug().Msg("locked IP " + *ip)
-	}
-
-	return request.ProcessRequest(ctx, r)
 }
