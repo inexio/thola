@@ -23,7 +23,7 @@ import (
 var deviceChannels struct {
 	sync.RWMutex
 
-	channels map[string]chan bool
+	channels map[string]chan struct{}
 }
 
 // StartAPI starts the API.
@@ -37,7 +37,7 @@ func StartAPI() {
 		log.Fatal().Err(err).Msg("starting the server failed")
 	}
 
-	deviceChannels.channels = make(map[string]chan bool)
+	deviceChannels.channels = make(map[string]chan struct{})
 	e := echo.New()
 
 	e.HideBanner = true
@@ -1005,7 +1005,7 @@ func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (requ
 		case <-ch:
 			log.Ctx(ctx).Debug().Msgf("locked IP '%s'", *ip)
 			defer func() {
-				ch <- true
+				ch <- struct{}{}
 				log.Ctx(ctx).Debug().Msgf("unlocked IP '%s'", *ip)
 			}()
 			return request.ProcessRequest(ctx, r)
@@ -1015,15 +1015,15 @@ func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (requ
 	}
 }
 
-func getDeviceChannel(ip string) chan bool {
+func getDeviceChannel(ip string) chan struct{} {
 	deviceChannels.RLock()
 	ch, ok := deviceChannels.channels[ip]
 	deviceChannels.RUnlock()
 	if !ok {
 		deviceChannels.Lock()
 		if ch, ok = deviceChannels.channels[ip]; !ok {
-			ch = make(chan bool, 1)
-			ch <- true
+			ch = make(chan struct{}, 1)
+			ch <- struct{}{}
 			deviceChannels.channels[ip] = ch
 		}
 		deviceChannels.Unlock()
