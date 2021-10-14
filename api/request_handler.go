@@ -20,10 +20,10 @@ import (
 	"time"
 )
 
-var deviceLocks struct {
+var deviceChannels struct {
 	sync.RWMutex
 
-	locks map[string]*sync.Mutex
+	channels map[string]chan bool
 }
 
 // StartAPI starts the API.
@@ -37,7 +37,7 @@ func StartAPI() {
 		log.Fatal().Err(err).Msg("starting the server failed")
 	}
 
-	deviceLocks.locks = make(map[string]*sync.Mutex)
+	deviceChannels.channels = make(map[string]chan bool)
 	e := echo.New()
 
 	e.HideBanner = true
@@ -989,59 +989,44 @@ func returnInFormat(ctx echo.Context, statusCode int, resp interface{}) error {
 	return ctx.String(http.StatusInternalServerError, "Invalid output format set")
 }
 
-type response struct {
-	res request.Response
-	err error
-}
-
 func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
 	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
 	ctx := logger.WithContext(context.Background())
+	log.Ctx(ctx).Debug().Msg("incoming request")
 
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
 		ctx, cancel := request.CheckForTimeout(ctx, r)
 		defer cancel()
 
-		responseChan := make(chan response)
-		go handleAPIRequestWithLock(ctx, r, *ip, responseChan)
+		ch := getDeviceChannel(*ip)
 		select {
 		case <-ctx.Done():
 			return r.HandlePreProcessError(errors.New("request timed out while waiting on the IP lock"))
-		case res := <-responseChan:
-			return res.res, res.err
+		case <-ch:
+			log.Ctx(ctx).Debug().Msgf("locked IP '%s'", *ip)
+			defer func() {
+				ch <- true
+				log.Ctx(ctx).Debug().Msgf("unlocked IP '%s'", *ip)
+			}()
+			return request.ProcessRequest(ctx, r)
 		}
 	} else {
 		return request.ProcessRequest(ctx, r)
 	}
 }
 
-func handleAPIRequestWithLock(ctx context.Context, r request.Request, ip string, responseChan chan response) {
-	lock := getDeviceLock(ip)
-	lock.Lock()
-	defer func() {
-		lock.Unlock()
-		log.Ctx(ctx).Debug().Msg("unlocked IP " + ip)
-	}()
-	log.Ctx(ctx).Debug().Msg("locked IP " + ip)
-
-	res, err := request.ProcessRequest(ctx, r)
-	responseChan <- response{
-		res: res,
-		err: err,
-	}
-}
-
-func getDeviceLock(ip string) *sync.Mutex {
-	deviceLocks.RLock()
-	lock, ok := deviceLocks.locks[ip]
-	deviceLocks.RUnlock()
+func getDeviceChannel(ip string) chan bool {
+	deviceChannels.RLock()
+	ch, ok := deviceChannels.channels[ip]
+	deviceChannels.RUnlock()
 	if !ok {
-		deviceLocks.Lock()
-		if lock, ok = deviceLocks.locks[ip]; !ok {
-			lock = &sync.Mutex{}
-			deviceLocks.locks[ip] = lock
+		deviceChannels.Lock()
+		if ch, ok = deviceChannels.channels[ip]; !ok {
+			ch = make(chan bool, 1)
+			ch <- true
+			deviceChannels.channels[ip] = ch
 		}
-		deviceLocks.Unlock()
+		deviceChannels.Unlock()
 	}
-	return lock
+	return ch
 }
