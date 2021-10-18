@@ -77,43 +77,43 @@ type Properties struct {
 //
 // swagger:model
 type Interface struct {
-	IfIndex              *uint64 `yaml:"ifIndex" json:"ifIndex" xml:"ifIndex"`
-	IfDescr              *string `yaml:"ifDescr" json:"ifDescr" xml:"ifDescr"`
-	IfType               *string `yaml:"ifType" json:"ifType" xml:"ifType"`
-	IfMtu                *uint64 `yaml:"ifMtu" json:"ifMtu" xml:"ifMtu"`
-	IfSpeed              *uint64 `yaml:"ifSpeed" json:"ifSpeed" xml:"ifSpeed"`
-	IfPhysAddress        *string `yaml:"ifPhysAddress" json:"ifPhysAddress" xml:"ifPhysAddress"`
-	IfAdminStatus        *Status `yaml:"ifAdminStatus" json:"ifAdminStatus" xml:"ifAdminStatus"`
-	IfOperStatus         *Status `yaml:"ifOperStatus" json:"ifOperStatus" xml:"ifOperStatus"`
-	IfLastChange         *uint64 `yaml:"ifLastChange" json:"ifLastChange" xml:"ifLastChange"`
-	IfInOctets           *uint64 `yaml:"ifInOctets" json:"ifInOctets" xml:"ifInOctets"`
-	IfInUcastPkts        *uint64 `yaml:"ifInUcastPkts" json:"ifInUcastPkts" xml:"ifInUcastPkts"`
-	IfInNUcastPkts       *uint64 `yaml:"ifInNUcastPkts" json:"ifInNUcastPkts" xml:"ifInNUcastPkts"`
-	IfInDiscards         *uint64 `yaml:"ifInDiscards" json:"ifInDiscards" xml:"ifInDiscards"`
-	IfInErrors           *uint64 `yaml:"ifInErrors" json:"ifInErrors" xml:"ifInErrors"`
-	IfInUnknownProtos    *uint64 `yaml:"ifInUnknownProtos" json:"ifInUnknownProtos" xml:"ifInUnknownProtos"`
-	IfOutOctets          *uint64 `yaml:"ifOutOctets" json:"ifOutOctets" xml:"ifOutOctets"`
-	IfOutUcastPkts       *uint64 `yaml:"ifOutUcastPkts" json:"ifOutUcastPkts" xml:"ifOutUcastPkts"`
-	IfOutNUcastPkts      *uint64 `yaml:"ifOutNUcastPkts" json:"ifOutNUcastPkts" xml:"ifOutNUcastPkts"`
-	IfOutDiscards        *uint64 `yaml:"ifOutDiscards" json:"ifOutDiscards" xml:"ifOutDiscards"`
-	IfOutErrors          *uint64 `yaml:"ifOutErrors" json:"ifOutErrors" xml:"ifOutErrors"`
-	IfOutQLen            *uint64 `yaml:"ifOutQLen" json:"ifOutQLen" xml:"ifOutQLen"`
-	IfSpecific           *string `yaml:"ifSpecific" json:"ifSpecific" xml:"ifSpecific"`
-	IfName               *string `yaml:"ifName" json:"ifName" xml:"ifName"`
-	IfInMulticastPkts    *uint64 `yaml:"ifInMulticastPkts" json:"ifInMulticastPkts" xml:"ifInMulticastPkts"`
-	IfInBroadcastPkts    *uint64 `yaml:"ifInBroadcastPkts" json:"ifInBroadcastPkts" xml:"ifInBroadcastPkts"`
-	IfOutMulticastPkts   *uint64 `yaml:"ifOutMulticastPkts" json:"ifOutMulticastPkts" xml:"ifOutMulticastPkts"`
-	IfOutBroadcastPkts   *uint64 `yaml:"ifOutBroadcastPkts" json:"ifOutBroadcastPkts" xml:"ifOutBroadcastPkts"`
-	IfHCInOctets         *uint64 `yaml:"ifHCInOctets" json:"ifHCInOctets" xml:"ifHCInOctets"`
-	IfHCInUcastPkts      *uint64 `yaml:"ifHCInUcastPkts" json:"ifHCInUcastPkts" xml:"ifHCInUcastPkts"`
-	IfHCInMulticastPkts  *uint64 `yaml:"ifHCInMulticastPkts" json:"ifHCInMulticastPkts" xml:"ifHCInMulticastPkts"`
-	IfHCInBroadcastPkts  *uint64 `yaml:"ifHCInBroadcastPkts" json:"ifHCInBroadcastPkts" xml:"ifHCInBroadcastPkts"`
-	IfHCOutOctets        *uint64 `yaml:"ifHCOutOctets" json:"ifHCOutOctets" xml:"ifHCOutOctets"`
-	IfHCOutUcastPkts     *uint64 `yaml:"ifHCOutUcastPkts" json:"ifHCOutUcastPkts" xml:"ifHCOutUcastPkts"`
-	IfHCOutMulticastPkts *uint64 `yaml:"ifHCOutMulticastPkts" json:"ifHCOutMulticastPkts" xml:"ifHCOutMulticastPkts"`
-	IfHCOutBroadcastPkts *uint64 `yaml:"ifHCOutBroadcastPkts" json:"ifHCOutBroadcastPkts" xml:"ifHCOutBroadcastPkts"`
-	IfHighSpeed          *uint64 `yaml:"ifHighSpeed" json:"ifHighSpeed" xml:"ifHighSpeed"`
-	IfAlias              *string `yaml:"ifAlias" json:"ifAlias" xml:"ifAlias"`
+	IfIndex              *uint64 `yaml:"ifIndex" json:"ifIndex" xml:"ifIndex" mapstructure:"ifIndex"`
+	IfDescr              *string `yaml:"ifDescr" json:"ifDescr" xml:"ifDescr" mapstructure:"ifDescr"`
+	IfType               *string `yaml:"ifType" json:"ifType" xml:"ifType" mapstructure:"ifType"`
+	IfMtu                *uint64 `yaml:"ifMtu" json:"ifMtu" xml:"ifMtu" mapstructure:"ifMtu"`
+	IfSpeed              *uint64 `yaml:"ifSpeed" json:"ifSpeed" xml:"ifSpeed" mapstructure:"ifSpeed"`
+	IfPhysAddress        *string `yaml:"ifPhysAddress" json:"ifPhysAddress" xml:"ifPhysAddress" mapstructure:"ifPhysAddress"`
+	IfAdminStatus        *Status `yaml:"ifAdminStatus" json:"ifAdminStatus" xml:"ifAdminStatus" mapstructure:"ifAdminStatus"`
+	IfOperStatus         *Status `yaml:"ifOperStatus" json:"ifOperStatus" xml:"ifOperStatus" mapstructure:"ifOperStatus"`
+	IfLastChange         *uint64 `yaml:"ifLastChange" json:"ifLastChange" xml:"ifLastChange" mapstructure:"ifLastChange"`
+	IfInOctets           *uint64 `yaml:"ifInOctets" json:"ifInOctets" xml:"ifInOctets" mapstructure:"ifInOctets"`
+	IfInUcastPkts        *uint64 `yaml:"ifInUcastPkts" json:"ifInUcastPkts" xml:"ifInUcastPkts" mapstructure:"ifInUcastPkts"`
+	IfInNUcastPkts       *uint64 `yaml:"ifInNUcastPkts" json:"ifInNUcastPkts" xml:"ifInNUcastPkts" mapstructure:"ifInNUcastPkts"`
+	IfInDiscards         *uint64 `yaml:"ifInDiscards" json:"ifInDiscards" xml:"ifInDiscards" mapstructure:"ifInDiscards"`
+	IfInErrors           *uint64 `yaml:"ifInErrors" json:"ifInErrors" xml:"ifInErrors" mapstructure:"ifInErrors"`
+	IfInUnknownProtos    *uint64 `yaml:"ifInUnknownProtos" json:"ifInUnknownProtos" xml:"ifInUnknownProtos" mapstructure:"ifInUnknownProtos"`
+	IfOutOctets          *uint64 `yaml:"ifOutOctets" json:"ifOutOctets" xml:"ifOutOctets" mapstructure:"ifOutOctets"`
+	IfOutUcastPkts       *uint64 `yaml:"ifOutUcastPkts" json:"ifOutUcastPkts" xml:"ifOutUcastPkts" mapstructure:"ifOutUcastPkts"`
+	IfOutNUcastPkts      *uint64 `yaml:"ifOutNUcastPkts" json:"ifOutNUcastPkts" xml:"ifOutNUcastPkts" mapstructure:"ifOutNUcastPkts"`
+	IfOutDiscards        *uint64 `yaml:"ifOutDiscards" json:"ifOutDiscards" xml:"ifOutDiscards" mapstructure:"ifOutDiscards"`
+	IfOutErrors          *uint64 `yaml:"ifOutErrors" json:"ifOutErrors" xml:"ifOutErrors" mapstructure:"ifOutErrors"`
+	IfOutQLen            *uint64 `yaml:"ifOutQLen" json:"ifOutQLen" xml:"ifOutQLen" mapstructure:"ifOutQLen"`
+	IfSpecific           *string `yaml:"ifSpecific" json:"ifSpecific" xml:"ifSpecific" mapstructure:"ifSpecific"`
+	IfName               *string `yaml:"ifName" json:"ifName" xml:"ifName" mapstructure:"ifName"`
+	IfInMulticastPkts    *uint64 `yaml:"ifInMulticastPkts" json:"ifInMulticastPkts" xml:"ifInMulticastPkts" mapstructure:"ifInMulticastPkts"`
+	IfInBroadcastPkts    *uint64 `yaml:"ifInBroadcastPkts" json:"ifInBroadcastPkts" xml:"ifInBroadcastPkts" mapstructure:"ifInBroadcastPkts"`
+	IfOutMulticastPkts   *uint64 `yaml:"ifOutMulticastPkts" json:"ifOutMulticastPkts" xml:"ifOutMulticastPkts" mapstructure:"ifOutMulticastPkts"`
+	IfOutBroadcastPkts   *uint64 `yaml:"ifOutBroadcastPkts" json:"ifOutBroadcastPkts" xml:"ifOutBroadcastPkts" mapstructure:"ifOutBroadcastPkts"`
+	IfHCInOctets         *uint64 `yaml:"ifHCInOctets" json:"ifHCInOctets" xml:"ifHCInOctets" mapstructure:"ifHCInOctets"`
+	IfHCInUcastPkts      *uint64 `yaml:"ifHCInUcastPkts" json:"ifHCInUcastPkts" xml:"ifHCInUcastPkts" mapstructure:"ifHCInUcastPkts"`
+	IfHCInMulticastPkts  *uint64 `yaml:"ifHCInMulticastPkts" json:"ifHCInMulticastPkts" xml:"ifHCInMulticastPkts" mapstructure:"ifHCInMulticastPkts"`
+	IfHCInBroadcastPkts  *uint64 `yaml:"ifHCInBroadcastPkts" json:"ifHCInBroadcastPkts" xml:"ifHCInBroadcastPkts" mapstructure:"ifHCInBroadcastPkts"`
+	IfHCOutOctets        *uint64 `yaml:"ifHCOutOctets" json:"ifHCOutOctets" xml:"ifHCOutOctets" mapstructure:"ifHCOutOctets"`
+	IfHCOutUcastPkts     *uint64 `yaml:"ifHCOutUcastPkts" json:"ifHCOutUcastPkts" xml:"ifHCOutUcastPkts" mapstructure:"ifHCOutUcastPkts"`
+	IfHCOutMulticastPkts *uint64 `yaml:"ifHCOutMulticastPkts" json:"ifHCOutMulticastPkts" xml:"ifHCOutMulticastPkts" mapstructure:"ifHCOutMulticastPkts"`
+	IfHCOutBroadcastPkts *uint64 `yaml:"ifHCOutBroadcastPkts" json:"ifHCOutBroadcastPkts" xml:"ifHCOutBroadcastPkts" mapstructure:"ifHCOutBroadcastPkts"`
+	IfHighSpeed          *uint64 `yaml:"ifHighSpeed" json:"ifHighSpeed" xml:"ifHighSpeed" mapstructure:"ifHighSpeed"`
+	IfAlias              *string `yaml:"ifAlias" json:"ifAlias" xml:"ifAlias" mapstructure:"ifAlias"`
 
 	// MaxSpeedIn and MaxSpeedOut are set if an interface has different values for max speed in / out
 	MaxSpeedIn  *uint64 `yaml:"max_speed_in" json:"max_speed_in" xml:"max_speed_in" mapstructure:"max_speed_in"`
@@ -143,24 +143,24 @@ type Interface struct {
 //
 // swagger:model
 type EthernetLikeInterface struct {
-	Dot3StatsAlignmentErrors             *uint64 `yaml:"dot3StatsAlignmentErrors,omitempty" json:"dot3StatsAlignmentErrors,omitempty" xml:"dot3StatsAlignmentErrors,omitempty"`
-	Dot3StatsFCSErrors                   *uint64 `yaml:"dot3StatsFCSErrors,omitempty" json:"dot3StatsFCSErrors,omitempty" xml:"dot3StatsFCSErrors,omitempty"`
-	Dot3StatsSingleCollisionFrames       *uint64 `yaml:"dot3StatsSingleCollisionFrames,omitempty" json:"dot3StatsSingleCollisionFrames,omitempty" xml:"dot3StatsSingleCollisionFrames,omitempty"`
-	Dot3StatsMultipleCollisionFrames     *uint64 `yaml:"dot3StatsMultipleCollisionFrames,omitempty" json:"dot3StatsMultipleCollisionFrames,omitempty" xml:"dot3StatsMultipleCollisionFrames,omitempty"`
-	Dot3StatsSQETestErrors               *uint64 `yaml:"dot3StatsSQETestErrors,omitempty" json:"dot3StatsSQETestErrors,omitempty" xml:"dot3StatsSQETestErrors,omitempty"`
-	Dot3StatsDeferredTransmissions       *uint64 `yaml:"dot3StatsDeferredTransmissions,omitempty" json:"dot3StatsDeferredTransmissions,omitempty" xml:"dot3StatsDeferredTransmissions,omitempty"`
-	Dot3StatsLateCollisions              *uint64 `yaml:"dot3StatsLateCollisions,omitempty" json:"dot3StatsLateCollisions,omitempty" xml:"dot3StatsLateCollisions,omitempty"`
-	Dot3StatsExcessiveCollisions         *uint64 `yaml:"dot3StatsExcessiveCollisions,omitempty" json:"dot3StatsExcessiveCollisions,omitempty" xml:"dot3StatsExcessiveCollisions,omitempty"`
-	Dot3StatsInternalMacTransmitErrors   *uint64 `yaml:"dot3StatsInternalMacTransmitErrors,omitempty" json:"dot3StatsInternalMacTransmitErrors,omitempty" xml:"dot3StatsInternalMacTransmitErrors,omitempty"`
-	Dot3StatsCarrierSenseErrors          *uint64 `yaml:"dot3StatsCarrierSenseErrors,omitempty" json:"dot3StatsCarrierSenseErrors,omitempty" xml:"dot3StatsCarrierSenseErrors,omitempty"`
-	Dot3StatsFrameTooLongs               *uint64 `yaml:"dot3StatsFrameTooLongs,omitempty" json:"dot3StatsFrameTooLongs,omitempty" xml:"dot3StatsFrameTooLongs,omitempty"`
-	Dot3StatsInternalMacReceiveErrors    *uint64 `yaml:"dot3StatsInternalMacReceiveErrors,omitempty" json:"dot3StatsInternalMacReceiveErrors,omitempty" xml:"dot3StatsInternalMacReceiveErrors,omitempty"`
-	Dot3HCStatsAlignmentErrors           *uint64 `yaml:"dot3HCStatsAlignmentErrors,omitempty" json:"dot3HCStatsAlignmentErrors,omitempty" xml:"dot3HCStatsAlignmentErrors,omitempty"`
-	Dot3HCStatsFCSErrors                 *uint64 `yaml:"dot3HCStatsFCSErrors,omitempty" json:"dot3HCStatsFCSErrors,omitempty" xml:"dot3HCStatsFCSErrors,omitempty"`
-	Dot3HCStatsInternalMacTransmitErrors *uint64 `yaml:"dot3HCStatsInternalMacTransmitErrors,omitempty" json:"dot3HCStatsInternalMacTransmitErrors,omitempty" xml:"dot3HCStatsInternalMacTransmitErrors,omitempty"`
-	Dot3HCStatsFrameTooLongs             *uint64 `yaml:"dot3HCStatsFrameTooLongs,omitempty" json:"dot3HCStatsFrameTooLongs,omitempty" xml:"dot3HCStatsFrameTooLongs,omitempty"`
-	Dot3HCStatsInternalMacReceiveErrors  *uint64 `yaml:"dot3HCStatsInternalMacReceiveErrors,omitempty" json:"dot3HCStatsInternalMacReceiveErrors,omitempty" xml:"dot3HCStatsInternalMacReceiveErrors,omitempty"`
-	EtherStatsCRCAlignErrors             *uint64 `yaml:"etherStatsCRCAlignErrors,omitempty" json:"etherStatsCRCAlignErrors,omitempty" xml:"etherStatsCRCAlignErrors,omitempty"`
+	Dot3StatsAlignmentErrors             *uint64 `yaml:"dot3StatsAlignmentErrors" json:"dot3StatsAlignmentErrors" xml:"dot3StatsAlignmentErrors" mapstructure:"dot3StatsAlignmentErrors"`
+	Dot3StatsFCSErrors                   *uint64 `yaml:"dot3StatsFCSErrors" json:"dot3StatsFCSErrors" xml:"dot3StatsFCSErrors" mapstructure:"dot3StatsFCSErrors"`
+	Dot3StatsSingleCollisionFrames       *uint64 `yaml:"dot3StatsSingleCollisionFrames" json:"dot3StatsSingleCollisionFrames" xml:"dot3StatsSingleCollisionFrames" mapstructure:"dot3StatsSingleCollisionFrames"`
+	Dot3StatsMultipleCollisionFrames     *uint64 `yaml:"dot3StatsMultipleCollisionFrames" json:"dot3StatsMultipleCollisionFrames" xml:"dot3StatsMultipleCollisionFrames" mapstructure:"dot3StatsMultipleCollisionFrames"`
+	Dot3StatsSQETestErrors               *uint64 `yaml:"dot3StatsSQETestErrors" json:"dot3StatsSQETestErrors" xml:"dot3StatsSQETestErrors" mapstructure:"dot3StatsSQETestErrors"`
+	Dot3StatsDeferredTransmissions       *uint64 `yaml:"dot3StatsDeferredTransmissions" json:"dot3StatsDeferredTransmissions" xml:"dot3StatsDeferredTransmissions" mapstructure:"dot3StatsDeferredTransmissions"`
+	Dot3StatsLateCollisions              *uint64 `yaml:"dot3StatsLateCollisions" json:"dot3StatsLateCollisions" xml:"dot3StatsLateCollisions" mapstructure:"dot3StatsLateCollisions"`
+	Dot3StatsExcessiveCollisions         *uint64 `yaml:"dot3StatsExcessiveCollisions" json:"dot3StatsExcessiveCollisions" xml:"dot3StatsExcessiveCollisions" mapstructure:"dot3StatsExcessiveCollisions"`
+	Dot3StatsInternalMacTransmitErrors   *uint64 `yaml:"dot3StatsInternalMacTransmitErrors" json:"dot3StatsInternalMacTransmitErrors" xml:"dot3StatsInternalMacTransmitErrors" mapstructure:"dot3StatsInternalMacTransmitErrors"`
+	Dot3StatsCarrierSenseErrors          *uint64 `yaml:"dot3StatsCarrierSenseErrors" json:"dot3StatsCarrierSenseErrors" xml:"dot3StatsCarrierSenseErrors" mapstructure:"dot3StatsCarrierSenseErrors"`
+	Dot3StatsFrameTooLongs               *uint64 `yaml:"dot3StatsFrameTooLongs" json:"dot3StatsFrameTooLongs" xml:"dot3StatsFrameTooLongs" mapstructure:"dot3StatsFrameTooLongs"`
+	Dot3StatsInternalMacReceiveErrors    *uint64 `yaml:"dot3StatsInternalMacReceiveErrors" json:"dot3StatsInternalMacReceiveErrors" xml:"dot3StatsInternalMacReceiveErrors" mapstructure:"dot3StatsInternalMacReceiveErrors"`
+	Dot3HCStatsAlignmentErrors           *uint64 `yaml:"dot3HCStatsAlignmentErrors" json:"dot3HCStatsAlignmentErrors" xml:"dot3HCStatsAlignmentErrors" mapstructure:"dot3HCStatsAlignmentErrors"`
+	Dot3HCStatsFCSErrors                 *uint64 `yaml:"dot3HCStatsFCSErrors" json:"dot3HCStatsFCSErrors" xml:"dot3HCStatsFCSErrors" mapstructure:"dot3HCStatsFCSErrors"`
+	Dot3HCStatsInternalMacTransmitErrors *uint64 `yaml:"dot3HCStatsInternalMacTransmitErrors" json:"dot3HCStatsInternalMacTransmitErrors" xml:"dot3HCStatsInternalMacTransmitErrors" mapstructure:"dot3HCStatsInternalMacTransmitErrors"`
+	Dot3HCStatsFrameTooLongs             *uint64 `yaml:"dot3HCStatsFrameTooLongs" json:"dot3HCStatsFrameTooLongs" xml:"dot3HCStatsFrameTooLongs" mapstructure:"dot3HCStatsFrameTooLongs"`
+	Dot3HCStatsInternalMacReceiveErrors  *uint64 `yaml:"dot3HCStatsInternalMacReceiveErrors" json:"dot3HCStatsInternalMacReceiveErrors" xml:"dot3HCStatsInternalMacReceiveErrors" mapstructure:"dot3HCStatsInternalMacReceiveErrors"`
+	EtherStatsCRCAlignErrors             *uint64 `yaml:"etherStatsCRCAlignErrors" json:"etherStatsCRCAlignErrors" xml:"etherStatsCRCAlignErrors" mapstructure:"etherStatsCRCAlignErrors"`
 }
 
 // RadioInterface
@@ -169,10 +169,10 @@ type EthernetLikeInterface struct {
 //
 // swagger:model
 type RadioInterface struct {
-	LevelOut      *int64  `yaml:"level_out,omitempty" json:"level_out,omitempty" xml:"level_out,omitempty" mapstructure:"level_out"`
-	LevelIn       *int64  `yaml:"level_in,omitempty" json:"level_in,omitempty" xml:"level_in,omitempty" mapstructure:"level_in"`
-	MaxbitrateOut *uint64 `yaml:"maxbitrate_out,omitempty" json:"maxbitrate_out,omitempty" xml:"maxbitrate_out,omitempty" mapstructure:"maxbitrate_out"`
-	MaxbitrateIn  *uint64 `yaml:"maxbitrate_in,omitempty" json:"maxbitrate_in,omitempty" xml:"maxbitrate_in,omitempty" mapstructure:"maxbitrate_in"`
+	LevelOut      *int64  `yaml:"level_out" json:"level_out" xml:"level_out" mapstructure:"level_out"`
+	LevelIn       *int64  `yaml:"level_in" json:"level_in" xml:"level_in" mapstructure:"level_in"`
+	MaxbitrateOut *uint64 `yaml:"maxbitrate_out" json:"maxbitrate_out" xml:"maxbitrate_out" mapstructure:"maxbitrate_out"`
+	MaxbitrateIn  *uint64 `yaml:"maxbitrate_in" json:"maxbitrate_in" xml:"maxbitrate_in" mapstructure:"maxbitrate_in"`
 }
 
 // DWDMInterface
@@ -181,11 +181,11 @@ type RadioInterface struct {
 //
 // swagger:model
 type DWDMInterface struct {
-	RXPower        *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower        *float64         `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	CorrectedFEC   []Rate           `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
-	UncorrectedFEC []Rate           `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
-	Channels       []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	RXPower        *float64         `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	TXPower        *float64         `yaml:"tx_power" json:"tx_power" xml:"tx_power" mapstructure:"tx_power"`
+	CorrectedFEC   []Rate           `yaml:"corrected_fec" json:"corrected_fec" xml:"corrected_fec" mapstructure:"corrected_fec"`
+	UncorrectedFEC []Rate           `yaml:"uncorrected_fec" json:"uncorrected_fec" xml:"uncorrected_fec" mapstructure:"uncorrected_fec"`
+	Channels       []OpticalChannel `yaml:"channels" json:"channels" xml:"channels" mapstructure:"channels"`
 }
 
 // OpticalTransponderInterface
@@ -194,12 +194,12 @@ type DWDMInterface struct {
 //
 // swagger:model
 type OpticalTransponderInterface struct {
-	Identifier     *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label          *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower        *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower        *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	CorrectedFEC   *uint64  `yaml:"corrected_fec,omitempty" json:"corrected_fec,omitempty" xml:"corrected_fec,omitempty" mapstructure:"corrected_fec"`
-	UncorrectedFEC *uint64  `yaml:"uncorrected_fec,omitempty" json:"uncorrected_fec,omitempty" xml:"uncorrected_fec,omitempty" mapstructure:"uncorrected_fec"`
+	Identifier     *string  `yaml:"identifier" json:"identifier" xml:"identifier" mapstructure:"identifier"`
+	Label          *string  `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	RXPower        *float64 `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	TXPower        *float64 `yaml:"tx_power" json:"tx_power" xml:"tx_power" mapstructure:"tx_power"`
+	CorrectedFEC   *uint64  `yaml:"corrected_fec" json:"corrected_fec" xml:"corrected_fec" mapstructure:"corrected_fec"`
+	UncorrectedFEC *uint64  `yaml:"uncorrected_fec" json:"uncorrected_fec" xml:"uncorrected_fec" mapstructure:"uncorrected_fec"`
 }
 
 // OpticalAmplifierInterface
@@ -208,11 +208,11 @@ type OpticalTransponderInterface struct {
 //
 // swagger:model
 type OpticalAmplifierInterface struct {
-	Identifier *string  `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label      *string  `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower    *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower    *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
-	Gain       *float64 `yaml:"gain,omitempty" json:"gain,omitempty" xml:"gain,omitempty" mapstructure:"gain"`
+	Identifier *string  `yaml:"identifier" json:"identifier" xml:"identifier" mapstructure:"identifier"`
+	Label      *string  `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	RXPower    *float64 `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	TXPower    *float64 `yaml:"tx_power" json:"tx_power" xml:"tx_power" mapstructure:"tx_power"`
+	Gain       *float64 `yaml:"gain" json:"gain" xml:"gain" mapstructure:"gain"`
 }
 
 // OpticalOPMInterface
@@ -221,10 +221,10 @@ type OpticalAmplifierInterface struct {
 //
 // swagger:model
 type OpticalOPMInterface struct {
-	Identifier *string          `yaml:"identifier,omitempty" json:"identifier,omitempty" xml:"identifier,omitempty" mapstructure:"identifier"`
-	Label      *string          `yaml:"label,omitempty" json:"label,omitempty" xml:"label,omitempty" mapstructure:"label"`
-	RXPower    *float64         `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	Channels   []OpticalChannel `yaml:"channels,omitempty" json:"channels,omitempty" xml:"channels,omitempty" mapstructure:"channels"`
+	Identifier *string          `yaml:"identifier" json:"identifier" xml:"identifier" mapstructure:"identifier"`
+	Label      *string          `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	RXPower    *float64         `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	Channels   []OpticalChannel `yaml:"channels" json:"channels" xml:"channels" mapstructure:"channels"`
 }
 
 // OpticalChannel
@@ -233,9 +233,9 @@ type OpticalOPMInterface struct {
 //
 // swagger:model
 type OpticalChannel struct {
-	Channel *string  `yaml:"channel,omitempty" json:"channel,omitempty" xml:"channel,omitempty" mapstructure:"channel"`
-	RXPower *float64 `yaml:"rx_power,omitempty" json:"rx_power,omitempty" xml:"rx_power,omitempty" mapstructure:"rx_power"`
-	TXPower *float64 `yaml:"tx_power,omitempty" json:"tx_power,omitempty" xml:"tx_power,omitempty" mapstructure:"tx_power"`
+	Channel *string  `yaml:"channel" json:"channel" xml:"channel" mapstructure:"channel"`
+	RXPower *float64 `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	TXPower *float64 `yaml:"tx_power" json:"tx_power" xml:"tx_power" mapstructure:"tx_power"`
 }
 
 // SAPInterface
@@ -244,8 +244,8 @@ type OpticalChannel struct {
 //
 // swagger:model
 type SAPInterface struct {
-	Inbound  *uint64 `yaml:"inbound,omitempty" json:"inbound,omitempty" xml:"inbound,omitempty" mapstructure:"inbound"`
-	Outbound *uint64 `yaml:"outbound,omitempty" json:"outbound,omitempty" xml:"outbound,omitempty" mapstructure:"outbound"`
+	Inbound  *uint64 `yaml:"inbound" json:"inbound" xml:"inbound" mapstructure:"inbound"`
+	Outbound *uint64 `yaml:"outbound" json:"outbound" xml:"outbound" mapstructure:"outbound"`
 }
 
 // VLANInformation
@@ -254,7 +254,7 @@ type SAPInterface struct {
 //
 // swagger:model
 type VLANInformation struct {
-	VLANs []VLAN `yaml:"vlans,omitempty" json:"vlans,omitempty" xml:"vlans,omitempty" mapstructure:"vlans"`
+	VLANs []VLAN `yaml:"vlans" json:"vlans" xml:"vlans" mapstructure:"vlans"`
 }
 
 // VLAN
@@ -263,8 +263,8 @@ type VLANInformation struct {
 //
 // swagger:model
 type VLAN struct {
-	Name   *string `yaml:"name,omitempty" json:"name,omitempty" xml:"name,omitempty" mapstructure:"name"`
-	Status *string `yaml:"status,omitempty" json:"status,omitempty" xml:"status,omitempty" mapstructure:"status"`
+	Name   *string `yaml:"name" json:"name" xml:"name" mapstructure:"name"`
+	Status *string `yaml:"status" json:"status" xml:"status" mapstructure:"status"`
 }
 
 //
@@ -277,7 +277,7 @@ type VLAN struct {
 //
 // swagger:model
 type CPUComponent struct {
-	CPUs []CPU `yaml:"cpus" json:"cpus" xml:"cpus"`
+	CPUs []CPU `yaml:"cpus" json:"cpus" xml:"cpus" mapstructure:"cpus"`
 }
 
 // CPU
@@ -286,8 +286,8 @@ type CPUComponent struct {
 //
 // swagger:model
 type CPU struct {
-	Label *string  `yaml:"label" json:"label" xml:"label"`
-	Load  *float64 `yaml:"load" json:"load" xml:"load"`
+	Label *string  `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	Load  *float64 `yaml:"load" json:"load" xml:"load" mapstructure:"load"`
 }
 
 // MemoryComponent
@@ -296,7 +296,7 @@ type CPU struct {
 //
 // swagger:model
 type MemoryComponent struct {
-	Pools []MemoryPool `yaml:"pools" json:"pools" xml:"pools"`
+	Pools []MemoryPool `yaml:"pools" json:"pools" xml:"pools" mapstructure:"pools"`
 }
 
 // MemoryPool
@@ -305,8 +305,8 @@ type MemoryComponent struct {
 //
 // swagger:model
 type MemoryPool struct {
-	Label                        *string  `yaml:"label" json:"label" xml:"label"`
-	Usage                        *float64 `yaml:"usage" json:"usage" xml:"usage"`
+	Label                        *string  `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	Usage                        *float64 `yaml:"usage" json:"usage" xml:"usage" mapstructure:"usage"`
 	PerformanceDataPointModifier `yaml:"-" json:"-" xml:"-" human_readable:"-"`
 }
 
@@ -316,7 +316,7 @@ type MemoryPool struct {
 //
 // swagger:model
 type DiskComponent struct {
-	Storages []DiskComponentStorage `yaml:"storages" json:"storages" xml:"storages"`
+	Storages []DiskComponentStorage `yaml:"storages" json:"storages" xml:"storages" mapstructure:"storages"`
 }
 
 // DiskComponentStorage
@@ -325,10 +325,10 @@ type DiskComponent struct {
 //
 // swagger:model
 type DiskComponentStorage struct {
-	Type        *string `yaml:"type" json:"type" xml:"type"`
-	Description *string `yaml:"description" json:"description" xml:"description"`
-	Available   *int    `yaml:"available" json:"available" xml:"available"`
-	Used        *int    `yaml:"used" json:"used" xml:"used"`
+	Type        *string `yaml:"type" json:"type" xml:"type" mapstructure:"type"`
+	Description *string `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
+	Available   *int    `yaml:"available" json:"available" xml:"available" mapstructure:"available"`
+	Used        *int    `yaml:"used" json:"used" xml:"used" mapstructure:"used"`
 }
 
 // UPSComponent
@@ -337,17 +337,17 @@ type DiskComponentStorage struct {
 //
 // swagger:model
 type UPSComponent struct {
-	AlarmLowVoltageDisconnect *int     `yaml:"alarm_low_voltage_disconnect" json:"alarm_low_voltage_disconnect" xml:"alarm_low_voltage_disconnect"`
-	BatteryAmperage           *float64 `yaml:"battery_amperage " json:"battery_amperage " xml:"battery_amperage"`
-	BatteryCapacity           *float64 `yaml:"battery_capacity" json:"battery_capacity" xml:"battery_capacity"`
-	BatteryCurrent            *float64 `yaml:"battery_current" json:"battery_current" xml:"battery_current"`
-	BatteryRemainingTime      *float64 `yaml:"battery_remaining_time" json:"battery_remaining_time" xml:"battery_remaining_time"`
-	BatteryTemperature        *float64 `yaml:"battery_temperature" json:"battery_temperature" xml:"battery_temperature"`
-	BatteryVoltage            *float64 `yaml:"battery_voltage" json:"battery_voltage" xml:"battery_voltage"`
-	CurrentLoad               *float64 `yaml:"current_load" json:"current_load" xml:"current_load"`
-	MainsVoltageApplied       *bool    `yaml:"mains_voltage_applied" json:"mains_voltage_applied" xml:"mains_voltage_applied"`
-	RectifierCurrent          *float64 `yaml:"rectifier_current" json:"rectifier_current" xml:"rectifier_current"`
-	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage"`
+	AlarmLowVoltageDisconnect *int     `yaml:"alarm_low_voltage_disconnect" json:"alarm_low_voltage_disconnect" xml:"alarm_low_voltage_disconnect" mapstructure:"alarm_low_voltage_disconnect"`
+	BatteryAmperage           *float64 `yaml:"battery_amperage " json:"battery_amperage " xml:"battery_amperage" mapstructure:"battery_amperage"`
+	BatteryCapacity           *float64 `yaml:"battery_capacity" json:"battery_capacity" xml:"battery_capacity" mapstructure:"battery_capacity"`
+	BatteryCurrent            *float64 `yaml:"battery_current" json:"battery_current" xml:"battery_current" mapstructure:"battery_current"`
+	BatteryRemainingTime      *float64 `yaml:"battery_remaining_time" json:"battery_remaining_time" xml:"battery_remaining_time" mapstructure:"battery_remaining_time"`
+	BatteryTemperature        *float64 `yaml:"battery_temperature" json:"battery_temperature" xml:"battery_temperature" mapstructure:"battery_temperature"`
+	BatteryVoltage            *float64 `yaml:"battery_voltage" json:"battery_voltage" xml:"battery_voltage" mapstructure:"battery_voltage"`
+	CurrentLoad               *float64 `yaml:"current_load" json:"current_load" xml:"current_load" mapstructure:"current_load"`
+	MainsVoltageApplied       *bool    `yaml:"mains_voltage_applied" json:"mains_voltage_applied" xml:"mains_voltage_applied" mapstructure:"mains_voltage_applied"`
+	RectifierCurrent          *float64 `yaml:"rectifier_current" json:"rectifier_current" xml:"rectifier_current" mapstructure:"rectifier_current"`
+	SystemVoltage             *float64 `yaml:"system_voltage" json:"system_voltage" xml:"system_voltage" mapstructure:"system_voltage"`
 }
 
 // ServerComponent
@@ -356,8 +356,8 @@ type UPSComponent struct {
 //
 // swagger:model
 type ServerComponent struct {
-	Procs *int `yaml:"procs" json:"procs" xml:"procs"`
-	Users *int `yaml:"users" json:"users" xml:"users"`
+	Procs *int `yaml:"procs" json:"procs" xml:"procs" mapstructure:"procs"`
+	Users *int `yaml:"users" json:"users" xml:"users" mapstructure:"users"`
 }
 
 // SBCComponent
@@ -366,15 +366,15 @@ type ServerComponent struct {
 //
 // swagger:model
 type SBCComponent struct {
-	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents"`
-	Realms                   []SBCComponentRealm `yaml:"realms" json:"realms" xml:"realms"`
-	GlobalCallPerSecond      *int                `yaml:"global_call_per_second" json:"global_call_per_second" xml:"global_call_per_second"`
-	GlobalConcurrentSessions *int                `yaml:"global_concurrent_sessions " json:"global_concurrent_sessions " xml:"global_concurrent_sessions"`
-	ActiveLocalContacts      *int                `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts"`
-	TranscodingCapacity      *int                `yaml:"transcoding_capacity" json:"transcoding_capacity" xml:"transcoding_capacity"`
-	LicenseCapacity          *int                `yaml:"license_capacity" json:"license_capacity" xml:"license_capacity"`
-	SystemRedundancy         *int                `yaml:"system_redundancy" json:"system_redundancy" xml:"system_redundancy"`
-	SystemHealthScore        *int                `yaml:"system_health_score" json:"system_health_score" xml:"system_health_score"`
+	Agents                   []SBCComponentAgent `yaml:"agents" json:"agents" xml:"agents" mapstructure:"agents"`
+	Realms                   []SBCComponentRealm `yaml:"realms" json:"realms" xml:"realms" mapstructure:"realms"`
+	GlobalCallPerSecond      *int                `yaml:"global_call_per_second" json:"global_call_per_second" xml:"global_call_per_second" mapstructure:"global_call_per_second"`
+	GlobalConcurrentSessions *int                `yaml:"global_concurrent_sessions " json:"global_concurrent_sessions " xml:"global_concurrent_sessions" mapstructure:"global_concurrent_sessions"`
+	ActiveLocalContacts      *int                `yaml:"active_local_contacts" json:"active_local_contacts" xml:"active_local_contacts" mapstructure:"active_local_contacts"`
+	TranscodingCapacity      *int                `yaml:"transcoding_capacity" json:"transcoding_capacity" xml:"transcoding_capacity" mapstructure:"transcoding_capacity"`
+	LicenseCapacity          *int                `yaml:"license_capacity" json:"license_capacity" xml:"license_capacity" mapstructure:"license_capacity"`
+	SystemRedundancy         *int                `yaml:"system_redundancy" json:"system_redundancy" xml:"system_redundancy" mapstructure:"system_redundancy"`
+	SystemHealthScore        *int                `yaml:"system_health_score" json:"system_health_score" xml:"system_health_score" mapstructure:"system_health_score"`
 }
 
 // SBCComponentAgent
@@ -414,11 +414,11 @@ type SBCComponentRealm struct {
 //
 // swagger:model
 type HardwareHealthComponent struct {
-	EnvironmentMonitorState *HardwareHealthComponentState        `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state"`
-	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans"`
-	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply"`
-	Temperature             []HardwareHealthComponentTemperature `yaml:"temperature" json:"temperature" xml:"temperature"`
-	Voltage                 []HardwareHealthComponentVoltage     `yaml:"voltage" json:"voltage" xml:"voltage"`
+	EnvironmentMonitorState *HardwareHealthComponentState        `yaml:"environment_monitor_state" json:"environment_monitor_state" xml:"environment_monitor_state" mapstructure:"environment_monitor_state"`
+	Fans                    []HardwareHealthComponentFan         `yaml:"fans" json:"fans" xml:"fans" mapstructure:"fans"`
+	PowerSupply             []HardwareHealthComponentPowerSupply `yaml:"power_supply" json:"power_supply" xml:"power_supply" mapstructure:"power_supply"`
+	Temperature             []HardwareHealthComponentTemperature `yaml:"temperature" json:"temperature" xml:"temperature" mapstructure:"temperature"`
+	Voltage                 []HardwareHealthComponentVoltage     `yaml:"voltage" json:"voltage" xml:"voltage" mapstructure:"voltage"`
 }
 
 // HardwareHealthComponentFan
@@ -427,8 +427,8 @@ type HardwareHealthComponent struct {
 //
 // swagger:model
 type HardwareHealthComponentFan struct {
-	Description *string                       `yaml:"description" json:"description" xml:"description"`
-	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
+	Description *string                       `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
 }
 
 // HardwareHealthComponentTemperature
@@ -437,9 +437,9 @@ type HardwareHealthComponentFan struct {
 //
 // swagger:model
 type HardwareHealthComponentTemperature struct {
-	Description *string                       `yaml:"description" json:"description" xml:"description"`
-	Temperature *float64                      `yaml:"temperature" json:"temperature" xml:"temperature"`
-	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
+	Description *string                       `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
+	Temperature *float64                      `yaml:"temperature" json:"temperature" xml:"temperature" mapstructure:"temperature"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
 }
 
 // HardwareHealthComponentVoltage
@@ -448,9 +448,19 @@ type HardwareHealthComponentTemperature struct {
 //
 // swagger:model
 type HardwareHealthComponentVoltage struct {
-	Description *string                       `yaml:"description" json:"description" xml:"description"`
-	Voltage     *float64                      `yaml:"voltage" json:"voltage" xml:"voltage"`
-	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
+	Description *string                       `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
+	Voltage     *float64                      `yaml:"voltage" json:"voltage" xml:"voltage" mapstructure:"voltage"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
+}
+
+// HardwareHealthComponentPowerSupply
+//
+// HardwareHealthComponentPowerSupply represents one power supply of a device.
+//
+// swagger:model
+type HardwareHealthComponentPowerSupply struct {
+	Description *string                       `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
+	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
 }
 
 type HardwareHealthComponentState string
@@ -488,24 +498,14 @@ func (h HardwareHealthComponentState) GetInt() (int, error) {
 	return 7, fmt.Errorf("invalid hardware health state '%s'", h)
 }
 
-// HardwareHealthComponentPowerSupply
-//
-// HardwareHealthComponentPowerSupply represents one power supply of a device.
-//
-// swagger:model
-type HardwareHealthComponentPowerSupply struct {
-	Description *string                       `yaml:"description" json:"description" xml:"description"`
-	State       *HardwareHealthComponentState `yaml:"state" json:"state" xml:"state"`
-}
-
 // Rate
 //
 // Rate encapsulates values which refer to a time span.
 //
 // swagger:model
 type Rate struct {
-	Time  string  `yaml:"time" json:"time" xml:"time"`
-	Value float64 `yaml:"value" json:"value" xml:"value"`
+	Time  string  `yaml:"time" json:"time" xml:"time" mapstructure:"time"`
+	Value float64 `yaml:"value" json:"value" xml:"value" mapstructure:"value"`
 }
 
 // NewContextWithDeviceProperties returns a new context with the device properties.

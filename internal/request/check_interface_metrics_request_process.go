@@ -106,16 +106,16 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 	var res []groupproperty.Filter
 
 	for _, f := range r.IfTypeFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifType", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifType"}, f))
 	}
 	for _, f := range r.IfNameFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifName", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifName"}, f))
 	}
 	for _, f := range r.IfDescrFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifDescr", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifDescr"}, f))
 	}
 
-	res = append(res, groupproperty.GetValueFilter("vlan"))
+	res = append(res, groupproperty.GetValueFilter([]string{"vlan"}))
 
 	return res
 }

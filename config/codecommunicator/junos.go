@@ -23,10 +23,8 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	}
 
 	for _, fil := range filter {
-		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok {
-			if valueFilter.GetFilterProperties() == "vlan" {
-				return interfaces, nil
-			}
+		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok && valueFilter.CheckMatch([]string{"vlan"}) {
+			return interfaces, nil
 		}
 	}
 
