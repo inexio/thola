@@ -483,7 +483,7 @@ func TestSNMPReader_getProperty_filter(t *testing.T) {
 	}
 
 	res, indices, err := sut.GetProperty(ctx, &groupFilter{
-		key:   "ifDescr",
+		key:   []string{"ifDescr"},
 		regex: "2",
 	})
 	if assert.NoError(t, err) {
@@ -638,7 +638,7 @@ func TestSNMPReader_getProperty_getsInsteadOfWalkFilter(t *testing.T) {
 	}
 
 	res, indices, err := sut.GetProperty(ctx, &groupFilter{
-		key:   "ifDescr",
+		key:   []string{"ifDescr"},
 		regex: "2",
 	})
 	if assert.NoError(t, err) {
