@@ -263,7 +263,7 @@ func (r *BaseRequest) getTimeout() *int {
 	return r.Timeout
 }
 
-func (r *BaseRequest) handlePreProcessError(err error) (Response, error) {
+func (r *BaseRequest) HandlePreProcessError(err error) (Response, error) {
 	return nil, err
 }
 

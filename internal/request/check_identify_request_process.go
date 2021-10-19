@@ -132,16 +132,6 @@ func (r *CheckIdentifyRequest) process(ctx context.Context) (Response, error) {
 	}, nil
 }
 
-func (r *CheckIdentifyRequest) handlePreProcessError(err error) (Response, error) {
-	r.init()
-	r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, err.Error(), false)
-	return &CheckIdentifyResponse{
-		CheckResponse:      CheckResponse{r.mon.GetInfo()},
-		IdentifyResult:     nil,
-		FailedExpectations: nil,
-	}, nil
-}
-
 func (r *CheckIdentifyRequest) validate(ctx context.Context) error {
 	err := r.BaseRequest.validate(ctx)
 	if err != nil {

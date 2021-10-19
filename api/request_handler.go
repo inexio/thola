@@ -10,6 +10,7 @@ import (
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"net/http"
@@ -19,10 +20,10 @@ import (
 	"time"
 )
 
-var deviceLocks struct {
+var deviceChannels struct {
 	sync.RWMutex
 
-	locks map[string]*sync.Mutex
+	channels map[string]chan struct{}
 }
 
 // StartAPI starts the API.
@@ -36,7 +37,7 @@ func StartAPI() {
 		log.Fatal().Err(err).Msg("starting the server failed")
 	}
 
-	deviceLocks.locks = make(map[string]*sync.Mutex)
+	deviceChannels.channels = make(map[string]chan struct{})
 	e := echo.New()
 
 	e.HideBanner = true
@@ -988,35 +989,44 @@ func returnInFormat(ctx echo.Context, statusCode int, resp interface{}) error {
 	return ctx.String(http.StatusInternalServerError, "Invalid output format set")
 }
 
-func getDeviceLock(ip string) *sync.Mutex {
-	deviceLocks.RLock()
-	lock, ok := deviceLocks.locks[ip]
-	deviceLocks.RUnlock()
-	if !ok {
-		deviceLocks.Lock()
-		if lock, ok = deviceLocks.locks[ip]; !ok {
-			lock = &sync.Mutex{}
-			deviceLocks.locks[ip] = lock
-		}
-		deviceLocks.Unlock()
-	}
-	return lock
-}
-
 func handleAPIRequest(echoCTX echo.Context, r request.Request, ip *string) (request.Response, error) {
 	logger := log.With().Str("request_id", echoCTX.Request().Header.Get(echo.HeaderXRequestID)).Logger()
 	ctx := logger.WithContext(context.Background())
+	log.Ctx(ctx).Debug().Msg("incoming request")
 
 	if ip != nil && !viper.GetBool("request.no-ip-lock") {
-		lock := getDeviceLock(*ip)
-		lock.Lock()
-		defer func() {
-			lock.Unlock()
-			log.Ctx(ctx).Debug().Msg("unlocked IP " + *ip)
-		}()
+		ctx, cancel := request.CheckForTimeout(ctx, r)
+		defer cancel()
 
-		log.Ctx(ctx).Debug().Msg("locked IP " + *ip)
+		ch := getDeviceChannel(*ip)
+		select {
+		case <-ctx.Done():
+			return r.HandlePreProcessError(errors.New("request timed out while waiting on the IP lock"))
+		case <-ch:
+			log.Ctx(ctx).Debug().Msgf("locked IP '%s'", *ip)
+			defer func() {
+				ch <- struct{}{}
+				log.Ctx(ctx).Debug().Msgf("unlocked IP '%s'", *ip)
+			}()
+			return request.ProcessRequest(ctx, r)
+		}
+	} else {
+		return request.ProcessRequest(ctx, r)
 	}
+}
 
-	return request.ProcessRequest(ctx, r)
+func getDeviceChannel(ip string) chan struct{} {
+	deviceChannels.RLock()
+	ch, ok := deviceChannels.channels[ip]
+	deviceChannels.RUnlock()
+	if !ok {
+		deviceChannels.Lock()
+		if ch, ok = deviceChannels.channels[ip]; !ok {
+			ch = make(chan struct{}, 1)
+			ch <- struct{}{}
+			deviceChannels.channels[ip] = ch
+		}
+		deviceChannels.Unlock()
+	}
+	return ch
 }

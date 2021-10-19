@@ -18,23 +18,25 @@ type response struct {
 
 // ProcessRequest is called by every request Thola receives
 func ProcessRequest(ctx context.Context, request Request) (Response, error) {
+	ctx, cancel := CheckForTimeout(ctx, request)
+	defer cancel()
+
 	err := request.validate(ctx)
 	if err != nil {
-		return request.handlePreProcessError(errors.Wrap(err, "invalid request"))
+		return request.HandlePreProcessError(errors.Wrap(err, "invalid request"))
 	}
-	ctx, cancel := checkForTimeout(ctx, request)
-	defer cancel()
+
 	responseChannel := make(chan response)
 	go processRequest(ctx, request, responseChannel)
 	select {
 	case res := <-responseChannel:
 		return res.res, res.err
 	case <-ctx.Done():
-		return request.handlePreProcessError(errors.New("request timed out"))
+		return request.HandlePreProcessError(errors.New("request timed out"))
 	}
 }
 
-func checkForTimeout(ctx context.Context, request Request) (context.Context, context.CancelFunc) {
+func CheckForTimeout(ctx context.Context, request Request) (context.Context, context.CancelFunc) {
 	var cancel context.CancelFunc
 	ctx, cancel = context.WithCancel(ctx)
 	if timeout := request.getTimeout(); timeout != nil && *timeout != 0 {
@@ -47,7 +49,7 @@ func checkForTimeout(ctx context.Context, request Request) (context.Context, con
 func processRequest(ctx context.Context, request Request, responseChan chan response) {
 	defer func() {
 		if r := recover(); r != nil {
-			res, err := request.handlePreProcessError(errors.New("thola paniced: " + fmt.Sprint(r)))
+			res, err := request.HandlePreProcessError(errors.New("thola paniced: " + fmt.Sprint(r)))
 			responseChan <- response{
 				res: res,
 				err: err,
@@ -56,7 +58,7 @@ func processRequest(ctx context.Context, request Request, responseChan chan resp
 	}()
 	con, err := request.setupConnection(ctx)
 	if err != nil {
-		res, err := request.handlePreProcessError(err)
+		res, err := request.HandlePreProcessError(err)
 		responseChan <- response{
 			res: res,
 			err: err,
