@@ -6,10 +6,12 @@ import (
 
 // ReadInterfacesRequest
 //
-// ReadInterfacesRequest is a the request struct for the read interfaces request.
+// ReadInterfacesRequest is the request struct for the read interfaces request.
 //
 // swagger:model
 type ReadInterfacesRequest struct {
+	// If you only want specific values of the interfaces you can specify them here.
+	Values []string `yaml:"values" json:"values" xml:"values"`
 	ReadRequest
 }
 
