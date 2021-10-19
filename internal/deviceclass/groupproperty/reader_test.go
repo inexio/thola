@@ -11,6 +11,41 @@ import (
 	"testing"
 )
 
+func TestGroupProperty_merge(t *testing.T) {
+	g1 := propertyGroup{
+		"ifIndex": "1",
+	}
+
+	g2 := propertyGroup{
+		"ifDescr": "3",
+		"radio": propertyGroup{
+			"level_in": "3",
+		},
+	}
+
+	expected := propertyGroup{
+		"ifIndex": "1",
+		"ifDescr": "3",
+		"radio": propertyGroup{
+			"level_in": "3",
+		},
+	}
+
+	assert.Equal(t, expected, g1.merge(g2))
+}
+
+func TestGroupProperty_merge_overwrite(t *testing.T) {
+	g1 := propertyGroup{
+		"ifIndex": "1",
+	}
+
+	g2 := propertyGroup{
+		"ifIndex": "3",
+	}
+
+	assert.Equal(t, g2, g1.merge(g2))
+}
+
 // TestDeviceClassOID_readOID tests deviceClassOID.readOid(...) without indices and skipEmpty = false
 func TestDeviceClassOID_readOID(t *testing.T) {
 	var snmpClient network.MockSNMPClient

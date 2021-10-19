@@ -462,3 +462,223 @@ func TestValueFilter_applySNMP_noMatch(t *testing.T) {
 
 	assert.Equal(t, reader, filteredGroup)
 }
+
+func TestExclusiveValueFilter_CheckMatch(t *testing.T) {
+	valueFilter := GetExclusiveValueFilter([][]string{{"radio", "level_in"}})
+
+	filter, ok := valueFilter.(ValueFilter)
+	assert.True(t, ok, "exclusive value filter is not implementing the ValueFilter interface")
+
+	assert.True(t, filter.CheckMatch([]string{"radio"}))
+	assert.True(t, filter.CheckMatch([]string{"ifDescr"}))
+	assert.True(t, filter.CheckMatch([]string{"radio", "level_out"}))
+	assert.False(t, filter.CheckMatch([]string{"radio", "level_in"}))
+	assert.False(t, filter.CheckMatch([]string{"radio", "level_in", "test"}))
+}
+
+func TestExclusiveValueFilter_ApplyPropertyGroups(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"ifDescr"}})
+
+	groups := PropertyGroups{
+		propertyGroup{
+			"ifIndex":      "1",
+			"ifDescr":      "Ethernet #1",
+			"ifOperStatus": "1",
+		},
+	}
+
+	filteredGroup, err := filter.ApplyPropertyGroups(context.Background(), groups)
+	assert.NoError(t, err)
+
+	expected := PropertyGroups{
+		propertyGroup{
+			"ifDescr": "Ethernet #1",
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_ApplyPropertyGroups_multiple(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"ifIndex"}, {"ifDescr"}})
+
+	groups := PropertyGroups{
+		propertyGroup{
+			"ifIndex":      "1",
+			"ifDescr":      "Ethernet #1",
+			"ifOperStatus": "1",
+		},
+	}
+
+	filteredGroup, err := filter.ApplyPropertyGroups(context.Background(), groups)
+	assert.NoError(t, err)
+
+	expected := PropertyGroups{
+		propertyGroup{
+			"ifIndex": "1",
+			"ifDescr": "Ethernet #1",
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_ApplyPropertyGroups_nested(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"radio", "level_in"}})
+
+	groups := PropertyGroups{
+		propertyGroup{
+			"ifIndex": "1",
+			"radio": propertyGroup{
+				"level_in": "10",
+			},
+		},
+	}
+
+	filteredGroup, err := filter.ApplyPropertyGroups(context.Background(), groups)
+	assert.NoError(t, err)
+
+	expected := PropertyGroups{
+		propertyGroup{
+			"radio": propertyGroup{
+				"level_in": "10",
+			},
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_ApplyPropertyGroups_multipleNested(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"radio", "level_in"}, {"radio", "level_out"}})
+
+	groups := PropertyGroups{
+		propertyGroup{
+			"ifIndex": "1",
+			"radio": propertyGroup{
+				"level_in":       "10",
+				"level_out":      "10",
+				"max_bitrate_in": "100000",
+			},
+		},
+	}
+
+	filteredGroup, err := filter.ApplyPropertyGroups(context.Background(), groups)
+	assert.NoError(t, err)
+
+	expected := PropertyGroups{
+		propertyGroup{
+			"radio": propertyGroup{
+				"level_in":  "10",
+				"level_out": "10",
+			},
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_applySNMP(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"ifDescr"}})
+
+	reader := snmpReader{
+		oids: &deviceClassOIDs{
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+			"ifOperStatus": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "2",
+				},
+			},
+		},
+	}
+
+	filteredGroup, err := filter.applySNMP(context.Background(), reader)
+	assert.NoError(t, err)
+
+	expected := snmpReader{
+		oids: &deviceClassOIDs{
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_applySNMP_nested(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"radio", "level_in"}})
+
+	reader := snmpReader{
+		oids: &deviceClassOIDs{
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+			"radio": &deviceClassOIDs{
+				"level_in": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "2",
+					},
+				},
+				"level_out": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "3",
+					},
+				},
+			},
+		},
+	}
+
+	filteredGroup, err := filter.applySNMP(context.Background(), reader)
+	assert.NoError(t, err)
+
+	expected := snmpReader{
+		oids: &deviceClassOIDs{
+			"radio": &deviceClassOIDs{
+				"level_in": &deviceClassOID{
+					SNMPGetConfiguration: network.SNMPGetConfiguration{
+						OID: "2",
+					},
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_applySNMP_noMatch(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"ifSpeed"}})
+
+	reader := snmpReader{
+		oids: &deviceClassOIDs{
+			"ifDescr": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "1",
+				},
+			},
+			"ifOperStatus": &deviceClassOID{
+				SNMPGetConfiguration: network.SNMPGetConfiguration{
+					OID: "2",
+				},
+			},
+		},
+	}
+
+	filteredGroup, err := filter.applySNMP(context.Background(), reader)
+	assert.NoError(t, err)
+
+	expected := snmpReader{
+		oids: &deviceClassOIDs{},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}

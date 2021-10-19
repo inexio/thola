@@ -170,8 +170,8 @@ func (g *valueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups Pr
 	var res PropertyGroups
 
 	for _, group := range propertyGroups {
-		newGroup, err := filterPropertyGroupKey(ctx, group, g.value, func(a, b string) bool {
-			return a == b
+		newGroup, err := filterPropertyGroupKey(ctx, group, g.value, func(val string, key []string) (bool, bool) {
+			return val == key[0], len(key) == 1
 		})
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to filter group property")
@@ -184,8 +184,8 @@ func (g *valueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups Pr
 
 func (g *valueFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpReader, error) {
 	var err error
-	reader.oids, err = filterOIDReaderKey(ctx, reader.oids, g.value, func(a, b string) bool {
-		return a == b
+	reader.oids, err = filterOIDReaderKey(ctx, reader.oids, g.value, func(val string, key []string) (bool, bool) {
+		return val == key[0], len(key) == 1
 	})
 	if err != nil {
 		return snmpReader{}, err
@@ -193,7 +193,72 @@ func (g *valueFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 	return reader, nil
 }
 
-func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []string, compareFunc func(a, b string) bool) (propertyGroup, error) {
+type exclusiveValueFilter struct {
+	values [][]string
+}
+
+func GetExclusiveValueFilter(values [][]string) Filter {
+	return &exclusiveValueFilter{
+		values: values,
+	}
+}
+
+func (g *exclusiveValueFilter) CheckMatch(value []string) bool {
+	for _, val := range g.values {
+		for i, k := range value {
+			if i >= len(val) || k != val[i] {
+				continue
+			}
+			if i == len(val)-1 && k == val[i] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (g *exclusiveValueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups PropertyGroups) (PropertyGroups, error) {
+	var res PropertyGroups
+
+	for _, group := range propertyGroups {
+		newGroup := make(propertyGroup)
+		for _, k := range g.values {
+			exclusiveGroup, err := filterPropertyGroupKey(ctx, group, k, func(val string, key []string) (bool, bool) {
+				return !(val == key[0] && len(key) == 1), !(val == key[0])
+			})
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to filter group property")
+			}
+			newGroup = newGroup.merge(exclusiveGroup)
+		}
+		res = append(res, newGroup)
+	}
+
+	return res, nil
+}
+
+func (g *exclusiveValueFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpReader, error) {
+	res := reader
+	oids := make(deviceClassOIDs)
+	res.oids = &oids
+
+	for _, k := range g.values {
+		tmp, err := filterOIDReaderKey(ctx, reader.oids, k, func(val string, key []string) (bool, bool) {
+			return !(val == key[0] && len(key) == 1), !(val == key[0])
+		})
+		if err != nil {
+			return snmpReader{}, err
+		}
+
+		if tmpConverted, ok := tmp.(*deviceClassOIDs); ok {
+			oids = oids.merge(*tmpConverted)
+		}
+	}
+
+	return res, nil
+}
+
+func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []string, matcher func(string, []string) (bool, bool)) (propertyGroup, error) {
 	if len(key) == 0 {
 		return nil, errors.New("filter key is empty")
 	}
@@ -201,20 +266,20 @@ func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []stri
 	//copy values
 	groupCopy := make(propertyGroup)
 	for k, v := range group {
-		if compareFunc(k, key[0]) {
-			if len(key) > 1 {
+		if match, del := matcher(k, key); match {
+			if del {
+				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in property group")
+			} else {
 				var nextGroup propertyGroup
 				err := nextGroup.encode(v)
 				if err != nil {
 					return nil, errors.Wrap(err, "failed to encode next filter key value to property group")
 				}
-				r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], compareFunc)
+				r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
 				if err != nil {
 					return nil, err
 				}
 				groupCopy[k] = r
-			} else {
-				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in property group")
 			}
 			continue
 		}
@@ -224,7 +289,7 @@ func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []stri
 	return groupCopy, nil
 }
 
-func filterOIDReaderKey(ctx context.Context, reader OIDReader, key []string, compareFunc func(a, b string) bool) (OIDReader, error) {
+func filterOIDReaderKey(ctx context.Context, reader OIDReader, key []string, matcher func(string, []string) (bool, bool)) (OIDReader, error) {
 	if len(key) == 0 {
 		return nil, errors.New("filter key is empty")
 	}
@@ -238,15 +303,15 @@ func filterOIDReaderKey(ctx context.Context, reader OIDReader, key []string, com
 	//copy values
 	readerCopy := make(deviceClassOIDs)
 	for k, v := range *multipleReader {
-		if compareFunc(k, key[0]) {
-			if len(key) > 1 {
-				r, err := filterOIDReaderKey(ctx, v, key[1:], compareFunc)
+		if match, del := matcher(k, key); match {
+			if del {
+				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in snmp reader")
+			} else {
+				r, err := filterOIDReaderKey(ctx, v, key[1:], matcher)
 				if err != nil {
 					return nil, err
 				}
 				readerCopy[k] = r
-			} else {
-				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in snmp reader")
 			}
 			continue
 		}
