@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"math/big"
+	"reflect"
 	"strconv"
 )
 
@@ -36,7 +37,12 @@ func New(i interface{}) Value {
 	case nil:
 		v = ""
 	default:
-		v = value(fmt.Sprint(t))
+		switch val := reflect.ValueOf(i); val.Kind() {
+		case reflect.Ptr:
+			return New(reflect.Indirect(val).Interface())
+		default:
+			v = value(fmt.Sprint(t))
+		}
 	}
 	return v
 }

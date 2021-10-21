@@ -90,7 +90,7 @@ func (c *timosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		})
 	}
 
-	return filterInterfaces(interfaces, filter)
+	return filterInterfaces(ctx, interfaces, filter)
 }
 
 // getPhysPortDescriptions returns a mapping from every ifIndex to a description.

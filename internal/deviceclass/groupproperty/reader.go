@@ -102,10 +102,42 @@ func Interface2Reader(i interface{}, parentReader Reader) (Reader, error) {
 
 type propertyGroup map[string]interface{}
 
+func (g *propertyGroup) decode(destination interface{}) error {
+	return mapstructure.WeakDecode(g, destination)
+}
+
+func (g *propertyGroup) encode(data interface{}) error {
+	return mapstructure.WeakDecode(data, g)
+}
+
+func (g *propertyGroup) merge(overwrite propertyGroup) propertyGroup {
+	res := make(propertyGroup)
+	for k, v := range *g {
+		res[k] = v
+	}
+	for k, v := range overwrite {
+		if origEntry, ok := (*g)[k]; ok {
+			origEntryGroupProperty, origOK := origEntry.(propertyGroup)
+			newEntryGroupProperty, newOK := v.(propertyGroup)
+			if origOK && newOK {
+				res[k] = origEntryGroupProperty.merge(newEntryGroupProperty)
+				continue
+			}
+		}
+		res[k] = v
+	}
+
+	return res
+}
+
 type PropertyGroups []propertyGroup
 
 func (g *PropertyGroups) Decode(destination interface{}) error {
 	return mapstructure.WeakDecode(g, destination)
+}
+
+func (g *PropertyGroups) Encode(data interface{}) error {
+	return mapstructure.WeakDecode(data, g)
 }
 
 type Reader interface {

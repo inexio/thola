@@ -1,3 +1,4 @@
+//go:build !client
 // +build !client
 
 package request
@@ -14,17 +15,17 @@ import (
 )
 
 type interfaceCheckOutput struct {
-	IfIndex       *string `json:"ifIndex" csv:"ifIndex"`
-	IfDescr       *string `json:"ifDescr" csv:"ifDescr"`
-	IfType        *string `json:"ifType" csv:"ifType"`
-	IfName        *string `json:"ifName" csv:"ifName"`
-	IfAlias       *string `json:"ifAlias" csv:"ifAlias"`
-	IfPhysAddress *string `json:"ifPhysAddress" csv:"ifPhysAddress"`
-	IfAdminStatus *string `json:"ifAdminStatus" csv:"ifAdminStatus"`
-	IfOperStatus  *string `json:"ifOperStatus" csv:"ifOperStatus"`
-	MaxSpeedIn    *string `json:"maxSpeedIn" csv:"maxSpeedIn"`
-	MaxSpeedOut   *string `json:"maxSpeedOut" csv:"maxSpeedOut"`
-	SubType       *string `json:"subType" csv:"subType"`
+	IfIndex       *string `csv:"ifIndex"`
+	IfDescr       *string `csv:"ifDescr"`
+	IfType        *string `csv:"ifType"`
+	IfName        *string `csv:"ifName"`
+	IfAlias       *string `csv:"ifAlias"`
+	IfPhysAddress *string `csv:"ifPhysAddress"`
+	IfAdminStatus *string `csv:"ifAdminStatus"`
+	IfOperStatus  *string `csv:"ifOperStatus"`
+	MaxSpeedIn    *string `csv:"maxSpeedIn"`
+	MaxSpeedOut   *string `csv:"maxSpeedOut"`
+	SubType       *string `csv:"subType"`
 }
 
 func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
@@ -106,16 +107,16 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 	var res []groupproperty.Filter
 
 	for _, f := range r.IfTypeFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifType", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifType"}, f))
 	}
 	for _, f := range r.IfNameFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifName", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifName"}, f))
 	}
 	for _, f := range r.IfDescrFilter {
-		res = append(res, groupproperty.GetGroupFilter("ifDescr", f))
+		res = append(res, groupproperty.GetGroupFilter([]string{"ifDescr"}, f))
 	}
 
-	res = append(res, groupproperty.GetValueFilter("vlan"))
+	res = append(res, groupproperty.GetValueFilter([]string{"vlan"}))
 
 	return res
 }

@@ -75,5 +75,5 @@ func (c *ceraosIP10Communicator) GetInterfaces(ctx context.Context, filter ...gr
 		}
 	}
 
-	return filterInterfaces(subInterfaces, filter)
+	return filterInterfaces(ctx, subInterfaces, filter)
 }

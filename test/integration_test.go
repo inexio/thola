@@ -96,6 +96,10 @@ func init() {
 }
 
 func TestIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration tests in short mode")
+	}
+
 	if !testConf.SimpleUI {
 		_, _ = colorstring.Println("[cyan][1/3][reset] Building up test environment...")
 	}

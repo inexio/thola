@@ -70,7 +70,7 @@ func (c *timosSASCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 		}
 	}
 
-	return filterInterfaces(interfaces, filter)
+	return filterInterfaces(ctx, interfaces, filter)
 }
 
 // getInterfaceBySubIndex returns the index of the interface that has the given index.

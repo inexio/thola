@@ -1,3 +1,4 @@
+//go:build client
 // +build client
 
 package cmd

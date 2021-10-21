@@ -8,7 +8,6 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
-	"regexp"
 )
 
 type codeCommunicator struct {
@@ -203,70 +202,28 @@ func (c *codeCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func filterInterfaces(interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
+func filterInterfaces(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
 	if len(filter) == 0 {
 		return interfaces, nil
 	}
 
-	var ifDescrFilter, ifNameFilter, ifTypeFilter []*regexp.Regexp
+	var propertyGroups groupproperty.PropertyGroups
+	err := propertyGroups.Encode(interfaces)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to encode interfaces to property groups")
+	}
 
 	for _, fil := range filter {
-		if interfaceFilter, ok := fil.(groupproperty.GroupFilter); ok {
-			key, regex := interfaceFilter.GetFilterProperties()
-
-			switch key {
-			case "ifDescr":
-				regex, err := regexp.Compile(regex)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to compile ifDescr regex")
-				}
-				ifDescrFilter = append(ifDescrFilter, regex)
-			case "ifName":
-				regex, err := regexp.Compile(regex)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to compile ifName regex")
-				}
-				ifNameFilter = append(ifNameFilter, regex)
-			case "ifType":
-				regex, err := regexp.Compile(regex)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to compile ifType regex")
-				}
-				ifTypeFilter = append(ifTypeFilter, regex)
-			default:
-				return nil, errors.New("unknown filter key: " + key)
-			}
+		propertyGroups, err = fil.ApplyPropertyGroups(ctx, propertyGroups)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to apply filter on property groups")
 		}
 	}
 
 	var res []device.Interface
-out:
-	for _, interf := range interfaces {
-		if interf.IfDescr != nil {
-			for _, fil := range ifDescrFilter {
-				if fil.MatchString(*interf.IfDescr) {
-					continue out
-				}
-			}
-		}
-
-		if interf.IfName != nil {
-			for _, fil := range ifNameFilter {
-				if fil.MatchString(*interf.IfName) {
-					continue out
-				}
-			}
-		}
-
-		if interf.IfType != nil {
-			for _, fil := range ifTypeFilter {
-				if fil.MatchString(*interf.IfType) {
-					continue out
-				}
-			}
-		}
-
-		res = append(res, interf)
+	err = propertyGroups.Decode(&res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property groups to interfaces")
 	}
 
 	return res, nil
