@@ -104,21 +104,7 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 }
 
 func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
-	var res []groupproperty.Filter
-
-	for _, f := range r.IfTypeFilter {
-		res = append(res, groupproperty.GetGroupFilter([]string{"ifType"}, f))
-	}
-	for _, f := range r.IfNameFilter {
-		res = append(res, groupproperty.GetGroupFilter([]string{"ifName"}, f))
-	}
-	for _, f := range r.IfDescrFilter {
-		res = append(res, groupproperty.GetGroupFilter([]string{"ifDescr"}, f))
-	}
-
-	res = append(res, groupproperty.GetValueFilter([]string{"vlan"}))
-
-	return res
+	return append(r.InterfaceOptions.getFilter(), groupproperty.GetValueFilter([]string{"vlan"}))
 }
 
 func (r *CheckInterfaceMetricsRequest) normalizeInterfaces(interfaces []device.Interface) error {
@@ -133,7 +119,7 @@ func (r *CheckInterfaceMetricsRequest) normalizeInterfaces(interfaces []device.I
 		}
 
 		if r.ifDescrRegex != nil {
-			normalizedIfDescr := r.ifDescrRegex.ReplaceAllString(*interfaces[i].IfDescr, *r.IfDescrRegexReplace)
+			normalizedIfDescr := r.ifDescrRegex.ReplaceAllString(*interfaces[i].IfDescr, r.IfDescrRegexReplace)
 			interfaces[i].IfDescr = &normalizedIfDescr
 		}
 	}

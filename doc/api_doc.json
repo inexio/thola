@@ -971,26 +971,34 @@
       "title": "BaseResponse",
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
+    "CPU": {
+      "description": "CPU contains information per CPU.",
+      "type": "object",
+      "title": "CPU",
+      "properties": {
+        "label": {
+          "type": "string",
+          "x-go-name": "Label"
+        },
+        "load": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Load"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
     "CPUComponent": {
       "description": "CPUComponent represents a CPU component.",
       "type": "object",
       "title": "CPUComponent",
       "properties": {
-        "load": {
+        "cpus": {
           "type": "array",
           "items": {
-            "type": "number",
-            "format": "double"
+            "$ref": "#/definitions/CPU"
           },
-          "x-go-name": "Load"
-        },
-        "temperature": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "double"
-          },
-          "x-go-name": "Temperature"
+          "x-go-name": "CPUs"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
@@ -1024,7 +1032,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckDeviceRequest": {
-      "description": "CheckDeviceRequest is a the request struct for the check device request.",
+      "description": "CheckDeviceRequest is the request struct for the check device request.",
       "type": "object",
       "title": "CheckDeviceRequest",
       "properties": {
@@ -1202,6 +1210,21 @@
         "device_data": {
           "$ref": "#/definitions/DeviceData"
         },
+        "ifDescr_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfDescrFilter"
+        },
+        "ifDescr_regex": {
+          "type": "string",
+          "x-go-name": "IfDescrRegex"
+        },
+        "ifDescr_regex_replace": {
+          "type": "string",
+          "x-go-name": "IfDescrRegexReplace"
+        },
         "ifName_filter": {
           "type": "array",
           "items": {
@@ -1228,11 +1251,23 @@
           "type": "boolean",
           "x-go-name": "PrintPerformanceData"
         },
+        "snmp_gets_instead_of_walk": {
+          "type": "boolean",
+          "x-go-name": "SNMPGetsInsteadOfWalk"
+        },
         "timeout": {
           "description": "Timeout for the request (0 =\u003e no timeout)",
           "type": "integer",
           "format": "int64",
           "x-go-name": "Timeout"
+        },
+        "values": {
+          "description": "If you only want specific values of the interfaces you can specify them here.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Values"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
@@ -1624,10 +1659,30 @@
       "type": "object",
       "title": "EthernetLikeInterface",
       "properties": {
+        "dot3HCStatsAlignmentErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsAlignmentErrors"
+        },
         "dot3HCStatsFCSErrors": {
           "type": "integer",
           "format": "uint64",
           "x-go-name": "Dot3HCStatsFCSErrors"
+        },
+        "dot3HCStatsFrameTooLongs": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsFrameTooLongs"
+        },
+        "dot3HCStatsInternalMacReceiveErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsInternalMacReceiveErrors"
+        },
+        "dot3HCStatsInternalMacTransmitErrors": {
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Dot3HCStatsInternalMacTransmitErrors"
         },
         "dot3StatsAlignmentErrors": {
           "type": "integer",
@@ -1698,7 +1753,7 @@
       "x-go-package": "github.com/inexio/thola/internal/device"
     },
     "HTTPConnectionData": {
-      "description": "HTTPConnectionData includes all http connection data for a device.",
+      "description": "HTTPConnectionData includes all HTTP connection data for a device.",
       "type": "object",
       "title": "HTTPConnectionData",
       "properties": {
@@ -1715,7 +1770,7 @@
           "example": "username"
         },
         "http_ports": {
-          "description": "The http port(s) of the device.",
+          "description": "The HTTP port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -1727,7 +1782,7 @@
           ]
         },
         "https_ports": {
-          "description": "The https port(s) of the device.",
+          "description": "The HTTPS port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -1747,9 +1802,7 @@
       "title": "HardwareHealthComponent",
       "properties": {
         "environment_monitor_state": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "EnvironmentMonitorState"
+          "$ref": "#/definitions/HardwareHealthComponentState"
         },
         "fans": {
           "type": "array",
@@ -1764,6 +1817,20 @@
             "$ref": "#/definitions/HardwareHealthComponentPowerSupply"
           },
           "x-go-name": "PowerSupply"
+        },
+        "temperature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HardwareHealthComponentTemperature"
+          },
+          "x-go-name": "Temperature"
+        },
+        "voltage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HardwareHealthComponentVoltage"
+          },
+          "x-go-name": "Voltage"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
@@ -1778,9 +1845,7 @@
           "x-go-name": "Description"
         },
         "state": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "State"
+          "$ref": "#/definitions/HardwareHealthComponentState"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
@@ -1795,9 +1860,51 @@
           "x-go-name": "Description"
         },
         "state": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "State"
+          "$ref": "#/definitions/HardwareHealthComponentState"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "HardwareHealthComponentState": {
+      "type": "string",
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "HardwareHealthComponentTemperature": {
+      "description": "HardwareHealthComponentTemperature represents one fan of a device.",
+      "type": "object",
+      "title": "HardwareHealthComponentTemperature",
+      "properties": {
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "state": {
+          "$ref": "#/definitions/HardwareHealthComponentState"
+        },
+        "temperature": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Temperature"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "HardwareHealthComponentVoltage": {
+      "description": "HardwareHealthComponentVoltage represents the voltage of a device.",
+      "type": "object",
+      "title": "HardwareHealthComponentVoltage",
+      "properties": {
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "state": {
+          "$ref": "#/definitions/HardwareHealthComponentState"
+        },
+        "voltage": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Voltage"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
@@ -2065,6 +2172,87 @@
         },
         "vlan": {
           "$ref": "#/definitions/VLANInformation"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "InterfaceOptions": {
+      "description": "InterfaceOptions is the request struct for the options of an interface request.",
+      "type": "object",
+      "title": "InterfaceOptions",
+      "properties": {
+        "ifDescr_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfDescrFilter"
+        },
+        "ifDescr_regex": {
+          "type": "string",
+          "x-go-name": "IfDescrRegex"
+        },
+        "ifDescr_regex_replace": {
+          "type": "string",
+          "x-go-name": "IfDescrRegexReplace"
+        },
+        "ifName_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfNameFilter"
+        },
+        "ifType_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfTypeFilter"
+        },
+        "snmp_gets_instead_of_walk": {
+          "type": "boolean",
+          "x-go-name": "SNMPGetsInsteadOfWalk"
+        },
+        "values": {
+          "description": "If you only want specific values of the interfaces you can specify them here.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Values"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/request"
+    },
+    "MemoryComponent": {
+      "description": "MemoryComponent represents a Memory component",
+      "type": "object",
+      "title": "MemoryComponent",
+      "properties": {
+        "pools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MemoryPool"
+          },
+          "x-go-name": "Pools"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "MemoryPool": {
+      "description": "MemoryPool contains information per memory pool.",
+      "type": "object",
+      "title": "MemoryPool",
+      "properties": {
+        "label": {
+          "type": "string",
+          "x-go-name": "Label"
+        },
+        "usage": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Usage"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
@@ -2364,7 +2552,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadCPULoadRequest": {
-      "description": "ReadCPULoadRequest is a the request struct for the read cpu request.",
+      "description": "ReadCPULoadRequest is the request struct for the read cpu request.",
       "type": "object",
       "title": "ReadCPULoadRequest",
       "properties": {
@@ -2381,17 +2569,16 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadCPULoadResponse": {
-      "description": "ReadCPULoadResponse is a the response struct for the read cpu response.",
+      "description": "ReadCPULoadResponse is the response struct for the read cpu response.",
       "type": "object",
       "title": "ReadCPULoadResponse",
       "properties": {
-        "cpu_load": {
+        "cpus": {
           "type": "array",
           "items": {
-            "type": "number",
-            "format": "double"
+            "$ref": "#/definitions/CPU"
           },
-          "x-go-name": "CPULoad"
+          "x-go-name": "CPUs"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
@@ -2477,9 +2664,7 @@
       "title": "ReadHardwareHealthResponse",
       "properties": {
         "environment_monitor_state": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "EnvironmentMonitorState"
+          "$ref": "#/definitions/HardwareHealthComponentState"
         },
         "fans": {
           "type": "array",
@@ -2494,29 +2679,84 @@
             "$ref": "#/definitions/HardwareHealthComponentPowerSupply"
           },
           "x-go-name": "PowerSupply"
+        },
+        "temperature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HardwareHealthComponentTemperature"
+          },
+          "x-go-name": "Temperature"
+        },
+        "voltage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HardwareHealthComponentVoltage"
+          },
+          "x-go-name": "Voltage"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadInterfacesRequest": {
-      "description": "ReadInterfacesRequest is a the request struct for the read interfaces request.",
+      "description": "ReadInterfacesRequest is the request struct for the read interfaces request.",
       "type": "object",
       "title": "ReadInterfacesRequest",
       "properties": {
         "device_data": {
           "$ref": "#/definitions/DeviceData"
         },
+        "ifDescr_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfDescrFilter"
+        },
+        "ifDescr_regex": {
+          "type": "string",
+          "x-go-name": "IfDescrRegex"
+        },
+        "ifDescr_regex_replace": {
+          "type": "string",
+          "x-go-name": "IfDescrRegexReplace"
+        },
+        "ifName_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfNameFilter"
+        },
+        "ifType_filter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IfTypeFilter"
+        },
+        "snmp_gets_instead_of_walk": {
+          "type": "boolean",
+          "x-go-name": "SNMPGetsInsteadOfWalk"
+        },
         "timeout": {
           "description": "Timeout for the request (0 =\u003e no timeout)",
           "type": "integer",
           "format": "int64",
           "x-go-name": "Timeout"
+        },
+        "values": {
+          "description": "If you only want specific values of the interfaces you can specify them here.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Values"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadInterfacesResponse": {
-      "description": "ReadInterfacesResponse is a the request struct for the read interfaces response.",
+      "description": "ReadInterfacesResponse is the request struct for the read interfaces response.",
       "type": "object",
       "title": "ReadInterfacesResponse",
       "properties": {
@@ -2552,10 +2792,12 @@
       "type": "object",
       "title": "ReadMemoryUsageResponse",
       "properties": {
-        "memory_usage": {
-          "type": "number",
-          "format": "double",
-          "x-go-name": "MemoryUsage"
+        "memory_pools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MemoryPool"
+          },
+          "x-go-name": "MemoryPools"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
@@ -2862,12 +3104,12 @@
       "x-go-package": "github.com/inexio/thola/internal/device"
     },
     "SNMPConnectionData": {
-      "description": "SNMPConnectionData includes all snmp connection data for a device.",
+      "description": "SNMPConnectionData includes all SNMP connection information for a device.",
       "type": "object",
       "title": "SNMPConnectionData",
       "properties": {
         "communities": {
-          "description": "The snmp community string(s) for the device.",
+          "description": "The SNMP community string(s) for the device.",
           "type": "array",
           "items": {
             "type": "string"
@@ -2898,8 +3140,15 @@
           "x-go-name": "DiscoverTimeout",
           "example": 2
         },
+        "maxRepetitions": {
+          "description": "The Max Repetitions of the SNMP connection. Overrides the device class settings if set.",
+          "type": "integer",
+          "format": "uint32",
+          "x-go-name": "MaxRepetitions",
+          "example": 20
+        },
         "ports": {
-          "description": "The snmp port(s) of the device.",
+          "description": "The SNMP port(s) of the device.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -2914,7 +3163,7 @@
           "$ref": "#/definitions/SNMPv3ConnectionData"
         },
         "versions": {
-          "description": "The snmp version(s) of the device.",
+          "description": "The SNMP version(s) of the device.",
           "type": "array",
           "items": {
             "type": "string"
@@ -2929,7 +3178,7 @@
     },
     "SNMPCredentials": {
       "type": "object",
-      "title": "SNMPCredentials includes all credential information of the snmp connection.",
+      "title": "SNMPCredentials includes all credential information of the SNMP connection.",
       "properties": {
         "community": {
           "type": "string",
@@ -2956,7 +3205,7 @@
       "x-go-package": "github.com/inexio/thola/internal/network"
     },
     "SNMPv3ConnectionData": {
-      "description": "SNMPv3ConnectionData includes all snmp v3 specific connection data.",
+      "description": "SNMPv3ConnectionData includes all SNMP v3 specific connection data.",
       "type": "object",
       "title": "SNMPv3ConnectionData",
       "properties": {
