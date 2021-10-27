@@ -104,7 +104,25 @@ func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, e
 }
 
 func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
-	return append(r.InterfaceOptions.getFilter(), groupproperty.GetValueFilter([]string{"vlan"}))
+	valueFilter := []groupproperty.Filter{
+		// ifTable
+		groupproperty.GetValueFilter([]string{"ifMtu"}),
+		groupproperty.GetValueFilter([]string{"ifLastChange"}),
+		groupproperty.GetValueFilter([]string{"ifOutQLen"}),
+		groupproperty.GetValueFilter([]string{"ifSpecific"}),
+		// VLANs
+		groupproperty.GetValueFilter([]string{"vlan"}),
+	}
+
+	if !r.PrintInterfaces {
+		valueFilter = append(valueFilter,
+			groupproperty.GetValueFilter([]string{"ifType"}),
+			groupproperty.GetValueFilter([]string{"ifName"}),
+			groupproperty.GetValueFilter([]string{"ifAlias"}),
+		)
+	}
+
+	return append(r.InterfaceOptions.getFilter(), valueFilter...)
 }
 
 func (r *CheckInterfaceMetricsRequest) normalizeInterfaces(interfaces []device.Interface) error {
