@@ -76,16 +76,24 @@ func (g *groupFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 		var err error
 		reader.wantedIndices, err = reader.getIndices(ctx)
 		if err != nil {
+			reader.wantedIndices = make(map[string]struct{})
 			log.Ctx(ctx).Debug().Err(err).Msg("failed to read indices, ignoring index oid")
 		}
+	} else {
+		// copy wanted indices
+		wantedIndices := make(map[string]struct{})
+		for index := range reader.wantedIndices {
+			wantedIndices[index] = struct{}{}
+		}
+		reader.wantedIndices = wantedIndices
 	}
-	// TODO copy maps
-	if reader.wantedIndices == nil {
-		reader.wantedIndices = make(map[string]struct{})
+
+	// copy filtered indices
+	filteredIndices := make(map[string]struct{})
+	for index := range reader.filteredIndices {
+		filteredIndices[index] = struct{}{}
 	}
-	if reader.filteredIndices == nil {
-		reader.filteredIndices = make(map[string]struct{})
-	}
+	reader.filteredIndices = filteredIndices
 
 	// compile filter regex
 	regex, err := regexp.Compile(g.regex)
