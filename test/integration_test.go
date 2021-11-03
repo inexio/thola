@@ -90,9 +90,9 @@ func init() {
 		log.Fatal().Err(err).Msg("failed to unmarshal test config!")
 	}
 
-	snmpSimIPs = make(chan string, 3)
-	snmpSimIPs <- "172.20.0.8"
-	snmpSimIPs <- "172.20.0.9"
+	snmpSimIPs = make(chan string, 2)
+	snmpSimIPs <- "snmpsim1"
+	snmpSimIPs <- "snmpsim2"
 }
 
 func TestIntegration(t *testing.T) {

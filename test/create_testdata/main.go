@@ -177,7 +177,7 @@ func getDeviceTestData(device string) (test.DeviceTestData, error) {
 
 	baseRequest := request.BaseRequest{
 		DeviceData: request.DeviceData{
-			IPAddress:      "172.20.0.8",
+			IPAddress:      "snmpsim1",
 			ConnectionData: connectionData,
 		},
 	}

@@ -9,26 +9,11 @@ services:
     depends_on:
       - snmpsim1
       - snmpsim2
-    networks:
-      tholanetwork:
-        ipv4_address: 172.20.0.7
   snmpsim1:
     image: thola/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/
-    networks:
-      tholanetwork:
-        ipv4_address: 172.20.0.8
   snmpsim2:
     image: thola/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/
-    networks:
-      tholanetwork:
-        ipv4_address: 172.20.0.9
-
-networks:
-  tholanetwork:
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24

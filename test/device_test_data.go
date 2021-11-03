@@ -173,7 +173,7 @@ func WaitForSNMPSim(community string, port int) error {
 	r := request.IdentifyRequest{
 		BaseRequest: request.BaseRequest{
 			DeviceData: request.DeviceData{
-				IPAddress: "172.20.0.8",
+				IPAddress: "snmpsim1",
 				ConnectionData: network.ConnectionData{
 					SNMP: &network.SNMPConnectionData{
 						Communities:              []string{community},
