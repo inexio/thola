@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 // CreateNetworkDeviceCommunicator creates a network device communicator which combines a device class communicator and code communicator
@@ -572,8 +573,9 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 
 	amount, err := c.deviceClassCommunicator.GetCountInterfaces(ctx)
 	if err != nil {
+		log.Ctx(ctx).Debug().Msg("failed to get count interfaces, trying to get interfaces")
 		var interfaces []device.Interface
-		interfaces, err = c.GetInterfaces(ctx)
+		interfaces, err = c.GetInterfaces(ctx, groupproperty.GetExclusiveValueFilter([][]string{{"ifIndex"}, {"ifDescr"}}))
 		if err != nil {
 			return 0, errors.Wrap(err, "count interfaces failed")
 		}

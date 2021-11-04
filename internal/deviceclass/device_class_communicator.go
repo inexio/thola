@@ -583,7 +583,7 @@ func (o *deviceClassCommunicator) GetInterfaces(ctx context.Context, filter ...g
 }
 
 func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, error) {
-	if o.components.interfaces == nil || o.components.interfaces.count == "" {
+	if o.components.interfaces == nil || o.components.interfaces.count == nil {
 		log.Ctx(ctx).Debug().Str("property", "countInterfaces").Str("device_class", o.name).Msg("no interface count information available")
 		return 0, tholaerr.NewNotImplementedError("not implemented")
 	}
@@ -594,25 +594,16 @@ func (o *deviceClassCommunicator) GetCountInterfaces(ctx context.Context) (int, 
 		return 0, errors.New("snmp client is empty")
 	}
 
-	oid := o.components.interfaces.count
-
-	snmpResponse, err := con.SNMP.SnmpClient.SNMPGet(ctx, oid)
+	res, err := o.components.interfaces.count.GetProperty(ctx)
 	if err != nil {
-		log.Ctx(ctx).Debug().Msg("count interfaces in device class failed")
-		return 0, err
+		return 0, errors.Wrap(err, "failed to get interfaces count")
 	}
 
-	response, err := snmpResponse[0].GetValue()
-	if err != nil {
-		log.Ctx(ctx).Debug().Err(err).Msg("response is empty")
-		return 0, errors.Wrap(err, "response is empty")
-	}
-
-	if responseInt, err := response.Int(); err == nil {
+	if responseInt, err := res.Int(); err == nil {
 		return responseInt, nil
 	}
 
-	return 0, fmt.Errorf("could not parse response to int, response has type %T", response)
+	return 0, errors.New("could not parse response to int")
 }
 
 func (o *deviceClassCommunicator) GetCPUComponentCPULoad(ctx context.Context) ([]device.CPU, error) {
