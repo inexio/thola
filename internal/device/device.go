@@ -498,6 +498,37 @@ func (h HardwareHealthComponentState) GetInt() (int, error) {
 	return 7, fmt.Errorf("invalid hardware health state '%s'", h)
 }
 
+// HighAvailabilityComponent
+//
+// HighAvailabilityComponent represents high availability information of a device.
+//
+// swagger:model
+type HighAvailabilityComponent struct {
+	State *HighAvailabilityComponentState
+	Role  *string
+	Nodes *int
+}
+
+type HighAvailabilityComponentState string
+
+const (
+	HighAvailabilityComponentStateUnsynchronized HighAvailabilityComponentState = "unsynchronized"
+	HighAvailabilityComponentStateSynchronized   HighAvailabilityComponentState = "synchronized"
+	HighAvailabilityComponentStateStandalone     HighAvailabilityComponentState = "standalone"
+)
+
+func (h HighAvailabilityComponentState) GetInt() (int, error) {
+	switch h {
+	case HighAvailabilityComponentStateUnsynchronized:
+		return 0, nil
+	case HighAvailabilityComponentStateSynchronized:
+		return 1, nil
+	case HighAvailabilityComponentStateStandalone:
+		return 2, nil
+	}
+	return 0, fmt.Errorf("invalid high availability state '%s'", h)
+}
+
 // Rate
 //
 // Rate encapsulates values which refer to a time span.

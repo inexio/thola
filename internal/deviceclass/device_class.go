@@ -49,14 +49,15 @@ type deviceClassIdentifyProperties struct {
 
 // deviceClassComponents represents the components part of a device class.
 type deviceClassComponents struct {
-	interfaces     *deviceClassComponentsInterfaces
-	ups            *deviceClassComponentsUPS
-	cpu            *deviceClassComponentsCPU
-	memory         *deviceClassComponentsMemory
-	sbc            *deviceClassComponentsSBC
-	server         *deviceClassComponentsServer
-	disk           *deviceClassComponentsDisk
-	hardwareHealth *deviceClassComponentsHardwareHealth
+	interfaces       *deviceClassComponentsInterfaces
+	ups              *deviceClassComponentsUPS
+	cpu              *deviceClassComponentsCPU
+	memory           *deviceClassComponentsMemory
+	sbc              *deviceClassComponentsSBC
+	server           *deviceClassComponentsServer
+	disk             *deviceClassComponentsDisk
+	hardwareHealth   *deviceClassComponentsHardwareHealth
+	highAvailability *deviceClassComponentsHighAvailability
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -108,13 +109,20 @@ type deviceClassComponentsDisk struct {
 	properties groupproperty.Reader
 }
 
-// deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
+// deviceClassComponentsHardwareHealth represents the hardware health part of a device class.
 type deviceClassComponentsHardwareHealth struct {
 	environmentMonitorState property.Reader
 	fans                    groupproperty.Reader
 	powerSupply             groupproperty.Reader
 	temperature             groupproperty.Reader
 	voltage                 groupproperty.Reader
+}
+
+// deviceClassComponentsHighAvailability represents the high availability part of a device class.
+type deviceClassComponentsHighAvailability struct {
+	state property.Reader
+	role  property.Reader
+	nodes property.Reader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -151,14 +159,15 @@ type yamlDeviceClassIdentify struct {
 
 // yamlDeviceClassComponents represents the components part of a yaml device class.
 type yamlDeviceClassComponents struct {
-	Interfaces     *yamlComponentsInterfaces               `yaml:"interfaces"`
-	UPS            *yamlComponentsUPSProperties            `yaml:"ups"`
-	CPU            *yamlComponentsCPUProperties            `yaml:"cpu"`
-	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
-	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
-	Server         *yamlComponentsServerProperties         `yaml:"server"`
-	Disk           *yamlComponentsDiskProperties           `yaml:"disk"`
-	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
+	Interfaces       *yamlComponentsInterfaces               `yaml:"interfaces"`
+	UPS              *yamlComponentsUPSProperties            `yaml:"ups"`
+	CPU              *yamlComponentsCPUProperties            `yaml:"cpu"`
+	Memory           *yamlComponentsMemoryProperties         `yaml:"memory"`
+	SBC              *yamlComponentsSBCProperties            `yaml:"sbc"`
+	Server           *yamlComponentsServerProperties         `yaml:"server"`
+	Disk             *yamlComponentsDiskProperties           `yaml:"disk"`
+	HardwareHealth   *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
+	HighAvailability *yamlComponentsHighAvailability         `yaml:"high_availability"`
 }
 
 // yamlDeviceClassConfig represents the config part of a yaml device class.
@@ -236,6 +245,13 @@ type yamlComponentsHardwareHealthProperties struct {
 	PowerSupply             interface{}   `yaml:"power_supply"`
 	Temperature             interface{}   `yaml:"temperature"`
 	Voltage                 interface{}   `yaml:"voltage"`
+}
+
+// yamlComponentsHa represents the specific properties of HA components of a yaml device class.
+type yamlComponentsHighAvailability struct {
+	State []interface{}
+	Role  []interface{}
+	Nodes []interface{}
 }
 
 //
@@ -512,6 +528,14 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml hardware health properties")
 		}
 		components.hardwareHealth = &hardwareHealth
+	}
+
+	if y.HighAvailability != nil {
+		ha, err := y.HighAvailability.convert(parentComponents.highAvailability)
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml high availability properties")
+		}
+		components.highAvailability = &ha
 	}
 
 	return components, nil
@@ -877,6 +901,38 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 		prop.environmentMonitorState, err = property.InterfaceSlice2Reader(y.EnvironmentMonitorState, condition.PropertyDefault, prop.environmentMonitorState)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
+		}
+	}
+
+	return prop, nil
+}
+
+func (y *yamlComponentsHighAvailability) convert(parentHA *deviceClassComponentsHighAvailability) (deviceClassComponentsHighAvailability, error) {
+	var prop deviceClassComponentsHighAvailability
+	var err error
+
+	if parentHA != nil {
+		prop = *parentHA
+	}
+
+	if y.State != nil {
+		prop.state, err = property.InterfaceSlice2Reader(y.State, condition.PropertyDefault, prop.state)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert state property to property reader")
+		}
+	}
+
+	if y.Role != nil {
+		prop.role, err = property.InterfaceSlice2Reader(y.Role, condition.PropertyDefault, prop.role)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert role property to property reader")
+		}
+	}
+
+	if y.Nodes != nil {
+		prop.nodes, err = property.InterfaceSlice2Reader(y.Nodes, condition.PropertyDefault, prop.nodes)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert nodes property to property reader")
 		}
 	}
 

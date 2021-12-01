@@ -466,6 +466,52 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponent(ctx context.Context
 	return hardwareHealth, nil
 }
 
+func (o *deviceClassCommunicator) GetHighAvailabilityComponent(ctx context.Context) (device.HighAvailabilityComponent, error) {
+	if !o.HasComponent(component.HighAvailability) {
+		return device.HighAvailabilityComponent{}, tholaerr.NewComponentNotFoundError("no ha component available for this device")
+	}
+
+	var ha device.HighAvailabilityComponent
+
+	empty := true
+
+	state, err := o.GetHighAvailabilityComponentState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability state")
+		}
+	} else {
+		ha.State = &state
+		empty = false
+	}
+
+	role, err := o.GetHighAvailabilityComponentRole(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		ha.Role = &role
+		empty = false
+	}
+
+	nodes, err := o.GetHighAvailabilityComponentNodes(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability nodes")
+		}
+	} else {
+		ha.Nodes = &nodes
+		empty = false
+	}
+
+	if empty {
+		return device.HighAvailabilityComponent{}, tholaerr.NewNotFoundError("no hardware health data available")
+	}
+
+	return ha, nil
+}
+
 func (o *deviceClassCommunicator) GetVendor(ctx context.Context) (string, error) {
 	if o.identify.properties.vendor == nil {
 		log.Ctx(ctx).Debug().Str("property", "vendor").Str("device_class", o.name).Msg("no detection information available")
@@ -1185,4 +1231,61 @@ func (o *deviceClassCommunicator) GetHardwareHealthComponentVoltage(ctx context.
 		return nil, errors.Wrap(err, "failed to decode property into voltage struct")
 	}
 	return voltage, nil
+}
+
+func (o *deviceClassCommunicator) GetHighAvailabilityComponentState(ctx context.Context) (device.HighAvailabilityComponentState, error) {
+	if o.components.highAvailability == nil || o.components.highAvailability.state == nil {
+		log.Ctx(ctx).Debug().Str("property", "HighAvailabilityComponentState").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "HighAvailabilityComponentState").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.highAvailability.state.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get HighAvailabilityComponentState")
+	}
+
+	state := device.HighAvailabilityComponentState(res.String())
+	if _, err := state.GetInt(); err != nil {
+		return "", fmt.Errorf("read out invalid highAvailability component state '%s'", state)
+	}
+	return state, nil
+}
+
+func (o *deviceClassCommunicator) GetHighAvailabilityComponentRole(ctx context.Context) (string, error) {
+	if o.components.highAvailability == nil || o.components.highAvailability.role == nil {
+		log.Ctx(ctx).Debug().Str("property", "HighAvailabilityComponentRole").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "HighAvailabilityComponentRole").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.highAvailability.role.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get HighAvailabilityComponentRole")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetHighAvailabilityComponentNodes(ctx context.Context) (int, error) {
+	if o.components.highAvailability == nil || o.components.highAvailability.nodes == nil {
+		log.Ctx(ctx).Debug().Str("property", "HighAvailabilityComponentNodes").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("property", "HighAvailabilityComponentNodes").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.highAvailability.nodes.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get HighAvailabilityComponentNodes")
+	}
+
+	v, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to int", res.String())
+	}
+
+	return v, nil
 }

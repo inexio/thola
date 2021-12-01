@@ -202,6 +202,18 @@ func (c *codeCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
+func (c *codeCommunicator) GetHighAvailabilityComponentState(_ context.Context) (device.HighAvailabilityComponentState, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHighAvailabilityComponentRole(_ context.Context) (string, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHighAvailabilityComponentNodes(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
 func filterInterfaces(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
 	if len(filter) == 0 {
 		return interfaces, nil

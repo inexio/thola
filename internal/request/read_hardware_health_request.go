@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadHardwareHealthRequest
 //
-// ReadHardwareHealthRequest is a the request struct for the read hardware health request.
+// ReadHardwareHealthRequest is the request struct for the read hardware health request.
 //
 // swagger:model
 type ReadHardwareHealthRequest struct {
@@ -13,7 +13,7 @@ type ReadHardwareHealthRequest struct {
 
 // ReadHardwareHealthResponse
 //
-// ReadHardwareHealthResponse is a the response struct for the read hardware health request.
+// ReadHardwareHealthResponse is the response struct for the read hardware health request.
 //
 // swagger:model
 type ReadHardwareHealthResponse struct {

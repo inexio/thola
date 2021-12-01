@@ -5,6 +5,7 @@ config:
     cpu: true
     memory: true
     hardware_health: true
+    high_availability: true
 
 match:
   conditions:
