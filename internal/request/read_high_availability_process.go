@@ -21,6 +21,6 @@ func (r *ReadHighAvailabilityRequest) process(ctx context.Context) (Response, er
 	}
 
 	return &ReadHighAvailabilityResponse{
-		HighAvailability: ha,
+		HighAvailabilityComponent: ha,
 	}, nil
 }

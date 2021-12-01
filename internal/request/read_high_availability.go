@@ -17,6 +17,6 @@ type ReadHighAvailabilityRequest struct {
 //
 // swagger:model
 type ReadHighAvailabilityResponse struct {
-	HighAvailability device.HighAvailabilityComponent `yaml:"high_availability" json:"high_availability" xml:"high_availability"`
+	device.HighAvailabilityComponent
 	ReadResponse
 }

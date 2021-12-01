@@ -504,9 +504,9 @@ func (h HardwareHealthComponentState) GetInt() (int, error) {
 //
 // swagger:model
 type HighAvailabilityComponent struct {
-	State *HighAvailabilityComponentState
-	Role  *string
-	Nodes *int
+	State *HighAvailabilityComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
+	Role  *string                         `yaml:"role" json:"role" xml:"role" mapstructure:"role"`
+	Nodes *int                            `yaml:"nodes" json:"nodes" xml:"nodes" mapstructure:"nodes"`
 }
 
 type HighAvailabilityComponentState string

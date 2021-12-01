@@ -12,7 +12,7 @@ func init() {
 
 var readHighAvailability = &cobra.Command{
 	Use:   "high-availability",
-	Short: "Read out the high availability status of a device",
+	Short: "Read out the high availability status of a device.",
 	Long:  "Read out the high availability status of a device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		request := request.ReadHighAvailabilityRequest{
