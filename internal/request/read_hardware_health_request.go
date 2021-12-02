@@ -17,6 +17,6 @@ type ReadHardwareHealthRequest struct {
 //
 // swagger:model
 type ReadHardwareHealthResponse struct {
-	device.HardwareHealthComponent
+	HardwareHealth device.HardwareHealthComponent `yaml:"hardware_health" json:"hardware_health" xml:"hardware_health"`
 	ReadResponse
 }

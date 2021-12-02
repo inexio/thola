@@ -32,7 +32,7 @@ func (r *CheckHighAvailabilityRequest) process(ctx context.Context) (Response, e
 		if *res.State == device.HighAvailabilityComponentStateUnsynchronized {
 			statusCode = monitoringplugin.CRITICAL
 		}
-		r.mon.UpdateStatus(statusCode, fmt.Sprintf("high-availability state = %s", *res.State))
+		r.mon.UpdateStatus(statusCode, fmt.Sprintf("high-availability state: %s", *res.State))
 
 		state, err := (*res.State).GetInt()
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "unknown high availability state", true) {
@@ -48,9 +48,9 @@ func (r *CheckHighAvailabilityRequest) process(ctx context.Context) (Response, e
 
 	if res.Role != nil {
 		if r.Role != nil && *r.Role != *res.Role {
-			r.mon.UpdateStatus(monitoringplugin.CRITICAL, fmt.Sprintf("role = %s (expected: %s)", *res.Role, *r.Role))
+			r.mon.UpdateStatus(monitoringplugin.CRITICAL, fmt.Sprintf("role: %s (expected: %s)", *res.Role, *r.Role))
 		} else {
-			r.mon.UpdateStatus(monitoringplugin.OK, fmt.Sprintf("role = %s", *res.Role))
+			r.mon.UpdateStatus(monitoringplugin.OK, fmt.Sprintf("role: %s", *res.Role))
 		}
 	}
 

@@ -17,8 +17,8 @@ func init() {
 
 var checkHighAvailabilityCMD = &cobra.Command{
 	Use:   "high-availability",
-	Short: "Check the high availability of a device",
-	Long:  "Checks the high availability of a device.",
+	Short: "Check the high availability status of a device",
+	Long:  "Checks the high availability status of a device.",
 	Run: func(cmd *cobra.Command, args []string) {
 		var nilString *string
 		role := cmd.Flags().Lookup("role").Value.String()

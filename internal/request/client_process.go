@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/inexio/go-monitoringplugin"
 	"github.com/inexio/thola/doc"
-	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/parser"
 	"github.com/inexio/thola/internal/tholaerr"
@@ -123,6 +122,10 @@ func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 
 func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/hardware-health"), nil
+}
+
+func (r *CheckHighAvailabilityRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/high-availability"), nil
 }
 
 func (r *ReadInterfacesRequest) process(ctx context.Context) (Response, error) {
@@ -243,14 +246,12 @@ func (r *ReadHardwareHealthRequest) process(ctx context.Context) (Response, erro
 	if err != nil {
 		return nil, err
 	}
-	var res device.HardwareHealthComponent
+	var res ReadHardwareHealthResponse
 	err = parser.ToStruct(responseBody, apiFormat, &res)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
 	}
-	return &ReadHardwareHealthResponse{
-		HardwareHealthComponent: res,
-	}, nil
+	return &res, nil
 }
 
 func (r *ReadHighAvailabilityRequest) process(ctx context.Context) (Response, error) {
@@ -259,14 +260,12 @@ func (r *ReadHighAvailabilityRequest) process(ctx context.Context) (Response, er
 	if err != nil {
 		return nil, err
 	}
-	var res device.HighAvailabilityComponent
+	var res ReadHighAvailabilityResponse
 	err = parser.ToStruct(responseBody, apiFormat, &res)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
 	}
-	return &ReadHighAvailabilityResponse{
-		HighAvailabilityComponent: res,
-	}, nil
+	return &res, nil
 }
 
 func (r *ReadAvailableComponentsRequest) process(ctx context.Context) (Response, error) {

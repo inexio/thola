@@ -120,7 +120,7 @@
         "tags": [
           "check"
         ],
-        "summary": "Check an hardware health of an device.",
+        "summary": "Check the hardware health of a device.",
         "operationId": "checkHardwareHealth",
         "parameters": [
           {
@@ -130,6 +130,48 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/CheckHardwareHealthRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/check/high-availability": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "check"
+        ],
+        "summary": "Check the high availability status of a device.",
+        "operationId": "checkHighAvailability",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckHighAvailabilityRequest"
             }
           }
         ],
@@ -709,7 +751,7 @@
           "read"
         ],
         "summary": "Reads out hardware health data of a device.",
-        "operationId": "hardware-health",
+        "operationId": "readHardwareHealth",
         "parameters": [
           {
             "description": "Request to process.",
@@ -726,6 +768,48 @@
             "description": "Returns the response.",
             "schema": {
               "$ref": "#/definitions/ReadHardwareHealthResponse"
+            }
+          },
+          "400": {
+            "description": "Returns an error with more details in the body.",
+            "schema": {
+              "$ref": "#/definitions/OutputError"
+            }
+          }
+        }
+      }
+    },
+    "/read/high-availability": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": [
+          "read"
+        ],
+        "summary": "Read out the high availability status of a device.",
+        "operationId": "readHighAvailability",
+        "parameters": [
+          {
+            "description": "Request to process.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReadHighAvailabilityRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the response.",
+            "schema": {
+              "$ref": "#/definitions/ReadHighAvailabilityResponse"
             }
           },
           "400": {
@@ -1004,7 +1088,7 @@
       "x-go-package": "github.com/inexio/thola/internal/device"
     },
     "CheckCPULoadRequest": {
-      "description": "CheckCPULoadRequest is a the request struct for the check cpu load request.",
+      "description": "CheckCPULoadRequest is the request struct for the check cpu load request.",
       "type": "object",
       "title": "CheckCPULoadRequest",
       "properties": {
@@ -1057,7 +1141,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckDiskRequest": {
-      "description": "CheckDiskRequest is a the request struct for the check disk request.",
+      "description": "CheckDiskRequest is the request struct for the check disk request.",
       "type": "object",
       "title": "CheckDiskRequest",
       "properties": {
@@ -1085,7 +1169,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckHardwareHealthRequest": {
-      "description": "CheckHardwareHealthRequest is a the request struct for the check sbc request.",
+      "description": "CheckHardwareHealthRequest is the request struct for the check hardware health request.",
       "type": "object",
       "title": "CheckHardwareHealthRequest",
       "properties": {
@@ -1109,8 +1193,40 @@
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
+    "CheckHighAvailabilityRequest": {
+      "description": "CheckHighAvailabilityRequest is the request struct for the check high-availability request.",
+      "type": "object",
+      "title": "CheckHighAvailabilityRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
+        },
+        "json_metrics": {
+          "type": "boolean",
+          "x-go-name": "JSONMetrics"
+        },
+        "nodes_thresholds": {
+          "$ref": "#/definitions/Thresholds"
+        },
+        "print_performance_data": {
+          "type": "boolean",
+          "x-go-name": "PrintPerformanceData"
+        },
+        "role": {
+          "type": "string",
+          "x-go-name": "Role"
+        },
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/request"
+    },
     "CheckIdentifyRequest": {
-      "description": "CheckIdentifyRequest is a the request struct for the check identify request.",
+      "description": "CheckIdentifyRequest is the request struct for the check identify request.",
       "type": "object",
       "title": "CheckIdentifyRequest",
       "properties": {
@@ -1203,7 +1319,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckInterfaceMetricsRequest": {
-      "description": "CheckInterfaceRequest is a the request struct for the check interface metrics request.",
+      "description": "CheckInterfaceRequest is the request struct for the check interface metrics request.",
       "type": "object",
       "title": "CheckInterfaceMetricsRequest",
       "properties": {
@@ -1273,7 +1389,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckMemoryUsageRequest": {
-      "description": "CheckMemoryUsageRequest is a the request struct for the check memory usage request.",
+      "description": "CheckMemoryUsageRequest is the request struct for the check memory usage request.",
       "type": "object",
       "title": "CheckMemoryUsageRequest",
       "properties": {
@@ -1348,7 +1464,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckSBCRequest": {
-      "description": "CheckSBCRequest is a the request struct for the check sbc request.",
+      "description": "CheckSBCRequest is the request struct for the check sbc request.",
       "type": "object",
       "title": "CheckSBCRequest",
       "properties": {
@@ -1376,7 +1492,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckSNMPRequest": {
-      "description": "CheckSNMPRequest is a the request struct for the check snmp request.",
+      "description": "CheckSNMPRequest is the request struct for the check snmp request.",
       "type": "object",
       "title": "CheckSNMPRequest",
       "properties": {
@@ -1435,7 +1551,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckServerRequest": {
-      "description": "CheckServerRequest is a the request struct for the check server request.",
+      "description": "CheckServerRequest is the request struct for the check server request.",
       "type": "object",
       "title": "CheckServerRequest",
       "properties": {
@@ -1487,7 +1603,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "CheckUPSRequest": {
-      "description": "CheckUPSRequest is a the request struct for the check ups request.",
+      "description": "CheckUPSRequest is the request struct for the check ups request.",
       "type": "object",
       "title": "CheckUPSRequest",
       "properties": {
@@ -1635,7 +1751,7 @@
       "properties": {
         "available": {
           "type": "integer",
-          "format": "int64",
+          "format": "uint64",
           "x-go-name": "Available"
         },
         "description": {
@@ -1648,7 +1764,7 @@
         },
         "used": {
           "type": "integer",
-          "format": "int64",
+          "format": "uint64",
           "x-go-name": "Used"
         }
       },
@@ -1909,6 +2025,30 @@
       },
       "x-go-package": "github.com/inexio/thola/internal/device"
     },
+    "HighAvailabilityComponent": {
+      "description": "HighAvailabilityComponent represents high availability information of a device.",
+      "type": "object",
+      "title": "HighAvailabilityComponent",
+      "properties": {
+        "nodes": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Nodes"
+        },
+        "role": {
+          "type": "string",
+          "x-go-name": "Role"
+        },
+        "state": {
+          "$ref": "#/definitions/HighAvailabilityComponentState"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
+    "HighAvailabilityComponentState": {
+      "type": "string",
+      "x-go-package": "github.com/inexio/thola/internal/device"
+    },
     "IdentifyExpectationResult": {
       "type": "object",
       "title": "IdentifyExpectationResult is a response struct for the check identify request.",
@@ -1925,7 +2065,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "IdentifyRequest": {
-      "description": "IdentifyRequest is a the request struct for the identify request.",
+      "description": "IdentifyRequest is the request struct for the identify request.",
       "type": "object",
       "title": "IdentifyRequest",
       "properties": {
@@ -2520,7 +2660,7 @@
       "x-go-package": "github.com/inexio/thola/internal/device"
     },
     "ReadAvailableComponentsRequest": {
-      "description": "ReadAvailableComponentsRequest is a the request struct for the read available-components request.",
+      "description": "ReadAvailableComponentsRequest is the request struct for the read available-components request.",
       "type": "object",
       "title": "ReadAvailableComponentsRequest",
       "properties": {
@@ -2537,7 +2677,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadAvailableComponentsResponse": {
-      "description": "ReadAvailableComponentsResponse is a the response struct for the read available-components response.",
+      "description": "ReadAvailableComponentsResponse is the response struct for the read available-components response.",
       "type": "object",
       "title": "ReadAvailableComponentsResponse",
       "properties": {
@@ -2584,7 +2724,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadCountInterfacesRequest": {
-      "description": "ReadCountInterfacesRequest is a the request struct for the read count-interfaces request.",
+      "description": "ReadCountInterfacesRequest is the request struct for the read count-interfaces request.",
       "type": "object",
       "title": "ReadCountInterfacesRequest",
       "properties": {
@@ -2601,7 +2741,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadCountInterfacesResponse": {
-      "description": "ReadCountInterfacesResponse is a the response struct for the read count-interfaces response.",
+      "description": "ReadCountInterfacesResponse is the response struct for the read count-interfaces response.",
       "type": "object",
       "title": "ReadCountInterfacesResponse",
       "properties": {
@@ -2614,7 +2754,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadDiskRequest": {
-      "description": "ReadDiskRequest is a the request struct for the read disk request.",
+      "description": "ReadDiskRequest is the request struct for the read disk request.",
       "type": "object",
       "title": "ReadDiskRequest",
       "properties": {
@@ -2631,7 +2771,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadDiskResponse": {
-      "description": "ReadDiskResponse is a the response struct for the read disk response.",
+      "description": "ReadDiskResponse is the response struct for the read disk response.",
       "type": "object",
       "title": "ReadDiskResponse",
       "properties": {
@@ -2642,7 +2782,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadHardwareHealthRequest": {
-      "description": "ReadHardwareHealthRequest is a the request struct for the read hardware health request.",
+      "description": "ReadHardwareHealthRequest is the request struct for the read hardware health request.",
       "type": "object",
       "title": "ReadHardwareHealthRequest",
       "properties": {
@@ -2659,40 +2799,40 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadHardwareHealthResponse": {
-      "description": "ReadHardwareHealthResponse is a the response struct for the read hardware health request.",
+      "description": "ReadHardwareHealthResponse is the response struct for the read hardware health request.",
       "type": "object",
       "title": "ReadHardwareHealthResponse",
       "properties": {
-        "environment_monitor_state": {
-          "$ref": "#/definitions/HardwareHealthComponentState"
+        "hardware_health": {
+          "$ref": "#/definitions/HardwareHealthComponent"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/request"
+    },
+    "ReadHighAvailabilityRequest": {
+      "description": "ReadHighAvailabilityRequest is the request struct for the read high availability request.",
+      "type": "object",
+      "title": "ReadHighAvailabilityRequest",
+      "properties": {
+        "device_data": {
+          "$ref": "#/definitions/DeviceData"
         },
-        "fans": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HardwareHealthComponentFan"
-          },
-          "x-go-name": "Fans"
-        },
-        "power_supply": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HardwareHealthComponentPowerSupply"
-          },
-          "x-go-name": "PowerSupply"
-        },
-        "temperature": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HardwareHealthComponentTemperature"
-          },
-          "x-go-name": "Temperature"
-        },
-        "voltage": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/HardwareHealthComponentVoltage"
-          },
-          "x-go-name": "Voltage"
+        "timeout": {
+          "description": "Timeout for the request (0 =\u003e no timeout)",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Timeout"
+        }
+      },
+      "x-go-package": "github.com/inexio/thola/internal/request"
+    },
+    "ReadHighAvailabilityResponse": {
+      "description": "ReadHighAvailabilityResponse is the response struct for the read high availability request.",
+      "type": "object",
+      "title": "ReadHighAvailabilityResponse",
+      "properties": {
+        "high_availability": {
+          "$ref": "#/definitions/HighAvailabilityComponent"
         }
       },
       "x-go-package": "github.com/inexio/thola/internal/request"
@@ -2771,7 +2911,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadMemoryUsageRequest": {
-      "description": "ReadMemoryUsageRequest is a the request struct for the read memory usage request.",
+      "description": "ReadMemoryUsageRequest is the request struct for the read memory usage request.",
       "type": "object",
       "title": "ReadMemoryUsageRequest",
       "properties": {
@@ -2788,7 +2928,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadMemoryUsageResponse": {
-      "description": "ReadMemoryUsageResponse is a the response struct for the read memory usage request.",
+      "description": "ReadMemoryUsageResponse is the response struct for the read memory usage request.",
       "type": "object",
       "title": "ReadMemoryUsageResponse",
       "properties": {
@@ -2826,7 +2966,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadSBCRequest": {
-      "description": "ReadSBCRequest is a the request struct for the read sbc request.",
+      "description": "ReadSBCRequest is the request struct for the read sbc request.",
       "type": "object",
       "title": "ReadSBCRequest",
       "properties": {
@@ -2843,7 +2983,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadSBCResponse": {
-      "description": "ReadSBCResponse is a the response struct for the read sbc response.",
+      "description": "ReadSBCResponse is the response struct for the read sbc response.",
       "type": "object",
       "title": "ReadSBCResponse",
       "properties": {
@@ -2854,7 +2994,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadServerRequest": {
-      "description": "ReadServerRequest is a the request struct for the read server request.",
+      "description": "ReadServerRequest is the request struct for the read server request.",
       "type": "object",
       "title": "ReadServerRequest",
       "properties": {
@@ -2871,7 +3011,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadServerResponse": {
-      "description": "ReadServerResponse is a the response struct for the read server response.",
+      "description": "ReadServerResponse is the response struct for the read server response.",
       "type": "object",
       "title": "ReadServerResponse",
       "properties": {
@@ -2882,7 +3022,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadUPSRequest": {
-      "description": "ReadUPSRequest is a the request struct for the read ups request.",
+      "description": "ReadUPSRequest is the request struct for the read ups request.",
       "type": "object",
       "title": "ReadUPSRequest",
       "properties": {
@@ -2899,7 +3039,7 @@
       "x-go-package": "github.com/inexio/thola/internal/request"
     },
     "ReadUPSResponse": {
-      "description": "ReadUPSResponse is a the response struct for the read ups response.",
+      "description": "ReadUPSResponse is the response struct for the read ups response.",
       "type": "object",
       "title": "ReadUPSResponse",
       "properties": {
