@@ -38,7 +38,7 @@ Thola currently has three main modes of operation with various subcommands:
     - `read cpu-load` returns the current cpu load of all CPUs.
     - `read disk` reads storage utilization.
     - `read hardware-health` reads hardware health information like temperatures and fans.
-    - `high-availability` reads out the high availability status of a device.
+    - `read high-availability` reads out the high availability status of a device.
     - `read interfaces` outputs the interfaces with several values like error counters and statistics.
     - `read sbc` reads out SBC specific information.
     - `read memory-usage` reads out the current memory usage.
@@ -48,7 +48,7 @@ Thola currently has three main modes of operation with various subcommands:
     - `check cpu-load` checks the average CPU load of all CPUs against given thresholds and outputs the current load of all CPUs as performance data.
     - `check disk` checks the free space of storages.
     - `check hardware-health` checks the hardware-health of a device.
-    - `high-availability` checks the high availability status of a device.
+    - `check high-availability` checks the high availability status of a device.
     - `check identify` compares the device properties with given expectations.
     - `check interface-metrics` outputs performance data for the interfaces, including special values based on the interface type (e.g. Radio Interface).
     - `check memory-usage` checks the current memory usage against given thresholds.
