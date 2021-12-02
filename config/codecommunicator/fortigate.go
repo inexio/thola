@@ -273,7 +273,7 @@ func (c *fortigateCommunicator) GetHighAvailabilityComponentState(ctx context.Co
 	case "1":
 		res = device.HighAvailabilityComponentStateSynchronized
 	default:
-		return "", fmt.Errorf("unknown sync state '%s'")
+		return "", fmt.Errorf("unknown sync state '%s'", s)
 	}
 
 	return res, nil
