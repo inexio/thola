@@ -327,8 +327,8 @@ type DiskComponent struct {
 type DiskComponentStorage struct {
 	Type        *string `yaml:"type" json:"type" xml:"type" mapstructure:"type"`
 	Description *string `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
-	Available   *int    `yaml:"available" json:"available" xml:"available" mapstructure:"available"`
-	Used        *int    `yaml:"used" json:"used" xml:"used" mapstructure:"used"`
+	Available   *uint64 `yaml:"available" json:"available" xml:"available" mapstructure:"available"`
+	Used        *uint64 `yaml:"used" json:"used" xml:"used" mapstructure:"used"`
 }
 
 // UPSComponent

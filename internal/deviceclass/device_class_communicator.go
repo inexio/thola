@@ -709,14 +709,7 @@ func (o *deviceClassCommunicator) GetDiskComponentStorages(ctx context.Context) 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode property into storage struct")
 	}
-	// ignore non-physical storage types
-	var filtered []device.DiskComponentStorage
-	for _, storage := range storages {
-		if *storage.Type != "Other" && *storage.Type != "RAM" && *storage.Type != "Virtual Memory" {
-			filtered = append(filtered, storage)
-		}
-	}
-	return filtered, nil
+	return storages, nil
 }
 
 func (o *deviceClassCommunicator) GetUPSComponentAlarmLowVoltageDisconnect(ctx context.Context) (int, error) {

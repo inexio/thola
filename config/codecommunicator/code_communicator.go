@@ -50,6 +50,12 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &aviatCommunicator{base}, nil
 	case "fortigate":
 		return &fortigateCommunicator{base}, nil
+	case "linux":
+		return &linuxCommunicator{base}, nil
+	case "vmware-esxi":
+		return &vmwareESXiCommunicator{base}, nil
+	case "aruba":
+		return &arubaCommunicator{base}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }

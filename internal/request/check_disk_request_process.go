@@ -18,17 +18,39 @@ func (r *CheckDiskRequest) process(ctx context.Context) (Response, error) {
 	}
 	disk := response.(*ReadDiskResponse).Disk
 
+	duplicateLabelCheckerDisk := make(duplicateLabelChecker)
+	for _, disk := range disk.Storages {
+		duplicateLabelCheckerDisk.addLabel(disk.Description)
+	}
+
 	for _, storage := range disk.Storages {
-		if storage.Type != nil && storage.Description != nil && storage.Available != nil && storage.Used != nil {
+		if storage.Used != nil {
 			var p *monitoringplugin.PerformanceDataPoint
 
-			if r.DiskThresholds.HasWarning() && r.DiskThresholds.HasCritical() { // check if max thresholds exist
-				warningMax := float64(*storage.Available) * r.DiskThresholds.WarningMax.(float64) / 100
-				criticalMax := float64(*storage.Available) * r.DiskThresholds.CriticalMax.(float64) / 100
-				thresholds := monitoringplugin.Thresholds{WarningMin: 0, WarningMax: warningMax, CriticalMin: 0, CriticalMax: criticalMax}
-				p = monitoringplugin.NewPerformanceDataPoint("disk_used", *storage.Used).SetUnit("KB").SetLabel(*storage.Description).SetThresholds(thresholds).SetMax(float64(*storage.Available))
+			if (r.DiskThresholds.HasWarning() || r.DiskThresholds.HasCritical()) && storage.Available != nil {
+				thresholds := monitoringplugin.Thresholds{
+					WarningMin:  0,
+					CriticalMin: 0,
+				}
+
+				if r.DiskThresholds.HasWarning() {
+					thresholds.WarningMax = float64(*storage.Available) * r.DiskThresholds.WarningMax.(float64) / 100
+				}
+				if r.DiskThresholds.HasWarning() {
+					thresholds.WarningMax = float64(*storage.Available) * r.DiskThresholds.CriticalMax.(float64) / 100
+				}
+
+				p = monitoringplugin.NewPerformanceDataPoint("disk_used", *storage.Used).SetUnit("B").SetThresholds(thresholds)
 			} else {
-				p = monitoringplugin.NewPerformanceDataPoint("disk_used", *storage.Used).SetUnit("KB").SetLabel(*storage.Description).SetMax(float64(*storage.Available))
+				p = monitoringplugin.NewPerformanceDataPoint("disk_used", *storage.Used).SetUnit("B")
+			}
+
+			if storage.Description != nil {
+				p.SetLabel(duplicateLabelCheckerDisk.getModifiedLabel(storage.Description))
+			}
+
+			if storage.Available != nil {
+				p.SetMax(*storage.Available)
 			}
 
 			err = r.mon.AddPerformanceDataPoint(p)
