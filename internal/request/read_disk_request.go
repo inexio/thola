@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadDiskRequest
 //
-// ReadDiskRequest is a the request struct for the read disk request.
+// ReadDiskRequest is the request struct for the read disk request.
 //
 // swagger:model
 type ReadDiskRequest struct {
@@ -13,7 +13,7 @@ type ReadDiskRequest struct {
 
 // ReadDiskResponse
 //
-// ReadDiskResponse is a the response struct for the read disk response.
+// ReadDiskResponse is the response struct for the read disk response.
 //
 // swagger:model
 type ReadDiskResponse struct {

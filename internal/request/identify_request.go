@@ -6,7 +6,7 @@ import (
 
 // IdentifyRequest
 //
-// IdentifyRequest is a the request struct for the identify request.
+// IdentifyRequest is the request struct for the identify request.
 //
 // swagger:model
 type IdentifyRequest struct {

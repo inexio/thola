@@ -2,7 +2,7 @@ package request
 
 // ReadAvailableComponentsRequest
 //
-// ReadAvailableComponentsRequest is a the request struct for the read available-components request.
+// ReadAvailableComponentsRequest is the request struct for the read available-components request.
 //
 // swagger:model
 type ReadAvailableComponentsRequest struct {
@@ -11,7 +11,7 @@ type ReadAvailableComponentsRequest struct {
 
 // ReadAvailableComponentsResponse
 //
-// ReadAvailableComponentsResponse is a the response struct for the read available-components response.
+// ReadAvailableComponentsResponse is the response struct for the read available-components response.
 //
 // swagger:model
 type ReadAvailableComponentsResponse struct {

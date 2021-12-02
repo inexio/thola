@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadSBCRequest
 //
-// ReadSBCRequest is a the request struct for the read sbc request.
+// ReadSBCRequest is the request struct for the read sbc request.
 //
 // swagger:model
 type ReadSBCRequest struct {
@@ -13,7 +13,7 @@ type ReadSBCRequest struct {
 
 // ReadSBCResponse
 //
-// ReadSBCResponse is a the response struct for the read sbc response.
+// ReadSBCResponse is the response struct for the read sbc response.
 //
 // swagger:model
 type ReadSBCResponse struct {

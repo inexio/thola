@@ -7,7 +7,7 @@ import (
 
 // CheckCPULoadRequest
 //
-// CheckCPULoadRequest is a the request struct for the check cpu load request.
+// CheckCPULoadRequest is the request struct for the check cpu load request.
 //
 // swagger:model
 type CheckCPULoadRequest struct {

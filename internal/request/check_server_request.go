@@ -7,7 +7,7 @@ import (
 
 // CheckServerRequest
 //
-// CheckServerRequest is a the request struct for the check server request.
+// CheckServerRequest is the request struct for the check server request.
 //
 // swagger:model
 type CheckServerRequest struct {

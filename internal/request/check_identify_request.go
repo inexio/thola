@@ -6,7 +6,7 @@ import (
 
 // CheckIdentifyRequest
 //
-// CheckIdentifyRequest is a the request struct for the check identify request.
+// CheckIdentifyRequest is the request struct for the check identify request.
 //
 // swagger:model
 type CheckIdentifyRequest struct {

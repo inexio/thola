@@ -480,6 +480,11 @@ func (c *networkDeviceCommunicator) GetHighAvailabilityComponent(ctx context.Con
 		empty = false
 	}
 
+	// if device is in standalone mode, return as there is no high-availability setup running
+	if state == device.HighAvailabilityComponentStateStandalone {
+		return ha, nil
+	}
+
 	role, err := c.GetHighAvailabilityComponentRole(ctx)
 	if err != nil {
 		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {

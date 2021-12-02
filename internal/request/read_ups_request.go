@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadUPSRequest
 //
-// ReadUPSRequest is a the request struct for the read ups request.
+// ReadUPSRequest is the request struct for the read ups request.
 //
 // swagger:model
 type ReadUPSRequest struct {
@@ -13,7 +13,7 @@ type ReadUPSRequest struct {
 
 // ReadUPSResponse
 //
-// ReadUPSResponse is a the response struct for the read ups response.
+// ReadUPSResponse is the response struct for the read ups response.
 //
 // swagger:model
 type ReadUPSResponse struct {
