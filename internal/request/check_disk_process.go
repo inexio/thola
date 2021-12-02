@@ -11,12 +11,15 @@ import (
 func (r *CheckDiskRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	diskRequest := ReadDiskRequest{ReadRequest{r.BaseRequest}}
-	response, err := diskRequest.process(ctx)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while processing read disk request", true) {
+	com, err := GetCommunicator(ctx, r.BaseRequest)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while getting communicator", true) {
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
-	disk := response.(*ReadDiskResponse).Disk
+
+	disk, err := com.GetDiskComponent(ctx)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while reading disk", true) {
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
 
 	duplicateLabelCheckerDisk := make(duplicateLabelChecker)
 	for _, disk := range disk.Storages {

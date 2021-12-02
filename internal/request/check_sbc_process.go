@@ -11,12 +11,15 @@ import (
 func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	sbcRequest := ReadSBCRequest{ReadRequest{r.BaseRequest}}
-	response, err := sbcRequest.process(ctx)
-	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while processing read sbc request", true) {
+	com, err := GetCommunicator(ctx, r.BaseRequest)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while getting communicator", true) {
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
-	sbc := response.(*ReadSBCResponse).SBC
+
+	sbc, err := com.GetSBCComponent(ctx)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while reading sbc", true) {
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
 
 	if sbc.GlobalCallPerSecond != nil {
 		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("global_call_per_second", *sbc.GlobalCallPerSecond))
