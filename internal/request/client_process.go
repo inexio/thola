@@ -30,7 +30,7 @@ func (r *IdentifyRequest) process(ctx context.Context) (Response, error) {
 	return &res, nil
 }
 
-func (r *check.CheckIdentifyRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckIdentifyRequest) process(ctx context.Context) (Response, error) {
 	var res CheckIdentifyResponse
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "check/identify", apiFormat)
@@ -49,7 +49,7 @@ func (r *check.CheckIdentifyRequest) process(ctx context.Context) (Response, err
 	return &res, nil
 }
 
-func (r *check.CheckSNMPRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckSNMPRequest) process(ctx context.Context) (Response, error) {
 	var res CheckSNMPResponse
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "check/snmp", apiFormat)
@@ -68,11 +68,11 @@ func (r *check.CheckSNMPRequest) process(ctx context.Context) (Response, error) 
 	return &res, nil
 }
 
-func (r *check.CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckInterfaceMetricsRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/interface-metrics"), nil
 }
 
-func (r *check.CheckTholaServerRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckTholaServerRequest) process(ctx context.Context) (Response, error) {
 	var res CheckResponse
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "check/thola-server", apiFormat)
@@ -96,35 +96,35 @@ func (r *check.CheckTholaServerRequest) process(ctx context.Context) (Response, 
 	return &res, nil
 }
 
-func (r *check.CheckUPSRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/ups"), nil
 }
 
-func (r *check.CheckSBCRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckSBCRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/sbc"), nil
 }
 
-func (r *check.CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckMemoryUsageRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/memory-usage"), nil
 }
 
-func (r *check.CheckServerRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckServerRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/server"), nil
 }
 
-func (r *check.CheckDiskRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckDiskRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/disk"), nil
 }
 
-func (r *check.CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckCPULoadRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/cpu-load"), nil
 }
 
-func (r *check.CheckHardwareHealthRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckHardwareHealthRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/hardware-health"), nil
 }
 
-func (r *check.CheckHighAvailabilityRequest) process(ctx context.Context) (Response, error) {
+func (r *CheckHighAvailabilityRequest) process(ctx context.Context) (Response, error) {
 	return checkProcess(ctx, r, "check/high-availability"), nil
 }
 
