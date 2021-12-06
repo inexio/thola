@@ -205,20 +205,20 @@ func handleRequest(r request.Request) {
 
 	db, err := database.GetDB(ctx)
 	if err != nil {
-		handleError(ctx, err)
+		handleError(ctx, err, r)
 		os.Exit(3)
 	}
 
 	resp, err := request.ProcessRequest(ctx, r)
 	if err != nil {
-		handleError(ctx, err)
+		handleError(ctx, err, r)
 		_ = db.CloseConnection(ctx)
 		os.Exit(3)
 	}
 
 	err = db.CloseConnection(ctx)
 	if err != nil {
-		handleError(ctx, err)
+		handleError(ctx, err, r)
 		os.Exit(3)
 	}
 

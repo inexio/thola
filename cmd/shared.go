@@ -63,8 +63,16 @@ func getBaseRequest(host string) request.BaseRequest {
 	}
 }
 
-func handleError(ctx context.Context, err error) {
-	b, err := parser.Parse(err, viper.GetString("format"))
+func handleError(ctx context.Context, err error, r request.Request) {
+	var v interface{}
+	v = err
+	res, err2 := r.HandlePreProcessError(err)
+	if err2 != nil {
+		v = err2
+	} else {
+		v = res
+	}
+	b, err := parser.Parse(v, viper.GetString("format"))
 	if err != nil {
 		log.Ctx(ctx).Error().AnErr("parse_error", err).AnErr("original_error", err).Msg("failed to parse error")
 	} else {
