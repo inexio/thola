@@ -65,7 +65,6 @@ func getBaseRequest(host string) request.BaseRequest {
 
 func handleError(ctx context.Context, err error, r request.Request) {
 	var v interface{}
-	v = err
 	res, err2 := r.HandlePreProcessError(err)
 	if err2 != nil {
 		v = err2
