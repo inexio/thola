@@ -434,6 +434,38 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 					return err
 				}
 			}
+
+			for _, channel := range i.Radio.Channels {
+				if channel.Channel != nil {
+					if channel.LevelIn != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("level_in", *channel.LevelIn).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.LevelOut != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("level_out", *channel.LevelOut).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.MaxbitrateIn != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *channel.MaxbitrateIn).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.MaxbitrateOut != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *channel.MaxbitrateOut).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
 		}
 
 		//DWDM interface metrics
