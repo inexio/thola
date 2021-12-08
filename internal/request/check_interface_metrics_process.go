@@ -112,6 +112,9 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 		groupproperty.GetValueFilter([]string{"ifSpecific"}),
 		// VLANs
 		groupproperty.GetValueFilter([]string{"vlan"}),
+		// Radio
+		groupproperty.GetValueFilter([]string{"radio", "rx_frequency"}),
+		groupproperty.GetValueFilter([]string{"radio", "tx_frequency"}),
 	}
 
 	if !r.PrintInterfaces {

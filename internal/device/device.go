@@ -169,10 +169,12 @@ type EthernetLikeInterface struct {
 //
 // swagger:model
 type RadioInterface struct {
-	LevelOut      *int64  `yaml:"level_out" json:"level_out" xml:"level_out" mapstructure:"level_out"`
-	LevelIn       *int64  `yaml:"level_in" json:"level_in" xml:"level_in" mapstructure:"level_in"`
-	MaxbitrateOut *uint64 `yaml:"maxbitrate_out" json:"maxbitrate_out" xml:"maxbitrate_out" mapstructure:"maxbitrate_out"`
-	MaxbitrateIn  *uint64 `yaml:"maxbitrate_in" json:"maxbitrate_in" xml:"maxbitrate_in" mapstructure:"maxbitrate_in"`
+	LevelOut      *int64   `yaml:"level_out" json:"level_out" xml:"level_out" mapstructure:"level_out"`
+	LevelIn       *int64   `yaml:"level_in" json:"level_in" xml:"level_in" mapstructure:"level_in"`
+	MaxbitrateOut *uint64  `yaml:"maxbitrate_out" json:"maxbitrate_out" xml:"maxbitrate_out" mapstructure:"maxbitrate_out"`
+	MaxbitrateIn  *uint64  `yaml:"maxbitrate_in" json:"maxbitrate_in" xml:"maxbitrate_in" mapstructure:"maxbitrate_in"`
+	RXFrequency   *float64 `yaml:"rx_frequency" json:"rx_frequency" xml:"rx_frequency" mapstructure:"rx_frequency"`
+	TXFrequency   *float64 `yaml:"tx_frequency" json:"tx_frequency" xml:"tx_frequency" mapstructure:"tx_frequency"`
 }
 
 // DWDMInterface
