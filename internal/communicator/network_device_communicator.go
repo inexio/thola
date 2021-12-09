@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 // CreateNetworkDeviceCommunicator creates a network device communicator which combines a device class communicator and code communicator
@@ -460,6 +461,57 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponent(ctx context.Conte
 	return hardwareHealth, nil
 }
 
+func (c *networkDeviceCommunicator) GetHighAvailabilityComponent(ctx context.Context) (device.HighAvailabilityComponent, error) {
+	if !c.HasComponent(component.HighAvailability) {
+		return device.HighAvailabilityComponent{}, tholaerr.NewComponentNotFoundError("no ha component available for this device")
+	}
+
+	var ha device.HighAvailabilityComponent
+
+	empty := true
+
+	state, err := c.GetHighAvailabilityComponentState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability state")
+		}
+	} else {
+		ha.State = &state
+		empty = false
+	}
+
+	// if device is in standalone mode, return as there is no high-availability setup running
+	if state == device.HighAvailabilityComponentStateStandalone {
+		return ha, nil
+	}
+
+	role, err := c.GetHighAvailabilityComponentRole(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		ha.Role = &role
+		empty = false
+	}
+
+	nodes, err := c.GetHighAvailabilityComponentNodes(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.HighAvailabilityComponent{}, errors.Wrap(err, "error occurred during get high availability nodes")
+		}
+	} else {
+		ha.Nodes = &nodes
+		empty = false
+	}
+
+	if empty {
+		return device.HighAvailabilityComponent{}, tholaerr.NewNotFoundError("no high availability data available")
+	}
+
+	return ha, nil
+}
+
 func (c *networkDeviceCommunicator) GetVendor(ctx context.Context) (string, error) {
 	if c.codeCommunicator != nil {
 		res, err := c.codeCommunicator.GetVendor(ctx)
@@ -572,8 +624,9 @@ func (c *networkDeviceCommunicator) GetCountInterfaces(ctx context.Context) (int
 
 	amount, err := c.deviceClassCommunicator.GetCountInterfaces(ctx)
 	if err != nil {
+		log.Ctx(ctx).Debug().Msg("failed to get count interfaces, trying to get interfaces")
 		var interfaces []device.Interface
-		interfaces, err = c.GetInterfaces(ctx)
+		interfaces, err = c.GetInterfaces(ctx, groupproperty.GetExclusiveValueFilter([][]string{{"ifIndex"}, {"ifDescr"}}))
 		if err != nil {
 			return 0, errors.Wrap(err, "count interfaces failed")
 		}
@@ -1151,4 +1204,61 @@ func (c *networkDeviceCommunicator) GetHardwareHealthComponentVoltage(ctx contex
 	}
 
 	return c.deviceClassCommunicator.GetHardwareHealthComponentVoltage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetHighAvailabilityComponentState(ctx context.Context) (device.HighAvailabilityComponentState, error) {
+	if !c.HasComponent(component.HighAvailability) {
+		return "", tholaerr.NewComponentNotFoundError("no ha component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetHighAvailabilityComponentState(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetHighAvailabilityComponentState(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetHighAvailabilityComponentRole(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.HighAvailability) {
+		return "", tholaerr.NewComponentNotFoundError("no ha component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetHighAvailabilityComponentRole(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetHighAvailabilityComponentRole(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetHighAvailabilityComponentNodes(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.HighAvailability) {
+		return 0, tholaerr.NewComponentNotFoundError("no ha component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetHighAvailabilityComponentNodes(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetHighAvailabilityComponentNodes(ctx)
 }

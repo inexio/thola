@@ -12,47 +12,56 @@ import (
 func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	r.init()
 
-	readUPSResponse, err := r.getData(ctx)
+	com, err := GetCommunicator(ctx, r.BaseRequest)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while getting communicator", true) {
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
+	readUPSResponse, err := com.GetUPSComponent(ctx)
+	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while reading ups", true) {
+		return &CheckResponse{r.mon.GetInfo()}, nil
+	}
+
 	if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while processing read ups request", true) {
 		r.mon.PrintPerformanceData(false)
 		return &CheckResponse{r.mon.GetInfo()}, nil
 	}
 
-	if readUPSResponse.UPS.AlarmLowVoltageDisconnect != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm_low_voltage_disconnect", *readUPSResponse.UPS.AlarmLowVoltageDisconnect))
+	if readUPSResponse.AlarmLowVoltageDisconnect != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("alarm_low_voltage_disconnect", *readUPSResponse.AlarmLowVoltageDisconnect))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryAmperage != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_amperage", *readUPSResponse.UPS.BatteryAmperage))
+	if readUPSResponse.BatteryAmperage != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_amperage", *readUPSResponse.BatteryAmperage))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryRemainingTime != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_remaining_time", *readUPSResponse.UPS.BatteryRemainingTime))
+	if readUPSResponse.BatteryRemainingTime != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_remaining_time", *readUPSResponse.BatteryRemainingTime))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryCapacity != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *readUPSResponse.UPS.BatteryCapacity))
+	if readUPSResponse.BatteryCapacity != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_capacity", *readUPSResponse.BatteryCapacity))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryCurrent != nil {
+	if readUPSResponse.BatteryCurrent != nil {
 		err := r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("batt_current", *readUPSResponse.UPS.BatteryCurrent).
+			monitoringplugin.NewPerformanceDataPoint("batt_current", *readUPSResponse.BatteryCurrent).
 				SetThresholds(r.BatteryCurrentThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -60,9 +69,9 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryTemperature != nil {
+	if readUPSResponse.BatteryTemperature != nil {
 		err := r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("batt_temperature", *readUPSResponse.UPS.BatteryTemperature).
+			monitoringplugin.NewPerformanceDataPoint("batt_temperature", *readUPSResponse.BatteryTemperature).
 				SetThresholds(r.BatteryTemperatureThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -70,17 +79,17 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
-	if readUPSResponse.UPS.BatteryVoltage != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_voltage", *readUPSResponse.UPS.BatteryVoltage))
+	if readUPSResponse.BatteryVoltage != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("batt_voltage", *readUPSResponse.BatteryVoltage))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
 	}
 
-	if readUPSResponse.UPS.CurrentLoad != nil {
+	if readUPSResponse.CurrentLoad != nil {
 		err := r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("current_load", *readUPSResponse.UPS.CurrentLoad).
+			monitoringplugin.NewPerformanceDataPoint("current_load", *readUPSResponse.CurrentLoad).
 				SetThresholds(r.CurrentLoadThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -88,18 +97,18 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
-	if readUPSResponse.UPS.MainsVoltageApplied != nil {
-		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("mains_voltage_applied", utility.IfThenElse(*readUPSResponse.UPS.MainsVoltageApplied, 1, 0)))
+	if readUPSResponse.MainsVoltageApplied != nil {
+		err := r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("mains_voltage_applied", utility.IfThenElse(*readUPSResponse.MainsVoltageApplied, 1, 0)))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
 			return &CheckResponse{r.mon.GetInfo()}, nil
 		}
-		r.mon.UpdateStatusIfNot(*readUPSResponse.UPS.MainsVoltageApplied, monitoringplugin.CRITICAL, "Mains voltage is not applied")
+		r.mon.UpdateStatusIfNot(*readUPSResponse.MainsVoltageApplied, monitoringplugin.CRITICAL, "Mains voltage is not applied")
 	}
 
-	if readUPSResponse.UPS.RectifierCurrent != nil {
+	if readUPSResponse.RectifierCurrent != nil {
 		err := r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("rectifier_current", *readUPSResponse.UPS.RectifierCurrent).
+			monitoringplugin.NewPerformanceDataPoint("rectifier_current", *readUPSResponse.RectifierCurrent).
 				SetThresholds(r.RectifierCurrentThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -107,9 +116,9 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
-	if readUPSResponse.UPS.SystemVoltage != nil {
+	if readUPSResponse.SystemVoltage != nil {
 		err := r.mon.AddPerformanceDataPoint(
-			monitoringplugin.NewPerformanceDataPoint("sys_voltage", *readUPSResponse.UPS.SystemVoltage).
+			monitoringplugin.NewPerformanceDataPoint("sys_voltage", *readUPSResponse.SystemVoltage).
 				SetThresholds(r.SystemVoltageThresholds))
 		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
 			r.mon.PrintPerformanceData(false)
@@ -118,15 +127,4 @@ func (r *CheckUPSRequest) process(ctx context.Context) (Response, error) {
 	}
 
 	return &CheckResponse{r.mon.GetInfo()}, nil
-}
-
-func (r *CheckUPSRequest) getData(ctx context.Context) (*ReadUPSResponse, error) {
-	readUPSRequest := ReadUPSRequest{ReadRequest{r.BaseRequest}}
-	response, err := readUPSRequest.process(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	readUPSResponse := response.(*ReadUPSResponse)
-	return readUPSResponse, nil
 }

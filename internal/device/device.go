@@ -327,8 +327,8 @@ type DiskComponent struct {
 type DiskComponentStorage struct {
 	Type        *string `yaml:"type" json:"type" xml:"type" mapstructure:"type"`
 	Description *string `yaml:"description" json:"description" xml:"description" mapstructure:"description"`
-	Available   *int    `yaml:"available" json:"available" xml:"available" mapstructure:"available"`
-	Used        *int    `yaml:"used" json:"used" xml:"used" mapstructure:"used"`
+	Available   *uint64 `yaml:"available" json:"available" xml:"available" mapstructure:"available"`
+	Used        *uint64 `yaml:"used" json:"used" xml:"used" mapstructure:"used"`
 }
 
 // UPSComponent
@@ -496,6 +496,37 @@ func (h HardwareHealthComponentState) GetInt() (int, error) {
 		return 7, nil
 	}
 	return 7, fmt.Errorf("invalid hardware health state '%s'", h)
+}
+
+// HighAvailabilityComponent
+//
+// HighAvailabilityComponent represents high availability information of a device.
+//
+// swagger:model
+type HighAvailabilityComponent struct {
+	State *HighAvailabilityComponentState `yaml:"state" json:"state" xml:"state" mapstructure:"state"`
+	Role  *string                         `yaml:"role" json:"role" xml:"role" mapstructure:"role"`
+	Nodes *int                            `yaml:"nodes" json:"nodes" xml:"nodes" mapstructure:"nodes"`
+}
+
+type HighAvailabilityComponentState string
+
+const (
+	HighAvailabilityComponentStateUnsynchronized HighAvailabilityComponentState = "unsynchronized"
+	HighAvailabilityComponentStateSynchronized   HighAvailabilityComponentState = "synchronized"
+	HighAvailabilityComponentStateStandalone     HighAvailabilityComponentState = "standalone"
+)
+
+func (h HighAvailabilityComponentState) GetInt() (int, error) {
+	switch h {
+	case HighAvailabilityComponentStateUnsynchronized:
+		return 0, nil
+	case HighAvailabilityComponentStateSynchronized:
+		return 1, nil
+	case HighAvailabilityComponentStateStandalone:
+		return 2, nil
+	}
+	return 0, fmt.Errorf("invalid high availability state '%s'", h)
 }
 
 // Rate

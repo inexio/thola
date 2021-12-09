@@ -7,7 +7,7 @@ import (
 
 // CheckDiskRequest
 //
-// CheckDiskRequest is a the request struct for the check disk request.
+// CheckDiskRequest is the request struct for the check disk request.
 //
 // swagger:model
 type CheckDiskRequest struct {

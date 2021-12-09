@@ -6,7 +6,7 @@ import (
 
 // CheckInterfaceMetricsRequest
 //
-// CheckInterfaceRequest is a the request struct for the check interface metrics request.
+// CheckInterfaceRequest is the request struct for the check interface metrics request.
 //
 // swagger:model
 type CheckInterfaceMetricsRequest struct {

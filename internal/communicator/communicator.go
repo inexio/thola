@@ -43,6 +43,9 @@ type Communicator interface {
 	// GetHardwareHealthComponent returns the hardware health component of a device if available.
 	GetHardwareHealthComponent(ctx context.Context) (device.HardwareHealthComponent, error)
 
+	// GetHighAvailabilityComponent returns the hardware health component of a device if available.
+	GetHighAvailabilityComponent(ctx context.Context) (device.HighAvailabilityComponent, error)
+
 	Functions
 }
 
@@ -77,6 +80,7 @@ type Functions interface {
 	availableServerCommunicatorFunctions
 	availableDiskCommunicatorFunctions
 	availableHardwareHealthCommunicatorFunctions
+	availableHighAvailabilityCommunicatorFunctions
 }
 
 type availableCPUCommunicatorFunctions interface {
@@ -188,4 +192,16 @@ type availableHardwareHealthCommunicatorFunctions interface {
 
 	// GetHardwareHealthComponentVoltage returns the voltages of the device.
 	GetHardwareHealthComponentVoltage(context.Context) ([]device.HardwareHealthComponentVoltage, error)
+}
+
+type availableHighAvailabilityCommunicatorFunctions interface {
+
+	// GetHighAvailabilityComponentState returns the HA state.
+	GetHighAvailabilityComponentState(ctx context.Context) (device.HighAvailabilityComponentState, error)
+
+	// GetHighAvailabilityComponentRole returns the role of the device in its HA setup.
+	GetHighAvailabilityComponentRole(ctx context.Context) (string, error)
+
+	// GetHighAvailabilityComponentNodes returns number of nodes in a HA setup.
+	GetHighAvailabilityComponentNodes(ctx context.Context) (int, error)
 }

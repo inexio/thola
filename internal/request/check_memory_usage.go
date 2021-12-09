@@ -7,7 +7,7 @@ import (
 
 // CheckMemoryUsageRequest
 //
-// CheckMemoryUsageRequest is a the request struct for the check memory usage request.
+// CheckMemoryUsageRequest is the request struct for the check memory usage request.
 //
 // swagger:model
 type CheckMemoryUsageRequest struct {

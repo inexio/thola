@@ -20,6 +20,6 @@ func (r *ReadHardwareHealthRequest) process(ctx context.Context) (Response, erro
 	}
 
 	return &ReadHardwareHealthResponse{
-		HardwareHealthComponent: result,
+		HardwareHealth: result,
 	}, nil
 }

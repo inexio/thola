@@ -369,7 +369,7 @@ func StartAPI() {
 
 	// swagger:operation POST /check/hardware-health check checkHardwareHealth
 	// ---
-	// summary: Check an hardware health of an device.
+	// summary: Check the hardware health of a device.
 	// consumes:
 	// - application/json
 	// - application/xml
@@ -393,6 +393,33 @@ func StartAPI() {
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/check/hardware-health", checkHardwareHealth)
+
+	// swagger:operation POST /check/high-availability check checkHighAvailability
+	// ---
+	// summary: Check the high availability status of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckHighAvailabilityRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/high-availability", checkHighAvailability)
 
 	// swagger:operation POST /read/interfaces read readInterfaces
 	// ---
@@ -610,7 +637,7 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/disk", readDisk)
 
-	// swagger:operation POST /read/hardware-health read hardware-health
+	// swagger:operation POST /read/hardware-health read readHardwareHealth
 	// ---
 	// summary: Reads out hardware health data of a device.
 	// consumes:
@@ -636,6 +663,33 @@ func StartAPI() {
 	//     schema:
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/hardware-health", readHardwareHealth)
+
+	// swagger:operation POST /read/high-availability read readHighAvailability
+	// ---
+	// summary: Read out the high availability status of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadHighAvailabilityRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadHighAvailabilityResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/high-availability", readHighAvailability)
 
 	// swagger:operation POST /read/available-components read readAvailableComponents
 	// ---
@@ -844,6 +898,18 @@ func checkHardwareHealth(ctx echo.Context) error {
 	return returnInFormat(ctx, http.StatusOK, resp)
 }
 
+func checkHighAvailability(ctx echo.Context) error {
+	r := request.CheckHighAvailabilityRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
 func readInterfaces(ctx echo.Context) error {
 	r := request.ReadInterfacesRequest{}
 	if err := ctx.Bind(&r); err != nil {
@@ -942,6 +1008,18 @@ func readDisk(ctx echo.Context) error {
 
 func readHardwareHealth(ctx echo.Context) error {
 	r := request.ReadHardwareHealthRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readHighAvailability(ctx echo.Context) error {
+	r := request.ReadHighAvailabilityRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

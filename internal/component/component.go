@@ -18,6 +18,7 @@ const (
 	Server
 	Disk
 	HardwareHealth
+	HighAvailability
 )
 
 // CreateComponent creates a component.
@@ -39,6 +40,8 @@ func CreateComponent(component string) (Component, error) {
 		return Disk, nil
 	case "hardware_health":
 		return HardwareHealth, nil
+	case "high_availability":
+		return HighAvailability, nil
 	default:
 		return 0, fmt.Errorf("invalid component type: %s", component)
 	}
@@ -66,6 +69,8 @@ func (d *Component) ToString() (string, error) {
 		return "disk", nil
 	case HardwareHealth:
 		return "hardware_health", nil
+	case HighAvailability:
+		return "high_availability", nil
 	default:
 		return "", errors.New("unknown component")
 	}

@@ -2,7 +2,7 @@ package request
 
 // CheckHardwareHealthRequest
 //
-// CheckHardwareHealthRequest is a the request struct for the check sbc request.
+// CheckHardwareHealthRequest is the request struct for the check hardware health request.
 //
 // swagger:model
 type CheckHardwareHealthRequest struct {

@@ -7,7 +7,7 @@ import (
 
 // CheckSNMPRequest
 //
-// CheckSNMPRequest is a the request struct for the check snmp request.
+// CheckSNMPRequest is the request struct for the check snmp request.
 //
 // swagger:model
 type CheckSNMPRequest struct {

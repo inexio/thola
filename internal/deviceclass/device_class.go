@@ -6,13 +6,12 @@ import (
 	"context"
 	"github.com/inexio/thola/config"
 	"github.com/inexio/thola/config/codecommunicator"
-	communicator2 "github.com/inexio/thola/internal/communicator"
+	"github.com/inexio/thola/internal/communicator"
 	"github.com/inexio/thola/internal/communicator/hierarchy"
 	"github.com/inexio/thola/internal/component"
-	condition2 "github.com/inexio/thola/internal/deviceclass/condition"
+	"github.com/inexio/thola/internal/deviceclass/condition"
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/deviceclass/property"
-	"github.com/inexio/thola/internal/network"
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/inexio/thola/internal/utility"
 	"github.com/pkg/errors"
@@ -27,7 +26,7 @@ import (
 // deviceClass represents a device class.
 type deviceClass struct {
 	name           string
-	match          condition2.Condition
+	match          condition.Condition
 	config         deviceClassConfig
 	identify       deviceClassIdentify
 	components     deviceClassComponents
@@ -50,14 +49,15 @@ type deviceClassIdentifyProperties struct {
 
 // deviceClassComponents represents the components part of a device class.
 type deviceClassComponents struct {
-	interfaces     *deviceClassComponentsInterfaces
-	ups            *deviceClassComponentsUPS
-	cpu            *deviceClassComponentsCPU
-	memory         *deviceClassComponentsMemory
-	sbc            *deviceClassComponentsSBC
-	server         *deviceClassComponentsServer
-	disk           *deviceClassComponentsDisk
-	hardwareHealth *deviceClassComponentsHardwareHealth
+	interfaces       *deviceClassComponentsInterfaces
+	ups              *deviceClassComponentsUPS
+	cpu              *deviceClassComponentsCPU
+	memory           *deviceClassComponentsMemory
+	sbc              *deviceClassComponentsSBC
+	server           *deviceClassComponentsServer
+	disk             *deviceClassComponentsDisk
+	hardwareHealth   *deviceClassComponentsHardwareHealth
+	highAvailability *deviceClassComponentsHighAvailability
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -109,13 +109,20 @@ type deviceClassComponentsDisk struct {
 	properties groupproperty.Reader
 }
 
-// deviceClassComponentsHardwareHealth represents the sbc components part of a device class.
+// deviceClassComponentsHardwareHealth represents the hardware health part of a device class.
 type deviceClassComponentsHardwareHealth struct {
 	environmentMonitorState property.Reader
 	fans                    groupproperty.Reader
 	powerSupply             groupproperty.Reader
 	temperature             groupproperty.Reader
 	voltage                 groupproperty.Reader
+}
+
+// deviceClassComponentsHighAvailability represents the high availability part of a device class.
+type deviceClassComponentsHighAvailability struct {
+	state property.Reader
+	role  property.Reader
+	nodes property.Reader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -126,7 +133,7 @@ type deviceClassConfig struct {
 
 // deviceClassComponentsInterfaces represents the interface properties part of a device class.
 type deviceClassComponentsInterfaces struct {
-	count      network.OID
+	count      property.Reader
 	properties groupproperty.Reader
 }
 
@@ -152,14 +159,15 @@ type yamlDeviceClassIdentify struct {
 
 // yamlDeviceClassComponents represents the components part of a yaml device class.
 type yamlDeviceClassComponents struct {
-	Interfaces     *yamlComponentsInterfaces               `yaml:"interfaces"`
-	UPS            *yamlComponentsUPSProperties            `yaml:"ups"`
-	CPU            *yamlComponentsCPUProperties            `yaml:"cpu"`
-	Memory         *yamlComponentsMemoryProperties         `yaml:"memory"`
-	SBC            *yamlComponentsSBCProperties            `yaml:"sbc"`
-	Server         *yamlComponentsServerProperties         `yaml:"server"`
-	Disk           *yamlComponentsDiskProperties           `yaml:"disk"`
-	HardwareHealth *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
+	Interfaces       *yamlComponentsInterfaces               `yaml:"interfaces"`
+	UPS              *yamlComponentsUPSProperties            `yaml:"ups"`
+	CPU              *yamlComponentsCPUProperties            `yaml:"cpu"`
+	Memory           *yamlComponentsMemoryProperties         `yaml:"memory"`
+	SBC              *yamlComponentsSBCProperties            `yaml:"sbc"`
+	Server           *yamlComponentsServerProperties         `yaml:"server"`
+	Disk             *yamlComponentsDiskProperties           `yaml:"disk"`
+	HardwareHealth   *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
+	HighAvailability *yamlComponentsHighAvailability         `yaml:"high_availability"`
 }
 
 // yamlDeviceClassConfig represents the config part of a yaml device class.
@@ -239,13 +247,20 @@ type yamlComponentsHardwareHealthProperties struct {
 	Voltage                 interface{}   `yaml:"voltage"`
 }
 
+// yamlComponentsHa represents the specific properties of HA components of a yaml device class.
+type yamlComponentsHighAvailability struct {
+	State []interface{}
+	Role  []interface{}
+	Nodes []interface{}
+}
+
 //
 // Here are definitions of interfaces of yaml device classes.
 //
 
 type yamlComponentsInterfaces struct {
-	Count      string      `yaml:"count"`
-	Properties interface{} `yaml:"properties"`
+	Count      []interface{} `yaml:"count"`
+	Properties interface{}   `yaml:"properties"`
 }
 
 // GetHierarchy returns the hierarchy of device classes merged with their corresponding code communicator.
@@ -262,7 +277,7 @@ func GetHierarchy() (hierarchy.Hierarchy, error) {
 	return hier, nil
 }
 
-func yamlFile2Hierarchy(file fs.File, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator2.Communicator) (hierarchy.Hierarchy, error) {
+func yamlFile2Hierarchy(file fs.File, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (hierarchy.Hierarchy, error) {
 	//get file info
 	fileInfo, err := file.Stat()
 	if err != nil {
@@ -316,16 +331,16 @@ func yamlFile2Hierarchy(file fs.File, directory string, parentDeviceClass *devic
 	return hier, nil
 }
 
-func createNetworkDeviceCommunicator(devClass *deviceClass, parentCommunicator communicator2.Communicator) (communicator2.Communicator, error) {
+func createNetworkDeviceCommunicator(devClass *deviceClass, parentCommunicator communicator.Communicator) (communicator.Communicator, error) {
 	devClassCommunicator := &(deviceClassCommunicator{devClass})
 	codeCommunicator, err := codecommunicator.GetCodeCommunicator(devClassCommunicator, parentCommunicator)
 	if err != nil && !tholaerr.IsNotFoundError(err) {
 		return nil, errors.Wrap(err, "failed to get code communicator")
 	}
-	return communicator2.CreateNetworkDeviceCommunicator(&(deviceClassCommunicator{devClass}), codeCommunicator), nil
+	return communicator.CreateNetworkDeviceCommunicator(&(deviceClassCommunicator{devClass}), codeCommunicator), nil
 }
 
-func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator2.Communicator) (map[string]hierarchy.Hierarchy, error) {
+func readDeviceClassDirectory(dir []fs.DirEntry, directory string, parentDeviceClass *deviceClass, parentCommunicator communicator.Communicator) (map[string]hierarchy.Hierarchy, error) {
 	deviceClasses := make(map[string]hierarchy.Hierarchy)
 	for _, dirEntry := range dir {
 		// directories will be ignored here, sub device classes dirs will be called when
@@ -388,12 +403,12 @@ func (y *yamlDeviceClass) convert(parent *deviceClass) (deviceClass, error) {
 	}
 	devClass.name += y.Name
 	if y.Name == "generic" {
-		devClass.match = condition2.GetAlwaysTrueCondition()
+		devClass.match = condition.GetAlwaysTrueCondition()
 		devClass.identify = deviceClassIdentify{
 			properties: deviceClassIdentifyProperties{},
 		}
 	} else {
-		cond, err := condition2.Interface2Condition(y.Match, condition2.ClassifyDevice)
+		cond, err := condition.Interface2Condition(y.Match, condition.ClassifyDevice)
 		if err != nil {
 			return deviceClass{}, errors.Wrap(err, "failed to convert device class condition")
 		}
@@ -515,6 +530,14 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 		components.hardwareHealth = &hardwareHealth
 	}
 
+	if y.HighAvailability != nil {
+		ha, err := y.HighAvailability.convert(parentComponents.highAvailability)
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml high availability properties")
+		}
+		components.highAvailability = &ha
+	}
+
 	return components, nil
 }
 
@@ -533,8 +556,11 @@ func (y *yamlComponentsInterfaces) convert(parentComponentsInterfaces *deviceCla
 		}
 	}
 
-	if y.Count != "" {
-		interfaceComponent.count = network.OID(y.Count)
+	if y.Count != nil {
+		interfaceComponent.count, err = property.InterfaceSlice2Reader(y.Count, condition.PropertyDefault, interfaceComponent.count)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert interface count")
+		}
 	}
 
 	return &interfaceComponent, nil
@@ -552,31 +578,31 @@ func (y *yamlDeviceClassIdentifyProperties) convert(parentProperties deviceClass
 	var err error
 
 	if y.Vendor != nil {
-		prop.vendor, err = property.InterfaceSlice2Reader(y.Vendor, condition2.PropertyVendor, prop.vendor)
+		prop.vendor, err = property.InterfaceSlice2Reader(y.Vendor, condition.PropertyVendor, prop.vendor)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert vendor property to property reader")
 		}
 	}
 	if y.Model != nil {
-		prop.model, err = property.InterfaceSlice2Reader(y.Model, condition2.PropertyModel, prop.model)
+		prop.model, err = property.InterfaceSlice2Reader(y.Model, condition.PropertyModel, prop.model)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model property to property reader")
 		}
 	}
 	if y.ModelSeries != nil {
-		prop.modelSeries, err = property.InterfaceSlice2Reader(y.ModelSeries, condition2.PropertyModelSeries, prop.modelSeries)
+		prop.modelSeries, err = property.InterfaceSlice2Reader(y.ModelSeries, condition.PropertyModelSeries, prop.modelSeries)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert model series property to property reader")
 		}
 	}
 	if y.SerialNumber != nil {
-		prop.serialNumber, err = property.InterfaceSlice2Reader(y.SerialNumber, condition2.PropertyDefault, prop.serialNumber)
+		prop.serialNumber, err = property.InterfaceSlice2Reader(y.SerialNumber, condition.PropertyDefault, prop.serialNumber)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert serial number property to property reader")
 		}
 	}
 	if y.OSVersion != nil {
-		prop.osVersion, err = property.InterfaceSlice2Reader(y.OSVersion, condition2.PropertyDefault, prop.osVersion)
+		prop.osVersion, err = property.InterfaceSlice2Reader(y.OSVersion, condition.PropertyDefault, prop.osVersion)
 		if err != nil {
 			return deviceClassIdentifyProperties{}, errors.Wrap(err, "failed to convert osVersion property to property reader")
 		}
@@ -631,67 +657,67 @@ func (y *yamlComponentsUPSProperties) convert(parentComponent *deviceClassCompon
 	}
 
 	if y.AlarmLowVoltageDisconnect != nil {
-		prop.alarmLowVoltageDisconnect, err = property.InterfaceSlice2Reader(y.AlarmLowVoltageDisconnect, condition2.PropertyDefault, prop.alarmLowVoltageDisconnect)
+		prop.alarmLowVoltageDisconnect, err = property.InterfaceSlice2Reader(y.AlarmLowVoltageDisconnect, condition.PropertyDefault, prop.alarmLowVoltageDisconnect)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert alarm low voltage disconnect property to property reader")
 		}
 	}
 	if y.BatteryAmperage != nil {
-		prop.batteryAmperage, err = property.InterfaceSlice2Reader(y.BatteryAmperage, condition2.PropertyDefault, prop.batteryAmperage)
+		prop.batteryAmperage, err = property.InterfaceSlice2Reader(y.BatteryAmperage, condition.PropertyDefault, prop.batteryAmperage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery amperage property to property reader")
 		}
 	}
 	if y.BatteryCapacity != nil {
-		prop.batteryCapacity, err = property.InterfaceSlice2Reader(y.BatteryCapacity, condition2.PropertyDefault, prop.batteryCapacity)
+		prop.batteryCapacity, err = property.InterfaceSlice2Reader(y.BatteryCapacity, condition.PropertyDefault, prop.batteryCapacity)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery capacity property to property reader")
 		}
 	}
 	if y.BatteryCurrent != nil {
-		prop.batteryCurrent, err = property.InterfaceSlice2Reader(y.BatteryCurrent, condition2.PropertyDefault, prop.batteryCurrent)
+		prop.batteryCurrent, err = property.InterfaceSlice2Reader(y.BatteryCurrent, condition.PropertyDefault, prop.batteryCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery current property to property reader")
 		}
 	}
 	if y.BatteryRemainingTime != nil {
-		prop.batteryRemainingTime, err = property.InterfaceSlice2Reader(y.BatteryRemainingTime, condition2.PropertyDefault, prop.batteryRemainingTime)
+		prop.batteryRemainingTime, err = property.InterfaceSlice2Reader(y.BatteryRemainingTime, condition.PropertyDefault, prop.batteryRemainingTime)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery remaining time property to property reader")
 		}
 	}
 	if y.BatteryTemperature != nil {
-		prop.batteryTemperature, err = property.InterfaceSlice2Reader(y.BatteryTemperature, condition2.PropertyDefault, prop.batteryTemperature)
+		prop.batteryTemperature, err = property.InterfaceSlice2Reader(y.BatteryTemperature, condition.PropertyDefault, prop.batteryTemperature)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery temperature property to property reader")
 		}
 	}
 	if y.BatteryVoltage != nil {
-		prop.batteryVoltage, err = property.InterfaceSlice2Reader(y.BatteryVoltage, condition2.PropertyDefault, prop.batteryVoltage)
+		prop.batteryVoltage, err = property.InterfaceSlice2Reader(y.BatteryVoltage, condition.PropertyDefault, prop.batteryVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert battery voltage property to property reader")
 		}
 	}
 	if y.CurrentLoad != nil {
-		prop.currentLoad, err = property.InterfaceSlice2Reader(y.CurrentLoad, condition2.PropertyDefault, prop.currentLoad)
+		prop.currentLoad, err = property.InterfaceSlice2Reader(y.CurrentLoad, condition.PropertyDefault, prop.currentLoad)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert current load property to property reader")
 		}
 	}
 	if y.MainsVoltageApplied != nil {
-		prop.mainsVoltageApplied, err = property.InterfaceSlice2Reader(y.MainsVoltageApplied, condition2.PropertyDefault, prop.mainsVoltageApplied)
+		prop.mainsVoltageApplied, err = property.InterfaceSlice2Reader(y.MainsVoltageApplied, condition.PropertyDefault, prop.mainsVoltageApplied)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert mains voltage applied property to property reader")
 		}
 	}
 	if y.RectifierCurrent != nil {
-		prop.rectifierCurrent, err = property.InterfaceSlice2Reader(y.RectifierCurrent, condition2.PropertyDefault, prop.rectifierCurrent)
+		prop.rectifierCurrent, err = property.InterfaceSlice2Reader(y.RectifierCurrent, condition.PropertyDefault, prop.rectifierCurrent)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert rectifier current property to property reader")
 		}
 	}
 	if y.SystemVoltage != nil {
-		prop.systemVoltage, err = property.InterfaceSlice2Reader(y.SystemVoltage, condition2.PropertyDefault, prop.systemVoltage)
+		prop.systemVoltage, err = property.InterfaceSlice2Reader(y.SystemVoltage, condition.PropertyDefault, prop.systemVoltage)
 		if err != nil {
 			return deviceClassComponentsUPS{}, errors.Wrap(err, "failed to convert system voltage property to property reader")
 		}
@@ -742,13 +768,13 @@ func (y *yamlComponentsServerProperties) convert(parentComponent *deviceClassCom
 	}
 
 	if y.Procs != nil {
-		prop.procs, err = property.InterfaceSlice2Reader(y.Procs, condition2.PropertyDefault, prop.procs)
+		prop.procs, err = property.InterfaceSlice2Reader(y.Procs, condition.PropertyDefault, prop.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert procs property to property reader")
 		}
 	}
 	if y.Users != nil {
-		prop.users, err = property.InterfaceSlice2Reader(y.Users, condition2.PropertyDefault, prop.procs)
+		prop.users, err = property.InterfaceSlice2Reader(y.Users, condition.PropertyDefault, prop.procs)
 		if err != nil {
 			return deviceClassComponentsServer{}, errors.Wrap(err, "failed to convert users property to property reader")
 		}
@@ -794,44 +820,44 @@ func (y *yamlComponentsSBCProperties) convert(parentComponentsSBC *deviceClassCo
 		}
 	}
 	if y.ActiveLocalContacts != nil {
-		prop.activeLocalContacts, err = property.InterfaceSlice2Reader(y.ActiveLocalContacts, condition2.PropertyDefault, prop.activeLocalContacts)
+		prop.activeLocalContacts, err = property.InterfaceSlice2Reader(y.ActiveLocalContacts, condition.PropertyDefault, prop.activeLocalContacts)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert active local contacts property to property reader")
 		}
 	}
 	if y.GlobalCallPerSecond != nil {
-		prop.globalCallPerSecond, err = property.InterfaceSlice2Reader(y.GlobalCallPerSecond, condition2.PropertyDefault, prop.globalCallPerSecond)
+		prop.globalCallPerSecond, err = property.InterfaceSlice2Reader(y.GlobalCallPerSecond, condition.PropertyDefault, prop.globalCallPerSecond)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global call per second property to property reader")
 		}
 	}
 	if y.GlobalConcurrentSessions != nil {
-		prop.globalConcurrentSessions, err = property.InterfaceSlice2Reader(y.GlobalConcurrentSessions, condition2.PropertyDefault, prop.globalConcurrentSessions)
+		prop.globalConcurrentSessions, err = property.InterfaceSlice2Reader(y.GlobalConcurrentSessions, condition.PropertyDefault, prop.globalConcurrentSessions)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert global concurrent sessions property to property reader")
 		}
 	}
 	if y.LicenseCapacity != nil {
-		prop.licenseCapacity, err = property.InterfaceSlice2Reader(y.LicenseCapacity, condition2.PropertyDefault, prop.licenseCapacity)
+		prop.licenseCapacity, err = property.InterfaceSlice2Reader(y.LicenseCapacity, condition.PropertyDefault, prop.licenseCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert license capacity property to property reader")
 		}
 	}
 	if y.TranscodingCapacity != nil {
-		prop.transcodingCapacity, err = property.InterfaceSlice2Reader(y.TranscodingCapacity, condition2.PropertyDefault, prop.transcodingCapacity)
+		prop.transcodingCapacity, err = property.InterfaceSlice2Reader(y.TranscodingCapacity, condition.PropertyDefault, prop.transcodingCapacity)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert transcoding capacity property to property reader")
 		}
 	}
 	if y.SystemRedundancy != nil {
-		prop.systemRedundancy, err = property.InterfaceSlice2Reader(y.SystemRedundancy, condition2.PropertyDefault, prop.systemRedundancy)
+		prop.systemRedundancy, err = property.InterfaceSlice2Reader(y.SystemRedundancy, condition.PropertyDefault, prop.systemRedundancy)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system redundancy property to property reader")
 		}
 	}
 
 	if y.SystemHealthScore != nil {
-		prop.systemHealthScore, err = property.InterfaceSlice2Reader(y.SystemHealthScore, condition2.PropertyDefault, prop.systemHealthScore)
+		prop.systemHealthScore, err = property.InterfaceSlice2Reader(y.SystemHealthScore, condition.PropertyDefault, prop.systemHealthScore)
 		if err != nil {
 			return deviceClassComponentsSBC{}, errors.Wrap(err, "failed to convert system health score property to property reader")
 		}
@@ -872,9 +898,41 @@ func (y *yamlComponentsHardwareHealthProperties) convert(parentHardwareHealth *d
 		}
 	}
 	if y.EnvironmentMonitorState != nil {
-		prop.environmentMonitorState, err = property.InterfaceSlice2Reader(y.EnvironmentMonitorState, condition2.PropertyDefault, prop.environmentMonitorState)
+		prop.environmentMonitorState, err = property.InterfaceSlice2Reader(y.EnvironmentMonitorState, condition.PropertyDefault, prop.environmentMonitorState)
 		if err != nil {
 			return deviceClassComponentsHardwareHealth{}, errors.Wrap(err, "failed to convert environment monitor state property to property reader")
+		}
+	}
+
+	return prop, nil
+}
+
+func (y *yamlComponentsHighAvailability) convert(parentHA *deviceClassComponentsHighAvailability) (deviceClassComponentsHighAvailability, error) {
+	var prop deviceClassComponentsHighAvailability
+	var err error
+
+	if parentHA != nil {
+		prop = *parentHA
+	}
+
+	if y.State != nil {
+		prop.state, err = property.InterfaceSlice2Reader(y.State, condition.PropertyDefault, prop.state)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert state property to property reader")
+		}
+	}
+
+	if y.Role != nil {
+		prop.role, err = property.InterfaceSlice2Reader(y.Role, condition.PropertyDefault, prop.role)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert role property to property reader")
+		}
+	}
+
+	if y.Nodes != nil {
+		prop.nodes, err = property.InterfaceSlice2Reader(y.Nodes, condition.PropertyDefault, prop.nodes)
+		if err != nil {
+			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert nodes property to property reader")
 		}
 	}
 

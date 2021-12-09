@@ -2,7 +2,7 @@ package request
 
 // ReadCountInterfacesRequest
 //
-// ReadCountInterfacesRequest is a the request struct for the read count-interfaces request.
+// ReadCountInterfacesRequest is the request struct for the read count-interfaces request.
 //
 // swagger:model
 type ReadCountInterfacesRequest struct {
@@ -11,7 +11,7 @@ type ReadCountInterfacesRequest struct {
 
 // ReadCountInterfacesResponse
 //
-// ReadCountInterfacesResponse is a the response struct for the read count-interfaces response.
+// ReadCountInterfacesResponse is the response struct for the read count-interfaces response.
 //
 // swagger:model
 type ReadCountInterfacesResponse struct {

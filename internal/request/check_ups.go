@@ -7,7 +7,7 @@ import (
 
 // CheckUPSRequest
 //
-// CheckUPSRequest is a the request struct for the check ups request.
+// CheckUPSRequest is the request struct for the check ups request.
 //
 // swagger:model
 type CheckUPSRequest struct {

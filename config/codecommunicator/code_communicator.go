@@ -50,6 +50,12 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &aviatCommunicator{base}, nil
 	case "fortigate":
 		return &fortigateCommunicator{base}, nil
+	case "linux":
+		return &linuxCommunicator{base}, nil
+	case "vmware-esxi":
+		return &vmwareESXiCommunicator{base}, nil
+	case "aruba":
+		return &arubaCommunicator{base}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }
@@ -199,6 +205,18 @@ func (c *codeCommunicator) GetHardwareHealthComponentPowerSupply(_ context.Conte
 }
 
 func (c *codeCommunicator) GetSBCComponentSystemHealthScore(_ context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHighAvailabilityComponentState(_ context.Context) (device.HighAvailabilityComponentState, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHighAvailabilityComponentRole(_ context.Context) (string, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetHighAvailabilityComponentNodes(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 

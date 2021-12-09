@@ -4,7 +4,7 @@ import "github.com/inexio/thola/internal/device"
 
 // ReadServerRequest
 //
-// ReadServerRequest is a the request struct for the read server request.
+// ReadServerRequest is the request struct for the read server request.
 //
 // swagger:model
 type ReadServerRequest struct {
@@ -13,7 +13,7 @@ type ReadServerRequest struct {
 
 // ReadServerResponse
 //
-// ReadServerResponse is a the response struct for the read server response.
+// ReadServerResponse is the response struct for the read server response.
 //
 // swagger:model
 type ReadServerResponse struct {
