@@ -6,6 +6,7 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strconv"
 )
 
@@ -29,7 +30,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// entPhysicalName
 	res, err := con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.2.1.47.1.1.1.1.7")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatModemStatusMaxCapacity")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get entPhysicalName")
+		return interfaces, nil
 	}
 
 	names := make(map[string]string)
@@ -44,7 +46,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// aviatModemStatusMaxCapacity
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.4.1.1")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatModemStatusMaxCapacity")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatModemStatusMaxCapacity")
+		return interfaces, nil
 	}
 
 	var maxCapacity uint64
@@ -63,7 +66,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// aviatModemCurCapacityTx
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.1.1.11")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatModemCurCapacityTx")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatModemCurCapacityTx")
+		return interfaces, nil
 	}
 
 	var maxBitRateTx uint64
@@ -99,7 +103,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// aviatModemCurCapacityRx
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.3.2.1.1.12")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatModemCurCapacityRx")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatModemCurCapacityRx")
+		return interfaces, nil
 	}
 
 	var maxBitRateRx uint64
@@ -135,7 +140,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// aviatRxPerformRslReadingCurrent
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.15.2.2.1.4")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatRxPerformRslReadingCurrent")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRxPerformRslReadingCurrent")
+		return interfaces, nil
 	}
 
 	for _, r := range res {
@@ -169,7 +175,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// aviatRxPerformTxpowReadingCurrent
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.33.2.2.1.7")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get aviatRxPerformTxpowReadingCurrent")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRxPerformTxpowReadingCurrent")
+		return interfaces, nil
 	}
 
 	for _, r := range res {
@@ -205,7 +212,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	// ifType
 	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.2.1.2.2.1.3")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get ifType")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get ifType")
+		return interfaces, nil
 	}
 
 	for _, r := range res {
