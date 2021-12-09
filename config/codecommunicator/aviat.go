@@ -220,6 +220,7 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 				return nil, errors.Wrap(err, "failed to parse ifIndex value")
 			}
 			radioIfIndex = &ifIndex
+			break
 		}
 	}
 
