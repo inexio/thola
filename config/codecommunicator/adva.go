@@ -24,6 +24,12 @@ func (c *advaCommunicator) GetInterfaces(ctx context.Context, filter ...grouppro
 		return nil, err
 	}
 
+	if groupproperty.CheckValueFiltersMatch(filter, []string{"dwdm"}) {
+		log.Ctx(ctx).Debug().Msg("filter matched on 'dwdm', skipping adva dwdm values")
+		return c.normalizeInterfaces(ctx, interfaces, filter)
+	}
+	log.Ctx(ctx).Debug().Msg("reading adva dwdm values")
+
 	if err = c.getDWDMInterfaces(ctx, interfaces); err != nil {
 		return nil, err
 	}
@@ -32,7 +38,7 @@ func (c *advaCommunicator) GetInterfaces(ctx context.Context, filter ...grouppro
 		return nil, err
 	}
 
-	return c.normalizeInterfaces(interfaces), nil
+	return c.normalizeInterfaces(ctx, interfaces, filter)
 }
 
 func (c *advaCommunicator) getDWDMInterfaces(ctx context.Context, interfaces []device.Interface) error {
@@ -348,14 +354,6 @@ func (c *advaCommunicator) getPowerValues(ctx context.Context, oid network.OID) 
 	return descrToValues, nil
 }
 
-func (c *advaCommunicator) normalizeInterfaces(interfaces []device.Interface) []device.Interface {
-	var res []device.Interface
-
-	for _, interf := range interfaces {
-		if !(interf.IfDescr != nil && (strings.HasPrefix(*interf.IfDescr, "TIFI-") || strings.HasPrefix(*interf.IfDescr, "TIFO-"))) {
-			res = append(res, interf)
-		}
-	}
-
-	return res
+func (c *advaCommunicator) normalizeInterfaces(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
+	return filterInterfaces(ctx, interfaces, append(filter, groupproperty.GetGroupFilter([]string{"ifDescr"}, "^(TIFI-|TIFO-)")))
 }
