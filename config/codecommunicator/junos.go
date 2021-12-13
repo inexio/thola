@@ -22,11 +22,11 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		return nil, err
 	}
 
-	for _, fil := range filter {
-		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok && valueFilter.CheckMatch([]string{"vlan"}) {
-			return interfaces, nil
-		}
+	if groupproperty.CheckValueFiltersMatch(filter, []string{"vlan"}) {
+		log.Ctx(ctx).Debug().Msg("filter matched on 'vlan', skipping junos vlan values")
+		return interfaces, nil
 	}
+	log.Ctx(ctx).Debug().Msg("reading junos vlan values")
 
 	interfacesWithVLANs, err := c.addVLANsNonELS(ctx, interfaces)
 	if err != nil {
@@ -38,7 +38,7 @@ func (c *junosCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		}
 	}
 
-	return interfacesWithVLANs, nil
+	return filterInterfaces(ctx, interfacesWithVLANs, filter)
 }
 
 func (c *junosCommunicator) addVLANsELS(ctx context.Context, interfaces []device.Interface) ([]device.Interface, error) {
