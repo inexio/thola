@@ -152,6 +152,15 @@ type ValueFilter interface {
 	CheckMatch([]string) bool
 }
 
+func CheckValueFiltersMatch(filters []Filter, value []string) bool {
+	for _, fil := range filters {
+		if valueFilter, ok := fil.(ValueFilter); ok && valueFilter.CheckMatch(value) {
+			return true
+		}
+	}
+	return false
+}
+
 type valueFilter struct {
 	value []string
 }
@@ -212,15 +221,17 @@ func GetExclusiveValueFilter(values [][]string) Filter {
 }
 
 func (g *exclusiveValueFilter) CheckMatch(value []string) bool {
+out:
 	for _, val := range g.values {
 		for i, k := range value {
 			if i >= len(val) || k != val[i] {
-				continue
+				continue out
 			}
-			if i == len(val)-1 && k == val[i] {
-				return false
+			if i == len(val)-1 {
+				break
 			}
 		}
+		return false
 	}
 	return true
 }

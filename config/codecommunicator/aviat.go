@@ -20,6 +20,16 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		return nil, err
 	}
 
+	if groupproperty.CheckValueFiltersMatch(filter, []string{"radio"}) {
+		log.Ctx(ctx).Debug().Msg("filter matched on 'radio', skipping aviat radio values")
+		return interfaces, nil
+	}
+	log.Ctx(ctx).Debug().Msg("reading aviat radio values")
+
+	return c.getRadioInterface(ctx, interfaces, filter)
+}
+
+func (c *aviatCommunicator) getRadioInterface(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("snmp client is empty")
@@ -244,5 +254,5 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		}
 	}
 
-	return interfaces, nil
+	return filterInterfaces(ctx, interfaces, filter)
 }

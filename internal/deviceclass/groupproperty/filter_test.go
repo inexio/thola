@@ -469,7 +469,7 @@ func TestExclusiveValueFilter_CheckMatch(t *testing.T) {
 	filter, ok := valueFilter.(ValueFilter)
 	assert.True(t, ok, "exclusive value filter is not implementing the ValueFilter interface")
 
-	assert.True(t, filter.CheckMatch([]string{"radio"}))
+	assert.False(t, filter.CheckMatch([]string{"radio"}))
 	assert.True(t, filter.CheckMatch([]string{"ifDescr"}))
 	assert.True(t, filter.CheckMatch([]string{"radio", "level_out"}))
 	assert.False(t, filter.CheckMatch([]string{"radio", "level_in"}))
