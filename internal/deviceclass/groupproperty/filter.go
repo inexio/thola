@@ -150,6 +150,7 @@ func (g *groupFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 
 type ValueFilter interface {
 	CheckMatch([]string) bool
+	AddException([]string) Filter
 }
 
 func CheckValueFiltersMatch(filters []Filter, value []string) bool {
@@ -181,6 +182,13 @@ func (g *valueFilter) CheckMatch(value []string) bool {
 		}
 	}
 	return true
+}
+
+func (g *valueFilter) AddException(value []string) Filter {
+	if g.CheckMatch(value) {
+		return nil
+	}
+	return g
 }
 
 func (g *valueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups PropertyGroups) (PropertyGroups, error) {
@@ -234,6 +242,15 @@ out:
 		return false
 	}
 	return true
+}
+
+func (g *exclusiveValueFilter) AddException(value []string) Filter {
+	if g.CheckMatch(value) {
+		return &exclusiveValueFilter{
+			values: append(g.values, value),
+		}
+	}
+	return g
 }
 
 func (g *exclusiveValueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups PropertyGroups) (PropertyGroups, error) {
