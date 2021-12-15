@@ -115,6 +115,8 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 		// Radio
 		groupproperty.GetValueFilter([]string{"radio", "rx_frequency"}),
 		groupproperty.GetValueFilter([]string{"radio", "tx_frequency"}),
+		groupproperty.GetValueFilter([]string{"radio", "channels", "rx_frequency"}),
+		groupproperty.GetValueFilter([]string{"radio", "channels", "tx_frequency"}),
 	}
 
 	if !r.PrintInterfaces {

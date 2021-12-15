@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/internal/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"reflect"
 	"regexp"
 	"strconv"
 )
@@ -181,6 +182,9 @@ func (g *valueFilter) CheckMatch(value []string) bool {
 			return false
 		}
 	}
+	if len(value) < len(g.value) {
+		return false
+	}
 	return true
 }
 
@@ -306,16 +310,34 @@ func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []stri
 			if del {
 				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in property group")
 			} else {
-				var nextGroup propertyGroup
-				err := nextGroup.encode(v)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to encode next filter key value to property group")
+				switch reflect.TypeOf(v).Kind() {
+				case reflect.Slice:
+					var nextGroups PropertyGroups
+					err := nextGroups.Encode(v)
+					if err != nil {
+						return nil, errors.Wrap(err, "failed to encode next filter key value to property groups")
+					}
+					var filteredGroups PropertyGroups
+					for _, nextGroup := range nextGroups {
+						r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
+						if err != nil {
+							return nil, err
+						}
+						filteredGroups = append(filteredGroups, r)
+					}
+					groupCopy[k] = filteredGroups
+				default:
+					var nextGroup propertyGroup
+					err := nextGroup.encode(v)
+					if err != nil {
+						return nil, errors.Wrap(err, "failed to encode next filter key value to property group")
+					}
+					r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
+					if err != nil {
+						return nil, err
+					}
+					groupCopy[k] = r
 				}
-				r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
-				if err != nil {
-					return nil, err
-				}
-				groupCopy[k] = r
 			}
 			continue
 		}

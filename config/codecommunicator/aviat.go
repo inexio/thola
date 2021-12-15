@@ -17,7 +17,9 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 	var filterWithIfType []groupproperty.Filter
 	for _, fil := range filter {
 		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok {
-			filterWithIfType = append(filterWithIfType, valueFilter.AddException([]string{"ifType"}))
+			if f := valueFilter.AddException([]string{"ifType"}); f != nil {
+				filterWithIfType = append(filterWithIfType, f)
+			}
 		}
 	}
 
@@ -219,6 +221,76 @@ func (c *aviatCommunicator) getRadioInterface(ctx context.Context, interfaces []
 			channels = append(channels, device.RadioChannel{
 				Channel:  &target,
 				LevelOut: &levelOut,
+			})
+		}
+	}
+
+	// aviatRfFreqTx
+	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.5.2.1.1.1")
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRfFreqTx")
+		return interfaces, nil
+	}
+
+	for _, r := range res {
+		txFrequencyVal, err := r.GetValue()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get aviatRfFreqTx value")
+		}
+		txFrequency, err := txFrequencyVal.Float64()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse aviatRfFreqTx value")
+		}
+		txFrequency = txFrequency / 1000
+
+		target := names[r.GetOID().GetIndex()]
+		found := false
+		for i, channel := range channels {
+			if channel.Channel != nil && *channel.Channel == target {
+				channels[i].TXFrequency = &txFrequency
+				found = true
+				break
+			}
+		}
+		if !found {
+			channels = append(channels, device.RadioChannel{
+				Channel:     &target,
+				TXFrequency: &txFrequency,
+			})
+		}
+	}
+
+	// aviatRfFreqRx
+	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.5.2.1.1.2")
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRfFreqRx")
+		return interfaces, nil
+	}
+
+	for _, r := range res {
+		rxFrequencyVal, err := r.GetValue()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get aviatRfFreqRx value")
+		}
+		rxFrequency, err := rxFrequencyVal.Float64()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse aviatRfFreqRx value")
+		}
+		rxFrequency = rxFrequency / 1000
+
+		target := names[r.GetOID().GetIndex()]
+		found := false
+		for i, channel := range channels {
+			if channel.Channel != nil && *channel.Channel == target {
+				channels[i].RXFrequency = &rxFrequency
+				found = true
+				break
+			}
+		}
+		if !found {
+			channels = append(channels, device.RadioChannel{
+				Channel:     &target,
+				RXFrequency: &rxFrequency,
 			})
 		}
 	}
