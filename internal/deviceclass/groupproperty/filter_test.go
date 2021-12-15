@@ -339,7 +339,7 @@ func TestValueFilter_ApplyPropertyGroups_nestedArray(t *testing.T) {
 		propertyGroup{
 			"ifIndex": "1",
 			"ifDescr": "Ethernet #1",
-			"radio": []propertyGroup{
+			"radio": PropertyGroups{
 				{
 					"level_in":  "10",
 					"level_out": "10",
@@ -585,6 +585,45 @@ func TestExclusiveValueFilter_ApplyPropertyGroups_nested(t *testing.T) {
 		propertyGroup{
 			"radio": propertyGroup{
 				"level_in": "10",
+			},
+		},
+	}
+
+	assert.Equal(t, expected, filteredGroup)
+}
+
+func TestExclusiveValueFilter_ApplyPropertyGroups_nestedArray(t *testing.T) {
+	filter := GetExclusiveValueFilter([][]string{{"radio", "level_in"}})
+
+	groups := PropertyGroups{
+		propertyGroup{
+			"ifIndex": "1",
+			"ifDescr": "Ethernet #1",
+			"radio": PropertyGroups{
+				{
+					"level_in":  "10",
+					"level_out": "10",
+				},
+				{
+					"level_in":  "7",
+					"level_out": "5",
+				},
+			},
+		},
+	}
+
+	filteredGroup, err := filter.ApplyPropertyGroups(context.Background(), groups)
+	assert.NoError(t, err)
+
+	expected := PropertyGroups{
+		propertyGroup{
+			"radio": PropertyGroups{
+				{
+					"level_in": "10",
+				},
+				{
+					"level_in": "7",
+				},
 			},
 		},
 	}
