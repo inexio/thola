@@ -112,6 +112,9 @@ func (r *CheckInterfaceMetricsRequest) getFilter() []groupproperty.Filter {
 		groupproperty.GetValueFilter([]string{"ifSpecific"}),
 		// VLANs
 		groupproperty.GetValueFilter([]string{"vlan"}),
+		// Radio
+		groupproperty.GetValueFilter([]string{"radio", "rx_frequency"}),
+		groupproperty.GetValueFilter([]string{"radio", "tx_frequency"}),
 	}
 
 	if !r.PrintInterfaces {
@@ -429,6 +432,38 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *i.Radio.MaxbitrateIn).SetLabel(*i.IfDescr))
 				if err != nil {
 					return err
+				}
+			}
+
+			for _, channel := range i.Radio.Channels {
+				if channel.Channel != nil {
+					if channel.LevelIn != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("level_in", *channel.LevelIn).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.LevelOut != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("level_out", *channel.LevelOut).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.MaxbitrateIn != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_in", *channel.MaxbitrateIn).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
+
+					if channel.MaxbitrateOut != nil {
+						err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("interface_maxbitrate_out", *channel.MaxbitrateOut).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+						if err != nil {
+							return err
+						}
+					}
 				}
 			}
 		}

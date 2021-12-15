@@ -10,10 +10,10 @@ services:
       - snmpsim1
       - snmpsim2
   snmpsim1:
-    image: thola/snmpsim:latest
+    image: ghcr.io/inexio/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/
   snmpsim2:
-    image: thola/snmpsim:latest
+    image: ghcr.io/inexio/snmpsim:latest
     volumes:
       - ${THOLA_TEST_SNMPRECDIR}:/usr/local/snmpsim/data/

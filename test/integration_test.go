@@ -194,6 +194,10 @@ func sendRequests(input chan testDevice, output chan statistics) {
 	for {
 		select {
 		case testDevice := <-input:
+			if len(testDevice.requestTypes) == 0 {
+				stats.success[testDevice.info.getIdentifier()] = "success"
+				continue
+			}
 			r, err := testDevice.info.generateRequest(testDevice.requestTypes[0])
 			if err != nil {
 				stats.failed[testDevice.info.getIdentifier()] = fmt.Sprintf("generating new request failed: %s", err.Error())

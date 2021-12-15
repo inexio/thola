@@ -149,7 +149,7 @@ func handleRequest(r request.Request) {
 
 	resp, err := request.ProcessRequest(ctx, r)
 	if err != nil {
-		handleError(ctx, err)
+		handleError(ctx, err, r)
 		os.Exit(3)
 	}
 

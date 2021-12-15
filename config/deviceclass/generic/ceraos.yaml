@@ -82,6 +82,22 @@ components:
                   value:
                     detection: constant
                     value: 1000
+            rx_frequency:
+              oid: 1.3.6.1.4.1.2281.10.5.2.1.4
+              operators:
+                - type: modify
+                  modify_method: divide
+                  value:
+                    detection: constant
+                    value: 1000
+            tx_frequency:
+                oid: 1.3.6.1.4.1.2281.10.5.2.1.3
+                operators:
+                  - type: modify
+                    modify_method: divide
+                    value:
+                      detection: constant
+                      value: 1000
 
   memory:
     properties:
