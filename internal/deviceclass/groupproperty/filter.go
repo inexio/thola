@@ -5,6 +5,7 @@ import (
 	"github.com/inexio/thola/internal/value"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"reflect"
 	"regexp"
 	"strconv"
 )
@@ -150,6 +151,16 @@ func (g *groupFilter) applySNMP(ctx context.Context, reader snmpReader) (snmpRea
 
 type ValueFilter interface {
 	CheckMatch([]string) bool
+	AddException([]string) Filter
+}
+
+func CheckValueFiltersMatch(filters []Filter, value []string) bool {
+	for _, fil := range filters {
+		if valueFilter, ok := fil.(ValueFilter); ok && valueFilter.CheckMatch(value) {
+			return true
+		}
+	}
+	return false
 }
 
 type valueFilter struct {
@@ -171,7 +182,17 @@ func (g *valueFilter) CheckMatch(value []string) bool {
 			return false
 		}
 	}
+	if len(value) < len(g.value) {
+		return false
+	}
 	return true
+}
+
+func (g *valueFilter) AddException(value []string) Filter {
+	if g.CheckMatch(value) {
+		return nil
+	}
+	return g
 }
 
 func (g *valueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups PropertyGroups) (PropertyGroups, error) {
@@ -212,17 +233,28 @@ func GetExclusiveValueFilter(values [][]string) Filter {
 }
 
 func (g *exclusiveValueFilter) CheckMatch(value []string) bool {
+out:
 	for _, val := range g.values {
 		for i, k := range value {
 			if i >= len(val) || k != val[i] {
-				continue
+				continue out
 			}
-			if i == len(val)-1 && k == val[i] {
-				return false
+			if i == len(val)-1 {
+				break
 			}
 		}
+		return false
 	}
 	return true
+}
+
+func (g *exclusiveValueFilter) AddException(value []string) Filter {
+	if g.CheckMatch(value) {
+		return &exclusiveValueFilter{
+			values: append(g.values, value),
+		}
+	}
+	return g
 }
 
 func (g *exclusiveValueFilter) ApplyPropertyGroups(ctx context.Context, propertyGroups PropertyGroups) (PropertyGroups, error) {
@@ -278,16 +310,34 @@ func filterPropertyGroupKey(ctx context.Context, group propertyGroup, key []stri
 			if del {
 				log.Ctx(ctx).Debug().Str("value", k).Msg("filter matched on value in property group")
 			} else {
-				var nextGroup propertyGroup
-				err := nextGroup.encode(v)
-				if err != nil {
-					return nil, errors.Wrap(err, "failed to encode next filter key value to property group")
+				switch reflect.TypeOf(v).Kind() {
+				case reflect.Slice:
+					var nextGroups PropertyGroups
+					err := nextGroups.Encode(v)
+					if err != nil {
+						return nil, errors.Wrap(err, "failed to encode next filter key value to property groups")
+					}
+					var filteredGroups PropertyGroups
+					for _, nextGroup := range nextGroups {
+						r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
+						if err != nil {
+							return nil, err
+						}
+						filteredGroups = append(filteredGroups, r)
+					}
+					groupCopy[k] = filteredGroups
+				default:
+					var nextGroup propertyGroup
+					err := nextGroup.encode(v)
+					if err != nil {
+						return nil, errors.Wrap(err, "failed to encode next filter key value to property group")
+					}
+					r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
+					if err != nil {
+						return nil, err
+					}
+					groupCopy[k] = r
 				}
-				r, err := filterPropertyGroupKey(ctx, nextGroup, key[1:], matcher)
-				if err != nil {
-					return nil, err
-				}
-				groupCopy[k] = r
 			}
 			continue
 		}

@@ -7,7 +7,6 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"strconv"
 )
 
 type aviatCommunicator struct {
@@ -15,11 +14,30 @@ type aviatCommunicator struct {
 }
 
 func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...groupproperty.Filter) ([]device.Interface, error) {
-	interfaces, err := c.deviceClass.GetInterfaces(ctx, filter...)
+	var filterWithIfType []groupproperty.Filter
+	for _, fil := range filter {
+		if valueFilter, ok := fil.(groupproperty.ValueFilter); ok {
+			if f := valueFilter.AddException([]string{"ifType"}); f != nil {
+				filterWithIfType = append(filterWithIfType, f)
+			}
+		}
+	}
+
+	interfaces, err := c.deviceClass.GetInterfaces(ctx, filterWithIfType...)
 	if err != nil {
 		return nil, err
 	}
 
+	if groupproperty.CheckValueFiltersMatch(filter, []string{"radio"}) {
+		log.Ctx(ctx).Debug().Msg("filter matched on 'radio', skipping aviat radio values")
+		return filterInterfaces(ctx, interfaces, filter)
+	}
+	log.Ctx(ctx).Debug().Msg("reading aviat radio values")
+
+	return c.getRadioInterface(ctx, interfaces, filter)
+}
+
+func (c *aviatCommunicator) getRadioInterface(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {
 	con, ok := network.DeviceConnectionFromContext(ctx)
 	if !ok || con.SNMP == nil {
 		return nil, errors.New("snmp client is empty")
@@ -207,33 +225,78 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 		}
 	}
 
-	var radioIfIndex *uint64
-
-	// ifType
-	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.2.1.2.2.1.3")
+	// aviatRfFreqTx
+	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.5.2.1.1.1")
 	if err != nil {
-		log.Ctx(ctx).Debug().Err(err).Msg("failed to get ifType")
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRfFreqTx")
 		return interfaces, nil
 	}
 
 	for _, r := range res {
-		ifTypeVal, err := r.GetValue()
+		txFrequencyVal, err := r.GetValue()
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get ifType value")
+			return nil, errors.Wrap(err, "failed to get aviatRfFreqTx value")
 		}
+		txFrequency, err := txFrequencyVal.Float64()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse aviatRfFreqTx value")
+		}
+		txFrequency = txFrequency / 1000
 
-		if ifTypeVal.String() == "188" {
-			ifIndex, err := strconv.ParseUint(r.GetOID().GetIndex(), 10, 64)
-			if err != nil {
-				return nil, errors.Wrap(err, "failed to parse ifIndex value")
+		target := names[r.GetOID().GetIndex()]
+		found := false
+		for i, channel := range channels {
+			if channel.Channel != nil && *channel.Channel == target {
+				channels[i].TXFrequency = &txFrequency
+				found = true
+				break
 			}
-			radioIfIndex = &ifIndex
-			break
+		}
+		if !found {
+			channels = append(channels, device.RadioChannel{
+				Channel:     &target,
+				TXFrequency: &txFrequency,
+			})
+		}
+	}
+
+	// aviatRfFreqRx
+	res, err = con.SNMP.SnmpClient.SNMPWalk(ctx, "1.3.6.1.4.1.2509.9.5.2.1.1.2")
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get aviatRfFreqRx")
+		return interfaces, nil
+	}
+
+	for _, r := range res {
+		rxFrequencyVal, err := r.GetValue()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get aviatRfFreqRx value")
+		}
+		rxFrequency, err := rxFrequencyVal.Float64()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse aviatRfFreqRx value")
+		}
+		rxFrequency = rxFrequency / 1000
+
+		target := names[r.GetOID().GetIndex()]
+		found := false
+		for i, channel := range channels {
+			if channel.Channel != nil && *channel.Channel == target {
+				channels[i].RXFrequency = &rxFrequency
+				found = true
+				break
+			}
+		}
+		if !found {
+			channels = append(channels, device.RadioChannel{
+				Channel:     &target,
+				RXFrequency: &rxFrequency,
+			})
 		}
 	}
 
 	for i, interf := range interfaces {
-		if interf.IfIndex != nil && radioIfIndex != nil && *interf.IfIndex == *radioIfIndex {
+		if interf.IfType != nil && *interf.IfType == "radioMAC" {
 			interfaces[i].MaxSpeedIn = &maxCapacity
 			interfaces[i].MaxSpeedOut = &maxCapacity
 			interfaces[i].Radio = &device.RadioInterface{
@@ -241,8 +304,9 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 				MaxbitrateIn:  &maxBitRateRx,
 				Channels:      channels,
 			}
+			break
 		}
 	}
 
-	return interfaces, nil
+	return filterInterfaces(ctx, interfaces, filter)
 }

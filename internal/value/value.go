@@ -39,7 +39,11 @@ func New(i interface{}) Value {
 	default:
 		switch val := reflect.ValueOf(i); val.Kind() {
 		case reflect.Ptr:
-			return New(reflect.Indirect(val).Interface())
+			if val.IsNil() {
+				v = ""
+			} else {
+				return New(reflect.Indirect(val).Interface())
+			}
 		default:
 			v = value(fmt.Sprint(t))
 		}

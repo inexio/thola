@@ -39,8 +39,8 @@ func (r *CheckDiskRequest) process(ctx context.Context) (Response, error) {
 				if r.DiskThresholds.HasWarning() {
 					thresholds.WarningMax = float64(*storage.Available) * r.DiskThresholds.WarningMax.(float64) / 100
 				}
-				if r.DiskThresholds.HasWarning() {
-					thresholds.WarningMax = float64(*storage.Available) * r.DiskThresholds.CriticalMax.(float64) / 100
+				if r.DiskThresholds.HasCritical() {
+					thresholds.CriticalMax = float64(*storage.Available) * r.DiskThresholds.CriticalMax.(float64) / 100
 				}
 
 				p = monitoringplugin.NewPerformanceDataPoint("disk_used", *storage.Used).SetUnit("B").SetThresholds(thresholds)
