@@ -20,6 +20,8 @@ func (c *aviatCommunicator) GetInterfaces(ctx context.Context, filter ...grouppr
 			if f := valueFilter.AddException([]string{"ifType"}); f != nil {
 				filterWithIfType = append(filterWithIfType, f)
 			}
+		} else {
+			filterWithIfType = append(filterWithIfType, fil)
 		}
 	}
 
