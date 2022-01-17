@@ -28,6 +28,8 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 	switch classIdentifier {
 	case "ceraos/ip10":
 		return &ceraosIP10Communicator{base}, nil
+	case "ceraos/ip20":
+		return &ceraosIP20Communicator{base}, nil
 	case "powerone/acc":
 		return &poweroneACCCommunicator{base}, nil
 	case "powerone/pcc":
