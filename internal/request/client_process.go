@@ -282,6 +282,20 @@ func (r *ReadAvailableComponentsRequest) process(ctx context.Context) (Response,
 	return &res, nil
 }
 
+func (r *ReadSIEMResponse) process(ctx context.Context) (Response, error) {
+	apiFormat := viper.GetString("target-api-format")
+	responseBody, err := sendToAPI(ctx, r, "read/siem", apiFormat)
+	if err != nil {
+		return nil, err
+	}
+	var res ReadSIEMResponse
+	err = parser.ToStruct(responseBody, apiFormat, &res)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse api response body to thola response")
+	}
+	return &res, nil
+}
+
 func checkProcess(ctx context.Context, r Request, apiPath string) Response {
 	var res CheckResponse
 	apiFormat := viper.GetString("target-api-format")
