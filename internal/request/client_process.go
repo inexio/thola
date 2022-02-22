@@ -282,7 +282,7 @@ func (r *ReadAvailableComponentsRequest) process(ctx context.Context) (Response,
 	return &res, nil
 }
 
-func (r *ReadSIEMResponse) process(ctx context.Context) (Response, error) {
+func (r *ReadSIEMRequest) process(ctx context.Context) (Response, error) {
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "read/siem", apiFormat)
 	if err != nil {
