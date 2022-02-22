@@ -547,6 +547,21 @@ func (h HighAvailabilityComponentState) GetInt() (int, error) {
 	return 0, fmt.Errorf("invalid high availability state '%s'", h)
 }
 
+// SIEMComponent
+//
+// SIEMComponent represents the siem information of a device.
+//
+// swagger:model
+type SIEMComponent struct {
+	SIEM                                         *string `yaml:"siem" json:"siem" mapstructure:"siem"`
+	SystemVersion                                *string `yaml:"system_version" json:"system_version" mapstructure:"system_version"`
+	LastRecordedMessagesPerSecondNormalizer      *int    `yaml:"last_recorded_messages_per_second_normalizer" json:"last_recorded_messages_per_second_normalizer" mapstructure:"last_recorded_messages_per_second_normalizer"`
+	AverageMessagesPerSecondLast5minNormalizer   *int    `yaml:"average_messages_per_second_last_5_min_normalizer" json:"average_messages_per_second_last_5_min_normalizer" mapstructure:"average_messages_per_second_last_5_min_normalizer"`
+	LastRecordedMessagesPerSecondStoreHandler    *int    `yaml:"last_recorded_messages_per_second_store_handler" json:"last_recorded_messages_per_second_store_handler" mapstructure:"last_recorded_messages_per_second_store_handler"`
+	AverageMessagesPerSecondLast5minStoreHandler *int    `yaml:"average_messages_per_second_last_5_min_store_handler" json:"average_messages_per_second_last_5_min_store_handler" mapstructure:"average_messages_per_second_last_5_min_store_handler"`
+	ServicesCurrentlyDown                        *int    `yaml:"services_currently_down" json:"services_currently_down" mapstructure:"services_currently_down"`
+}
+
 // Rate
 //
 // Rate encapsulates values which refer to a time span.

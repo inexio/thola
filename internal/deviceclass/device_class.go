@@ -58,6 +58,7 @@ type deviceClassComponents struct {
 	disk             *deviceClassComponentsDisk
 	hardwareHealth   *deviceClassComponentsHardwareHealth
 	highAvailability *deviceClassComponentsHighAvailability
+	siem             *deviceClassComponentsSIEM
 }
 
 // deviceClassComponentsUPS represents the ups components part of a device class.
@@ -125,6 +126,29 @@ type deviceClassComponentsHighAvailability struct {
 	nodes property.Reader
 }
 
+// deviceClassComponentsSIEM represents the SIEM part of a device class.
+type deviceClassComponentsSIEM struct {
+	siem                                         property.Reader
+	systemVersion                                property.Reader
+	lastRecordedMessagesPerSecondNormalizer      property.Reader
+	averageMessagesPerSecondLast5minNormalizer   property.Reader
+	lastRecordedMessagesPerSecondStoreHandler    property.Reader
+	averageMessagesPerSecondLast5minStoreHandler property.Reader
+	servicesCurrentlyDown                        property.Reader
+
+	cpuConsumptionCollection      property.Reader
+	cpuConsumptionNormalization   property.Reader
+	cpuConsumptionEnrichment      property.Reader
+	cpuConsumptionIndexing        property.Reader
+	cpuConsumptionDashboardAlerts property.Reader
+
+	//logCollectionServices groupproperty.Reader
+	//normalizationServicesStatus groupproperty.Reader
+	//enrichmentServicesStatus groupproperty.Reader
+	//indexingServicesStatus groupproperty.Reader
+
+}
+
 // deviceClassConfig represents the config part of a device class.
 type deviceClassConfig struct {
 	snmp       deviceClassSNMP
@@ -168,6 +192,7 @@ type yamlDeviceClassComponents struct {
 	Disk             *yamlComponentsDiskProperties           `yaml:"disk"`
 	HardwareHealth   *yamlComponentsHardwareHealthProperties `yaml:"hardware_health"`
 	HighAvailability *yamlComponentsHighAvailability         `yaml:"high_availability"`
+	SIEM             *yamlComponentsSIEM                     `yaml:"siem"`
 }
 
 // yamlDeviceClassConfig represents the config part of a yaml device class.
@@ -252,6 +277,23 @@ type yamlComponentsHighAvailability struct {
 	State []interface{}
 	Role  []interface{}
 	Nodes []interface{}
+}
+
+// yamlComponentsSIEM represents the SIEM part of a device class.
+type yamlComponentsSIEM struct {
+	SIEM                                         []interface{} `yaml:"siem"`
+	SystemVersion                                []interface{} `yaml:"system_version"`
+	LastRecordedMessagesPerSecondNormalizer      []interface{} `yaml:"last_recorded_messages_per_second_normalizer"`
+	AverageMessagesPerSecondLast5minNormalizer   []interface{} `yaml:"average_messages_per_second_last_5_min_normalizer"`
+	LastRecordedMessagesPerSecondStoreHandler    []interface{} `yaml:"last_recorded_messages_per_second_store_handler"`
+	AverageMessagesPerSecondLast5minStoreHandler []interface{} `yaml:"average_messages_per_second_last_5_min_store_handler"`
+	ServicesCurrentlyDown                        []interface{} `yaml:"services_currently_down"`
+
+	CpuConsumptionCollection      []interface{} `yaml:"cpu_consumption_collection"`
+	CpuConsumptionNormalization   []interface{} `yaml:"cpu_consumption_normalization"`
+	CpuConsumptionEnrichment      []interface{} `yaml:"cpu_consumption_enrichment"`
+	CpuConsumptionIndexing        []interface{} `yaml:"cpu_consumption_indexing"`
+	CpuConsumptionDashboardAlerts []interface{} `yaml:"cpu_consumption_dashboard_alerts"`
 }
 
 //
@@ -536,6 +578,14 @@ func (y *yamlDeviceClassComponents) convert(parentComponents deviceClassComponen
 			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml high availability properties")
 		}
 		components.highAvailability = &ha
+	}
+
+	if y.SIEM != nil {
+		siem, err := y.SIEM.convert(parentComponents.siem)
+		if err != nil {
+			return deviceClassComponents{}, errors.Wrap(err, "failed to read yaml siem properties")
+		}
+		components.siem = &siem
 	}
 
 	return components, nil
@@ -933,6 +983,101 @@ func (y *yamlComponentsHighAvailability) convert(parentHA *deviceClassComponents
 		prop.nodes, err = property.InterfaceSlice2Reader(y.Nodes, condition.PropertyDefault, prop.nodes)
 		if err != nil {
 			return deviceClassComponentsHighAvailability{}, errors.Wrap(err, "failed to convert nodes property to property reader")
+		}
+	}
+
+	return prop, nil
+}
+
+func (y *yamlComponentsSIEM) convert(parentSIEM *deviceClassComponentsSIEM) (deviceClassComponentsSIEM, error) {
+	var prop deviceClassComponentsSIEM
+	var err error
+
+	if parentSIEM != nil {
+		prop = *parentSIEM
+	}
+
+	if y.LastRecordedMessagesPerSecondNormalizer != nil {
+		prop.lastRecordedMessagesPerSecondNormalizer, err = property.InterfaceSlice2Reader(y.LastRecordedMessagesPerSecondNormalizer, condition.PropertyDefault, prop.lastRecordedMessagesPerSecondNormalizer)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert LastRecordedMessagesPerSecondNormalizer property to property reader")
+		}
+	}
+
+	if y.AverageMessagesPerSecondLast5minNormalizer != nil {
+		prop.averageMessagesPerSecondLast5minNormalizer, err = property.InterfaceSlice2Reader(y.AverageMessagesPerSecondLast5minNormalizer, condition.PropertyDefault, prop.averageMessagesPerSecondLast5minNormalizer)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert AverageMessagesPerSecondLast5minNormalizer property to property reader")
+		}
+	}
+
+	if y.LastRecordedMessagesPerSecondStoreHandler != nil {
+		prop.lastRecordedMessagesPerSecondStoreHandler, err = property.InterfaceSlice2Reader(y.LastRecordedMessagesPerSecondStoreHandler, condition.PropertyDefault, prop.lastRecordedMessagesPerSecondStoreHandler)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert LastRecordedMessagesPerSecondStoreHandler property to property reader")
+		}
+	}
+
+	if y.AverageMessagesPerSecondLast5minStoreHandler != nil {
+		prop.averageMessagesPerSecondLast5minStoreHandler, err = property.InterfaceSlice2Reader(y.AverageMessagesPerSecondLast5minStoreHandler, condition.PropertyDefault, prop.averageMessagesPerSecondLast5minStoreHandler)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert AverageMessagesPerSecondLast5minStoreHandler property to property reader")
+		}
+	}
+
+	if y.ServicesCurrentlyDown != nil {
+		prop.servicesCurrentlyDown, err = property.InterfaceSlice2Reader(y.ServicesCurrentlyDown, condition.PropertyDefault, prop.servicesCurrentlyDown)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert ServicesCurrentlyDown property to property reader")
+		}
+	}
+
+	if y.SystemVersion != nil {
+		prop.systemVersion, err = property.InterfaceSlice2Reader(y.SystemVersion, condition.PropertyDefault, prop.systemVersion)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert SystemVersion property to property reader")
+		}
+	}
+
+	if y.SIEM != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.SIEM, condition.PropertyDefault, prop.siem)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.CpuConsumptionCollection != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionCollection, condition.PropertyDefault, prop.cpuConsumptionCollection)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.CpuConsumptionNormalization != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionNormalization, condition.PropertyDefault, prop.cpuConsumptionNormalization)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.CpuConsumptionEnrichment != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionEnrichment, condition.PropertyDefault, prop.cpuConsumptionEnrichment)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.CpuConsumptionIndexing != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionIndexing, condition.PropertyDefault, prop.cpuConsumptionIndexing)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.CpuConsumptionDashboardAlerts != nil {
+		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionDashboardAlerts, condition.PropertyDefault, prop.cpuConsumptionDashboardAlerts)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
 	}
 
