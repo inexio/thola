@@ -250,8 +250,6 @@ func (c *codeCommunicator) GetSIEMComponentSIEM(ctx context.Context) (string, er
 	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-//
-
 func (c *codeCommunicator) GetSIEMComponentCpuConsumptionCollection(ctx context.Context) (float64, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
@@ -270,6 +268,58 @@ func (c *codeCommunicator) GetSIEMComponentCpuConsumptionIndexing(ctx context.Co
 
 func (c *codeCommunicator) GetSIEMComponentCpuConsumptionDashboardAlerts(ctx context.Context) (float64, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionCollection(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionNormalization(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionEnrichment(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionIndexing(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueCollection(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueNormalization(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueEnrichment(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueIndexing(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentActiveSearchProcesses(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentDiskUsageDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
 func filterInterfaces(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {

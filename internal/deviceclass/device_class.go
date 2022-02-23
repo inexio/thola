@@ -142,6 +142,24 @@ type deviceClassComponentsSIEM struct {
 	cpuConsumptionIndexing        property.Reader
 	cpuConsumptionDashboardAlerts property.Reader
 
+	memoryConsumptionCollection      property.Reader
+	memoryConsumptionNormalization   property.Reader
+	memoryConsumptionEnrichment      property.Reader
+	memoryConsumptionIndexing        property.Reader
+	memoryConsumptionDashboardAlerts property.Reader
+
+	queueCollection      property.Reader
+	queueNormalization   property.Reader
+	queueEnrichment      property.Reader
+	queueIndexing        property.Reader
+	queueDashboardAlerts property.Reader
+
+	activeSearchProcesses property.Reader
+
+	diskUsageDashboardAlerts property.Reader
+
+	zfsPools groupproperty.Reader
+
 	//logCollectionServices groupproperty.Reader
 	//normalizationServicesStatus groupproperty.Reader
 	//enrichmentServicesStatus groupproperty.Reader
@@ -294,6 +312,24 @@ type yamlComponentsSIEM struct {
 	CpuConsumptionEnrichment      []interface{} `yaml:"cpu_consumption_enrichment"`
 	CpuConsumptionIndexing        []interface{} `yaml:"cpu_consumption_indexing"`
 	CpuConsumptionDashboardAlerts []interface{} `yaml:"cpu_consumption_dashboard_alerts"`
+
+	MemoryConsumptionCollection      []interface{} `yaml:"memory_consumption_collection"`
+	MemoryConsumptionNormalization   []interface{} `yaml:"memory_consumption_normalization"`
+	MemoryConsumptionEnrichment      []interface{} `yaml:"memory_consumption_enrichment"`
+	MemoryConsumptionIndexing        []interface{} `yaml:"memory_consumption_indexing"`
+	MemoryConsumptionDashboardAlerts []interface{} `yaml:"memory_consumption_dashboard_alerts"`
+
+	QueueCollection      []interface{} `yaml:"queue_collection"`
+	QueueNormalization   []interface{} `yaml:"queue_normalization"`
+	QueueEnrichment      []interface{} `yaml:"queue_enrichment"`
+	QueueIndexing        []interface{} `yaml:"queue_indexing"`
+	QueueDashboardAlerts []interface{} `yaml:"queue_dashboard_alerts"`
+
+	ActiveSearchProcesses []interface{} `yaml:"active_search_processes"`
+
+	DiskUsageDashboardAlerts []interface{} `yaml:"disk_usage_dashboard_alerts"`
+
+	ZFSPools interface{} `yaml:"zfs_pools"`
 }
 
 //
@@ -1047,35 +1083,126 @@ func (y *yamlComponentsSIEM) convert(parentSIEM *deviceClassComponentsSIEM) (dev
 	}
 
 	if y.CpuConsumptionCollection != nil {
-		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionCollection, condition.PropertyDefault, prop.cpuConsumptionCollection)
+		prop.cpuConsumptionCollection, err = property.InterfaceSlice2Reader(y.CpuConsumptionCollection, condition.PropertyDefault, prop.cpuConsumptionCollection)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
 	}
 
 	if y.CpuConsumptionNormalization != nil {
-		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionNormalization, condition.PropertyDefault, prop.cpuConsumptionNormalization)
+		prop.cpuConsumptionNormalization, err = property.InterfaceSlice2Reader(y.CpuConsumptionNormalization, condition.PropertyDefault, prop.cpuConsumptionNormalization)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
 	}
 
 	if y.CpuConsumptionEnrichment != nil {
-		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionEnrichment, condition.PropertyDefault, prop.cpuConsumptionEnrichment)
+		prop.cpuConsumptionEnrichment, err = property.InterfaceSlice2Reader(y.CpuConsumptionEnrichment, condition.PropertyDefault, prop.cpuConsumptionEnrichment)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
 	}
 
 	if y.CpuConsumptionIndexing != nil {
-		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionIndexing, condition.PropertyDefault, prop.cpuConsumptionIndexing)
+		prop.cpuConsumptionIndexing, err = property.InterfaceSlice2Reader(y.CpuConsumptionIndexing, condition.PropertyDefault, prop.cpuConsumptionIndexing)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
 	}
 
 	if y.CpuConsumptionDashboardAlerts != nil {
-		prop.siem, err = property.InterfaceSlice2Reader(y.CpuConsumptionDashboardAlerts, condition.PropertyDefault, prop.cpuConsumptionDashboardAlerts)
+		prop.cpuConsumptionDashboardAlerts, err = property.InterfaceSlice2Reader(y.CpuConsumptionDashboardAlerts, condition.PropertyDefault, prop.cpuConsumptionDashboardAlerts)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.MemoryConsumptionCollection != nil {
+		prop.memoryConsumptionCollection, err = property.InterfaceSlice2Reader(y.MemoryConsumptionCollection, condition.PropertyDefault, prop.memoryConsumptionCollection)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.MemoryConsumptionNormalization != nil {
+		prop.memoryConsumptionNormalization, err = property.InterfaceSlice2Reader(y.MemoryConsumptionNormalization, condition.PropertyDefault, prop.memoryConsumptionNormalization)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.MemoryConsumptionEnrichment != nil {
+		prop.memoryConsumptionEnrichment, err = property.InterfaceSlice2Reader(y.MemoryConsumptionEnrichment, condition.PropertyDefault, prop.memoryConsumptionEnrichment)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.MemoryConsumptionIndexing != nil {
+		prop.memoryConsumptionIndexing, err = property.InterfaceSlice2Reader(y.MemoryConsumptionIndexing, condition.PropertyDefault, prop.memoryConsumptionIndexing)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.MemoryConsumptionDashboardAlerts != nil {
+		prop.memoryConsumptionDashboardAlerts, err = property.InterfaceSlice2Reader(y.MemoryConsumptionDashboardAlerts, condition.PropertyDefault, prop.memoryConsumptionDashboardAlerts)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.QueueCollection != nil {
+		prop.queueCollection, err = property.InterfaceSlice2Reader(y.QueueCollection, condition.PropertyDefault, prop.queueCollection)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.QueueNormalization != nil {
+		prop.queueNormalization, err = property.InterfaceSlice2Reader(y.QueueNormalization, condition.PropertyDefault, prop.queueNormalization)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.QueueEnrichment != nil {
+		prop.queueEnrichment, err = property.InterfaceSlice2Reader(y.QueueEnrichment, condition.PropertyDefault, prop.queueEnrichment)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.QueueIndexing != nil {
+		prop.queueIndexing, err = property.InterfaceSlice2Reader(y.QueueIndexing, condition.PropertyDefault, prop.queueIndexing)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.QueueDashboardAlerts != nil {
+		prop.queueDashboardAlerts, err = property.InterfaceSlice2Reader(y.QueueDashboardAlerts, condition.PropertyDefault, prop.queueDashboardAlerts)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.ActiveSearchProcesses != nil {
+		prop.activeSearchProcesses, err = property.InterfaceSlice2Reader(y.ActiveSearchProcesses, condition.PropertyDefault, prop.activeSearchProcesses)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.DiskUsageDashboardAlerts != nil {
+		prop.diskUsageDashboardAlerts, err = property.InterfaceSlice2Reader(y.DiskUsageDashboardAlerts, condition.PropertyDefault, prop.diskUsageDashboardAlerts)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.ZFSPools != nil {
+		prop.zfsPools, err = groupproperty.Interface2Reader(y.ZFSPools, prop.zfsPools)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}

@@ -247,4 +247,43 @@ type availableSIEMCommunicatorFunctions interface {
 
 	// GetSIEMComponentCpuConsumptionDashboardAlerts returns siem type
 	GetSIEMComponentCpuConsumptionDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionCollection returns siem type
+	GetSIEMComponentMemoryConsumptionCollection(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionNormalization returns siem type
+	GetSIEMComponentMemoryConsumptionNormalization(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionEnrichment returns siem type
+	GetSIEMComponentMemoryConsumptionEnrichment(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionIndexing returns siem type
+	GetSIEMComponentMemoryConsumptionIndexing(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionDashboardAlerts returns siem type
+	GetSIEMComponentMemoryConsumptionDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueCollection returns siem type
+	GetSIEMComponentQueueCollection(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueNormalization returns siem type
+	GetSIEMComponentQueueNormalization(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueEnrichment returns siem type
+	GetSIEMComponentQueueEnrichment(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueIndexing returns siem type
+	GetSIEMComponentQueueIndexing(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueDashboardAlerts returns siem type
+	GetSIEMComponentQueueDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentActiveSearchProcesses returns siem type
+	GetSIEMComponentActiveSearchProcesses(ctx context.Context) (int, error)
+
+	// GetSIEMComponentDiskUsageDashboardAlerts returns siem type
+	GetSIEMComponentDiskUsageDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentZFSPools returns siem type
+	GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error)
 }
