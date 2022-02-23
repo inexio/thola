@@ -596,13 +596,13 @@ type SIEMComponent struct {
 type SIEMComponentZFSPool struct {
 	Name            *string `yaml:"name" json:"name" mapstructure:"name"`
 	Status          *string `yaml:"status" json:"status" mapstructure:"status"`
-	DiskAllocation  *string `yaml:"disk_allocation" json:"disk_allocation" mapstructure:"disk_allocation"`
-	FreeDiskSpace   *string `yaml:"free_disk_space" json:"free_disk_space" mapstructure:"free_disk_space"`
-	ReadOperations  *string `yaml:"read_operations" json:"read_operations" mapstructure:"read_operations"`
-	WriteOperations *string `yaml:"write_operations" json:"write_operations" mapstructure:"write_operations"`
-	ReadBandwidth   *string `yaml:"read_bandwidth" json:"read_bandwidth" mapstructure:"read_bandwidth"`
-	WriteBandwidth  *string `yaml:"write_bandwidth" json:"write_bandwidth" mapstructure:"write_bandwidth"`
-	FailedDisks     *string `yaml:"failed_disks" json:"failed_disks" mapstructure:"failed_disks"`
+	DiskAllocation  *int    `yaml:"disk_allocation" json:"disk_allocation" mapstructure:"disk_allocation"`
+	FreeDiskSpace   *int    `yaml:"free_disk_space" json:"free_disk_space" mapstructure:"free_disk_space"`
+	ReadOperations  *int    `yaml:"read_operations" json:"read_operations" mapstructure:"read_operations"`
+	WriteOperations *int    `yaml:"write_operations" json:"write_operations" mapstructure:"write_operations"`
+	ReadBandwidth   *int    `yaml:"read_bandwidth" json:"read_bandwidth" mapstructure:"read_bandwidth"`
+	WriteBandwidth  *int    `yaml:"write_bandwidth" json:"write_bandwidth" mapstructure:"write_bandwidth"`
+	FailedDisks     *int    `yaml:"failed_disks" json:"failed_disks" mapstructure:"failed_disks"`
 }
 
 // SIEMComponentRepository
@@ -612,8 +612,8 @@ type SIEMComponentZFSPool struct {
 // swagger:model
 type SIEMComponentRepository struct {
 	Name                 *string `yaml:"name" json:"name" mapstructure:"name"`
-	LogSizePreviousDay   *string `yaml:"log_size_previous_day" json:"log_size_previous_day" mapstructure:"log_size_previous_day"`
-	LogSizePreviousMonth *string `yaml:"log_size_previous_month" json:"log_size_previous_month" mapstructure:"log_size_previous_month"`
+	LogSizePreviousDay   *int    `yaml:"log_size_previous_day" json:"log_size_previous_day" mapstructure:"log_size_previous_day"`
+	LogSizePreviousMonth *int    `yaml:"log_size_previous_month" json:"log_size_previous_month" mapstructure:"log_size_previous_month"`
 }
 
 // Rate

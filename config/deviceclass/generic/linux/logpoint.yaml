@@ -150,6 +150,9 @@ components:
                       value:
                         detection: constant
                         value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
 
         free_disk_space:
           oid: 1.3.6.1.4.1.54322.1.12.4
@@ -201,6 +204,10 @@ components:
                       value:
                         detection: constant
                         value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
         read_operations:
           oid: 1.3.6.1.4.1.54322.1.12.5
         write_operations:
@@ -255,6 +262,10 @@ components:
                       value:
                         detection: constant
                         value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
         write_bandwidth:
           oid: 1.3.6.1.4.1.54322.1.12.8
           operators:
@@ -305,6 +316,10 @@ components:
                       value:
                         detection: constant
                         value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
         failed_disks:
           oid: 1.3.6.1.4.1.54322.1.12.9
 
