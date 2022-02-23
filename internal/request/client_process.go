@@ -128,6 +128,10 @@ func (r *CheckHighAvailabilityRequest) process(ctx context.Context) (Response, e
 	return checkProcess(ctx, r, "check/high-availability"), nil
 }
 
+func (r *CheckSIEMRequest) process(ctx context.Context) (Response, error) {
+	return checkProcess(ctx, r, "check/siem"), nil
+}
+
 func (r *ReadInterfacesRequest) process(ctx context.Context) (Response, error) {
 	apiFormat := viper.GetString("target-api-format")
 	responseBody, err := sendToAPI(ctx, r, "read/interfaces", apiFormat)
