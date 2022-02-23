@@ -285,5 +285,8 @@ type availableSIEMCommunicatorFunctions interface {
 	GetSIEMComponentDiskUsageDashboardAlerts(ctx context.Context) (float64, error)
 
 	// GetSIEMComponentZFSPools returns siem type
-	GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error)
+	GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error)
+
+	// GetSIEMComponentRepositories returns siem type
+	GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error)
 }

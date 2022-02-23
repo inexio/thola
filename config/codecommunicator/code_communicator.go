@@ -58,6 +58,8 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &vmwareESXiCommunicator{base}, nil
 	case "aruba":
 		return &arubaCommunicator{base}, nil
+	case "linux/logpoint":
+		return &linuxLogpointCommunicator{base}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }
@@ -318,7 +320,11 @@ func (c *codeCommunicator) GetSIEMComponentDiskUsageDashboardAlerts(ctx context.
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
-func (c *codeCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error) {
+func (c *codeCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error) {
 	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
