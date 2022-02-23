@@ -560,6 +560,47 @@ type SIEMComponent struct {
 	LastRecordedMessagesPerSecondStoreHandler    *int    `yaml:"last_recorded_messages_per_second_store_handler" json:"last_recorded_messages_per_second_store_handler" mapstructure:"last_recorded_messages_per_second_store_handler"`
 	AverageMessagesPerSecondLast5minStoreHandler *int    `yaml:"average_messages_per_second_last_5_min_store_handler" json:"average_messages_per_second_last_5_min_store_handler" mapstructure:"average_messages_per_second_last_5_min_store_handler"`
 	ServicesCurrentlyDown                        *int    `yaml:"services_currently_down" json:"services_currently_down" mapstructure:"services_currently_down"`
+
+	CpuConsumptionCollection      *float64 `yaml:"cpu_consumption_collection" json:"cpu_consumption_collection" mapstructure:"cpu_consumption_collection"`
+	CpuConsumptionNormalization   *float64 `yaml:"cpu_consumption_normalization" json:"cpu_consumption_normalization" mapstructure:"cpu_consumption_normalization"`
+	CpuConsumptionEnrichment      *float64 `yaml:"cpu_consumption_enrichment" json:"cpu_consumption_enrichment" mapstructure:"cpu_consumption_enrichment"`
+	CpuConsumptionIndexing        *float64 `yaml:"cpu_consumption_indexing" json:"cpu_consumption_indexing" mapstructure:"cpu_consumption_indexing"`
+	CpuConsumptionDashboardAlerts *float64 `yaml:"cpu_consumption_dashboard_alerts" json:"cpu_consumption_dashboard_alerts" mapstructure:"cpu_consumption_dashboard_alerts"`
+
+	MemoryConsumptionCollection      *float64 `yaml:"memory_consumption_collection" json:"memory_consumption_collection" mapstructure:"memory_consumption_collection"`
+	MemoryConsumptionNormalization   *float64 `yaml:"memory_consumption_normalization" json:"memory_consumption_normalization" mapstructure:"memory_consumption_normalization"`
+	MemoryConsumptionEnrichment      *float64 `yaml:"memory_consumption_enrichment" json:"memory_consumption_enrichment" mapstructure:"memory_consumption_enrichment"`
+	MemoryConsumptionIndexing        *float64 `yaml:"memory_consumption_indexing" json:"memory_consumption_indexing" mapstructure:"memory_consumption_indexing"`
+	MemoryConsumptionDashboardAlerts *float64 `yaml:"memory_consumption_dashboard_alerts" json:"memory_consumption_dashboard_alerts" mapstructure:"memory_consumption_dashboard_alerts"`
+
+	QueueCollection      *float64 `yaml:"queue_collection" json:"queue_collection" mapstructure:"queue_collection"`
+	QueueNormalization   *float64 `yaml:"queue_normalization" json:"queue_normalization" mapstructure:"queue_normalization"`
+	QueueEnrichment      *float64 `yaml:"queue_enrichment" json:"queue_enrichment" mapstructure:"queue_enrichment"`
+	QueueIndexing        *float64 `yaml:"queue_indexing" json:"queue_indexing" mapstructure:"queue_indexing"`
+	QueueDashboardAlerts *float64 `yaml:"queue_dashboard_alerts" json:"queue_dashboard_alerts" mapstructure:"queue_dashboard_alerts"`
+
+	ActiveSearchProcesses *int `yaml:"active_search_processes" json:"active_search_processes" mapstructure:"active_search_processes"`
+
+	DiskUsageDashboardAlerts *float64 `yaml:"disk_usage_dashboard_alerts" json:"disk_usage_dashboard_alerts" mapstructure:"disk_usage_dashboard_alerts"`
+
+	ZFSPools []ZFSPool `yaml:"zfs_pools" json:"zfs_pools" xml:"zfs_pools" mapstructure:"zfs_pools"`
+}
+
+// ZFSPool
+//
+// ZFSPool contains information per zfs pool. (siem)
+//
+// swagger:model
+type ZFSPool struct {
+	Name            *string `yaml:"name" json:"name" mapstructure:"name"`
+	Status          *string `yaml:"status" json:"status" mapstructure:"status"`
+	DiskAllocation  *string `yaml:"disk_allocation" json:"disk_allocation" mapstructure:"disk_allocation"`
+	FreeDiskSpace   *string `yaml:"free_disk_space" json:"free_disk_space" mapstructure:"free_disk_space"`
+	ReadOperations  *string `yaml:"read_operations" json:"read_operations" mapstructure:"read_operations"`
+	WriteOperations *string `yaml:"write_operations" json:"write_operations" mapstructure:"write_operations"`
+	ReadBandwidth   *string `yaml:"read_bandwidth" json:"read_bandwidth" mapstructure:"read_bandwidth"`
+	WriteBandwidth  *string `yaml:"write_bandwidth" json:"write_bandwidth" mapstructure:"write_bandwidth"`
+	FailedDisks     *string `yaml:"failed_disks" json:"failed_disks" mapstructure:"failed_disks"`
 }
 
 // Rate
