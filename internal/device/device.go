@@ -583,15 +583,17 @@ type SIEMComponent struct {
 
 	DiskUsageDashboardAlerts *float64 `yaml:"disk_usage_dashboard_alerts" json:"disk_usage_dashboard_alerts" mapstructure:"disk_usage_dashboard_alerts"`
 
-	ZFSPools []ZFSPool `yaml:"zfs_pools" json:"zfs_pools" xml:"zfs_pools" mapstructure:"zfs_pools"`
+	ZFSPools []SIEMComponentZFSPool `yaml:"zfs_pools" json:"zfs_pools" xml:"zfs_pools" mapstructure:"zfs_pools"`
+
+	Repositories []SIEMComponentRepository `yaml:"repositories" json:"repositories" xml:"repositories" mapstructure:"repositories"`
 }
 
-// ZFSPool
+// SIEMComponentZFSPool
 //
-// ZFSPool contains information per zfs pool. (siem)
+// SIEMComponentZFSPool contains information per zfs pool. (siem)
 //
 // swagger:model
-type ZFSPool struct {
+type SIEMComponentZFSPool struct {
 	Name            *string `yaml:"name" json:"name" mapstructure:"name"`
 	Status          *string `yaml:"status" json:"status" mapstructure:"status"`
 	DiskAllocation  *string `yaml:"disk_allocation" json:"disk_allocation" mapstructure:"disk_allocation"`
@@ -601,6 +603,17 @@ type ZFSPool struct {
 	ReadBandwidth   *string `yaml:"read_bandwidth" json:"read_bandwidth" mapstructure:"read_bandwidth"`
 	WriteBandwidth  *string `yaml:"write_bandwidth" json:"write_bandwidth" mapstructure:"write_bandwidth"`
 	FailedDisks     *string `yaml:"failed_disks" json:"failed_disks" mapstructure:"failed_disks"`
+}
+
+// SIEMComponentRepository
+//
+// SIEMComponentRepository contains information per repository. (siem)
+//
+// swagger:model
+type SIEMComponentRepository struct {
+	Name                 *string `yaml:"name" json:"name" mapstructure:"name"`
+	LogSizePreviousDay   *string `yaml:"log_size_previous_day" json:"log_size_previous_day" mapstructure:"log_size_previous_day"`
+	LogSizePreviousMonth *string `yaml:"log_size_previous_month" json:"log_size_previous_month" mapstructure:"log_size_previous_month"`
 }
 
 // Rate

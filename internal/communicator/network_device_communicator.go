@@ -771,6 +771,16 @@ func (c *networkDeviceCommunicator) GetSIEMComponent(ctx context.Context) (devic
 		empty = false
 	}
 
+	repos, err := c.GetSIEMComponentRepositories(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.Repositories = repos
+		empty = false
+	}
+
 	if empty {
 		return device.SIEMComponent{}, tholaerr.NewNotFoundError("no high availability data available")
 	}
@@ -1987,7 +1997,7 @@ func (c *networkDeviceCommunicator) GetSIEMComponentDiskUsageDashboardAlerts(ctx
 	return c.deviceClassCommunicator.GetSIEMComponentDiskUsageDashboardAlerts(ctx)
 }
 
-func (c *networkDeviceCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error) {
+func (c *networkDeviceCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
 	if !c.HasComponent(component.SIEM) {
 		return nil, tholaerr.NewComponentNotFoundError("no siem component available for this device")
 	}
@@ -2004,4 +2014,23 @@ func (c *networkDeviceCommunicator) GetSIEMComponentZFSPools(ctx context.Context
 	}
 
 	return c.deviceClassCommunicator.GetSIEMComponentZFSPools(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error) {
+	if !c.HasComponent(component.SIEM) {
+		return nil, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentRepositories(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return nil, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentRepositories(ctx)
 }

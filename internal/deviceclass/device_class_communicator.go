@@ -1834,8 +1834,8 @@ func (o *deviceClassCommunicator) GetSIEMComponentDiskUsageDashboardAlerts(ctx c
 	return v, nil
 }
 
-func (o *deviceClassCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.ZFSPool, error) {
-	if o.components.siem == nil || o.components.siem.diskUsageDashboardAlerts == nil {
+func (o *deviceClassCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
+	if o.components.siem == nil || o.components.siem.zfsPools == nil {
 		log.Ctx(ctx).Debug().Str("groupProperty", "SIEMComponentZFSPools").Str("device_class", o.name).Msg("no detection information available")
 		return nil, tholaerr.NewNotImplementedError("no detection information available")
 	}
@@ -1845,10 +1845,29 @@ func (o *deviceClassCommunicator) GetSIEMComponentZFSPools(ctx context.Context) 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get property")
 	}
-	var zfsPools []device.ZFSPool
+	var zfsPools []device.SIEMComponentZFSPool
 	err = res.Decode(&zfsPools)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode property into zfs pools struct")
 	}
 	return zfsPools, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error) {
+	if o.components.siem == nil || o.components.siem.repositories == nil {
+		log.Ctx(ctx).Debug().Str("groupProperty", "SIEMComponentRepositories").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "SIEMComponentRepositories").Logger()
+	ctx = logger.WithContext(ctx)
+	res, _, err := o.components.siem.repositories.GetProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var repos []device.SIEMComponentRepository
+	err = res.Decode(&repos)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into repositories struct")
+	}
+	return repos, nil
 }

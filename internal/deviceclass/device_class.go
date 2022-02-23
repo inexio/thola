@@ -160,11 +160,7 @@ type deviceClassComponentsSIEM struct {
 
 	zfsPools groupproperty.Reader
 
-	//logCollectionServices groupproperty.Reader
-	//normalizationServicesStatus groupproperty.Reader
-	//enrichmentServicesStatus groupproperty.Reader
-	//indexingServicesStatus groupproperty.Reader
-
+	repositories groupproperty.Reader
 }
 
 // deviceClassConfig represents the config part of a device class.
@@ -330,6 +326,8 @@ type yamlComponentsSIEM struct {
 	DiskUsageDashboardAlerts []interface{} `yaml:"disk_usage_dashboard_alerts"`
 
 	ZFSPools interface{} `yaml:"zfs_pools"`
+
+	Repositories interface{} `yaml:"repositories"`
 }
 
 //
@@ -1203,6 +1201,13 @@ func (y *yamlComponentsSIEM) convert(parentSIEM *deviceClassComponentsSIEM) (dev
 
 	if y.ZFSPools != nil {
 		prop.zfsPools, err = groupproperty.Interface2Reader(y.ZFSPools, prop.zfsPools)
+		if err != nil {
+			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
+		}
+	}
+
+	if y.Repositories != nil {
+		prop.repositories, err = groupproperty.Interface2Reader(y.Repositories, prop.repositories)
 		if err != nil {
 			return deviceClassComponentsSIEM{}, errors.Wrap(err, "failed to convert siem property to property reader")
 		}
