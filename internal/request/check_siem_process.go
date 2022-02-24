@@ -178,5 +178,107 @@ func (r *CheckSIEMRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
+	if siem.ActiveSearchProcesses != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("active_search_processes", *siem.ActiveSearchProcesses))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.DiskUsageDashboardAlerts != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("disk_usage_dashboard_alerts", *siem.DiskUsageDashboardAlerts))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	for _, pool := range siem.ZFSPools {
+		if pool.Name == nil {
+			continue
+		}
+
+		if pool.DiskAllocation != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("disk_allocation", *pool.DiskAllocation).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.FreeDiskSpace != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("free_disk_space", *pool.FreeDiskSpace).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.ReadOperations != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("read_operations", *pool.ReadOperations).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.WriteOperations != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("write_operations", *pool.WriteOperations).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.ReadBandwidth != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("read_bandwidth", *pool.ReadBandwidth).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.WriteBandwidth != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("write_bandwidth", *pool.WriteBandwidth).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.FailedDisks != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("failed_disks", *pool.FailedDisks).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+	}
+
+	for _, repo := range siem.Repositories {
+		if repo.Name == nil {
+			continue
+		}
+
+		if repo.LogSizePreviousDay != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("log_size_previous_day", *repo.LogSizePreviousDay).SetLabel(*repo.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if repo.LogSizePreviousMonth != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("log_size_previous_month", *repo.LogSizePreviousMonth).SetLabel(*repo.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+	}
+
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }
