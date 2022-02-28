@@ -1,0 +1,334 @@
+name: logpoint
+
+match:
+  conditions:
+    - type: snmpget
+      oid: .1.3.6.1.4.1.54322.1.6
+      match_mode: regex
+      values:
+        - '.*'
+  logical_operator: OR
+
+config:
+  components:
+    siem: true
+
+components:
+  siem:
+    siem:
+      - detection: constant
+        value: "LogPoint"
+    last_recorded_messages_per_second_normalizer:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.1
+    average_messages_per_second_last_5_min_normalizer:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.2
+    last_recorded_messages_per_second_store_handler:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.3
+    average_messages_per_second_last_5_min_store_handler:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.4
+    services_currently_down:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.5
+    system_version:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.6
+
+    cpu_consumption_collection:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.7.1
+    cpu_consumption_normalization:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.8.1
+    cpu_consumption_enrichment:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.9.1
+    cpu_consumption_indexing:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.10.1
+    cpu_consumption_dashboard_alerts:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.11.1
+
+    memory_consumption_collection:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.7.2
+    memory_consumption_normalization:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.8.2
+    memory_consumption_enrichment:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.9.2
+    memory_consumption_indexing:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.10.2
+    memory_consumption_dashboard_alerts:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.11.2
+
+    queue_collection:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.7.3
+    queue_normalization:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.8.3
+    queue_enrichment:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.9.3
+    queue_indexing:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.10.3
+    queue_dashboard_alerts:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.11.3
+
+    active_search_processes:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.11.5
+
+    disk_usage_dashboard_alerts:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.1.11.4
+
+    zfs_pools:
+      detection: snmpwalk
+      values:
+        name:
+          oid: 1.3.6.1.4.1.54322.1.12.1
+        status:
+          oid: 1.3.6.1.4.1.54322.1.12.2
+        disk_allocation:
+          oid: 1.3.6.1.4.1.54322.1.12.3
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        free_disk_space:
+          oid: 1.3.6.1.4.1.54322.1.12.4
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        read_operations:
+          oid: 1.3.6.1.4.1.54322.1.12.5
+        write_operations:
+          oid: 1.3.6.1.4.1.54322.1.12.6
+        read_bandwidth:
+          oid: 1.3.6.1.4.1.54322.1.12.7
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        write_bandwidth:
+          oid: 1.3.6.1.4.1.54322.1.12.8
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        failed_disks:
+          oid: 1.3.6.1.4.1.54322.1.12.9
+
+    repositories:
+      detection: snmpwalk
+      values:
+        name:
+          oid: 1.3.6.1.4.1.54322.1.13.1
+        log_size_previous_day:
+          oid: 1.3.6.1.4.1.54322.1.13.2
+        log_size_previous_month:
+          oid: 1.3.6.1.4.1.54322.1.13.3

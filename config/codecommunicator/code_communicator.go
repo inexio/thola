@@ -58,6 +58,8 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &vmwareESXiCommunicator{base}, nil
 	case "aruba":
 		return &arubaCommunicator{base}, nil
+	case "linux/logpoint":
+		return &linuxLogpointCommunicator{base}, nil
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }
@@ -220,6 +222,110 @@ func (c *codeCommunicator) GetHighAvailabilityComponentRole(_ context.Context) (
 
 func (c *codeCommunicator) GetHighAvailabilityComponentNodes(_ context.Context) (int, error) {
 	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentLastRecordedMessagesPerSecondNormalizer(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentAverageMessagesPerSecondLast5minNormalizer(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentLastRecordedMessagesPerSecondStoreHandler(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentAverageMessagesPerSecondLast5minStoreHandler(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentServicesCurrentlyDown(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentSystemVersion(ctx context.Context) (string, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentSIEM(ctx context.Context) (string, error) {
+	return "", tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentCpuConsumptionCollection(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentCpuConsumptionNormalization(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentCpuConsumptionEnrichment(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentCpuConsumptionIndexing(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentCpuConsumptionDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionCollection(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionNormalization(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionEnrichment(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionIndexing(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentMemoryConsumptionDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueCollection(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueNormalization(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueEnrichment(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueIndexing(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentQueueDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentActiveSearchProcesses(ctx context.Context) (int, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentDiskUsageDashboardAlerts(ctx context.Context) (float64, error) {
+	return 0, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
+}
+
+func (c *codeCommunicator) GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error) {
+	return nil, tholaerr.NewNotImplementedError("function is not implemented for this communicator")
 }
 
 func filterInterfaces(ctx context.Context, interfaces []device.Interface, filter []groupproperty.Filter) ([]device.Interface, error) {

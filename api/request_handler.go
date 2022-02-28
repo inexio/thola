@@ -691,6 +691,60 @@ func StartAPI() {
 	//       $ref: '#/definitions/OutputError'
 	e.POST("/read/high-availability", readHighAvailability)
 
+	// swagger:operation POST /read/siem read readSIEM
+	// ---
+	// summary: Read out the siem status of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/ReadSIEMRequest'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/ReadSIEMRequest'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/read/siem", readSIEM)
+
+	// swagger:operation POST /check/siem check siem
+	// ---
+	// summary: Check the siem status of a device.
+	// consumes:
+	// - application/json
+	// - application/xml
+	// produces:
+	// - application/json
+	// - application/xml
+	// parameters:
+	// - name: body
+	//   in: body
+	//   description: Request to process.
+	//   required: true
+	//   schema:
+	//     $ref: '#/definitions/CheckSIEMResponse'
+	// responses:
+	//   200:
+	//     description: Returns the response.
+	//     schema:
+	//       $ref: '#/definitions/CheckSIEMResponse'
+	//   400:
+	//     description: Returns an error with more details in the body.
+	//     schema:
+	//       $ref: '#/definitions/OutputError'
+	e.POST("/check/siem", checkSIEM)
+
 	// swagger:operation POST /read/available-components read readAvailableComponents
 	// ---
 	// summary: Returns the available components for the device.
@@ -910,6 +964,18 @@ func checkHighAvailability(ctx echo.Context) error {
 	return returnInFormat(ctx, http.StatusOK, resp)
 }
 
+func checkSIEM(ctx echo.Context) error {
+	r := request.CheckSIEMRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
 func readInterfaces(ctx echo.Context) error {
 	r := request.ReadInterfacesRequest{}
 	if err := ctx.Bind(&r); err != nil {
@@ -1020,6 +1086,18 @@ func readHardwareHealth(ctx echo.Context) error {
 
 func readHighAvailability(ctx echo.Context) error {
 	r := request.ReadHighAvailabilityRequest{}
+	if err := ctx.Bind(&r); err != nil {
+		return err
+	}
+	resp, err := handleAPIRequest(ctx, &r, &r.BaseRequest.DeviceData.IPAddress)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	return returnInFormat(ctx, http.StatusOK, resp)
+}
+
+func readSIEM(ctx echo.Context) error {
+	r := request.ReadSIEMRequest{}
 	if err := ctx.Bind(&r); err != nil {
 		return err
 	}

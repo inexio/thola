@@ -46,6 +46,9 @@ type Communicator interface {
 	// GetHighAvailabilityComponent returns the hardware health component of a device if available.
 	GetHighAvailabilityComponent(ctx context.Context) (device.HighAvailabilityComponent, error)
 
+	// GetSIEMComponent returns the siem socmponent component of a device if available.
+	GetSIEMComponent(ctx context.Context) (device.SIEMComponent, error)
+
 	Functions
 }
 
@@ -81,6 +84,7 @@ type Functions interface {
 	availableDiskCommunicatorFunctions
 	availableHardwareHealthCommunicatorFunctions
 	availableHighAvailabilityCommunicatorFunctions
+	availableSIEMCommunicatorFunctions
 }
 
 type availableCPUCommunicatorFunctions interface {
@@ -204,4 +208,85 @@ type availableHighAvailabilityCommunicatorFunctions interface {
 
 	// GetHighAvailabilityComponentNodes returns number of nodes in a HA setup.
 	GetHighAvailabilityComponentNodes(ctx context.Context) (int, error)
+}
+
+type availableSIEMCommunicatorFunctions interface {
+
+	// GetSIEMComponentLastRecordedMessagesPerSecondNormalizer returns last recorded messages per seconds of the normalizer
+	GetSIEMComponentLastRecordedMessagesPerSecondNormalizer(ctx context.Context) (int, error)
+
+	// GetSIEMComponentAverageMessagesPerSecondLast5minNormalizer returns average recorded messages per seconds of the normalizer
+	GetSIEMComponentAverageMessagesPerSecondLast5minNormalizer(ctx context.Context) (int, error)
+
+	// GetSIEMComponentLastRecordedMessagesPerSecondStoreHandler returns last recorded messages per seconds of the store handler
+	GetSIEMComponentLastRecordedMessagesPerSecondStoreHandler(ctx context.Context) (int, error)
+
+	// GetSIEMComponentAverageMessagesPerSecondLast5minStoreHandler returns average recorded messages per seconds of the store handler
+	GetSIEMComponentAverageMessagesPerSecondLast5minStoreHandler(ctx context.Context) (int, error)
+
+	// GetSIEMComponentServicesCurrentlyDown returns currently down services number
+	GetSIEMComponentServicesCurrentlyDown(ctx context.Context) (int, error)
+
+	// GetSIEMComponentSystemVersion returns the siem system version
+	GetSIEMComponentSystemVersion(ctx context.Context) (string, error)
+
+	// GetSIEMComponentSIEM returns siem type
+	GetSIEMComponentSIEM(ctx context.Context) (string, error)
+
+	// GetSIEMComponentCpuConsumptionCollection returns siem type
+	GetSIEMComponentCpuConsumptionCollection(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentCpuConsumptionNormalization returns siem type
+	GetSIEMComponentCpuConsumptionNormalization(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentCpuConsumptionEnrichment returns siem type
+	GetSIEMComponentCpuConsumptionEnrichment(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentCpuConsumptionIndexing returns siem type
+	GetSIEMComponentCpuConsumptionIndexing(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentCpuConsumptionDashboardAlerts returns siem type
+	GetSIEMComponentCpuConsumptionDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionCollection returns siem type
+	GetSIEMComponentMemoryConsumptionCollection(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionNormalization returns siem type
+	GetSIEMComponentMemoryConsumptionNormalization(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionEnrichment returns siem type
+	GetSIEMComponentMemoryConsumptionEnrichment(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionIndexing returns siem type
+	GetSIEMComponentMemoryConsumptionIndexing(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentMemoryConsumptionDashboardAlerts returns siem type
+	GetSIEMComponentMemoryConsumptionDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueCollection returns siem type
+	GetSIEMComponentQueueCollection(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueNormalization returns siem type
+	GetSIEMComponentQueueNormalization(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueEnrichment returns siem type
+	GetSIEMComponentQueueEnrichment(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueIndexing returns siem type
+	GetSIEMComponentQueueIndexing(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentQueueDashboardAlerts returns siem type
+	GetSIEMComponentQueueDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentActiveSearchProcesses returns siem type
+	GetSIEMComponentActiveSearchProcesses(ctx context.Context) (int, error)
+
+	// GetSIEMComponentDiskUsageDashboardAlerts returns siem type
+	GetSIEMComponentDiskUsageDashboardAlerts(ctx context.Context) (float64, error)
+
+	// GetSIEMComponentZFSPools returns siem type
+	GetSIEMComponentZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error)
+
+	// GetSIEMComponentRepositories returns siem type
+	GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error)
 }
