@@ -257,28 +257,5 @@ func (r *CheckSIEMRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
-	for _, repo := range siem.Repositories {
-		if repo.Name == nil {
-			continue
-		}
-
-		if repo.LogSizePreviousDay != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("log_size_previous_day", *repo.LogSizePreviousDay).SetLabel(*repo.Name)
-			err = r.mon.AddPerformanceDataPoint(p)
-			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
-				r.mon.PrintPerformanceData(false)
-				return &CheckResponse{r.mon.GetInfo()}, nil
-			}
-		}
-		if repo.LogSizePreviousMonth != nil {
-			p := monitoringplugin.NewPerformanceDataPoint("log_size_previous_month", *repo.LogSizePreviousMonth).SetLabel(*repo.Name)
-			err = r.mon.AddPerformanceDataPoint(p)
-			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
-				r.mon.PrintPerformanceData(false)
-				return &CheckResponse{r.mon.GetInfo()}, nil
-			}
-		}
-	}
-
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }
