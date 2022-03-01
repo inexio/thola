@@ -192,7 +192,7 @@ func WaitForSNMPSim(community string, port int) error {
 
 	timeout := make(chan bool)
 	go func() {
-		time.Sleep(180 * time.Second)
+		time.Sleep(360 * time.Second)
 		timeout <- true
 	}()
 
