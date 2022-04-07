@@ -257,5 +257,228 @@ func (r *CheckSIEMRequest) process(ctx context.Context) (Response, error) {
 		}
 	}
 
+	if siem.FabricServerIOWait != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("io_wait", *siem.FabricServerIOWait).SetLabel("fabric_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerVMSwapiness != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("vm_swapiness", *siem.FabricServerVMSwapiness).SetLabel("fabric_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerClusterSize != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_cluster_size", *siem.FabricServerClusterSize))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerProxyCpuUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("cpu_usage", *siem.FabricServerProxyCpuUsage).SetLabel("fabric_server_proxy"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerProxyMemoryUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("memory_usage", *siem.FabricServerProxyMemoryUsage).SetLabel("fabric_server_proxy"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerProxyNumberOfAliveConnections != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_proxy_number_of_alive_connections", *siem.FabricServerProxyNumberOfAliveConnections))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerProxyNodesCount != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_proxy_nodes_count", *siem.FabricServerProxyNodesCount))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageCpuUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("cpu_usage", *siem.FabricServerStorageCpuUsage).SetLabel("fabric_server_storage"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageMemoryUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("memory_usage", *siem.FabricServerStorageMemoryUsage).SetLabel("fabric_server_storage"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageConfiguredCapacity != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_storage_configured_capacity", *siem.FabricServerStorageConfiguredCapacity))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageAvailableCapacity != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_storage_available_capacity", *siem.FabricServerStorageAvailableCapacity))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageDfsUsed != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_storage_dfs_used", *siem.FabricServerStorageDfsUsed))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageUnderReplicatedBlocks != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_storage_under_replicated_blocks", *siem.FabricServerStorageUnderReplicatedBlocks))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerStorageLiveDataNodes != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("fabric_server_storage_live_data_nodes", *siem.FabricServerStorageLiveDataNodes))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerAuthenticatorCpuUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("cpu_usage", *siem.FabricServerAuthenticatorCpuUsage).SetLabel("fabric_server_authenticator"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.FabricServerAuthenticatorMemoryUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("memory_usage", *siem.FabricServerAuthenticatorMemoryUsage).SetLabel("fabric_server_authenticator"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.ApiServerIOWait != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("io_wait", *siem.ApiServerIOWait).SetLabel("api_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.ApiServerVMSwapiness != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("vm_swapiness", *siem.ApiServerVMSwapiness).SetLabel("api_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	for _, pool := range siem.FabricServerZFSPools {
+		if pool.Name == nil {
+			continue
+		}
+
+		if pool.DiskAllocation != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("disk_allocation", *pool.DiskAllocation).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.FreeDiskSpace != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("free_disk_space", *pool.FreeDiskSpace).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.ReadOperations != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("read_operations", *pool.ReadOperations).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.WriteOperations != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("write_operations", *pool.WriteOperations).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.ReadBandwidth != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("read_bandwidth", *pool.ReadBandwidth).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.WriteBandwidth != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("write_bandwidth", *pool.WriteBandwidth).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+		if pool.FailedDisks != nil {
+			p := monitoringplugin.NewPerformanceDataPoint("failed_disks", *pool.FailedDisks).SetLabel(*pool.Name)
+			err = r.mon.AddPerformanceDataPoint(p)
+			if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+				r.mon.PrintPerformanceData(false)
+				return &CheckResponse{r.mon.GetInfo()}, nil
+			}
+		}
+	}
+
+	if siem.ApiServerCpuUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("cpu_usage", *siem.ApiServerCpuUsage).SetLabel("api_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
+	if siem.ApiServerMemoryUsage != nil {
+		err = r.mon.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("memory_usage", *siem.ApiServerMemoryUsage).SetLabel("api_server"))
+		if r.mon.UpdateStatusOnError(err, monitoringplugin.UNKNOWN, "error while adding performance data point", true) {
+			r.mon.PrintPerformanceData(false)
+			return &CheckResponse{r.mon.GetInfo()}, nil
+		}
+	}
+
 	return &CheckResponse{r.mon.GetInfo()}, nil
 }

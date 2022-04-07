@@ -289,4 +289,56 @@ type availableSIEMCommunicatorFunctions interface {
 
 	// GetSIEMComponentRepositories returns siem type
 	GetSIEMComponentRepositories(ctx context.Context) ([]device.SIEMComponentRepository, error)
+
+	GetSIEMComponentFabricServerVersion(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerIOWait(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerVMSwapiness(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerClusterSize(ctx context.Context) (int, error)
+
+	GetSIEMComponentFabricServerProxyCpuUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerProxyMemoryUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerProxyState(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerProxyNodesCount(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerStorageCPUUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerStorageMemoryUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentConfiguredCapacity(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerStorageAvailableCapacity(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerStorageDFSUsed(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx context.Context) (int, error)
+
+	GetSIEMComponentFabricServerStorageLiveDataNodes(ctx context.Context) (int, error)
+
+	GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx context.Context) (string, error)
+
+	GetSIEMComponentFabricServerZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error)
+
+	GetSIEMComponentAPIServerVersion(ctx context.Context) (string, error)
+
+	GetSIEMComponentAPIServerIOWait(ctx context.Context) (float64, error)
+
+	GetSIEMComponentAPIServerVMSwapiness(ctx context.Context) (float64, error)
+
+	GetSIEMComponentAPIServerCPUUsage(ctx context.Context) (float64, error)
+
+	GetSIEMComponentAPIServerMemoryUsage(ctx context.Context) (float64, error)
 }
