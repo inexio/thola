@@ -586,6 +586,36 @@ type SIEMComponent struct {
 	ZFSPools []SIEMComponentZFSPool `yaml:"zfs_pools" json:"zfs_pools" xml:"zfs_pools" mapstructure:"zfs_pools"`
 
 	Repositories []SIEMComponentRepository `yaml:"repositories" json:"repositories" xml:"repositories" mapstructure:"repositories"`
+
+	//director
+	FabricServerVersion                       *string  `yaml:"fabric_server_version" json:"fabric_server_version" mapstructure:"fabric_server_version"`
+	FabricServerIOWait                        *float64 `yaml:"fabric_server_io_wait" json:"fabric_server_io_wait" mapstructure:"fabric_server_io_wait"`
+	FabricServerVMSwapiness                   *float64 `yaml:"fabric_server_vm_swapiness" json:"fabric_server_vm_swapiness" mapstructure:"fabric_server_vm_swapiness"`
+	FabricServerClusterSize                   *int     `yaml:"fabric_server_cluster_size" json:"fabric_server_cluster_size" mapstructure:"fabric_server_cluster_size"`
+	FabricServerProxyCpuUsage                 *float64 `yaml:"fabric_server_proxy_cpu_usage" json:"fabric_server_proxy_cpu_usage" mapstructure:"fabric_server_proxy_cpu_usage"`
+	FabricServerProxyMemoryUsage              *float64 `yaml:"fabric_server_proxy_memory_usage" json:"fabric_server_proxy_memory_usage" mapstructure:"fabric_server_proxy_memory_usage"`
+	FabricServerProxyNumberOfAliveConnections *float64 `yaml:"fabric_server_proxy_number_of_alive_connections" json:"fabric_server_proxy_number_of_alive_connections" mapstructure:"fabric_server_proxy_number_of_alive_connections"`
+	FabricServerProxyState                    *string  `yaml:"fabric_server_proxy_state" json:"fabric_server_proxy_state" mapstructure:"fabric_server_proxy_state"`
+	FabricServerProxyNodesCount               *float64 `yaml:"fabric_server_proxy_nodes_count" json:"fabric_server_proxy_nodes_count" mapstructure:"fabric_server_proxy_nodes_count"`
+	FabricServerStorageCpuUsage               *float64 `yaml:"fabric_server_storage_cpu_usage" json:"fabric_server_storage_cpu_usage" mapstructure:"fabric_server_storage_cpu_usage"`
+	FabricServerStorageMemoryUsage            *float64 `yaml:"fabric_server_storage_memory_usage" json:"fabric_server_storage_memory_usage" mapstructure:"fabric_server_storage_memory_usage"`
+	FabricServerStorageConfiguredCapacity     *string  `yaml:"fabric_server_storage_configured_capacity" json:"fabric_server_storage_configured_capacity" mapstructure:"fabric_server_storage_configured_capacity"`
+	FabricServerStorageAvailableCapacity      *string  `yaml:"fabric_server_storage_available_capacity" json:"fabric_server_storage_available_capacity" mapstructure:"fabric_server_storage_available_capacity"`
+	FabricServerStorageDfsUsed                *float64 `yaml:"fabric_server_storage_dfs_used" json:"fabric_server_storage_dfs_used" mapstructure:"fabric_server_storage_dfs_used"`
+	FabricServerStorageUnderReplicatedBlocks  *int     `yaml:"fabric_server_storage_under_replicated_blocks" json:"fabric_server_storage_under_replicated_blocks" mapstructure:"fabric_server_storage_under_replicated_blocks"`
+	FabricServerStorageLiveDataNodes          *int     `yaml:"fabric_server_storage_live_data_nodes" json:"fabric_server_storage_live_data_nodes" mapstructure:"fabric_server_storage_live_data_nodes"`
+
+	FabricServerAuthenticatorCpuUsage           *float64               `yaml:"fabric_server_authenticator_cpu_usage" json:"fabric_server_authenticator_cpu_usage" mapstructure:"fabric_server_authenticator_cpu_usage"`
+	FabricServerAuthenticatorMemoryUsage        *float64               `yaml:"fabric_server_authenticator_memory_usage" json:"fabric_server_authenticator_memory_usage" mapstructure:"fabric_server_authenticator_memory_usage"`
+	FabricServerAuthenticatorServiceStatus      *string                `yaml:"fabric_server_authenticator_service_status" json:"fabric_server_authenticator_service_status" mapstructure:"fabric_server_authenticator_service_status"`
+	FabricServerAuthenticatorAdminServiceStatus *string                `yaml:"fabric_server_authenticator_admin_service_status" json:"fabric_server_authenticator_admin_service_status" mapstructure:"fabric_server_authenticator_admin_service_status"`
+	FabricServerZFSPools                        []SIEMComponentZFSPool `yaml:"fabric_server_zfs_pools" json:"fabric_server_zfs_pools" mapstructure:"fabric_server_zfs_pools"`
+
+	ApiServerVersion     *string  `yaml:"api_server_version" json:"api_server_version" mapstructure:"api_server_version"`
+	ApiServerIOWait      *float64 `yaml:"api_server_io_wait" json:"api_server_io_wait" mapstructure:"api_server_io_wait"`
+	ApiServerVMSwapiness *float64 `yaml:"api_server_vm_swapiness" json:"api_server_vm_swapiness" mapstructure:"api_server_vm_swapiness"`
+	ApiServerCpuUsage    *float64 `yaml:"api_server_cluster_cpu_usage" json:"api_server_cpu_usage" mapstructure:"api_server_cpu_usage"`
+	ApiServerMemoryUsage *float64 `yaml:"api_server_cluster_memory_usage" json:"api_server_memory_usage" mapstructure:"api_server_memory_usage"`
 }
 
 // SIEMComponentZFSPool

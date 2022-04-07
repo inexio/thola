@@ -514,7 +514,7 @@ func (c *networkDeviceCommunicator) GetHighAvailabilityComponent(ctx context.Con
 
 func (c *networkDeviceCommunicator) GetSIEMComponent(ctx context.Context) (device.SIEMComponent, error) {
 	if !c.HasComponent(component.SIEM) {
-		return device.SIEMComponent{}, tholaerr.NewComponentNotFoundError("no ha component available for this device")
+		return device.SIEMComponent{}, tholaerr.NewComponentNotFoundError("no siem component available for this device")
 	}
 
 	var siem device.SIEMComponent
@@ -778,6 +778,266 @@ func (c *networkDeviceCommunicator) GetSIEMComponent(ctx context.Context) (devic
 		}
 	} else {
 		siem.Repositories = repos
+		empty = false
+	}
+
+	fsVersion, err := c.GetSIEMComponentFabricServerVersion(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerVersion = &fsVersion
+		empty = false
+	}
+
+	fsIOWait, err := c.GetSIEMComponentFabricServerIOWait(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerIOWait = &fsIOWait
+		empty = false
+	}
+
+	fsVMswap, err := c.GetSIEMComponentFabricServerVMSwapiness(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerVMSwapiness = &fsVMswap
+		empty = false
+	}
+
+	fsClusterSize, err := c.GetSIEMComponentFabricServerClusterSize(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerClusterSize = &fsClusterSize
+		empty = false
+	}
+
+	fsProxyCpu, err := c.GetSIEMComponentFabricServerProxyCpuUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerProxyCpuUsage = &fsProxyCpu
+		empty = false
+	}
+
+	fsProxyMem, err := c.GetSIEMComponentFabricServerProxyMemoryUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerProxyMemoryUsage = &fsProxyMem
+		empty = false
+	}
+
+	fsProxyAlCon, err := c.GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerProxyNumberOfAliveConnections = &fsProxyAlCon
+		empty = false
+	}
+
+	fsProxyState, err := c.GetSIEMComponentFabricServerProxyState(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerProxyState = &fsProxyState
+		empty = false
+	}
+
+	fsProxyNodesCount, err := c.GetSIEMComponentFabricServerProxyNodesCount(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerProxyNodesCount = &fsProxyNodesCount
+		empty = false
+	}
+
+	fsStorageCPU, err := c.GetSIEMComponentFabricServerStorageCPUUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageCpuUsage = &fsStorageCPU
+		empty = false
+	}
+
+	fsStorageMem, err := c.GetSIEMComponentFabricServerStorageMemoryUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageMemoryUsage = &fsStorageMem
+		empty = false
+	}
+
+	fsConfiguredCap, err := c.GetSIEMComponentConfiguredCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageConfiguredCapacity = &fsConfiguredCap
+		empty = false
+	}
+
+	fsAvailCap, err := c.GetSIEMComponentFabricServerStorageAvailableCapacity(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageAvailableCapacity = &fsAvailCap
+		empty = false
+	}
+
+	fsStorageDFSUsed, err := c.GetSIEMComponentFabricServerStorageDFSUsed(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageDfsUsed = &fsStorageDFSUsed
+		empty = false
+	}
+
+	fsStorageURB, err := c.GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageUnderReplicatedBlocks = &fsStorageURB
+		empty = false
+	}
+
+	fsStorageLiveDataNodes, err := c.GetSIEMComponentFabricServerStorageLiveDataNodes(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerStorageLiveDataNodes = &fsStorageLiveDataNodes
+		empty = false
+	}
+
+	fsAuthCPU, err := c.GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerAuthenticatorCpuUsage = &fsAuthCPU
+		empty = false
+	}
+
+	fsAuthMem, err := c.GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerAuthenticatorMemoryUsage = &fsAuthMem
+		empty = false
+	}
+
+	fsAuthServiceStatus, err := c.GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerAuthenticatorServiceStatus = &fsAuthServiceStatus
+		empty = false
+	}
+
+	fsAuthAdminServiceStat, err := c.GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerAuthenticatorAdminServiceStatus = &fsAuthAdminServiceStat
+		empty = false
+	}
+
+	fsZFSPools, err := c.GetSIEMComponentFabricServerZFSPools(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.FabricServerZFSPools = fsZFSPools
+		empty = false
+	}
+
+	apiVersion, err := c.GetSIEMComponentAPIServerVersion(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.ApiServerVersion = &apiVersion
+		empty = false
+	}
+
+	apiIOWait, err := c.GetSIEMComponentAPIServerIOWait(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.ApiServerIOWait = &apiIOWait
+		empty = false
+	}
+
+	apiVMSwap, err := c.GetSIEMComponentAPIServerVMSwapiness(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.ApiServerVMSwapiness = &apiVMSwap
+		empty = false
+	}
+
+	apiCPU, err := c.GetSIEMComponentAPIServerCPUUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.ApiServerCpuUsage = &apiCPU
+		empty = false
+	}
+
+	apiMem, err := c.GetSIEMComponentAPIServerMemoryUsage(ctx)
+	if err != nil {
+		if !tholaerr.IsNotFoundError(err) && !tholaerr.IsNotImplementedError(err) {
+			return device.SIEMComponent{}, errors.Wrap(err, "error occurred during get high availability role")
+		}
+	} else {
+		siem.ApiServerMemoryUsage = &apiMem
 		empty = false
 	}
 
@@ -2033,4 +2293,498 @@ func (c *networkDeviceCommunicator) GetSIEMComponentRepositories(ctx context.Con
 	}
 
 	return c.deviceClassCommunicator.GetSIEMComponentRepositories(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerVersion(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerVersion(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerVersion(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerIOWait(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerIOWait(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerIOWait(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerVMSwapiness(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerVMSwapiness(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerVMSwapiness(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerClusterSize(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerClusterSize(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerClusterSize(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerProxyCpuUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerProxyCpuUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerProxyCpuUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerProxyMemoryUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerProxyMemoryUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerProxyMemoryUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerProxyState(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerProxyState(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerProxyState(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerProxyNodesCount(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerProxyNodesCount(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerProxyNodesCount(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageCPUUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageCPUUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageCPUUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageMemoryUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageMemoryUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageMemoryUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentConfiguredCapacity(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentConfiguredCapacity(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentConfiguredCapacity(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageAvailableCapacity(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageAvailableCapacity(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageAvailableCapacity(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageDFSUsed(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageDFSUsed(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageDFSUsed(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerStorageLiveDataNodes(ctx context.Context) (int, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerStorageLiveDataNodes(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerStorageLiveDataNodes(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentFabricServerZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
+	if !c.HasComponent(component.SIEM) {
+		return nil, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentFabricServerZFSPools(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return nil, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentFabricServerZFSPools(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentAPIServerVersion(ctx context.Context) (string, error) {
+	if !c.HasComponent(component.SIEM) {
+		return "", tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentAPIServerVersion(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return "", errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentAPIServerVersion(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentAPIServerIOWait(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentAPIServerIOWait(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentAPIServerIOWait(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentAPIServerVMSwapiness(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentAPIServerVMSwapiness(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentAPIServerVMSwapiness(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentAPIServerCPUUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentAPIServerCPUUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentAPIServerCPUUsage(ctx)
+}
+
+func (c *networkDeviceCommunicator) GetSIEMComponentAPIServerMemoryUsage(ctx context.Context) (float64, error) {
+	if !c.HasComponent(component.SIEM) {
+		return 0, tholaerr.NewComponentNotFoundError("no siem component available for this device")
+	}
+
+	if c.codeCommunicator != nil {
+		res, err := c.codeCommunicator.GetSIEMComponentAPIServerMemoryUsage(ctx)
+		if err != nil {
+			if !tholaerr.IsNotImplementedError(err) {
+				return 0, errors.Wrap(err, "error in code communicator")
+			}
+		} else {
+			return res, nil
+		}
+	}
+
+	return c.deviceClassCommunicator.GetSIEMComponentAPIServerMemoryUsage(ctx)
 }

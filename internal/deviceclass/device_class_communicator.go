@@ -1871,3 +1871,537 @@ func (o *deviceClassCommunicator) GetSIEMComponentRepositories(ctx context.Conte
 	}
 	return repos, nil
 }
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerVersion(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerVersion == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerVersion").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerVersion").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerVersion.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentFabricServerVersion")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerIOWait(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerIOWait == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerIOWait").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerIOWait").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerIOWait.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerIOWait")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerVMSwapiness(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerVMSwapiness == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerVMSwapiness").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerVMSwapiness").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerVMSwapiness.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerVMSwapiness")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerClusterSize(ctx context.Context) (int, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerClusterSize == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerClusterSize").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerClusterSize").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerClusterSize.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerClusterSize")
+	}
+
+	v, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerProxyCpuUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerProxyCpuUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerProxyCpuUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerProxyCpuUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerProxyCpuUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerProxyCpuUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerProxyMemoryUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerProxyMemoryUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerProxyMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerProxyMemoryUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerProxyMemoryUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerProxyMemoryUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerProxyNumberOfAliveConnections(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerProxyNumberOfAliveConnections == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerProxyNumberOfAliveConnections").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerProxyNumberOfAliveConnections").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerProxyNumberOfAliveConnections.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerProxyNumberOfAliveConnections")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerProxyState(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerProxyState == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerProxyState").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerProxyState").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerProxyState.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentFabricServerProxyState")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerProxyNodesCount(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerProxyNodesCount == nil {
+		log.Ctx(ctx).Debug().Str("property", "FabricServerProxyNodesCount").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "FabricServerProxyNodesCount").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerProxyNodesCount.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get FabricServerProxyNodesCount")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageCPUUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageCpuUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageCPUUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageCPUUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageCpuUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageCPUUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageMemoryUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageMemoryUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageMemoryUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageMemoryUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageMemoryUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentConfiguredCapacity(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageConfiguredCapacity == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentConfiguredCapacity").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentConfiguredCapacity").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageConfiguredCapacity.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentConfiguredCapacity")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageAvailableCapacity(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageAvailableCapacity == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageAvailableCapacity").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageAvailableCapacity").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageAvailableCapacity.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageAvailableCapacity")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageDFSUsed(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageDfsUsed == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageDFSUsed").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageDFSUsed").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageDfsUsed.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageDFSUsed")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageUnderReplicatedBlocks(ctx context.Context) (int, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageUnderReplicatedBlocks == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageUnderReplicatedBlocks").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageUnderReplicatedBlocks").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageUnderReplicatedBlocks.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageUnderReplicatedBlocks")
+	}
+
+	v, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerStorageLiveDataNodes(ctx context.Context) (int, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerStorageLiveDataNodes == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerStorageLiveDataNodes").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerStorageLiveDataNodes").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerStorageLiveDataNodes.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerStorageLiveDataNodes")
+	}
+
+	v, err := res.Int()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerAuthenticatorCPUUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerAuthenticatorCpuUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerAuthenticatorCPUUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerAuthenticatorCPUUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerAuthenticatorCpuUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerAuthenticatorCPUUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerAuthenticatorMemoryUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerAuthenticatorMemoryUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerAuthenticatorMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerAuthenticatorMemoryUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerAuthenticatorMemoryUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentFabricServerAuthenticatorMemoryUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerAuthenticatorServiceStatus(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerAuthenticatorServiceStatus == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerAuthenticatorServiceStatus").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerAuthenticatorServiceStatus").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerAuthenticatorServiceStatus.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentFabricServerAuthenticatorServiceStatus")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerAuthenticatorAdminServiceStatus(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerAuthenticatorAdminServiceStatus == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentFabricServerAuthenticatorAdminServiceStatus").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentFabricServerAuthenticatorAdminServiceStatus").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.fabricServerAuthenticatorAdminServiceStatus.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentFabricServerAuthenticatorAdminServiceStatus")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentFabricServerZFSPools(ctx context.Context) ([]device.SIEMComponentZFSPool, error) {
+	if o.components.siem == nil || o.components.siem.fabricServerZFSPools == nil {
+		log.Ctx(ctx).Debug().Str("groupProperty", "SIEMComponentFabricServerZFSPools").Str("device_class", o.name).Msg("no detection information available")
+		return nil, tholaerr.NewNotImplementedError("no detection information available")
+	}
+	logger := log.Ctx(ctx).With().Str("groupProperty", "SIEMComponentFabricServerZFSPools").Logger()
+	ctx = logger.WithContext(ctx)
+	res, _, err := o.components.siem.fabricServerZFSPools.GetProperty(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get property")
+	}
+	var zfsPools []device.SIEMComponentZFSPool
+	err = res.Decode(&zfsPools)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode property into zfs pools struct")
+	}
+	return zfsPools, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentAPIServerVersion(ctx context.Context) (string, error) {
+	if o.components.siem == nil || o.components.siem.apiServerVersion == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentAPIServerVersion").Str("device_class", o.name).Msg("no detection information available")
+		return "", tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentAPIServerVersion").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.apiServerVersion.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return "", errors.Wrap(err, "failed to get SIEMComponentAPIServerVersion")
+	}
+
+	return res.String(), nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentAPIServerIOWait(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.apiServerIOWait == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentAPIServerIOWait").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentAPIServerIOWait").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.apiServerIOWait.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentAPIServerIOWait")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentAPIServerVMSwapiness(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.apiServerVMSwapiness == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentAPIServerVMSwapiness").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentAPIServerVMSwapiness").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.apiServerVMSwapiness.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentAPIServerVMSwapiness")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentAPIServerCPUUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.apiServerCpuUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentAPIServerCPUUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentAPIServerCPUUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.apiServerCpuUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentAPIServerCPUUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}
+
+func (o *deviceClassCommunicator) GetSIEMComponentAPIServerMemoryUsage(ctx context.Context) (float64, error) {
+	if o.components.siem == nil || o.components.siem.apiServerMemoryUsage == nil {
+		log.Ctx(ctx).Debug().Str("property", "SIEMComponentAPIServerMemoryUsage").Str("device_class", o.name).Msg("no detection information available")
+		return 0, tholaerr.NewNotImplementedError("no detection information available")
+	}
+
+	logger := log.Ctx(ctx).With().Str("property", "SIEMComponentAPIServerMemoryUsage").Logger()
+	ctx = logger.WithContext(ctx)
+	res, err := o.components.siem.apiServerMemoryUsage.GetProperty(ctx)
+	if err != nil {
+		log.Ctx(ctx).Debug().Err(err).Msg("failed to get property")
+		return 0, errors.Wrap(err, "failed to get SIEMComponentAPIServerMemoryUsage")
+	}
+
+	v, err := res.Float64()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to convert value '%s' to float64", res.String())
+	}
+
+	return v, nil
+}

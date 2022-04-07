@@ -3,6 +3,11 @@ name: logpoint
 match:
   conditions:
     - type: snmpget
+      oid: 1.3.6.1.2.1.1.4.0
+      match_mode: contains
+      values:
+        - 'LogPoint'
+    - type: snmpget
       oid: .1.3.6.1.4.1.54322.1.6
       match_mode: regex
       values:
@@ -332,3 +337,401 @@ components:
           oid: 1.3.6.1.4.1.54322.1.13.2
         log_size_previous_month:
           oid: 1.3.6.1.4.1.54322.1.13.3
+
+    # logpoint director
+    #fabric server
+    fabric_server_version:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.1
+    fabric_server_i_o_wait:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.2
+    fabric_server_vm_swapiness:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.3
+    fabric_server_cluster_size:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.4
+    fabric_server_proxy_cpu_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.5.1
+    fabric_server_proxy_memory_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.5.2
+    fabric_server_proxy_number_of_alive_connections:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.5.3
+    fabric_server_proxy_state:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.5.4
+    fabric_server_proxy_nodes_count:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.5.5
+    fabric_server_storage_cpu_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.1
+    fabric_server_storage_memory_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.2
+    fabric_server_storage_configured_capacity:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.3
+        operators:
+          - type: switch
+            switch_mode: regex
+            cases:
+              - case: '^[0-9\.]+\sTB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sTB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000000000
+              - case: '^[0-9\.]+\sGB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sGB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000000
+              - case: '^[0-9\.]+\sMB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sMB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000
+              - case: '^[0-9\.]+\sKB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sKB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000
+    fabric_server_storage_available_capacity:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.4
+        operators:
+          - type: switch
+            switch_mode: regex
+            cases:
+              - case: '^[0-9\.]+\sTB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sTB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000000000
+              - case: '^[0-9\.]+\sGB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sGB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000000
+              - case: '^[0-9\.]+\sMB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sMB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000000
+              - case: '^[0-9\.]+\sKB'
+                operators:
+                  - type: modify
+                    modify_method: regexSubmatch
+                    regex: '^([0-9\.]+)\sKB'
+                    format: "$1"
+                  - type: modify
+                    modify_method: multiply
+                    value:
+                      detection: constant
+                      value: 1000
+    fabric_server_storage_dfs_used:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.5
+    fabric_server_storage_under_replicated_blocks:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.6
+    fabric_server_storage_live_data_nodes:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.6.7
+    fabric_server_authenticator_cpu_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.7.1
+    fabric_server_authenticator_memory_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.7.2
+    fabric_server_authenticator_service_status:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.7.3
+    fabric_server_authenticator_admin_service_status:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.5.7.4
+    fabric_server_zfs_pools:
+      detection: snmpwalk
+      values:
+        name:
+          oid: 1.3.6.1.4.1.54322.5.8.1
+        status:
+          oid: 1.3.6.1.4.1.54322.5.8.2
+        disk_allocation:
+          oid: 1.3.6.1.4.1.54322.5.8.3
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        free_disk_space:
+          oid: 1.3.6.1.4.1.54322.5.8.4
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        read_operations:
+          oid: 1.3.6.1.4.1.54322.5.8.5
+        write_operations:
+          oid: 1.3.6.1.4.1.54322.5.8.6
+        read_bandwidth:
+          oid: 1.3.6.1.4.1.54322.5.8.7
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+            - type: filter
+              filter_method: regex
+              value: '^[0-9]+$'
+
+        write_bandwidth:
+          oid: 1.3.6.1.4.1.54322.5.8.8
+          operators:
+            - type: switch
+              switch_mode: regex
+              cases:
+                - case: '^[0-9\.]+T'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)T'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000000
+                - case: '^[0-9\.]+G'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)G'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000000
+                - case: '^[0-9\.]+M'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)M'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000000
+                - case: '^[0-9\.]+K'
+                  operators:
+                    - type: modify
+                      modify_method: regexSubmatch
+                      regex: '^([0-9\.]+)K'
+                      format: "$1"
+                    - type: modify
+                      modify_method: multiply
+                      value:
+                        detection: constant
+                        value: 1000
+    # api server
+    api_server_version:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.3.1
+    api_server_i_o_wait:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.3.2
+    api_server_vm_swapiness:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.3.3
+    api_server_cluster_cpu_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.3.4.1
+    api_server_cluster_memory_usage:
+      - detection: snmpget
+        oid: .1.3.6.1.4.1.54322.3.4.2
