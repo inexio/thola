@@ -34,10 +34,18 @@ identify:
       - detection: snmpget
         oid: "1.3.6.1.2.1.47.1.1.1.1.13.1"
         operators:
+          - type: filter
+            filter_method: "!equals"
+            value: "  "
           - type: modify
             modify_method: regexReplace
             replace: ""
             regex: '(?i)^C(ISCO)?'
+      - detection: SysObjectID
+        operators:
+          - type: modify
+            modify_method: map
+            mappings: sysObjectID.yaml
     model_series:
       - detection: Model
         operators:
