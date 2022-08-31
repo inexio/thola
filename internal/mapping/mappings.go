@@ -5,7 +5,7 @@ import (
 	"github.com/inexio/thola/internal/tholaerr"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"io"
 	"path/filepath"
 	"sync"
 )
@@ -31,7 +31,7 @@ func readMapping(file string) (mapping, error) {
 	if err != nil {
 		return nil, errors.New("failed to open mappings file")
 	}
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return nil, errors.New("failed to read mappings file")
 	}

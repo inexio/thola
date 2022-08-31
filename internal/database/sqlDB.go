@@ -106,7 +106,7 @@ func (d *sqlDatabase) getEntry(ctx context.Context, dest interface{}, ip, dataTy
 	if err != nil {
 		return errors.Wrap(err, "db select failed")
 	}
-	if results == nil || len(results) == 0 {
+	if len(results) == 0 {
 		return tholaerr.NewNotFoundError("cache entry not found")
 	}
 

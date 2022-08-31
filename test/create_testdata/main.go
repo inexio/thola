@@ -11,7 +11,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -99,7 +98,7 @@ func main() {
 }
 
 func buildTestDevicesRecursive(relativePath string) ([]string, error) {
-	fileDir, err := ioutil.ReadDir(filepath.Join(snmpRecDir, relativePath))
+	fileDir, err := os.ReadDir(filepath.Join(snmpRecDir, relativePath))
 	if err != nil {
 		return nil, errors.Wrap(err, "error during read dir")
 	}
@@ -158,7 +157,7 @@ func createTestdata(testDevices []string) error {
 			return err
 		}
 
-		err = ioutil.WriteFile(filepath.Join(snmpRecDir, device+".testdata"), deviceDataJson, 0644)
+		err = os.WriteFile(filepath.Join(snmpRecDir, device+".testdata"), deviceDataJson, 0644)
 		if err != nil {
 			return err
 		}
