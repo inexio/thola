@@ -8,6 +8,7 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"regexp"
 	"strings"
 )
 
@@ -79,11 +80,13 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
 	m := make(map[string]int)
+	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_[^/]+|MGNT)/([^\\(]+)")
 	for k, interf := range interfaces {
 		if interf.IfName == nil {
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
-		identifier := strings.Split(strings.Join(strings.Split(*interf.IfName, "/")[2:], "/"), "(")[0]
+		match := interfaceRegex.FindStringSubmatch(*interf.IfName)
+		identifier := match[1] + "/" + match[2] + "/" + match[3]
 
 		if _, ok := m[identifier]; ok {
 			return nil, fmt.Errorf("interface identifier `%s` exists multiple times", *interf.IfName)
@@ -97,13 +100,22 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface) ([]device.Interface, error) {
 	var res []device.Interface
 
+	// if_descr is for example: EKINOPS/C600HC/20/PM_OPM8/OPM-4(S14_from_Oerel)
+	//                         EKINOPS/R1/Su1/Sl8/PM_ROADM-FLEX-H10M/WSS_Line_In(WSS_LINE_IN     )
+	//                         EKINOPS/R1/Su1/Sl0/MGNT/FE_1
+	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_[^/]+|MGNT)/([^\\(]+)")
+
 	for _, interf := range interfaces {
 		if interf.IfDescr == nil {
 			return nil, fmt.Errorf("no IfDescr set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
 
-		slotNumber := strings.Split(*interf.IfName, "/")[2]
-		moduleName := strings.Split(*interf.IfDescr, "/")[3]
+		match := interfaceRegex.FindStringSubmatch(*interf.IfDescr)
+		log.Debug().Msgf("found slot %s, module %s, port %s", match[1], match[2], match[3])
+
+		slotNumber := match[1]
+		moduleName := match[2]
+		portName := match[3]
 
 		// change ifType of ports of slots > 0 to "opticalChannel" if ifType equals "other", but not OPM8 interfaces
 		if slotNumber != "0" && interf.IfType != nil && *interf.IfType == "other" && moduleName != "PM_OPM8" {
@@ -112,7 +124,7 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 		}
 
 		// change subType of OPM8 ports
-		if moduleName == "PM_OPM8" {
+		if moduleName == "PM_OPM8" || moduleName == "PM_ROADM-FLEX-H4M" || moduleName == "PM_ROADM-FLEX-H10M" {
 			subType := "channelMonitoring"
 			interf.SubType = &subType
 		}
@@ -120,7 +132,7 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 		// change ifDescr and ifName of every interface
 		// they no longer contain Ekinops/C...
 		// and are now in the form <slot>-[Description]
-		*interf.IfDescr = slotNumber + "-" + strings.Split(strings.Split(*interf.IfDescr, "/")[4], "(")[0]
+		*interf.IfDescr = slotNumber + "-" + portName
 		interf.IfName = interf.IfDescr
 
 		// remove every port on slot 0 starting with "0-FE_"

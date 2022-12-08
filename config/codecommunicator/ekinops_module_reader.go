@@ -183,6 +183,19 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 				powerTransformFunc: ekinopsPowerTransformOPM8,
 			},
 		}}, nil
+	case "PM_ROADM-FLEX-H10M":
+		fallthrough
+	case "PM_ROADM-FLEX-H4M":
+		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderRoadmFlex{
+			ekinopsModuleData: moduleData,
+			ports: ekinopsRoadmFlexOIDs{
+				identifierOID:      ".1.3.6.1.4.1.20044.98.7.7.1.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.98.9.2.2.1.3",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.98.3.3.40.1.2",
+				channelsOid:        ".1.3.6.1.4.1.20044.98.3.3",
+				powerTransformFunc: ekinopsPowerTransformRoadmFlex,
+			},
+		}}, nil
 	}
 	return nil, errors.New("no module reader available")
 }
@@ -243,6 +256,13 @@ func ekinopsPowerTransformOPM8(f float64) float64 {
 		return f / 256
 	}
 	return f/256 - 256
+}
+
+func ekinopsPowerTransformRoadmFlex(f float64) float64 {
+	if f < 32768 {
+		return f / 10
+	}
+	return (f - 65536) / 10
 }
 
 func ekinopsPowerTransformCheckInfinity(f float64) float64 {

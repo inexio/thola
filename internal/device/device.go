@@ -129,6 +129,7 @@ type Interface struct {
 	OpticalTransponder *OpticalTransponderInterface `yaml:"optical_transponder,omitempty" json:"optical_transponder,omitempty" xml:"optical_transponder,omitempty" mapstructure:"optical_transponder,omitempty"`
 	OpticalAmplifier   *OpticalAmplifierInterface   `yaml:"optical_amplifier,omitempty" json:"optical_amplifier,omitempty" xml:"optical_amplifier,omitempty" mapstructure:"optical_amplifier,omitempty"`
 	OpticalOPM         *OpticalOPMInterface         `yaml:"optical_opm,omitempty" json:"optical_opm,omitempty" xml:"optical_opm,omitempty" mapstructure:"optical_opm,omitempty"`
+	OpticalRoadmFlex   *OpticalRoadmFlexInterface   `yaml:"optical_roadm_flex,omitempty" json:"optical_roadm_flex,omitempty" xml:"optical_roadm_flex,omitempty" mapstructure:"optical_roadm_flex,omitempty"`
 	SAP                *SAPInterface                `yaml:"sap,omitempty" json:"sap,omitempty" xml:"sap,omitempty" mapstructure:"sap,omitempty"`
 	VLAN               *VLANInformation             `yaml:"vlan,omitempty" json:"vlan,omitempty" xml:"vlan,omitempty" mapstructure:"vlan,omitempty"`
 }
@@ -239,6 +240,18 @@ type OpticalAmplifierInterface struct {
 //
 // swagger:model
 type OpticalOPMInterface struct {
+	Identifier *string          `yaml:"identifier" json:"identifier" xml:"identifier" mapstructure:"identifier"`
+	Label      *string          `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
+	RXPower    *float64         `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
+	Channels   []OpticalChannel `yaml:"channels" json:"channels" xml:"channels" mapstructure:"channels"`
+}
+
+// OpticalRoadmFlexInterface
+//
+// OpticalRoadmFlexInterface represents an optical opm interface.
+//
+// swagger:model
+type OpticalRoadmFlexInterface struct {
 	Identifier *string          `yaml:"identifier" json:"identifier" xml:"identifier" mapstructure:"identifier"`
 	Label      *string          `yaml:"label" json:"label" xml:"label" mapstructure:"label"`
 	RXPower    *float64         `yaml:"rx_power" json:"rx_power" xml:"rx_power" mapstructure:"rx_power"`
