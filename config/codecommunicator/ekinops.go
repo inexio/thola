@@ -124,7 +124,12 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 		}
 
 		// change subType of OPM8 ports
-		if moduleName == "PM_OPM8" || moduleName == "PM_ROADM-FLEX-H4M" || moduleName == "PM_ROADM-FLEX-H10M" {
+		if moduleName == "PM_OPM8" {
+			subType := "channelMonitoring"
+			interf.SubType = &subType
+		}
+
+		if (moduleName == "PM_ROADM-FLEX-H4M" || moduleName == "PM_ROADM-FLEX-H10M") && strings.Contains(*interf.IfDescr, "WSS_Line_") {
 			subType := "channelMonitoring"
 			interf.SubType = &subType
 		}

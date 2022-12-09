@@ -123,8 +123,8 @@ func ekinopsReadRoadmFlexMetrics(ctx context.Context, oids ekinopsRoadmFlexOIDs)
 	}
 
 	// results to map
-	channelValuesIn := make(map[int]float64)
-	channelValuesOut := make(map[int]float64)
+	channelValues0 := make(map[int]float64)
+	channelValues1 := make(map[int]float64)
 	for _, channelResult := range channelsResults {
 		val, err := channelResult.GetValue()
 		if err != nil {
@@ -156,29 +156,29 @@ func ekinopsReadRoadmFlexMetrics(ctx context.Context, oids ekinopsRoadmFlexOIDs)
 		channelNum := (channelIdx-65)/2 + 14
 
 		if portIdx == 0 {
-			channelValuesIn[channelNum] = value
+			channelValues0[channelNum] = value
 		} else if portIdx == 1 {
-			channelValuesOut[channelNum] = value
+			channelValues1[channelNum] = value
 		} else {
 			log.Ctx(ctx).Warn().Msgf("unexpected channel number %d for oid %s", portIdx, channelResult.GetOID().String())
 		}
 	}
 
 	for channelNum := 14; channelNum <= 60; channelNum += 1 {
-		channelName := fmt.Sprintf("C%d", channelNum)
-		rxPowerIn := channelValuesIn[channelNum]
-		rxPowerOut := channelValuesOut[channelNum]
+		channelName := fmt.Sprintf("C%d.00", channelNum)
+		rxPowerIn := channelValues0[channelNum]
+		rxPowerOut := channelValues1[channelNum]
 
-		channelIn := device.OpticalChannel{
+		channel0 := device.OpticalChannel{
 			Channel: &channelName,
 			RXPower: &rxPowerIn,
 		}
-		channelOut := device.OpticalChannel{
+		channel1 := device.OpticalChannel{
 			Channel: &channelName,
 			RXPower: &rxPowerOut,
 		}
-		opticalRoadmFlexInterfaces[0].Channels = append(opticalRoadmFlexInterfaces[0].Channels, channelIn)
-		opticalRoadmFlexInterfaces[1].Channels = append(opticalRoadmFlexInterfaces[1].Channels, channelOut)
+		opticalRoadmFlexInterfaces[0].Channels = append(opticalRoadmFlexInterfaces[0].Channels, channel0)
+		opticalRoadmFlexInterfaces[1].Channels = append(opticalRoadmFlexInterfaces[1].Channels, channel1)
 	}
 
 	return opticalRoadmFlexInterfaces, nil
