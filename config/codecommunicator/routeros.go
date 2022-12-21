@@ -6,6 +6,7 @@ import (
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strconv"
 	"strings"
 )
@@ -29,7 +30,7 @@ func (c *routerosCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 
 	bitrateInResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.14988.1.1.1.2.1.9")
 	if err != nil {
-		return nil, errors.Wrap(err, "snmpwalk for bitrate-in oid failed")
+		log.Ctx(ctx).Warn().Msgf("snmpwalk for bitrate-in oid failed: %s", err)
 	}
 
 	bitratesIn := make(map[uint64]uint64)
@@ -54,7 +55,7 @@ func (c *routerosCommunicator) GetInterfaces(ctx context.Context, filter ...grou
 
 	bitrateOutResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.14988.1.1.1.2.1.8")
 	if err != nil {
-		return nil, errors.Wrap(err, "snmpwalk for bitrate-out oid failed")
+		log.Ctx(ctx).Warn().Msgf("snmpwalk for bitrate-out oid failed: %s", err)
 	}
 
 	bitratesOut := make(map[uint64]uint64)
