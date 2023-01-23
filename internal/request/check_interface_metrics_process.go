@@ -587,6 +587,24 @@ func addCheckInterfacePerformanceData(interfaces []device.Interface, r *monitori
 			}
 		}
 
+		//OpticalRoadmFlex
+		if i.OpticalRoadmFlex != nil {
+			if i.OpticalRoadmFlex.RXPower != nil {
+				err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *i.OpticalRoadmFlex.RXPower).SetLabel(*i.IfDescr))
+				if err != nil {
+					return err
+				}
+			}
+			for _, channel := range i.OpticalRoadmFlex.Channels {
+				if channel.Channel != nil && channel.RXPower != nil {
+					err := r.AddPerformanceDataPoint(monitoringplugin.NewPerformanceDataPoint("rx_power", *channel.RXPower).SetLabel(*i.IfDescr + "_" + *channel.Channel))
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+
 		//SAP
 		if i.SAP != nil {
 			if i.SAP.Inbound != nil {

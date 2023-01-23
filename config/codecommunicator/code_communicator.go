@@ -60,6 +60,9 @@ func GetCodeCommunicator(deviceClass communicator.Communicator, parentNetworkDev
 		return &arubaCommunicator{base}, nil
 	case "linux/logpoint":
 		return &linuxLogpointCommunicator{base}, nil
+	case "routeros":
+		return &routerosCommunicator{base}, nil
+
 	}
 	return nil, tholaerr.NewNotFoundError(fmt.Sprintf("no code communicator found for device class identifier '%s'", classIdentifier))
 }
