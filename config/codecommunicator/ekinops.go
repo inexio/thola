@@ -86,6 +86,10 @@ func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (m
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
 		}
 		match := interfaceRegex.FindStringSubmatch(*interf.IfName)
+		if len(match) == 0 {
+			log.Warn().Msgf("interface %s did not match the regular expression '([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)'", *interf.IfName)
+			continue
+		}
 		identifier := match[1] + "/" + match[2] + "/" + match[3]
 
 		if _, ok := m[identifier]; ok {
@@ -111,6 +115,10 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 		}
 
 		match := interfaceRegex.FindStringSubmatch(*interf.IfDescr)
+		if len(match) == 0 {
+			log.Warn().Msgf("interface %s did not match the regular expression '([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)'", *interf.IfName)
+			continue
+		}
 		log.Debug().Msgf("found slot %s, module %s, port %s", match[1], match[2], match[3])
 
 		slotNumber := match[1]
