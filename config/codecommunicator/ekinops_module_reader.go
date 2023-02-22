@@ -151,6 +151,8 @@ func ekinopsGetModuleReader(slotIdentifier, module string) (ekinopsModuleReader,
 			},
 		}}, nil
 	case "PM_1001RR":
+		fallthrough
+	case "PM1001RR":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderTransponder{
 			ekinopsModuleData: moduleData,
 			networkLinePortsOIDs: ekinopsTransponderOIDs{
