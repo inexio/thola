@@ -80,7 +80,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
 	m := make(map[string]int)
-	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_[^/]+|MGNT)/([^\\(]+)")
+	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)")
 	for k, interf := range interfaces {
 		if interf.IfName == nil {
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
@@ -103,7 +103,7 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 	// if_descr is for example: EKINOPS/C600HC/20/PM_OPM8/OPM-4(S14_from_Oerel)
 	//                         EKINOPS/R1/Su1/Sl8/PM_ROADM-FLEX-H10M/WSS_Line_In(WSS_LINE_IN     )
 	//                         EKINOPS/R1/Su1/Sl0/MGNT/FE_1
-	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_[^/]+|MGNT)/([^\\(]+)")
+	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)")
 
 	for _, interf := range interfaces {
 		if interf.IfDescr == nil {
