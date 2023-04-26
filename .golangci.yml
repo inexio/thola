@@ -2,8 +2,6 @@ run:
   timeout: 5m
   skip-files:
     - '(.+)_test\.go'
-    - 'internal/config/http_config.go'
-    - 'internal/config/config.go'
 
 linters:
   disable-all: false
