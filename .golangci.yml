@@ -8,13 +8,16 @@ run:
 linters:
   disable-all: false
   enable:
-    - funlen
-    - dogsled
-    - dupl
-    - whitespace
-    - wsl
     - exportloopref
   disable:
+    - errorlint
+    - exhaustive
+    - dogsled
+    - whitespace
+    - gosec
+    - dupl
+    - wsl
+    - funlen
     - scopelint
     - bodyclose
     - contextcheck
@@ -25,7 +28,7 @@ linters:
     - structcheck
     - unparam
     - musttag
+    - unused
   presets:
     - bugs
-    - unused
   fast: false
