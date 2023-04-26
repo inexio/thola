@@ -1,0 +1,32 @@
+run:
+  timeout: 5m
+  skip-files:
+    - '(.+)_test\.go'
+
+linters:
+  disable-all: false
+  enable:
+    - exportloopref
+  disable:
+    - errorlint
+    - exhaustive
+    - dogsled
+    - whitespace
+    - gosec
+    - dupl
+    - wsl
+    - funlen
+    - scopelint
+    - bodyclose
+    - contextcheck
+    - nilerr
+    - noctx
+    - rowserrcheck
+    - sqlclosecheck
+    - structcheck
+    - unparam
+    - musttag
+    - unused
+  presets:
+    - bugs
+  fast: false

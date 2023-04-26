@@ -3,13 +3,14 @@ package codecommunicator
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/deviceclass/groupproperty"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"regexp"
-	"strings"
 )
 
 type junosCommunicator struct {
@@ -308,13 +309,15 @@ func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]inde
 	}
 
 	var indices []indexAndLabel
+	regex := regexp.MustCompile("(?i)engine")
+
 	for _, response := range jnxOperatingDescr {
 		res, err := response.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of snmp response")
 		}
 
-		if ok, err = regexp.MatchString("(?i)engine", res.String()); err == nil && ok {
+		if ok = regex.MatchString(res.String()); ok {
 			indices = append(indices, indexAndLabel{
 				index: strings.TrimPrefix(response.GetOID().String(), jnxOperatingDescrOID.String()),
 				label: res.String(),
