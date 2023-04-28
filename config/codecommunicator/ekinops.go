@@ -42,6 +42,12 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 		log.Fatal().Err(err).Msg("failed to snmpwalk")
 	}
 
+	//get used mgnt2PerfCapOidEnable
+	mgnt2PerfCapOidEnableResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.20044.7.8.1.1.5")
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to snmpwalk")
+	}
+
 	var moduleReaders []ekinopsModuleReader
 
 	for k, slotResult := range slotResults {
@@ -55,9 +61,18 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 			return nil, errors.Wrap(err, "failed to get module result as string")
 		}
 
-		moduleReader, err := ekinopsGetModuleReader(slotIdentifier.String(), module.String())
+		var mgnt2PerfCapOidEnable string
+		if module.String() == "PM_400FRS04-SF" {
+			value, err := mgnt2PerfCapOidEnableResults[k].GetValue()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get mgnt2PerfCapOidEnable result as string")
+			}
+			mgnt2PerfCapOidEnable = value.String()
+		}
+
+		moduleReader, err := ekinopsGetModuleReader(slotIdentifier.String(), module.String(), mgnt2PerfCapOidEnable)
 		if err != nil {
-			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module)
+			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module.String())
 			continue
 		}
 		moduleReaders = append(moduleReaders, moduleReader)
