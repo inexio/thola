@@ -182,10 +182,7 @@ func (g *valueFilter) CheckMatch(value []string) bool {
 			return false
 		}
 	}
-	if len(value) < len(g.value) {
-		return false
-	}
-	return true
+	return len(value) >= len(g.value)
 }
 
 func (g *valueFilter) AddException(value []string) Filter {

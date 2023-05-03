@@ -308,13 +308,17 @@ func (c *junosCommunicator) getRoutingEngineIndices(ctx context.Context) ([]inde
 	}
 
 	var indices []indexAndLabel
+	regex, err := regexp.Compile("(?i)engine")
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to compile engine regular expression")
+	}
 	for _, response := range jnxOperatingDescr {
 		res, err := response.GetValue()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to get string value of snmp response")
 		}
 
-		if ok, err = regexp.MatchString("(?i)engine", res.String()); err == nil && ok {
+		if ok = regex.MatchString(res.String()); ok {
 			indices = append(indices, indexAndLabel{
 				index: strings.TrimPrefix(response.GetOID().String(), jnxOperatingDescrOID.String()),
 				label: res.String(),

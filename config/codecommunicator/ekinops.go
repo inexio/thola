@@ -42,6 +42,12 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 		log.Fatal().Err(err).Msg("failed to snmpwalk")
 	}
 
+	//get used mgnt2PerfCapOidEnable
+	mgnt2PerfCapOidEnableResults, err := con.SNMP.SnmpClient.SNMPWalk(ctx, ".1.3.6.1.4.1.20044.7.8.1.1.5")
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to snmpwalk")
+	}
+
 	var moduleReaders []ekinopsModuleReader
 
 	for k, slotResult := range slotResults {
@@ -55,9 +61,18 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 			return nil, errors.Wrap(err, "failed to get module result as string")
 		}
 
-		moduleReader, err := ekinopsGetModuleReader(slotIdentifier.String(), module.String())
+		var mgnt2PerfCapOidEnable string
+		if module.String() == "PM_400FRS04-SF" {
+			value, err := mgnt2PerfCapOidEnableResults[k].GetValue()
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to get mgnt2PerfCapOidEnable result as string")
+			}
+			mgnt2PerfCapOidEnable = value.String()
+		}
+
+		moduleReader, err := ekinopsGetModuleReader(slotIdentifier.String(), module.String(), mgnt2PerfCapOidEnable)
 		if err != nil {
-			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module)
+			log.Ctx(ctx).Debug().Err(err).Msgf("no information for reading out ekinops module '%s' available", module.String())
 			continue
 		}
 		moduleReaders = append(moduleReaders, moduleReader)
@@ -80,7 +95,7 @@ func (c *ekinopsCommunicator) GetInterfaces(ctx context.Context, filter ...group
 
 func ekinopsInterfacesIfIdentifierToSliceIndex(interfaces []device.Interface) (map[string]int, error) {
 	m := make(map[string]int)
-	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)")
+	interfaceRegex, _ := regexp.Compile(`([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)`)
 	for k, interf := range interfaces {
 		if interf.IfName == nil {
 			return nil, fmt.Errorf("no ifName set for interface ifIndex: `%d`", *interf.IfIndex)
@@ -107,7 +122,7 @@ func (c *ekinopsCommunicator) normalizeInterfaces(interfaces []device.Interface)
 	// if_descr is for example: EKINOPS/C600HC/20/PM_OPM8/OPM-4(S14_from_Oerel)
 	//                         EKINOPS/R1/Su1/Sl8/PM_ROADM-FLEX-H10M/WSS_Line_In(WSS_LINE_IN     )
 	//                         EKINOPS/R1/Su1/Sl0/MGNT/FE_1
-	interfaceRegex, _ := regexp.Compile("([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)")
+	interfaceRegex, _ := regexp.Compile(`([0-9]+)/(PM_?[^/]+|MGNT)/([^\\(]+)`)
 
 	for _, interf := range interfaces {
 		if interf.IfDescr == nil {
