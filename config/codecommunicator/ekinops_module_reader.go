@@ -21,7 +21,7 @@ type ekinopsModuleReader interface {
 func ekinopsGetModuleReader(slotIdentifier, module string, mgnt2PerfCap string) (ekinopsModuleReader, error) {
 	moduleData := ekinopsModuleData{slotIdentifier, module}
 	switch module {
-	case "PM_OAIL-HCS", "PM_OAIL-HCS-17", "PM-OABP-HC", "PM-OAIL-HC":
+	case "PM_OAIL-HCS", "PM_OAIL-HCS2", "PM_OAIL-HCS-17", "PM_OAIL-HCS2-17", "PM-OABP-HC", "PM-OAIL-HC":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderAmplifier{
 			ekinopsModuleData: moduleData,
 			boosterPorts: ekinopsAmplifierOIDs{
