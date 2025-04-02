@@ -1,0 +1,15 @@
+include:
+  - project: 'software/deployment/ci-templates'
+    ref: 'master'
+    file: 'application/docker/build.yml'
+
+variables:
+  IMAGE_NAME: ${DOCKER_CI_REGISTRY}/${CI_PROJECT_NAME}
+
+build-image:
+  extends: .docker-template
+  stage: build
+  only:
+    - pre-release
+  tags:
+    - docker
