@@ -7,6 +7,7 @@ import (
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"strings"
 )
 
 type aviatCommunicator struct {
@@ -298,7 +299,8 @@ func (c *aviatCommunicator) getRadioInterface(ctx context.Context, interfaces []
 	}
 
 	for i, interf := range interfaces {
-		if interf.IfType != nil && *interf.IfType == "radioMAC" {
+		if interf.IfType != nil && ((*interf.IfType == "radioMAC") || (strings.HasPrefix(*interf.IfName, "Radio"))) {
+			log.Ctx(ctx).Debug().Err(err).Msg("Add channel informations")
 			interfaces[i].MaxSpeedIn = &maxCapacity
 			interfaces[i].MaxSpeedOut = &maxCapacity
 			interfaces[i].Radio = &device.RadioInterface{

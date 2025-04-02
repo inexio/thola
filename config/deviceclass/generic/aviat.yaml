@@ -1,5 +1,9 @@
 name: "aviat"
 
+config:
+  snmp:
+    max_repetitions: 1
+
 match:
   logical_operator: "OR"
   conditions:
