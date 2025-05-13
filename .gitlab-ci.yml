@@ -10,6 +10,7 @@ build-image:
   before_script: 
     - echo "{\"auths\":{\"${DOCKER_CI_REGISTRY}\":{\"username\":\"${DOCKER_CI_USER}\",\"password\":\"${DOCKER_CI_PASSWORD}\"}}}" > /kaniko/.docker/config.json
   extends: .kaniko-build-template
+  when: manual
   only:
     - pre-release
   tags:
