@@ -1,15 +1,16 @@
 include:
-  - project: 'software/deployment/ci-templates'
+  - project: 'dgsys/k8s/isp-ci-templates'
     ref: 'master'
-    file: 'application/docker/build.yml'
+    file: 'application/docker/kaniko.yml'
 
 variables:
   IMAGE_NAME: ${DOCKER_CI_REGISTRY}/${CI_PROJECT_NAME}
 
 build-image:
-  extends: .docker-template
-  stage: build
+  before_script: 
+    - echo "{\"auths\":{\"${DOCKER_CI_REGISTRY}\":{\"username\":\"${DOCKER_CI_USER}\",\"password\":\"${DOCKER_CI_PASSWORD}\"}}}" > /kaniko/.docker/config.json
+  extends: .kaniko-build-template
   only:
-    - tags
+    - pre-release
   tags:
-    - docker
+    - isppd
