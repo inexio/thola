@@ -5,6 +5,7 @@ include:
 
 variables:
   IMAGE_NAME: ${DOCKER_CI_REGISTRY}/${CI_PROJECT_NAME}
+  IMAGE_TAG: 'latest'
 
 build-image:
   before_script:
