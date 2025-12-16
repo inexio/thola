@@ -2,11 +2,12 @@ package codecommunicator
 
 import (
 	"context"
+	"math"
+	"strings"
+
 	"github.com/inexio/thola/internal/device"
 	"github.com/inexio/thola/internal/network"
 	"github.com/pkg/errors"
-	"math"
-	"strings"
 )
 
 // ekinopsModuleReader is an interface with one function that receives an array of device.Interface and
@@ -21,7 +22,7 @@ type ekinopsModuleReader interface {
 func ekinopsGetModuleReader(slotIdentifier, module string, mgnt2PerfCap string) (ekinopsModuleReader, error) {
 	moduleData := ekinopsModuleData{slotIdentifier, module}
 	switch module {
-	case "PM_OAIL-HCS", "PM_OAIL-HCS2", "PM_OAIL-HCS-17", "PM_OAIL-HCS2-17", "PM-OABP-HC", "PM-OAIL-HC":
+	case "PM_OAIL-HCS", "PM_OAIL-HCS2", "PM_OAIL-HCS-17", "PM_OAIL-HCS2-17", "PM-OABP-HC", "PM-OAIL-HC", "PM_OAC-20":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderAmplifier{
 			ekinopsModuleData: moduleData,
 			boosterPorts: ekinopsAmplifierOIDs{
@@ -85,7 +86,7 @@ func ekinopsGetModuleReader(slotIdentifier, module string, mgnt2PerfCap string) 
 				powerTransformFunc: ekinopsPowerTransform10Log10XMinus40,
 			},
 		}}, nil
-	case "PM_200FRS02":
+	case "PM_200FRS02", "PM_200FRS02-2":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderTransponder{
 			ekinopsModuleData: moduleData,
 			networkLinePortsOIDs: ekinopsTransponderOIDs{
@@ -153,6 +154,28 @@ func ekinopsGetModuleReader(slotIdentifier, module string, mgnt2PerfCap string) 
 				},
 			}}, nil
 		}
+	case "PM_400FR05-C2A":
+		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderTransponder{
+			ekinopsModuleData: moduleData,
+			networkLinePortsOIDs: ekinopsTransponderOIDs{
+				identifierOID:      ".1.3.6.1.4.1.20044.118.7.1.2.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.118.9.3.2.1.3",
+				txPowerOID:         ".1.3.6.1.4.1.20044.118.3.3.144.1.2",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.118.3.3.156.1.2",
+				correctedFEC:       "",
+				uncorrectedFEC:     "",
+				powerTransformFunc: ekionopsPowerTransformShiftDivideBy100,
+			},
+			clientPortsOIDs: ekinopsTransponderOIDs{
+				identifierOID:      ".1.3.6.1.4.1.20044.118.7.1.1.1.2",
+				labelOID:           ".1.3.6.1.4.1.20044.118.9.3.1.1.3",
+				txPowerOID:         ".1.3.6.1.4.1.20044.118.3.2.256.1.2",
+				rxPowerOID:         ".1.3.6.1.4.1.20044.118.3.2.288.1.2",
+				correctedFEC:       "",
+				uncorrectedFEC:     "",
+				powerTransformFunc: ekinopsPowerTransform10Log10XMinus40,
+			},
+		}}, nil
 	case "PM_O6006MP":
 		return &ekinopsModuleReaderWrapper{&ekinopsModuleReaderTransponder{
 			ekinopsModuleData: moduleData,
